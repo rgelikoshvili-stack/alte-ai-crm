@@ -1,0 +1,81 @@
+from datetime import date, datetime
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict
+
+SourceType = Literal["manual", "website_snapshot", "pdf", "faq", "policy", "program_page"]
+SourceStatus = Literal["draft", "approved", "archived"]
+KnowledgeLanguage = Literal["ka", "en"]
+
+
+class ORMModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+
+class KnowledgeSourceCreate(BaseModel):
+    title: str
+    source_type: SourceType
+    status: SourceStatus = "draft"
+    language: KnowledgeLanguage
+    source_url: str | None = None
+    owner: str | None = None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
+
+
+class KnowledgeSourceRead(ORMModel):
+    id: str
+    title: str
+    source_type: str
+    status: str
+    language: str
+    source_url: str | None
+    owner: str | None
+    approved_by: str | None
+    approved_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class KnowledgeSnippetCreate(BaseModel):
+    source_id: str
+    title: str
+    content: str
+    category: str
+    program_name: str | None = None
+    keywords: str | None = None
+    effective_from: date | None = None
+    effective_to: date | None = None
+    status: SourceStatus = "draft"
+    language: KnowledgeLanguage
+
+
+class KnowledgeSnippetRead(ORMModel):
+    id: str
+    source_id: str
+    title: str
+    content: str
+    category: str
+    program_name: str | None
+    keywords: str | None
+    effective_from: date | None
+    effective_to: date | None
+    status: str
+    language: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class KnowledgeSearchResponse(BaseModel):
+    snippet: KnowledgeSnippetRead
+    source: KnowledgeSourceRead
+    score: int
+    source_status: str
+
+
+class KnowledgeSearchQuery(BaseModel):
+    query: str
+    language: KnowledgeLanguage | None = None
+    category: str | None = None
+    program_name: str | None = None
+    approved_only: bool = True

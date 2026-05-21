@@ -20,6 +20,7 @@ from app.services.lead_service import create_lead
 from app.services.lead_service import update_lead
 from app.services.qualification_service import apply_qualification_to_lead_create, build_qualification
 from app.services.task_service import create_task
+from app.services.knowledge_service import search_knowledge_snippets
 
 
 async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> ChatSessionStartResponse:
@@ -76,6 +77,14 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
+    knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
+    if knowledge["answer_source_status"] == "answered_from_approved_source":
+        analysis.used_sources = knowledge["used_sources"]
+        analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
+    elif should_require_knowledge(analysis):
+        analysis.risk_flags.append(knowledge["answer_source_status"])
+        analysis.should_handover = True
+        analysis.reply = build_no_source_reply(analysis)
     await audit_event(
         db,
         action="ai_mock_analysis_created",
@@ -117,6 +126,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "missing_fields": analysis.missing_fields,
             "risk_flags": analysis.risk_flags,
             "qualification": analysis.qualification.model_dump(),
+            "answer_source_status": knowledge["answer_source_status"],
+            "used_sources": knowledge["used_sources"],
         },
     )
     db.add(ai_reply)
@@ -145,6 +156,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         qualification_status=analysis.qualification.qualification_status,
         handover_reason=analysis.qualification.handover_reason,
         recommended_next_action=analysis.qualification.recommended_next_action,
+        answer_source_status=knowledge["answer_source_status"],
+        used_sources=knowledge["used_sources"],
     )
 
 
@@ -330,6 +343,71 @@ def is_medical(analysis: AIAnalysisResult) -> bool:
 def mentions_relocation(analysis: AIAnalysisResult) -> bool:
     haystack = f"{analysis.conversation_summary or ''}".lower()
     return "visa" in haystack or "relocation" in haystack
+
+
+async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
+    if not should_use_knowledge(analysis):
+        return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
+    category = category_for_analysis(analysis)
+    results = await search_knowledge_snippets(
+        db,
+        query=message,
+        language=analysis.language if analysis.language in {"ka", "en"} else None,
+        category=category,
+        program_name=analysis.program,
+        approved_only=True,
+    )
+    if not results:
+        return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    if any(item.source_status == "source_stale" for item in results):
+        status = "source_stale"
+    else:
+        status = "answered_from_approved_source"
+    return {
+        "answer_source_status": status,
+        "used_sources": [item.source.title for item in results],
+        "snippet_titles": [item.snippet.title for item in results],
+    }
+
+
+def should_use_knowledge(analysis: AIAnalysisResult) -> bool:
+    return analysis.intent in {"admission_interest", "international_admission", "finance_question"} or (
+        analysis.qualification.intent
+        in {"program_info", "admission_requirements", "tuition_fee", "scholarship", "application"}
+    )
+
+
+def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
+    return analysis.intent == "finance_question" or analysis.qualification.intent in {
+        "tuition_fee",
+        "scholarship",
+        "admission_requirements",
+    }
+
+
+def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
+    if analysis.qualification.intent == "tuition_fee":
+        return "tuition"
+    if analysis.qualification.intent == "scholarship":
+        return "scholarship"
+    if analysis.qualification.intent in {"admission_requirements", "application"}:
+        return "admissions"
+    if analysis.program:
+        return "program"
+    return None
+
+
+def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[str]) -> str:
+    source_hint = ", ".join(snippet_titles[:2])
+    if analysis.language == "en":
+        return f"I found verified information from approved sources: {source_hint}. A consultant can help with the next step if you want."
+    return f"მოვძებნე დადასტურებული ინფორმაცია დამტკიცებული წყაროდან: {source_hint}. სურვილის შემთხვევაში კონსულტანტიც დაგეხმარებათ შემდეგ ნაბიჯში."
+
+
+def build_no_source_reply(analysis: AIAnalysisResult) -> str:
+    if analysis.language == "en":
+        return "I need verified information from admissions before giving an exact answer. A consultant can confirm this for you."
+    return "ზუსტი პასუხისთვის მჭირდება დადასტურებული ინფორმაცია admissions/კონსულტანტისგან. კონსულტანტი დაგიდასტურებთ დეტალებს."
 
 
 async def create_or_update_conversation_lead(

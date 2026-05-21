@@ -12,6 +12,7 @@ from app.models.crm import (
     Task,
     User,
 )
+from app.models.knowledge import KnowledgeSnippet, KnowledgeSource, RetrievalResult
 
 __all__ = [
     "AuditLog",
@@ -26,4 +27,7 @@ __all__ = [
     "PipelineStage",
     "Task",
     "User",
+    "KnowledgeSnippet",
+    "KnowledgeSource",
+    "RetrievalResult",
 ]

@@ -71,3 +71,5 @@ class ChatMessageResponse(BaseModel):
     qualification_status: str | None = None
     handover_reason: str | None = None
     recommended_next_action: str | None = None
+    answer_source_status: str | None = None
+    used_sources: list[str] = Field(default_factory=list)
