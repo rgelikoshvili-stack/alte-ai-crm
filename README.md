@@ -2,7 +2,7 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current phase: Phase 0 backend foundation.
+Current phase: Phase 1 CRM core backend.
 
 ## Stack
 
@@ -57,8 +57,30 @@ cd C:\tmp\alte-ai-crm\backend
 pytest
 ```
 
-## Phase 0 Scope
+## Current Scope
 
-This phase includes only the backend foundation: FastAPI app, settings, database base/session setup, Alembic wiring, system routes, Anthropic client placeholder, and system tests.
+Phase 0 includes the backend foundation: FastAPI app, settings, database base/session setup, Alembic wiring, system routes, Anthropic client placeholder, and system tests.
 
-CRM models, chat flow, AI calls, frontend, widget UI, WhatsApp, Messenger, Instagram, Email, and business workflows are intentionally out of scope until later phases.
+Phase 1 adds CRM core backend tables, schemas, services, routes, audit logging, customer duplicate detection, lead stage history, tasks, conversations/messages, pipelines, and deadline tracking.
+
+AI calls, frontend, widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
+
+## Run Migrations
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+alembic upgrade head
+```
+
+## Phase 1 Endpoint Areas
+
+- System: `/health`, `/version`
+- Departments: `/departments`
+- Customers: `/customers`, `/customers/search`
+- Leads: `/leads`, `/leads/{lead_id}/stage`
+- Conversations: `/conversations`, `/conversations/{conversation_id}/messages`
+- Inbox: `/inbox`
+- Tasks: `/tasks`, `/tasks/{task_id}/complete`
+- Pipelines: `/pipelines`, `/pipeline-stages`
+- Deadlines: `/deadlines`
