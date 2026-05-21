@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.mock_ai_analyzer import analyze_message
-from app.models import Conversation, Department, Message, Task
+from app.models import Conversation, Customer, Department, Lead, Message, Task
 from app.schemas.chat import (
     AIAnalysisResult,
     ChatMessageRequest,
@@ -17,6 +17,8 @@ from app.schemas.crm import CustomerCreate, LeadCreate, TaskCreate
 from app.services.audit_service import audit_event
 from app.services.customer_service import create_or_update_customer
 from app.services.lead_service import create_lead
+from app.services.lead_service import update_lead
+from app.services.qualification_service import apply_qualification_to_lead_create, build_qualification
 from app.services.task_service import create_task
 
 
@@ -62,6 +64,18 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     )
 
     analysis = analyze_message(payload.message, payload.source_domain)
+    if not has_contact(analysis) and conversation.customer_id:
+        customer = await db.get(Customer, conversation.customer_id)
+        if customer:
+            analysis.extracted_contact.first_name = analysis.extracted_contact.first_name or customer.first_name
+            analysis.extracted_contact.last_name = analysis.extracted_contact.last_name or customer.last_name
+            analysis.extracted_contact.phone = analysis.extracted_contact.phone or customer.phone
+            analysis.extracted_contact.email = analysis.extracted_contact.email or customer.email
+            analysis.extracted_contact.country = analysis.extracted_contact.country or customer.country
+            analysis.extracted_contact.city = analysis.extracted_contact.city or customer.city
+    analysis.qualification = build_qualification(payload.message, analysis)
+    if analysis.qualification.handover_required:
+        analysis.should_handover = True
     await audit_event(
         db,
         action="ai_mock_analysis_created",
@@ -77,10 +91,10 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     if analysis.intent == "general_info":
         pass
     elif analysis.intent in {"admission_interest", "consultation_request"}:
-        if analysis.should_create_lead:
+        if analysis.should_create_lead or conversation.lead_id:
             created_lead_id, created_task_id = await create_admissions_flow(db, conversation, analysis)
     elif analysis.intent == "international_admission":
-        if analysis.should_create_lead:
+        if analysis.should_create_lead or conversation.lead_id:
             created_lead_id, created_task_id = await create_international_flow(db, conversation, analysis)
     elif analysis.intent == "human_request":
         conversation.human_handover = True
@@ -102,6 +116,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "confidence": analysis.confidence,
             "missing_fields": analysis.missing_fields,
             "risk_flags": analysis.risk_flags,
+            "qualification": analysis.qualification.model_dump(),
         },
     )
     db.add(ai_reply)
@@ -126,6 +141,10 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         created_lead_id=created_lead_id,
         created_task_id=created_task_id,
         missing_fields=analysis.missing_fields,
+        lead_score=analysis.qualification.lead_score,
+        qualification_status=analysis.qualification.qualification_status,
+        handover_reason=analysis.qualification.handover_reason,
+        recommended_next_action=analysis.qualification.recommended_next_action,
     )
 
 
@@ -160,20 +179,21 @@ async def create_admissions_flow(
     conversation: Conversation,
     analysis: AIAnalysisResult,
 ) -> tuple[str | None, str | None]:
-    customer = await create_customer_from_analysis(db, analysis)
-    lead = await create_lead(
-        db,
-        LeadCreate(
-            customer_id=customer.id,
-            interest_area=analysis.interest_area,
-            program=analysis.program,
-            priority=analysis.priority,
-            source_channel="website_chat",
-            source_domain=analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
-            is_international_priority=analysis.source_domain == "join.alte.edu.ge",
-            medical_track=is_medical(analysis),
-        ),
+    customer = await get_or_create_customer_for_conversation(db, conversation, analysis)
+    lead_data = apply_qualification_to_lead_create(
+        {
+            "customer_id": customer.id,
+            "interest_area": analysis.interest_area,
+            "program": analysis.program,
+            "priority": analysis.priority,
+            "source_channel": "website_chat",
+            "source_domain": analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
+            "is_international_priority": analysis.source_domain == "join.alte.edu.ge",
+            "medical_track": is_medical(analysis),
+        },
+        analysis.qualification,
     )
+    lead, created = await create_or_update_conversation_lead(db, conversation, lead_data)
     task = await create_task(
         db,
         TaskCreate(
@@ -188,7 +208,7 @@ async def create_admissions_flow(
     conversation.customer_id = customer.id
     conversation.lead_id = lead.id
     await db.commit()
-    return lead.id, task.id
+    return lead.id, task.id if created else None
 
 
 async def create_international_flow(
@@ -196,23 +216,24 @@ async def create_international_flow(
     conversation: Conversation,
     analysis: AIAnalysisResult,
 ) -> tuple[str | None, str | None]:
-    customer = await create_customer_from_analysis(db, analysis)
+    customer = await get_or_create_customer_for_conversation(db, conversation, analysis)
     department = await find_department(db, "International Admissions")
-    lead = await create_lead(
-        db,
-        LeadCreate(
-            customer_id=customer.id,
-            interest_area=analysis.interest_area or "International admission",
-            program=analysis.program,
-            department_id=department.id if department else None,
-            priority="high",
-            source_channel="website_chat",
-            source_domain=analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
-            is_international_priority=True,
-            medical_track=is_medical(analysis),
-            relocation_needed=mentions_relocation(analysis),
-        ),
+    lead_data = apply_qualification_to_lead_create(
+        {
+            "customer_id": customer.id,
+            "interest_area": analysis.interest_area or "International admission",
+            "program": analysis.program,
+            "department_id": department.id if department else None,
+            "priority": "high",
+            "source_channel": "website_chat",
+            "source_domain": analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
+            "is_international_priority": True,
+            "medical_track": is_medical(analysis),
+            "relocation_needed": mentions_relocation(analysis),
+        },
+        analysis.qualification,
     )
+    lead, created = await create_or_update_conversation_lead(db, conversation, lead_data)
     task = await create_task(
         db,
         TaskCreate(
@@ -228,7 +249,7 @@ async def create_international_flow(
     conversation.customer_id = customer.id
     conversation.lead_id = lead.id
     await db.commit()
-    return lead.id, task.id
+    return lead.id, task.id if created else None
 
 
 async def create_handover_task(db: AsyncSession, conversation: Conversation, analysis: AIAnalysisResult) -> str | None:
@@ -278,6 +299,20 @@ async def create_customer_from_analysis(db: AsyncSession, analysis: AIAnalysisRe
     )
 
 
+async def get_or_create_customer_for_conversation(
+    db: AsyncSession,
+    conversation: Conversation,
+    analysis: AIAnalysisResult,
+) -> Customer:
+    if has_contact(analysis):
+        return await create_customer_from_analysis(db, analysis)
+    if conversation.customer_id:
+        customer = await db.get(Customer, conversation.customer_id)
+        if customer:
+            return customer
+    return await create_customer_from_analysis(db, analysis)
+
+
 async def find_department(db: AsyncSession, name: str) -> Department | None:
     return await db.scalar(select(Department).where(Department.name == name))
 
@@ -295,3 +330,19 @@ def is_medical(analysis: AIAnalysisResult) -> bool:
 def mentions_relocation(analysis: AIAnalysisResult) -> bool:
     haystack = f"{analysis.conversation_summary or ''}".lower()
     return "visa" in haystack or "relocation" in haystack
+
+
+async def create_or_update_conversation_lead(
+    db: AsyncSession,
+    conversation: Conversation,
+    lead_data: dict,
+) -> tuple[Lead, bool]:
+    if conversation.lead_id:
+        lead = await db.get(Lead, conversation.lead_id)
+        if lead:
+            from app.schemas.crm import LeadUpdate
+
+            await update_lead(db, lead, LeadUpdate(**{k: v for k, v in lead_data.items() if k != "customer_id"}))
+            return lead, False
+    lead = await create_lead(db, LeadCreate(**lead_data))
+    return lead, True

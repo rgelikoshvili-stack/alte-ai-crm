@@ -3,6 +3,7 @@ from app.services.conversation_service import create_conversation, create_messag
 from app.services.customer_service import create_or_update_customer
 from app.services.chat_service import handle_message, request_handover, start_session
 from app.services.lead_service import change_lead_stage, create_lead, update_lead
+from app.services.qualification_service import build_qualification
 from app.services.task_service import complete_task, create_task, update_task
 
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     "create_message",
     "create_or_update_customer",
     "create_task",
+    "build_qualification",
     "handle_message",
     "request_handover",
     "start_session",

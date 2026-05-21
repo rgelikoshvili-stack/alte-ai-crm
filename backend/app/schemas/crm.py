@@ -117,6 +117,13 @@ class LeadCreate(BaseModel):
     medical_track: bool = False
     intake_period: str | None = None
     relocation_needed: bool = False
+    qualification_intent: str | None = None
+    urgency: str | None = None
+    lead_score: int | None = None
+    qualification_status: str | None = None
+    handover_required: bool = False
+    handover_reason: str | None = None
+    recommended_next_action: str | None = None
 
 
 class LeadUpdate(BaseModel):
@@ -131,6 +138,13 @@ class LeadUpdate(BaseModel):
     medical_track: bool | None = None
     intake_period: str | None = None
     relocation_needed: bool | None = None
+    qualification_intent: str | None = None
+    urgency: str | None = None
+    lead_score: int | None = None
+    qualification_status: str | None = None
+    handover_required: bool | None = None
+    handover_reason: str | None = None
+    recommended_next_action: str | None = None
 
 
 class LeadStageChange(BaseModel):
@@ -155,6 +169,13 @@ class LeadRead(ORMModel):
     medical_track: bool
     intake_period: str | None
     relocation_needed: bool
+    qualification_intent: str | None
+    urgency: str | None
+    lead_score: int | None
+    qualification_status: str | None
+    handover_required: bool
+    handover_reason: str | None
+    recommended_next_action: str | None
     created_at: datetime
     updated_at: datetime
 

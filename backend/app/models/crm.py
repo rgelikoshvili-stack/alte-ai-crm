@@ -99,6 +99,13 @@ class Lead(TimestampMixin, Base):
     medical_track: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     intake_period: Mapped[str | None] = mapped_column(String(64))
     relocation_needed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    qualification_intent: Mapped[str | None] = mapped_column(String(64))
+    urgency: Mapped[str | None] = mapped_column(String(32))
+    lead_score: Mapped[int | None] = mapped_column(Integer)
+    qualification_status: Mapped[str | None] = mapped_column(String(64))
+    handover_required: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    handover_reason: Mapped[str | None] = mapped_column(String(120))
+    recommended_next_action: Mapped[str | None] = mapped_column(String(255))
 
     customer: Mapped[Customer] = relationship(back_populates="leads")
 

@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from app.schemas.qualification import LeadQualificationResult
 from app.schemas.crm import Priority
 
 Language = Literal["ka", "en", "unknown"]
@@ -35,6 +36,7 @@ class AIAnalysisResult(BaseModel):
     conversation_summary: str | None = None
     used_sources: list[str] = Field(default_factory=list)
     risk_flags: list[str] = Field(default_factory=list)
+    qualification: LeadQualificationResult = Field(default_factory=LeadQualificationResult)
 
 
 class ChatSessionStartRequest(BaseModel):
@@ -65,3 +67,7 @@ class ChatMessageResponse(BaseModel):
     created_lead_id: str | None = None
     created_task_id: str | None = None
     missing_fields: list[str] = Field(default_factory=list)
+    lead_score: int | None = None
+    qualification_status: str | None = None
+    handover_reason: str | None = None
+    recommended_next_action: str | None = None

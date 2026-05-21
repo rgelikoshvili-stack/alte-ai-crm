@@ -2,7 +2,7 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current phase: Phase 2 website chat flow backend.
+Current phase: Phase 3 lead qualification with mock AI.
 
 ## Stack
 
@@ -65,6 +65,8 @@ Phase 1 adds CRM core backend tables, schemas, services, routes, audit logging, 
 
 Phase 2 adds website chat backend flow with deterministic mock AI analysis. The mock analyzer returns structured intent, confidence, contact extraction, missing fields, handover flags, and source-domain signals. Chat services apply business rules and decide whether to create customers, leads, tasks, messages, handover, and audit events.
 
+Phase 3 extends the same mock chat flow with lead qualification: contact extraction, preferred program detection, qualification intent, urgency, lead score, qualification status, handover reason, and recommended next action. Qualification is stored on linked leads when a lead exists.
+
 Real Claude API calls, frontend, widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 ## Run Migrations
@@ -86,7 +88,7 @@ alembic upgrade head
 - Tasks: `/tasks`, `/tasks/{task_id}/complete`
 - Pipelines: `/pipelines`, `/pipeline-stages`
 - Deadlines: `/deadlines`
-- Chat: `/chat/session/start`, `/chat/message`, `/chat/handover/{conversation_id}`
+- Chat: `/chat/session/start`, `/chat/message`, `/chat/handover/{conversation_id}`, `/chat/session/{conversation_id}/qualification`
 
 ## Phase 2 Chat Examples
 
@@ -129,3 +131,11 @@ curl -X POST http://127.0.0.1:8000/chat/handover/<conversation_id>
 ```
 
 Phase 2 AI is mocked and deterministic. Real Anthropic Claude integration is planned for Phase 3.
+
+Phase 3 still uses mocked deterministic analysis. Real Anthropic Claude integration remains out of scope until explicitly approved.
+
+Read current lead qualification:
+
+```powershell
+curl http://127.0.0.1:8000/chat/session/<conversation_id>/qualification
+```

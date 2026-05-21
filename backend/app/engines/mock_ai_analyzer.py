@@ -3,7 +3,7 @@ import re
 from app.schemas.chat import AIAnalysisResult, ExtractedContact
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
-PHONE_RE = re.compile(r"(?:\+995\s?)?\d{9}")
+PHONE_RE = re.compile(r"(?:\+995)?\d{9}")
 
 
 def analyze_message(message: str, source_domain: str | None = None) -> AIAnalysisResult:
@@ -96,7 +96,7 @@ def detect_language(text: str) -> str:
 
 
 def detect_intent(lowered: str) -> str:
-    if contains_any(lowered, ["ადამიან", "ოპერატორ", "კონსულტანტ", "დამირეკეთ", "დამალაპარაკეთ"]):
+    if contains_any(lowered, ["ადამიან", "ოპერატორ", "კონსულტანტ", "დამირეკეთ", "დამალაპარაკეთ", "call me"]):
         return "human_request"
     if contains_any(lowered, ["international", "medicine", "from india", "visa", "relocation"]):
         return "international_admission"
@@ -108,7 +108,22 @@ def detect_intent(lowered: str) -> str:
         return "technical_issue"
     if contains_any(lowered, ["ღონისძიება", "open day", "event"]):
         return "event_interest"
-    if contains_any(lowered, ["ჩარიცხვა", "მიღება", "პროგრამა", "ბაკალავრი", "მაგისტრი", "მაინტერესებს", "apply"]):
+    if contains_any(
+        lowered,
+        [
+            "ჩარიცხვა",
+            "მიღება",
+            "პროგრამა",
+            "ბაკალავრ",
+            "მაგისტრ",
+            "მაინტერესებს",
+            "apply",
+            "application",
+            "admission",
+            "requirements",
+            "program information",
+        ],
+    ):
         return "admission_interest"
     if contains_any(lowered, ["სად ხართ", "სად მდებარეობს", "მისამართი", "ტელეფონი", "კონტაქტი", "contact"]):
         return "general_info"
@@ -116,8 +131,9 @@ def detect_intent(lowered: str) -> str:
 
 
 def extract_contact(text: str) -> ExtractedContact:
+    compact_text = text.replace(" ", "")
     email_match = EMAIL_RE.search(text)
-    phone_match = PHONE_RE.search(text.replace(" ", ""))
+    phone_match = PHONE_RE.search(compact_text)
     first_name = None
     last_name = None
     parts = [part.strip() for part in text.split(",")]
@@ -126,6 +142,16 @@ def extract_contact(text: str) -> ExtractedContact:
         if len(name_parts) >= 2:
             first_name = name_parts[0]
             last_name = name_parts[1]
+    if not first_name:
+        name_match = re.search(r"(?:my name is|i am)\s+([A-Z][a-z]+)\s+([A-Z][a-z]+)", text)
+        if name_match:
+            first_name = name_match.group(1)
+            last_name = name_match.group(2)
+    if not first_name and re.search(r"[\u10A0-\u10FF]", text):
+        name_match = re.search(r"([\u10A0-\u10FF]{2,})\s+([\u10A0-\u10FF]{2,})", text)
+        if name_match and not any(word in name_match.group(0) for word in ["სად მდებარეობს", "მაინტერესებს"]):
+            first_name = name_match.group(1)
+            last_name = name_match.group(2)
     country = None
     city = None
     lowered = text.lower()
@@ -149,6 +175,16 @@ def detect_program(text: str) -> str | None:
         return "Business"
     if "medicine" in lowered or "md" in lowered or "სამედიცინო" in lowered:
         return "Medicine / 6-year MD"
+    if "law" in lowered or "სამართ" in lowered:
+        return "Law"
+    if "computer science" in lowered or "it" in lowered or "კომპიუტერულ" in lowered:
+        return "IT / Computer Science"
+    if "mba" in lowered:
+        return "MBA"
+    if "bachelor" in lowered or "ბაკალავრ" in lowered:
+        return "Bachelor"
+    if "master" in lowered or "მაგისტრ" in lowered:
+        return "Master"
     return None
 
 
