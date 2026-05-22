@@ -403,3 +403,41 @@ curl "http://127.0.0.1:8000/knowledge/snippets/search?query=contact&language=en&
 curl "http://127.0.0.1:8000/knowledge/snippets/search?query=tuition%20fee&language=en&category=finance"
 curl "http://127.0.0.1:8000/knowledge/snippets/search?query=medicine%20visa&language=en&source_domain=join.alte.edu.ge"
 ```
+
+## Phase 7C Knowledge Review Admin Readiness
+
+Phase 7C adds backend-only review and approval endpoints for manually governed knowledge content.
+
+Review queue:
+
+```powershell
+curl "http://127.0.0.1:8000/knowledge/review-queue?sensitivity=high"
+curl "http://127.0.0.1:8000/knowledge/review-queue?stale=true"
+curl "http://127.0.0.1:8000/knowledge/review-queue?review_required=true"
+```
+
+Update source metadata:
+
+```powershell
+curl -X PATCH "http://127.0.0.1:8000/knowledge/sources/<source_id>" `
+  -H "Content-Type: application/json" `
+  -d "{\"review_required\":true,\"sensitivity\":\"high\"}"
+```
+
+Update, approve, or archive snippets:
+
+```powershell
+curl -X PATCH "http://127.0.0.1:8000/knowledge/snippets/<snippet_id>" `
+  -H "Content-Type: application/json" `
+  -d "{\"title\":\"Updated title\",\"review_required\":false}"
+
+curl -X PATCH "http://127.0.0.1:8000/knowledge/snippets/<snippet_id>/approve?approved_by=knowledge-admin"
+curl -X PATCH "http://127.0.0.1:8000/knowledge/snippets/<snippet_id>/archive"
+```
+
+Every review mutation writes an audit event:
+
+- `knowledge_source_updated`
+- `knowledge_snippet_updated`
+- `knowledge_snippet_approved`
+- `knowledge_snippet_archived`

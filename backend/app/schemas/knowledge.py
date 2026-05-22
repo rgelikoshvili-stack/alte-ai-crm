@@ -49,6 +49,23 @@ class KnowledgeSourceRead(ORMModel):
     updated_at: datetime
 
 
+class KnowledgeSourceUpdate(BaseModel):
+    source_key: str | None = None
+    title: str | None = None
+    source_type: SourceType | None = None
+    status: SourceStatus | None = None
+    language: KnowledgeLanguage | None = None
+    source_url: str | None = None
+    source_domain: str | None = None
+    category: str | None = None
+    sensitivity: str | None = None
+    review_required: bool | None = None
+    stale_after_days: int | None = None
+    owner: str | None = None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
+
+
 class KnowledgeSnippetCreate(BaseModel):
     source_id: str
     source_key: str | None = None
@@ -90,6 +107,24 @@ class KnowledgeSnippetRead(ORMModel):
     updated_at: datetime
 
 
+class KnowledgeSnippetUpdate(BaseModel):
+    source_key: str | None = None
+    title: str | None = None
+    content: str | None = None
+    category: str | None = None
+    source_domain: str | None = None
+    sensitivity: str | None = None
+    review_required: bool | None = None
+    stale_after_days: int | None = None
+    content_hash: str | None = None
+    program_name: str | None = None
+    keywords: str | None = None
+    effective_from: date | None = None
+    effective_to: date | None = None
+    status: SourceStatus | None = None
+    language: KnowledgeLanguage | None = None
+
+
 class KnowledgeSearchResponse(BaseModel):
     snippet: KnowledgeSnippetRead
     source: KnowledgeSourceRead
@@ -107,3 +142,10 @@ class KnowledgeSearchQuery(BaseModel):
     program_name: str | None = None
     approved_only: bool = True
     include_stale: bool = False
+
+
+class KnowledgeReviewItem(BaseModel):
+    snippet: KnowledgeSnippetRead
+    source: KnowledgeSourceRead
+    is_stale: bool
+    reasons: list[str]
