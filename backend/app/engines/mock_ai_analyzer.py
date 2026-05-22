@@ -96,6 +96,8 @@ def detect_language(text: str) -> str:
 
 
 def detect_intent(lowered: str) -> str:
+    if contains_any(lowered, ["ჩარიცხვა", "მიღება", "პროგრამა", "ბაკალავრ", "მაგისტრ", "მაინტერესებს"]):
+        return "admission_interest"
     if contains_any(lowered, ["ადამიან", "ოპერატორ", "კონსულტანტ", "დამირეკეთ", "დამალაპარაკეთ", "call me"]):
         return "human_request"
     if contains_any(lowered, ["international", "medicine", "from india", "visa", "relocation"]):
@@ -171,6 +173,12 @@ def extract_contact(text: str) -> ExtractedContact:
 
 def detect_program(text: str) -> str | None:
     lowered = text.lower()
+    if "ბიზნეს" in lowered:
+        return "Business"
+    if "მედიცინ" in lowered:
+        return "Medicine / 6-year MD"
+    if "სამართ" in lowered:
+        return "Law"
     if "ბიზნეს" in lowered or "business" in lowered:
         return "Business"
     if "medicine" in lowered or "md" in lowered or "სამედიცინო" in lowered:

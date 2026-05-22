@@ -68,8 +68,14 @@
       <p>
         Run the backend on <code>http://127.0.0.1:8000</code>, then open this page through a local static server.
       </p>
+      <ol>
+        <li>Backend: <code>uvicorn app.main:app --reload</code></li>
+        <li>Widget server: <code>python -m http.server 5500</code></li>
+        <li>Diagnostics: <code>http://127.0.0.1:8000/diagnostics/local-demo</code></li>
+      </ol>
 
       <section class="panel">
+        <p><strong>API base URL:</strong> <code id="apiBase">http://127.0.0.1:8000</code></p>
         <label for="domain">Demo source domain</label>
         <select id="domain">
           <option value="alte.edu.ge">alte.edu.ge</option>
@@ -80,6 +86,16 @@
           Changing this selector stores a new demo config and reloads the page. Use join.alte.edu.ge to test the
           international admissions default.
         </p>
+      </section>
+
+      <section class="panel">
+        <h2>Test messages</h2>
+        <ul>
+          <li>მაინტერესებს ბიზნესის პროგრამაზე ჩარიცხვა</li>
+          <li>ნინო ბერიძე, +995599000000, nino@example.com</li>
+          <li>რა ღირს სწავლა?</li>
+          <li>I want to apply for medicine from India</li>
+        </ul>
       </section>
 
       <section class="panel">
@@ -97,15 +113,17 @@
 
     <script>
       const savedDomain = localStorage.getItem("alteDemoSourceDomain") || "alte.edu.ge";
+      const apiBaseUrl = "http://127.0.0.1:8000";
       const select = document.getElementById("domain");
       select.value = savedDomain;
+      document.getElementById("apiBase").textContent = apiBaseUrl;
       document.getElementById("reload").addEventListener("click", () => {
         localStorage.setItem("alteDemoSourceDomain", select.value);
         localStorage.removeItem("alteChatWidgetSession");
         window.location.reload();
       });
       window.AlteChatWidgetConfig = {
-        apiBaseUrl: "http://127.0.0.1:8000",
+        apiBaseUrl,
         sourceDomain: savedDomain,
         defaultLanguage: savedDomain === "join.alte.edu.ge" ? "en" : "ka",
         proactiveEnabled: true,

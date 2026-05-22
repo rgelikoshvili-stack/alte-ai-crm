@@ -5,6 +5,7 @@ from fastapi import Request
 PUBLIC_PREFIXES = (
     "/health",
     "/version",
+    "/diagnostics/local-demo",
     "/docs",
     "/redoc",
     "/openapi.json",

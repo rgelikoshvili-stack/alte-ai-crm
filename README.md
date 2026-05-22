@@ -499,3 +499,65 @@ window.AlteChatWidgetConfig = {
 ```
 
 The widget is local/static only in this phase. It does not add analytics tracking, deployment, scraping, or omnichannel integrations.
+
+## Phase 7E Local Demo Runbook
+
+Phase 7E hardens the local end-to-end demo flow. The default demo uses SQLite and `AI_PROVIDER=mock`, so it does not require a real Claude API key.
+
+Step 1: local backend environment
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+copy .env.local.example .env
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Step 2: migrations and demo data
+
+```powershell
+alembic upgrade head
+python -m app.scripts.setup_local_demo
+```
+
+Step 3: start backend
+
+```powershell
+uvicorn app.main:app --reload
+```
+
+Step 4: start widget demo in a second terminal
+
+```powershell
+cd C:\tmp\alte-ai-crm\widget
+python -m http.server 5500
+```
+
+Step 5: open demo
+
+```text
+http://127.0.0.1:5500/demo.html
+```
+
+Step 6: run HTTP smoke check
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.e2e_local_smoke
+```
+
+Useful local endpoints:
+
+- `GET /health`
+- `GET /diagnostics/local-demo`
+- `GET /dashboard/overview`
+- `GET /inbox`
+- `GET /analytics/overview`
+
+Common local errors:
+
+- Missing `.env`: copy `backend/.env.local.example` to `backend/.env`.
+- PostgreSQL placeholder `DATABASE_URL`: use `sqlite+aiosqlite:///./alte_ai_crm_local.db` for local demo.
+- Missing tables: run `alembic upgrade head`.
+- Empty knowledge results: run `python -m app.scripts.setup_local_demo`.

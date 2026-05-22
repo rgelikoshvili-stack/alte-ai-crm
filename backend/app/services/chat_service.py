@@ -65,11 +65,12 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     )
 
     initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message)
+    history = await conversation_history(db, conversation.id)
     analysis, ai_meta = analyze_with_ai(
         payload.message,
         source_domain=payload.source_domain,
         language_hint=conversation.language,
-        conversation_history=await conversation_history(db, conversation.id),
+        conversation_history=history,
         knowledge_context=initial_knowledge_context,
     )
     if not has_contact(analysis) and conversation.customer_id:
@@ -81,6 +82,12 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             analysis.extracted_contact.email = analysis.extracted_contact.email or customer.email
             analysis.extracted_contact.country = analysis.extracted_contact.country or customer.country
             analysis.extracted_contact.city = analysis.extracted_contact.city or customer.city
+    if should_convert_contact_followup_to_admission(analysis, history, conversation):
+        analysis.intent = "admission_interest"
+        analysis.should_create_lead = True
+        analysis.department = "Admissions"
+        analysis.interest_area = analysis.interest_area or "Admissions"
+        analysis.program = analysis.program or infer_program_from_history(history)
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
@@ -493,6 +500,48 @@ def build_no_source_reply(analysis: AIAnalysisResult) -> str:
     if analysis.language == "en":
         return "I need verified information from admissions before giving an exact answer. A consultant can confirm this for you."
     return "ზუსტი პასუხისთვის მჭირდება დადასტურებული ინფორმაცია admissions/კონსულტანტისგან. კონსულტანტი დაგიდასტურებთ დეტალებს."
+
+
+def should_convert_contact_followup_to_admission(
+    analysis: AIAnalysisResult,
+    history: list[dict[str, str]],
+    conversation: Conversation,
+) -> bool:
+    if conversation.lead_id or not has_contact(analysis):
+        return False
+    if analysis.intent not in {"general_info", "unknown"}:
+        return False
+    return history_contains_admission_interest(history)
+
+
+def history_contains_admission_interest(history: list[dict[str, str]]) -> bool:
+    haystack = " ".join(item["text"] for item in history).lower()
+    return any(
+        needle in haystack
+        for needle in [
+            "admission",
+            "apply",
+            "application",
+            "program",
+            "business",
+            "მიღება",
+            "ჩარიცხვა",
+            "პროგრამა",
+            "ბიზნეს",
+            "მაინტერესებს",
+        ]
+    )
+
+
+def infer_program_from_history(history: list[dict[str, str]]) -> str | None:
+    haystack = " ".join(item["text"] for item in history).lower()
+    if "business" in haystack or "ბიზნეს" in haystack:
+        return "Business"
+    if "medicine" in haystack or "md" in haystack or "მედიცინ" in haystack:
+        return "Medicine / 6-year MD"
+    if "law" in haystack or "სამართ" in haystack:
+        return "Law"
+    return None
 
 
 async def create_or_update_conversation_lead(
