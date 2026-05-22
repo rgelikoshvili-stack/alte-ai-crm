@@ -79,6 +79,8 @@ Phase 6 adds backend analytics and SLA readiness endpoints for admissions perfor
 
 Phase 6B adds an Analytics view to the static operator frontend using the Phase 6 backend endpoints.
 
+Phase 6C adds a local/demo bootstrap script for development data: departments, an admissions pipeline, pipeline stages, approved demo knowledge snippets, and an optional admin user from environment variables.
+
 Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
@@ -304,3 +306,30 @@ AI/mock response analytics:
 ```powershell
 curl http://127.0.0.1:8000/analytics/ai
 ```
+
+## Phase 6C Local Bootstrap
+
+Run migrations first:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+alembic upgrade head
+```
+
+Seed local demo data:
+
+```powershell
+python -m app.scripts.bootstrap_demo
+```
+
+Optional local admin user:
+
+```powershell
+$env:ALTE_BOOTSTRAP_ADMIN_EMAIL="admin@alte.edu.ge"
+Read-Host "Local bootstrap admin password" | Set-Item Env:ALTE_BOOTSTRAP_ADMIN_PASSWORD
+$env:ALTE_BOOTSTRAP_ADMIN_NAME="Alte Admin"
+python -m app.scripts.bootstrap_demo
+```
+
+The bootstrap command is idempotent. Re-running it does not create duplicate departments, pipeline stages, knowledge sources, snippets, or admin users.

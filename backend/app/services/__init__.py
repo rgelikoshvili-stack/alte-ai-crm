@@ -8,6 +8,7 @@ from app.services.knowledge_service import create_knowledge_snippet, create_know
 from app.services.task_service import complete_task, create_task, update_task
 from app.services.security_service import create_access_token, hash_password, verify_password
 from app.services.analytics_service import build_analytics_overview
+from app.services.bootstrap_service import bootstrap_local_demo_data
 
 __all__ = [
     "audit_event",
@@ -31,4 +32,5 @@ __all__ = [
     "hash_password",
     "verify_password",
     "build_analytics_overview",
+    "bootstrap_local_demo_data",
 ]

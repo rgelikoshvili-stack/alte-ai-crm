@@ -56,6 +56,8 @@ Completed:
 - Phase 5B: CRM operator frontend shell
 - Phase 5C: optional auth, RBAC, correlation ID, token login, and response sanitizing helpers
 - Phase 6: analytics and SLA backend readiness
+- Phase 6B: analytics operator frontend view
+- Phase 6C: local/demo bootstrap data readiness
 
 Current gap before production:
 
@@ -111,6 +113,14 @@ Build analytics from existing CRM data:
 - AI/mock intent accuracy review
 
 Status: completed as backend analytics endpoints using existing CRM, task, message, and knowledge data.
+
+### Phase 6B - Analytics Operator View
+
+Status: completed as a frontend Analytics tab consuming the Phase 6 backend endpoints.
+
+### Phase 6C - Local Bootstrap / Demo Readiness
+
+Status: completed as an idempotent local seed command for departments, admissions pipeline stages, demo knowledge, and optional admin user creation from environment variables.
 
 ### Later Controlled Phases
 
