@@ -6,6 +6,7 @@ PUBLIC_PREFIXES = (
     "/health",
     "/version",
     "/diagnostics/local-demo",
+    "/diagnostics/ai",
     "/docs",
     "/redoc",
     "/openapi.json",

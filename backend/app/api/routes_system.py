@@ -92,3 +92,28 @@ def is_placeholder_key(value: str | None) -> bool:
         return True
     normalized = value.strip().lower()
     return normalized in {"your-anthropic-api-key", "local-placeholder", "test-anthropic-key", "change-me"}
+
+
+@router.get("/diagnostics/ai")
+async def ai_diagnostics() -> dict:
+    settings = get_settings()
+    provider = settings.AI_PROVIDER.lower().strip()
+    has_key = bool(settings.ANTHROPIC_API_KEY and settings.ANTHROPIC_API_KEY.strip())
+    placeholder = is_placeholder_key(settings.ANTHROPIC_API_KEY)
+    warnings: list[str] = []
+    if provider == "mock":
+        warnings.append("mock mode active")
+    if provider == "claude" and (not has_key or placeholder):
+        warnings.append("AI_PROVIDER=claude but ANTHROPIC_API_KEY placeholder/missing")
+    if provider not in {"mock", "claude"}:
+        warnings.append("unknown AI_PROVIDER")
+    return {
+        "ai_provider": settings.AI_PROVIDER,
+        "ai_model": settings.AI_MODEL,
+        "confidence_threshold": settings.AI_CONFIDENCE_THRESHOLD,
+        "has_anthropic_key": has_key,
+        "anthropic_key_is_placeholder": placeholder,
+        "mock_mode": provider == "mock",
+        "claude_enabled": provider == "claude" and has_key and not placeholder,
+        "warnings": warnings,
+    }

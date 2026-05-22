@@ -583,3 +583,49 @@ Common local errors:
 - PostgreSQL placeholder `DATABASE_URL`: use `sqlite+aiosqlite:///./alte_ai_crm_local.db` for local demo.
 - Missing tables: run `alembic upgrade head`.
 - Empty knowledge results: run `python -m app.scripts.setup_local_demo`.
+
+## Phase 8A Controlled Claude Live Test
+
+Claude live testing is documented in:
+
+```text
+docs/CLAUDE_LIVE_TEST_GUIDE.md
+```
+
+Default local/demo mode remains:
+
+```env
+AI_PROVIDER=mock
+```
+
+Controlled Claude mode uses:
+
+```env
+AI_PROVIDER=claude
+ANTHROPIC_API_KEY=your-real-key
+AUTH_REQUIRED=false
+```
+
+Direct AI service dry run:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.ai_direct_dry_run
+```
+
+Claude live HTTP smoke, with the backend already running:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.claude_live_smoke
+```
+
+AI diagnostics:
+
+```text
+GET /diagnostics/ai
+```
+
+The smoke script refuses placeholder keys and never prints the key. Claude still returns structured analysis only; CRM writes remain in service/business logic.
