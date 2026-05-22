@@ -1,5 +1,6 @@
 const state = {
   apiBase: localStorage.getItem("alte_api_base") || "http://127.0.0.1:8000",
+  token: localStorage.getItem("alte_access_token") || "",
   limit: Number(localStorage.getItem("alte_operator_limit") || 20),
   activeView: "dashboard",
   pipelines: [],
@@ -62,7 +63,25 @@ async function apiGet(path, params = {}) {
       url.searchParams.set(key, value);
     }
   });
-  const response = await fetch(url);
+  const headers = {};
+  if (state.token) headers.Authorization = `Bearer ${state.token}`;
+  const response = await fetch(url, { headers });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${response.status} ${response.statusText}: ${text.slice(0, 160)}`);
+  }
+  return response.json();
+}
+
+async function apiPost(path, payload = {}) {
+  const url = new URL(path, state.apiBase);
+  const headers = { "Content-Type": "application/json" };
+  if (state.token) headers.Authorization = `Bearer ${state.token}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`${response.status} ${response.statusText}: ${text.slice(0, 160)}`);
@@ -463,6 +482,31 @@ function switchView(view) {
 function syncSettings() {
   $("settingsApiBase").value = state.apiBase;
   $("settingsLimit").value = state.limit;
+  $("authStatus").textContent = state.token ? "Token stored for authenticated API calls." : "No token stored.";
+}
+
+async function loginOperator() {
+  setStatus("Signing in...");
+  try {
+    const result = await apiPost("/auth/login", {
+      email: $("loginEmail").value.trim(),
+      password: $("loginPassword").value,
+    });
+    state.token = result.access_token;
+    localStorage.setItem("alte_access_token", state.token);
+    $("loginPassword").value = "";
+    syncSettings();
+    setStatus(`Signed in as ${result.user.email}`);
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+}
+
+function logoutOperator() {
+  state.token = "";
+  localStorage.removeItem("alte_access_token");
+  syncSettings();
+  setStatus("Stored token cleared.");
 }
 
 function bindFilters() {
@@ -509,6 +553,8 @@ function init() {
     state.limit = Math.max(5, Math.min(100, Number($("settingsLimit").value || 20)));
     localStorage.setItem("alte_operator_limit", String(state.limit));
   });
+  $("loginBtn").addEventListener("click", loginOperator);
+  $("logoutBtn").addEventListener("click", logoutOperator);
   bindFilters();
   loadActiveView();
 }

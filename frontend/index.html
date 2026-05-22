@@ -229,6 +229,19 @@
                 Refresh size
                 <input id="settingsLimit" type="number" min="5" max="100" value="20" />
               </label>
+              <label>
+                Operator email
+                <input id="loginEmail" type="email" autocomplete="username" />
+              </label>
+              <label>
+                Operator password
+                <input id="loginPassword" type="password" autocomplete="current-password" />
+              </label>
+            </div>
+            <div class="settings-actions">
+              <button id="loginBtn" class="primary-action" type="button">Login</button>
+              <button id="logoutBtn" class="secondary-action" type="button">Clear token</button>
+              <span id="authStatus" class="auth-status">No token stored.</span>
             </div>
           </section>
         </section>

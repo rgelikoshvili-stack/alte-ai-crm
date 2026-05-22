@@ -73,6 +73,8 @@ Phase 5A prepares backend-only operator dashboard API responses: dashboard overv
 
 Phase 5B adds a static CRM operator frontend shell in `frontend/`. It uses the Phase 5A backend APIs for dashboard overview, inbox, conversation detail, leads, lead detail, pipeline board, tasks, knowledge sources, and knowledge snippet search. It does not add authentication, real Claude calls, external channels, or website widget behavior.
 
+Phase 5C adds backend authentication and security hardening: password hashing, token login, `/auth/me`, optional `AUTH_REQUIRED` route protection, role permission checks, correlation IDs, response secret sanitizing helpers, and security tests. Authentication is disabled by default for local compatibility and can be enabled with `AUTH_REQUIRED=true`.
+
 Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
@@ -100,6 +102,7 @@ alembic upgrade head
 - Knowledge: `/knowledge/sources`, `/knowledge/snippets`, `/knowledge/snippets/search`
 - Dashboard: `/dashboard/overview`
 - Operator readiness: filtered `/inbox`, `/leads`, `/tasks`, `/conversations/{id}/detail`, `/leads/{id}/detail`, `/pipelines/{id}/board`
+- Auth: `/auth/login`, `/auth/me`
 
 ## Phase 2 Chat Examples
 
@@ -233,3 +236,34 @@ http://127.0.0.1:5173
 ```
 
 The frontend is intentionally dependency-free in this phase. It can later be replaced by a Next.js/React app after CRM workflows and security are stable.
+
+## Phase 5C Auth / Security
+
+Authentication is optional in local development:
+
+```env
+AUTH_REQUIRED=false
+```
+
+To enforce token authentication and role checks for operator/CRM endpoints:
+
+```env
+AUTH_REQUIRED=true
+```
+
+Login:
+
+```powershell
+curl -X POST http://127.0.0.1:8000/auth/login `
+  -H "Content-Type: application/json" `
+  -d "{\"email\":\"admin@alte.edu.ge\",\"password\":\"password123\"}"
+```
+
+Use the returned bearer token:
+
+```powershell
+curl http://127.0.0.1:8000/auth/me `
+  -H "Authorization: Bearer <token>"
+```
+
+The static operator frontend has a Settings login form and sends the stored token on API requests.

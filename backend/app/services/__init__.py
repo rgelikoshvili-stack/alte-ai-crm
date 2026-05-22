@@ -6,6 +6,7 @@ from app.services.lead_service import change_lead_stage, create_lead, update_lea
 from app.services.qualification_service import build_qualification
 from app.services.knowledge_service import create_knowledge_snippet, create_knowledge_source, search_knowledge_snippets
 from app.services.task_service import complete_task, create_task, update_task
+from app.services.security_service import create_access_token, hash_password, verify_password
 
 __all__ = [
     "audit_event",
@@ -25,4 +26,7 @@ __all__ = [
     "start_session",
     "update_lead",
     "update_task",
+    "create_access_token",
+    "hash_password",
+    "verify_password",
 ]

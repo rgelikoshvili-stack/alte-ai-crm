@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str
     ENVIRONMENT: str = "development"
     APP_VERSION: str = "0.1.0"
+    AUTH_REQUIRED: bool = False
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -42,6 +42,7 @@ class User(TimestampMixin, Base):
     role: Mapped[str] = mapped_column(String(64), nullable=False)
     department_id: Mapped[str | None] = mapped_column(ForeignKey("departments.id"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    password_hash: Mapped[str | None] = mapped_column(String(255))
 
 
 class Customer(TimestampMixin, Base):

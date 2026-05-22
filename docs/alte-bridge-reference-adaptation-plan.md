@@ -53,15 +53,16 @@ Completed:
 - Phase 3: mock lead qualification
 - Phase 4: knowledge base and source governance
 - Phase 5A: CRM operator dashboard API readiness
+- Phase 5B: CRM operator frontend shell
+- Phase 5C: optional auth, RBAC, correlation ID, token login, and response sanitizing helpers
 
 Current gap before production:
 
-- No frontend CRM operator UI yet
-- No real authentication/RBAC yet
 - No public website widget UI yet
 - No real Claude integration yet
 - No external channels yet
 - No production deployment hardening yet
+- Auth/RBAC is present but still needs production operator seeding, password reset, session policy, and deployment validation
 
 ## Recommended Next Sequence
 
@@ -81,6 +82,8 @@ Build the operator-facing UI against existing Phase 5A APIs:
 
 Use Bridge Hub static/dashboard files only as layout references. Create Alte-native UI, copy no accounting labels.
 
+Status: completed as a static dependency-free frontend shell.
+
 ### Phase 5C - Auth, RBAC, Audit, Security Hardening
 
 Adapt Bridge Hub security patterns into Alte-native modules:
@@ -93,6 +96,8 @@ Adapt Bridge Hub security patterns into Alte-native modules:
 - Masking helper
 - Rate limiting for public chat and login
 - Security contract tests
+
+Status: completed as optional `AUTH_REQUIRED` enforcement, token login, role checks, correlation IDs, sanitizing helpers, and tests.
 
 ### Phase 6 - Analytics and SLA
 
@@ -124,4 +129,3 @@ For every future task:
 4. Add tests in the same phase.
 5. Run compile and pytest.
 6. Do not proceed to the next phase without approval.
-

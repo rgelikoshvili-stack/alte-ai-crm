@@ -42,6 +42,26 @@ class DepartmentRead(ORMModel):
     updated_at: datetime
 
 
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    role: UserRole
+    department_id: str | None = None
+    is_active: bool = True
+    password: str | None = None
+
+
+class UserRead(ORMModel):
+    id: str
+    name: str
+    email: str
+    role: str
+    department_id: str | None
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
 class CustomerCreate(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
