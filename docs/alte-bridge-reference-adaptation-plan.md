@@ -14,7 +14,7 @@ Bridge Hub files copied under `docs/reference/bridge-hub/` are reference-only. T
 4. Keep AI as analysis-only. CRM services decide changes.
 5. Keep API routes thin and move business rules into services.
 6. Every important CRM event must remain audit logged.
-7. Do not add external channels, real Claude calls, or frontend widget behavior before the approved phase.
+7. Do not add external channels, public widget behavior, or production integrations before the approved phase.
 
 ## What To Reuse From Bridge Hub
 
@@ -58,11 +58,11 @@ Completed:
 - Phase 6: analytics and SLA backend readiness
 - Phase 6B: analytics operator frontend view
 - Phase 6C: local/demo bootstrap data readiness
+- Phase 7A: safe/staged Claude structured analysis integration
 
 Current gap before production:
 
 - No public website widget UI yet
-- No real Claude integration yet
 - No external channels yet
 - No production deployment hardening yet
 - Auth/RBAC is present but still needs production operator seeding, password reset, session policy, and deployment validation
@@ -122,11 +122,14 @@ Status: completed as a frontend Analytics tab consuming the Phase 6 backend endp
 
 Status: completed as an idempotent local seed command for departments, admissions pipeline stages, demo knowledge, and optional admin user creation from environment variables.
 
+### Phase 7A - Safe Claude Integration
+
+Status: completed as staged `AI_PROVIDER=claude` support. Claude returns structured `AIAnalysisResult` only, AI calls are isolated in `app.services.ai_service`, mock mode remains default, and chat services still own CRM mutations.
+
 ### Later Controlled Phases
 
 Only after frontend and security:
 
-- Real Claude integration
 - Website widget UI and proactive triggers
 - WhatsApp/Messenger/Instagram/Email integrations
 - WhatsApp history import

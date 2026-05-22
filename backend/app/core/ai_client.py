@@ -16,6 +16,6 @@ def get_ai_client() -> AnthropicClientHandle:
     settings = get_settings()
     return AnthropicClientHandle(
         provider="anthropic",
-        model="claude-sonnet-4-20250514",
+        model=settings.AI_MODEL,
         client=Anthropic(api_key=settings.ANTHROPIC_API_KEY),
     )

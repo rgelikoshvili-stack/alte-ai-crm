@@ -81,7 +81,9 @@ Phase 6B adds an Analytics view to the static operator frontend using the Phase 
 
 Phase 6C adds a local/demo bootstrap script for development data: departments, an admissions pipeline, pipeline stages, approved demo knowledge snippets, and an optional admin user from environment variables.
 
-Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
+Phase 7A adds safe/staged Claude analysis support behind `AI_PROVIDER=claude` while keeping `AI_PROVIDER=mock` as the default for tests and local development. AI still returns structured analysis only; CRM changes remain controlled by services.
+
+Website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
 
@@ -333,3 +335,34 @@ python -m app.scripts.bootstrap_demo
 ```
 
 The bootstrap command is idempotent. Re-running it does not create duplicate departments, pipeline stages, knowledge sources, snippets, or admin users.
+
+## Phase 7A Safe Claude Integration
+
+Default local/test mode:
+
+```env
+AI_PROVIDER=mock
+```
+
+Claude mode:
+
+```env
+AI_PROVIDER=claude
+AI_MODEL=claude-sonnet-4-20250514
+AI_TIMEOUT_SECONDS=20
+AI_CONFIDENCE_THRESHOLD=0.70
+AI_MAX_TOKENS=1200
+ANTHROPIC_API_KEY=your-anthropic-api-key
+```
+
+Claude calls are isolated in `app.services.ai_service`. The chat service receives an `AIAnalysisResult` and applies CRM business rules itself. Claude never writes customers, leads, tasks, messages, or handovers directly.
+
+Safe fallback behavior:
+
+- invalid JSON
+- validation failure
+- timeout/client failure
+- low confidence below `AI_CONFIDENCE_THRESHOLD`
+- missing approved knowledge for factual tuition/deadline/requirement questions
+
+Tests mock Claude responses and do not require a real API key.

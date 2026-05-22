@@ -1,7 +1,7 @@
 from datetime import UTC, date, datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -174,6 +174,23 @@ class AuditLog(Base):
     entity_type: Mapped[str] = mapped_column(String(120), nullable=False)
     entity_id: Mapped[str | None] = mapped_column(String(36))
     metadata_json: Mapped[dict | None] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
+class AIInteraction(Base):
+    __tablename__ = "ai_interactions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    conversation_id: Mapped[str] = mapped_column(ForeignKey("conversations.id"), nullable=False, index=True)
+    message_id: Mapped[str | None] = mapped_column(ForeignKey("messages.id"), index=True)
+    provider: Mapped[str] = mapped_column(String(64), nullable=False)
+    model: Mapped[str] = mapped_column(String(120), nullable=False)
+    intent: Mapped[str | None] = mapped_column(String(120))
+    confidence: Mapped[float | None] = mapped_column(Float)
+    answer: Mapped[str | None] = mapped_column(Text)
+    sources_json: Mapped[dict | list | None] = mapped_column(JSON)
+    flags_json: Mapped[dict | list | None] = mapped_column(JSON)
+    raw_response_json: Mapped[dict | list | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
 

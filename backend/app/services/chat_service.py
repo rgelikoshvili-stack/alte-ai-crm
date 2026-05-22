@@ -4,8 +4,7 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.engines.mock_ai_analyzer import analyze_message
-from app.models import Conversation, Customer, Department, Lead, Message, Task
+from app.models import AIInteraction, Conversation, Customer, Department, Lead, Message, Task
 from app.schemas.chat import (
     AIAnalysisResult,
     ChatMessageRequest,
@@ -15,6 +14,7 @@ from app.schemas.chat import (
 )
 from app.schemas.crm import CustomerCreate, LeadCreate, TaskCreate
 from app.services.audit_service import audit_event
+from app.services.ai_service import analyze_with_ai
 from app.services.customer_service import create_or_update_customer
 from app.services.lead_service import create_lead
 from app.services.lead_service import update_lead
@@ -64,7 +64,14 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         metadata_json={"conversation_id": conversation.id},
     )
 
-    analysis = analyze_message(payload.message, payload.source_domain)
+    initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message)
+    analysis, ai_meta = analyze_with_ai(
+        payload.message,
+        source_domain=payload.source_domain,
+        language_hint=conversation.language,
+        conversation_history=await conversation_history(db, conversation.id),
+        knowledge_context=initial_knowledge_context,
+    )
     if not has_contact(analysis) and conversation.customer_id:
         customer = await db.get(Customer, conversation.customer_id)
         if customer:
@@ -85,12 +92,24 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
+    await persist_ai_interaction(
+        db,
+        conversation_id=conversation.id,
+        message_id=user_message.id,
+        analysis=analysis,
+        ai_meta=ai_meta,
+    )
     await audit_event(
         db,
-        action="ai_mock_analysis_created",
+        action="ai_analysis_created",
         entity_type="conversation",
         entity_id=conversation.id,
-        metadata_json=analysis.model_dump(),
+        metadata_json={
+            "provider": ai_meta["provider"],
+            "intent": analysis.intent,
+            "confidence": analysis.confidence,
+            "risk_flags": analysis.risk_flags,
+        },
     )
     await db.commit()
 
@@ -368,6 +387,68 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         "used_sources": [item.source.title for item in results],
         "snippet_titles": [item.snippet.title for item in results],
     }
+
+
+async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> list[dict]:
+    results = await search_knowledge_snippets(
+        db,
+        query=message,
+        approved_only=True,
+        include_stale=False,
+        limit=3,
+    )
+    return [
+        {
+            "id": item.snippet.id,
+            "title": item.snippet.title,
+            "content": item.snippet.content,
+            "category": item.snippet.category,
+            "program_name": item.snippet.program_name,
+            "source_id": item.source.id,
+            "source_title": item.source.title,
+            "score": item.score,
+        }
+        for item in results
+    ]
+
+
+async def conversation_history(db: AsyncSession, conversation_id: str) -> list[dict[str, str]]:
+    messages = (
+        await db.scalars(
+            select(Message)
+            .where(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.desc())
+            .limit(8)
+        )
+    ).all()
+    return [
+        {"sender_type": message.sender_type, "text": message.text}
+        for message in reversed(messages)
+    ]
+
+
+async def persist_ai_interaction(
+    db: AsyncSession,
+    *,
+    conversation_id: str,
+    message_id: str | None,
+    analysis: AIAnalysisResult,
+    ai_meta: dict,
+) -> None:
+    db.add(
+        AIInteraction(
+            conversation_id=conversation_id,
+            message_id=message_id,
+            provider=ai_meta["provider"],
+            model=ai_meta["model"],
+            intent=analysis.intent,
+            confidence=analysis.confidence,
+            answer=analysis.reply,
+            sources_json=analysis.used_sources,
+            flags_json=analysis.risk_flags,
+            raw_response_json=ai_meta.get("raw_response"),
+        )
+    )
 
 
 def should_use_knowledge(analysis: AIAnalysisResult) -> bool:

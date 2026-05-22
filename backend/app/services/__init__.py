@@ -9,6 +9,7 @@ from app.services.task_service import complete_task, create_task, update_task
 from app.services.security_service import create_access_token, hash_password, verify_password
 from app.services.analytics_service import build_analytics_overview
 from app.services.bootstrap_service import bootstrap_local_demo_data
+from app.services.ai_service import analyze_with_ai
 
 __all__ = [
     "audit_event",
@@ -33,4 +34,5 @@ __all__ = [
     "verify_password",
     "build_analytics_overview",
     "bootstrap_local_demo_data",
+    "analyze_with_ai",
 ]

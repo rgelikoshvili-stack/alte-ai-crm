@@ -1,5 +1,6 @@
 from app.models.crm import (
     AuditLog,
+    AIInteraction,
     Conversation,
     Customer,
     DeadlineTracking,
@@ -16,6 +17,7 @@ from app.models.knowledge import KnowledgeSnippet, KnowledgeSource, RetrievalRes
 
 __all__ = [
     "AuditLog",
+    "AIInteraction",
     "Conversation",
     "Customer",
     "DeadlineTracking",
