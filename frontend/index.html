@@ -24,6 +24,7 @@
           <button class="nav-item" data-view="pipeline" type="button">Pipeline</button>
           <button class="nav-item" data-view="tasks" type="button">Tasks</button>
           <button class="nav-item" data-view="knowledge" type="button">Knowledge</button>
+          <button class="nav-item" data-view="analytics" type="button">Analytics</button>
           <button class="nav-item" data-view="settings" type="button">Settings</button>
         </nav>
       </aside>
@@ -211,6 +212,38 @@
                 <h2>Snippet matches</h2>
               </div>
               <div id="knowledgeSnippets" class="list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-analytics" class="view">
+          <div id="analyticsCards" class="metric-grid"></div>
+          <div class="split-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Lead performance</h2>
+              </div>
+              <div id="analyticsLeadGroups" class="bar-list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>SLA workload</h2>
+              </div>
+              <div id="analyticsSlaGroups" class="bar-list"></div>
+            </section>
+          </div>
+          <div class="split-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Knowledge governance</h2>
+              </div>
+              <div id="analyticsKnowledgeGroups" class="bar-list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>AI response quality</h2>
+              </div>
+              <div id="analyticsAiGroups" class="bar-list"></div>
             </section>
           </div>
         </section>

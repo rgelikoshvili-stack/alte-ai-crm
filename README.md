@@ -77,6 +77,8 @@ Phase 5C adds backend authentication and security hardening: password hashing, t
 
 Phase 6 adds backend analytics and SLA readiness endpoints for admissions performance, AI/mock response quality, source governance coverage, and operator task follow-up. It uses existing CRM, task, message, and knowledge tables only.
 
+Phase 6B adds an Analytics view to the static operator frontend using the Phase 6 backend endpoints.
+
 Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
@@ -238,7 +240,7 @@ Open:
 http://127.0.0.1:5173
 ```
 
-The frontend is intentionally dependency-free in this phase. It can later be replaced by a Next.js/React app after CRM workflows and security are stable.
+The frontend is intentionally dependency-free in this phase. It includes dashboard, inbox, leads, pipeline, tasks, knowledge, analytics, and settings views. It can later be replaced by a Next.js/React app after CRM workflows and security are stable.
 
 ## Phase 5C Auth / Security
 

@@ -13,6 +13,7 @@ const titles = {
   pipeline: ["Pipeline", "Stage-based admissions board."],
   tasks: ["Tasks", "Follow-up workload and overdue work."],
   knowledge: ["Knowledge", "Approved source and snippet governance."],
+  analytics: ["Analytics", "Admissions performance, SLA, source coverage and AI quality."],
   settings: ["Settings", "Local operator workspace settings."],
 };
 
@@ -187,6 +188,35 @@ function renderBarList(id, items) {
         </div>
       `;
     })
+    .join("");
+}
+
+function countItemsFromObject(data, labels) {
+  return labels.map(([key, label]) => ({ key: label, count: Number(data[key] || 0) }));
+}
+
+function renderAnalyticsCards(data) {
+  const cards = [
+    ["Total leads", data.total_leads],
+    ["Hot leads", data.hot_leads],
+    ["Qualified leads", data.qualified_leads],
+    ["Average score", data.average_lead_score],
+    ["Conversations", data.total_conversations],
+    ["Handovers", data.human_handover_count],
+    ["Open tasks", data.open_tasks],
+    ["Overdue tasks", data.overdue_tasks],
+    ["No source answers", data.knowledge_no_source_count],
+    ["Source-backed answers", data.answered_from_source_count],
+  ];
+  $("analyticsCards").innerHTML = cards
+    .map(
+      ([label, value]) => `
+        <article class="metric-card">
+          <div class="metric-label">${escapeHtml(label)}</div>
+          <div class="metric-value">${Number(value || 0)}</div>
+        </article>
+      `,
+    )
     .join("");
 }
 
@@ -454,6 +484,49 @@ async function loadKnowledge() {
     : listEmpty("No snippets match the current filters.");
 }
 
+async function loadAnalytics() {
+  const [overview, leads, sla, knowledge, ai] = await Promise.all([
+    apiGet("/analytics/overview"),
+    apiGet("/analytics/leads"),
+    apiGet("/analytics/sla"),
+    apiGet("/analytics/knowledge"),
+    apiGet("/analytics/ai"),
+  ]);
+  renderAnalyticsCards(overview);
+  renderBarList("analyticsLeadGroups", [
+    ...leads.leads_by_status.map((item) => ({ key: `Status: ${display(item.key, "None")}`, count: item.count })),
+    ...leads.leads_by_priority.map((item) => ({ key: `Priority: ${display(item.key, "None")}`, count: item.count })),
+    ...leads.leads_by_source_domain.map((item) => ({ key: display(item.key, "No domain"), count: item.count })),
+    { key: "International priority", count: leads.international_priority_count },
+    { key: "Medicine track", count: leads.medical_track_count },
+  ]);
+  renderBarList(
+    "analyticsSlaGroups",
+    countItemsFromObject(sla, [
+      ["open_tasks", "Open tasks"],
+      ["overdue_tasks", "Overdue tasks"],
+      ["due_today_tasks", "Due today"],
+      ["urgent_open_tasks", "Urgent open"],
+      ["open_handover_conversations", "Open handovers"],
+    ]),
+  );
+  renderBarList("analyticsKnowledgeGroups", [
+    { key: "Sources", count: knowledge.total_sources },
+    { key: "Snippets", count: knowledge.total_snippets },
+    { key: "Stale snippets", count: knowledge.stale_snippets },
+    { key: "No approved source events", count: knowledge.no_approved_source_events },
+    { key: "Source-backed events", count: knowledge.answered_from_source_events },
+    ...knowledge.sources_by_status.map((item) => ({ key: `Source: ${display(item.key, "None")}`, count: item.count })),
+  ]);
+  renderBarList("analyticsAiGroups", [
+    { key: "AI replies", count: ai.total_ai_messages },
+    { key: "Average confidence x100", count: Math.round(Number(ai.average_confidence || 0) * 100) },
+    { key: "Handover recommended", count: ai.handover_recommended_count },
+    ...ai.intents.map((item) => ({ key: `Intent: ${display(item.key, "None")}`, count: item.count })),
+    ...ai.answer_source_statuses.map((item) => ({ key: `Source: ${display(item.key, "None")}`, count: item.count })),
+  ]);
+}
+
 async function loadActiveView() {
   setStatus("Loading...");
   try {
@@ -463,6 +536,7 @@ async function loadActiveView() {
     if (state.activeView === "pipeline") await loadPipelines();
     if (state.activeView === "tasks") await loadTasks();
     if (state.activeView === "knowledge") await loadKnowledge();
+    if (state.activeView === "analytics") await loadAnalytics();
     if (state.activeView === "settings") syncSettings();
     setStatus(`Updated ${new Date().toLocaleTimeString("ka-GE")}`);
   } catch (error) {

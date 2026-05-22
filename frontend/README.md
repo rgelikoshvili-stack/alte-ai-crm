@@ -27,4 +27,15 @@ The UI expects the API at `http://127.0.0.1:8000` by default. Change the API fie
 
 If backend `AUTH_REQUIRED=true`, use Settings to log in. The returned token is stored in localStorage and sent as a bearer token with API requests.
 
+Available views:
+
+- Dashboard
+- Inbox
+- Leads
+- Pipeline
+- Tasks
+- Knowledge
+- Analytics
+- Settings
+
 This phase does not add real Claude calls, omnichannel integrations, or website widget behavior.
