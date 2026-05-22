@@ -16,6 +16,15 @@ class Settings(BaseSettings):
     AI_TIMEOUT_SECONDS: int = 20
     AI_CONFIDENCE_THRESHOLD: float = 0.70
     AI_MAX_TOKENS: int = 1200
+    CORS_ORIGINS: str = (
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:5500,http://127.0.0.1:5500"
+    )
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -441,3 +441,61 @@ Every review mutation writes an audit event:
 - `knowledge_snippet_updated`
 - `knowledge_snippet_approved`
 - `knowledge_snippet_archived`
+
+## Phase 7D Public Website Chat Widget
+
+Phase 7D adds a lightweight static widget for embedding Alte AI CRM chat into `alte.edu.ge` or `join.alte.edu.ge`.
+
+Widget files:
+
+```text
+widget/alte-chat-widget.js
+widget/demo.html
+widget/README.md
+```
+
+Backend:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload
+```
+
+Widget demo:
+
+```powershell
+cd C:\tmp\alte-ai-crm\widget
+python -m http.server 5500
+```
+
+Open:
+
+```text
+http://127.0.0.1:5500/demo.html
+```
+
+Embed example:
+
+```html
+<script>
+  window.AlteChatWidgetConfig = {
+    apiBaseUrl: "http://127.0.0.1:8000",
+    sourceDomain: "alte.edu.ge",
+    defaultLanguage: "ka"
+  };
+</script>
+<script src="./alte-chat-widget.js"></script>
+```
+
+For `join.alte.edu.ge`, set:
+
+```js
+window.AlteChatWidgetConfig = {
+  apiBaseUrl: "http://127.0.0.1:8000",
+  sourceDomain: "join.alte.edu.ge",
+  defaultLanguage: "en"
+};
+```
+
+The widget is local/static only in this phase. It does not add analytics tracking, deployment, scraping, or omnichannel integrations.

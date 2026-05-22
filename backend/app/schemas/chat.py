@@ -40,6 +40,7 @@ class AIAnalysisResult(BaseModel):
 
 
 class ChatSessionStartRequest(BaseModel):
+    channel: Literal["website_chat"] = "website_chat"
     source_domain: str | None = "alte.edu.ge"
     language: Language = "unknown"
 
@@ -55,6 +56,7 @@ class ChatMessageRequest(BaseModel):
     message: str
     session_id: str | None = None
     source_domain: str | None = "alte.edu.ge"
+    language: Language | None = None
 
 
 class ChatMessageResponse(BaseModel):
