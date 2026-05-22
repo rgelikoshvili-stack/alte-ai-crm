@@ -75,6 +75,8 @@ Phase 5B adds a static CRM operator frontend shell in `frontend/`. It uses the P
 
 Phase 5C adds backend authentication and security hardening: password hashing, token login, `/auth/me`, optional `AUTH_REQUIRED` route protection, role permission checks, correlation IDs, response secret sanitizing helpers, and security tests. Authentication is disabled by default for local compatibility and can be enabled with `AUTH_REQUIRED=true`.
 
+Phase 6 adds backend analytics and SLA readiness endpoints for admissions performance, AI/mock response quality, source governance coverage, and operator task follow-up. It uses existing CRM, task, message, and knowledge tables only.
+
 Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
@@ -103,6 +105,7 @@ alembic upgrade head
 - Dashboard: `/dashboard/overview`
 - Operator readiness: filtered `/inbox`, `/leads`, `/tasks`, `/conversations/{id}/detail`, `/leads/{id}/detail`, `/pipelines/{id}/board`
 - Auth: `/auth/login`, `/auth/me`
+- Analytics: `/analytics/overview`, `/analytics/leads`, `/analytics/sla`, `/analytics/knowledge`, `/analytics/ai`
 
 ## Phase 2 Chat Examples
 
@@ -267,3 +270,35 @@ curl http://127.0.0.1:8000/auth/me `
 ```
 
 The static operator frontend has a Settings login form and sends the stored token on API requests.
+
+## Phase 6 Analytics / SLA
+
+Overview:
+
+```powershell
+curl http://127.0.0.1:8000/analytics/overview
+```
+
+Lead analytics:
+
+```powershell
+curl http://127.0.0.1:8000/analytics/leads
+```
+
+SLA analytics:
+
+```powershell
+curl http://127.0.0.1:8000/analytics/sla
+```
+
+Knowledge governance analytics:
+
+```powershell
+curl http://127.0.0.1:8000/analytics/knowledge
+```
+
+AI/mock response analytics:
+
+```powershell
+curl http://127.0.0.1:8000/analytics/ai
+```

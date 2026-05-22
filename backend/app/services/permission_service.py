@@ -17,6 +17,7 @@ PUBLIC_PREFIXES = (
 ROLE_PERMISSIONS: dict[str, set[str]] = {
     "admin": {"*"},
     "manager": {
+        "analytics:read",
         "dashboard:read",
         "inbox:read",
         "conversation:read",
@@ -32,6 +33,7 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "customer:read",
     },
     "admissions_user": {
+        "analytics:read",
         "dashboard:read",
         "inbox:read",
         "conversation:read",
@@ -44,6 +46,7 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "customer:read",
     },
     "international_admissions_user": {
+        "analytics:read",
         "dashboard:read",
         "inbox:read",
         "conversation:read",
@@ -56,6 +59,7 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "customer:read",
     },
     "finance_user": {
+        "analytics:read",
         "dashboard:read",
         "inbox:read",
         "conversation:read",
@@ -94,6 +98,8 @@ def permission_for_request(request: Request) -> str | None:
 
     if path.startswith("/dashboard"):
         return "dashboard:read"
+    if path.startswith("/analytics"):
+        return "analytics:read"
     if path.startswith("/inbox"):
         return "inbox:read"
     if path.startswith("/conversations"):
@@ -120,4 +126,3 @@ def role_has_permission(role: str, permission: str | None) -> bool:
         return True
     permissions = ROLE_PERMISSIONS.get(role, set())
     return "*" in permissions or permission in permissions
-

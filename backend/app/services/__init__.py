@@ -7,6 +7,7 @@ from app.services.qualification_service import build_qualification
 from app.services.knowledge_service import create_knowledge_snippet, create_knowledge_source, search_knowledge_snippets
 from app.services.task_service import complete_task, create_task, update_task
 from app.services.security_service import create_access_token, hash_password, verify_password
+from app.services.analytics_service import build_analytics_overview
 
 __all__ = [
     "audit_event",
@@ -29,4 +30,5 @@ __all__ = [
     "create_access_token",
     "hash_password",
     "verify_password",
+    "build_analytics_overview",
 ]

@@ -55,6 +55,7 @@ Completed:
 - Phase 5A: CRM operator dashboard API readiness
 - Phase 5B: CRM operator frontend shell
 - Phase 5C: optional auth, RBAC, correlation ID, token login, and response sanitizing helpers
+- Phase 6: analytics and SLA backend readiness
 
 Current gap before production:
 
@@ -108,6 +109,8 @@ Build analytics from existing CRM data:
 - Hot lead conversion
 - Knowledge source coverage and no-source answer rate
 - AI/mock intent accuracy review
+
+Status: completed as backend analytics endpoints using existing CRM, task, message, and knowledge data.
 
 ### Later Controlled Phases
 

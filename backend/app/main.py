@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.middleware import auth_rbac_middleware, correlation_middleware
+from app.api.routes_analytics import router as analytics_router
 from app.api.routes_auth import router as auth_router
 from app.api.routes_chat import router as chat_router
 from app.api.routes_conversations import router as conversations_router
@@ -43,6 +44,7 @@ app.middleware("http")(auth_rbac_middleware)
 app.include_router(system_router)
 app.include_router(auth_router)
 app.include_router(chat_router)
+app.include_router(analytics_router)
 app.include_router(dashboard_router)
 app.include_router(departments_router)
 app.include_router(customers_router)
