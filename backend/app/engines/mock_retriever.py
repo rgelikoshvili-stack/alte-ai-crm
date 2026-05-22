@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +12,8 @@ async def retrieve_snippets(
     query: str,
     language: str | None = None,
     category: str | None = None,
+    source_domain: str | None = None,
+    sensitivity: str | None = None,
     program_name: str | None = None,
     approved_only: bool = True,
     include_stale: bool = False,
@@ -35,6 +37,11 @@ async def retrieve_snippets(
             continue
         if category and snippet.category != category:
             continue
+        explicit_domains = {item for item in {snippet.source_domain, source.source_domain} if item}
+        if source_domain and explicit_domains and source_domain not in explicit_domains:
+            continue
+        if sensitivity and sensitivity not in {snippet.sensitivity, source.sensitivity}:
+            continue
         if program_name and snippet.program_name and snippet.program_name.lower() != program_name.lower():
             continue
 
@@ -42,11 +49,12 @@ async def retrieve_snippets(
         if score <= 0:
             continue
         source_status = "answered_from_approved_source"
-        if snippet.effective_to and snippet.effective_to < today:
+        stale = is_stale_snippet(snippet, today)
+        if stale:
             source_status = "source_stale"
             if not include_stale:
                 continue
-        results.append(RetrievalResult(snippet, source, score, source_status))
+        results.append(RetrievalResult(snippet, source, score, source_status, is_stale=stale))
 
     return sorted(results, key=lambda item: item.score, reverse=True)[:limit]
 
@@ -64,9 +72,16 @@ def score_snippet(
             snippet.title,
             snippet.content,
             snippet.category,
+            snippet.source_key or "",
+            snippet.source_domain or "",
+            snippet.sensitivity or "",
             snippet.program_name or "",
             snippet.keywords or "",
             source.title,
+            source.source_key or "",
+            source.source_domain or "",
+            source.category or "",
+            source.sensitivity or "",
         ]
     ).lower()
     score = sum(10 for token in query_tokens if token and token in haystack)
@@ -79,17 +94,64 @@ def score_snippet(
     return score
 
 
+def is_stale_snippet(snippet: KnowledgeSnippet, today: date) -> bool:
+    if snippet.effective_to and snippet.effective_to < today:
+        return True
+    if snippet.stale_after_days is None:
+        return False
+    baseline = snippet.effective_from or as_date(snippet.updated_at) or as_date(snippet.created_at)
+    return bool(baseline and baseline + timedelta(days=snippet.stale_after_days) < today)
+
+
+def as_date(value: date | datetime | None) -> date | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    return value
+
+
 def tokenize(text: str) -> set[str]:
     normalized = text.lower().replace(",", " ").replace("?", " ").replace(".", " ")
     tokens = {token.strip() for token in normalized.split() if len(token.strip()) >= 3}
     keyword_map = {
         "ღირს": "tuition",
+        "საფასური": "tuition",
         "ფასი": "tuition",
         "გადასახადი": "tuition",
-        "მიღება": "admission",
+        "tuition": "tuition",
+        "fee": "tuition",
+        "fees": "tuition",
+        "price": "tuition",
+        "deadline": "deadline",
+        "ვადა": "deadline",
         "ჩარიცხვა": "admission",
-        "ბიზნეს": "business",
+        "მიღება": "admission",
+        "admission": "admission",
+        "apply": "admission",
+        "application": "admission",
+        "ბიზნესი": "business",
+        "business": "business",
+        "სამართალი": "law",
+        "law": "law",
+        "მედიცინა": "medicine",
+        "medicine": "medicine",
+        "md": "medicine",
         "სტიპენდია": "scholarship",
+        "scholarship": "scholarship",
+        "მისამართი": "contact",
+        "ტელეფონი": "contact",
+        "კონტაქტი": "contact",
+        "contact": "contact",
+        "address": "contact",
+        "კომპიუტერული": "computer",
+        "computer": "computer",
+        "ხელოვნური": "ai",
+        "international": "international",
+        "visa": "visa",
+        "relocation": "relocation",
+        "library": "library",
+        "ბიბლიოთეკა": "library",
     }
     tokens.update(value for key, value in keyword_map.items() if key in normalized)
     return tokens

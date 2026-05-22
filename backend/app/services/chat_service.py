@@ -373,6 +373,7 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         query=message,
         language=analysis.language if analysis.language in {"ka", "en"} else None,
         category=category,
+        source_domain=analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
         program_name=analysis.program,
         approved_only=True,
     )
@@ -384,7 +385,7 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         status = "answered_from_approved_source"
     return {
         "answer_source_status": status,
-        "used_sources": [item.source.title for item in results],
+        "used_sources": [item.source.source_key or item.source.title for item in results],
         "snippet_titles": [item.snippet.title for item in results],
     }
 
@@ -405,7 +406,10 @@ async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> 
             "category": item.snippet.category,
             "program_name": item.snippet.program_name,
             "source_id": item.source.id,
+            "source_key": item.source.source_key,
             "source_title": item.source.title,
+            "source_domain": item.source.source_domain,
+            "sensitivity": item.snippet.sensitivity,
             "score": item.score,
         }
         for item in results
@@ -468,13 +472,13 @@ def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
 
 def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
     if analysis.qualification.intent == "tuition_fee":
-        return "tuition"
+        return "finance"
     if analysis.qualification.intent == "scholarship":
         return "scholarship"
     if analysis.qualification.intent in {"admission_requirements", "application"}:
         return "admissions"
     if analysis.program:
-        return "program"
+        return "programs"
     return None
 
 

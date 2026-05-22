@@ -366,3 +366,40 @@ Safe fallback behavior:
 - missing approved knowledge for factual tuition/deadline/requirement questions
 
 Tests mock Claude responses and do not require a real API key.
+
+## Phase 7B Manual Alte Knowledge Seed
+
+Phase 7B adds a local, manually maintained Alte knowledge seed. It is not scraping, crawling, or live website ingestion.
+
+Seed file:
+
+```text
+backend/app/knowledge_seed/alte_seed_v1.json
+```
+
+Run migrations first, then seed the local database:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+alembic upgrade head
+python -m app.scripts.seed_alte_knowledge
+```
+
+The seed command is idempotent. It creates missing `KnowledgeSource` and `KnowledgeSnippet` rows and skips existing snippets by deterministic content hash.
+
+Knowledge governance rules:
+
+- approved snippets are returned by default
+- archived sources are excluded by default
+- source metadata includes `source_key`, `source_domain`, `category`, `language`, `sensitivity`, and stale-review settings
+- high-risk topics such as tuition, deadlines, admission requirements, medicine, visa, relocation, and policy facts must be verified from an approved current source or by a consultant
+- the chatbot must not invent exact tuition, dates, documents, or official policy when no approved snippet exists
+
+Useful local checks:
+
+```powershell
+curl "http://127.0.0.1:8000/knowledge/snippets/search?query=contact&language=en&category=contact"
+curl "http://127.0.0.1:8000/knowledge/snippets/search?query=tuition%20fee&language=en&category=finance"
+curl "http://127.0.0.1:8000/knowledge/snippets/search?query=medicine%20visa&language=en&source_domain=join.alte.edu.ge"
+```

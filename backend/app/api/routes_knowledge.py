@@ -26,8 +26,10 @@ async def create_source(payload: KnowledgeSourceCreate, db: AsyncSession = Depen
 
 @router.get("/sources", response_model=list[KnowledgeSourceRead])
 async def get_sources(
+    source_key: str | None = None,
     status: str | None = None,
     source_type: str | None = None,
+    category: str | None = None,
     language: str | None = None,
     q: str | None = None,
     limit: int = 20,
@@ -36,8 +38,10 @@ async def get_sources(
 ):
     return await list_knowledge_sources(
         db,
+        source_key=source_key,
         status=status,
         source_type=source_type,
+        category=category,
         language=language,
         q=q,
         limit=limit,
@@ -56,6 +60,8 @@ async def search_snippets(
     query: str | None = None,
     language: str | None = None,
     category: str | None = None,
+    source_domain: str | None = None,
+    sensitivity: str | None = None,
     program: str | None = None,
     program_name: str | None = None,
     approved_only: bool = True,
@@ -68,12 +74,20 @@ async def search_snippets(
         query=q or query or "",
         language=language,
         category=category,
+        source_domain=source_domain,
+        sensitivity=sensitivity,
         program_name=program or program_name,
         approved_only=approved_only,
         include_stale=include_stale,
         limit=limit,
     )
     return [
-        {"snippet": item.snippet, "source": item.source, "score": item.score, "source_status": item.source_status}
+        {
+            "snippet": item.snippet,
+            "source": item.source,
+            "score": item.score,
+            "source_status": item.source_status,
+            "is_stale": item.is_stale,
+        }
         for item in results
     ]

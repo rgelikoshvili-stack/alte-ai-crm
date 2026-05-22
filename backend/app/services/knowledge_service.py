@@ -17,18 +17,24 @@ async def create_knowledge_source(db: AsyncSession, payload: KnowledgeSourceCrea
 async def list_knowledge_sources(
     db: AsyncSession,
     *,
+    source_key: str | None = None,
     status: str | None = None,
     source_type: str | None = None,
+    category: str | None = None,
     language: str | None = None,
     q: str | None = None,
     limit: int = 20,
     offset: int = 0,
 ) -> list[KnowledgeSource]:
     query = select(KnowledgeSource).where(KnowledgeSource.status != "archived").order_by(KnowledgeSource.created_at.desc())
+    if source_key:
+        query = query.where(KnowledgeSource.source_key == source_key)
     if status:
         query = query.where(KnowledgeSource.status == status)
     if source_type:
         query = query.where(KnowledgeSource.source_type == source_type)
+    if category:
+        query = query.where(KnowledgeSource.category == category)
     if language:
         query = query.where(KnowledgeSource.language == language)
     if q:
@@ -51,6 +57,8 @@ async def search_knowledge_snippets(
     query: str,
     language: str | None = None,
     category: str | None = None,
+    source_domain: str | None = None,
+    sensitivity: str | None = None,
     program_name: str | None = None,
     approved_only: bool = True,
     include_stale: bool = False,
@@ -61,6 +69,8 @@ async def search_knowledge_snippets(
         query=query,
         language=language,
         category=category,
+        source_domain=source_domain,
+        sensitivity=sensitivity,
         program_name=program_name,
         approved_only=approved_only,
         include_stale=include_stale,
