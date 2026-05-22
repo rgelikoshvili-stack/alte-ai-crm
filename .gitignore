@@ -4,3 +4,11 @@ __pycache__/
 .pytest_cache/
 .env
 *.db
+*.sqlite
+*.sqlite3
+*.log
+node_modules/
+dist/
+build/
+.DS_Store
+Thumbs.db

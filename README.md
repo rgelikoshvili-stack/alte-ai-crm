@@ -2,7 +2,29 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current phase: Phase 5B CRM operator frontend shell.
+Current status: `v0.7-local-mvp`
+
+Checkpoint docs:
+
+- `docs/PROJECT_STATUS.md`
+- `docs/LOCAL_MVP_CHECKLIST.md`
+- `docs/GITHUB_SETUP.md`
+- `docs/releases/v0.7-local-mvp.md`
+
+Release verification:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_release_checkpoint
+```
+
+Local package:
+
+```powershell
+cd C:\tmp\alte-ai-crm
+.\scripts\create_local_mvp_package.ps1
+```
 
 ## Stack
 
