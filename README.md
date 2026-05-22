@@ -2,7 +2,7 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current phase: Phase 5A CRM operator dashboard API readiness.
+Current phase: Phase 5B CRM operator frontend shell.
 
 ## Stack
 
@@ -71,7 +71,11 @@ Phase 4 adds a controlled local knowledge base: approved sources, snippets, sour
 
 Phase 5A prepares backend-only operator dashboard API responses: dashboard overview cards, filtered inbox, conversation details, lead list/detail, task list, pipeline board data, and knowledge admin filters. No frontend is included.
 
-Real Claude API calls, frontend, widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
+Phase 5B adds a static CRM operator frontend shell in `frontend/`. It uses the Phase 5A backend APIs for dashboard overview, inbox, conversation detail, leads, lead detail, pipeline board, tasks, knowledge sources, and knowledge snippet search. It does not add authentication, real Claude calls, external channels, or website widget behavior.
+
+Real Claude API calls, website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
+
+Bridge Hub reference material has been copied under `docs/reference/bridge-hub/` for architecture and safety guidance only. The Alte-specific mapping is documented in `docs/alte-bridge-reference-adaptation-plan.md`.
 
 ## Run Migrations
 
@@ -204,3 +208,28 @@ Pipeline board:
 ```powershell
 curl "http://127.0.0.1:8000/pipelines/<pipeline_id>/board?leads_per_stage=20"
 ```
+
+## Phase 5B Operator Frontend
+
+Start the backend:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload
+```
+
+Serve the frontend:
+
+```powershell
+cd C:\tmp\alte-ai-crm\frontend
+python -m http.server 5173
+```
+
+Open:
+
+```text
+http://127.0.0.1:5173
+```
+
+The frontend is intentionally dependency-free in this phase. It can later be replaced by a Next.js/React app after CRM workflows and security are stable.

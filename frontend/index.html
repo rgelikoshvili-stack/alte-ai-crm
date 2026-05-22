@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ka">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alte AI CRM</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="CRM navigation">
+        <div class="brand">
+          <div class="brand-mark">A</div>
+          <div>
+            <div class="brand-title">Alte AI CRM</div>
+            <div class="brand-subtitle">Admissions cockpit</div>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item active" data-view="dashboard" type="button">Dashboard</button>
+          <button class="nav-item" data-view="inbox" type="button">Inbox</button>
+          <button class="nav-item" data-view="leads" type="button">Leads</button>
+          <button class="nav-item" data-view="pipeline" type="button">Pipeline</button>
+          <button class="nav-item" data-view="tasks" type="button">Tasks</button>
+          <button class="nav-item" data-view="knowledge" type="button">Knowledge</button>
+          <button class="nav-item" data-view="settings" type="button">Settings</button>
+        </nav>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <h1 id="viewTitle">Dashboard</h1>
+            <p id="viewSubtitle">Live operator overview from the CRM backend.</p>
+          </div>
+          <div class="api-control">
+            <label for="apiBase">API</label>
+            <input id="apiBase" type="url" value="http://127.0.0.1:8000" />
+            <button id="refreshBtn" class="primary-action" type="button">Refresh</button>
+          </div>
+        </header>
+
+        <section id="statusBar" class="status-bar" role="status"></section>
+
+        <section id="view-dashboard" class="view active">
+          <div id="overviewCards" class="metric-grid"></div>
+          <div class="split-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Latest conversations</h2>
+              </div>
+              <div id="latestConversations" class="list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Latest tasks</h2>
+              </div>
+              <div id="latestTasks" class="list"></div>
+            </section>
+          </div>
+          <div class="split-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Leads by stage</h2>
+              </div>
+              <div id="leadsByStage" class="bar-list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Leads by priority</h2>
+              </div>
+              <div id="leadsByPriority" class="bar-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-inbox" class="view">
+          <div class="toolbar">
+            <input id="inboxSearch" type="search" placeholder="Search conversation, customer, phone" />
+            <select id="inboxStatus">
+              <option value="">All statuses</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
+            <select id="inboxHandover">
+              <option value="">All handovers</option>
+              <option value="true">Human handover</option>
+              <option value="false">AI handled</option>
+            </select>
+          </div>
+          <div class="two-pane">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Inbox</h2>
+              </div>
+              <div id="inboxList" class="list selectable"></div>
+            </section>
+            <section class="panel detail-panel">
+              <div class="panel-header">
+                <h2>Conversation detail</h2>
+              </div>
+              <div id="conversationDetail" class="detail-empty">Select a conversation.</div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-leads" class="view">
+          <div class="toolbar">
+            <input id="leadSearch" type="search" placeholder="Search lead, program, customer" />
+            <select id="leadStatus">
+              <option value="">All statuses</option>
+              <option value="new">New</option>
+              <option value="open">Open</option>
+              <option value="in_progress">In progress</option>
+              <option value="won">Won</option>
+              <option value="lost">Lost</option>
+            </select>
+            <select id="leadPriority">
+              <option value="">All priorities</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="normal">Normal</option>
+              <option value="low">Low</option>
+            </select>
+            <select id="leadDomain">
+              <option value="">All domains</option>
+              <option value="alte.edu.ge">alte.edu.ge</option>
+              <option value="join.alte.edu.ge">join.alte.edu.ge</option>
+            </select>
+          </div>
+          <div class="two-pane">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Leads</h2>
+              </div>
+              <div id="leadList" class="list selectable"></div>
+            </section>
+            <section class="panel detail-panel">
+              <div class="panel-header">
+                <h2>Lead detail</h2>
+              </div>
+              <div id="leadDetail" class="detail-empty">Select a lead.</div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-pipeline" class="view">
+          <div class="toolbar">
+            <select id="pipelineSelect">
+              <option value="">Select pipeline</option>
+            </select>
+          </div>
+          <div id="pipelineBoard" class="pipeline-board"></div>
+        </section>
+
+        <section id="view-tasks" class="view">
+          <div class="toolbar">
+            <select id="taskStatus">
+              <option value="">All statuses</option>
+              <option value="open">Open</option>
+              <option value="in_progress">In progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <select id="taskPriority">
+              <option value="">All priorities</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="normal">Normal</option>
+              <option value="low">Low</option>
+            </select>
+            <select id="taskOverdue">
+              <option value="">All due dates</option>
+              <option value="true">Overdue</option>
+              <option value="false">Not overdue</option>
+            </select>
+          </div>
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Tasks</h2>
+            </div>
+            <div id="taskList" class="table-wrap"></div>
+          </section>
+        </section>
+
+        <section id="view-knowledge" class="view">
+          <div class="toolbar">
+            <input id="knowledgeSearch" type="search" placeholder="Search sources and snippets" />
+            <select id="knowledgeLanguage">
+              <option value="">All languages</option>
+              <option value="ka">Georgian</option>
+              <option value="en">English</option>
+            </select>
+            <select id="knowledgeStatus">
+              <option value="">Default active sources</option>
+              <option value="approved">Approved</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          <div class="split-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Sources</h2>
+              </div>
+              <div id="knowledgeSources" class="list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Snippet matches</h2>
+              </div>
+              <div id="knowledgeSnippets" class="list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Operator workspace settings</h2>
+            </div>
+            <div class="settings-grid">
+              <label>
+                API base URL
+                <input id="settingsApiBase" type="url" />
+              </label>
+              <label>
+                Refresh size
+                <input id="settingsLimit" type="number" min="5" max="100" value="20" />
+              </label>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
