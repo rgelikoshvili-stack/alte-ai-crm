@@ -14,8 +14,27 @@ async def create_knowledge_source(db: AsyncSession, payload: KnowledgeSourceCrea
     return source
 
 
-async def list_knowledge_sources(db: AsyncSession) -> list[KnowledgeSource]:
-    return (await db.scalars(select(KnowledgeSource).order_by(KnowledgeSource.created_at.desc()))).all()
+async def list_knowledge_sources(
+    db: AsyncSession,
+    *,
+    status: str | None = None,
+    source_type: str | None = None,
+    language: str | None = None,
+    q: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
+) -> list[KnowledgeSource]:
+    query = select(KnowledgeSource).where(KnowledgeSource.status != "archived").order_by(KnowledgeSource.created_at.desc())
+    if status:
+        query = query.where(KnowledgeSource.status == status)
+    if source_type:
+        query = query.where(KnowledgeSource.source_type == source_type)
+    if language:
+        query = query.where(KnowledgeSource.language == language)
+    if q:
+        needle = f"%{q}%"
+        query = query.where(KnowledgeSource.title.like(needle))
+    return (await db.scalars(query.offset(offset).limit(limit))).all()
 
 
 async def create_knowledge_snippet(db: AsyncSession, payload: KnowledgeSnippetCreate) -> KnowledgeSnippet:
@@ -34,6 +53,8 @@ async def search_knowledge_snippets(
     category: str | None = None,
     program_name: str | None = None,
     approved_only: bool = True,
+    include_stale: bool = False,
+    limit: int = 10,
 ):
     return await retrieve_snippets(
         db,
@@ -42,4 +63,6 @@ async def search_knowledge_snippets(
         category=category,
         program_name=program_name,
         approved_only=approved_only,
+        include_stale=include_stale,
+        limit=limit,
     )

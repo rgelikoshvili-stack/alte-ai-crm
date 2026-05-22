@@ -53,7 +53,7 @@ def test_search_returns_approved_snippets(client):
     source = create_source(client, language="en")
     create_snippet(client, source["id"])
 
-    response = client.get("/knowledge/snippets/search?query=business admission&language=en")
+    response = client.get("/knowledge/snippets/search?query=business admission&language=en&include_stale=true")
 
     assert response.status_code == 200
     data = response.json()
@@ -65,7 +65,7 @@ def test_archived_source_excluded(client):
     source = create_source(client, status="archived", language="en")
     create_snippet(client, source["id"])
 
-    response = client.get("/knowledge/snippets/search?query=business admission&language=en")
+    response = client.get("/knowledge/snippets/search?query=business admission&language=en&include_stale=true")
 
     assert response.status_code == 200
     assert response.json() == []
@@ -75,7 +75,7 @@ def test_draft_snippet_excluded_by_default(client):
     source = create_source(client, language="en")
     create_snippet(client, source["id"], status="draft")
 
-    response = client.get("/knowledge/snippets/search?query=business admission&language=en")
+    response = client.get("/knowledge/snippets/search?query=business admission&language=en&include_stale=true")
 
     assert response.status_code == 200
     assert response.json() == []
@@ -108,7 +108,7 @@ def test_stale_snippet_flagged(client):
     stale_date = (date.today() - timedelta(days=1)).isoformat()
     create_snippet(client, source["id"], effective_to=stale_date)
 
-    response = client.get("/knowledge/snippets/search?query=business admission&language=en")
+    response = client.get("/knowledge/snippets/search?query=business admission&language=en&include_stale=true")
 
     assert response.status_code == 200
     assert response.json()[0]["source_status"] == "source_stale"

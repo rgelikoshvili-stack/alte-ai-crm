@@ -14,6 +14,8 @@ async def retrieve_snippets(
     category: str | None = None,
     program_name: str | None = None,
     approved_only: bool = True,
+    include_stale: bool = False,
+    limit: int = 3,
 ) -> list[RetrievalResult]:
     rows = (
         await db.execute(
@@ -42,9 +44,11 @@ async def retrieve_snippets(
         source_status = "answered_from_approved_source"
         if snippet.effective_to and snippet.effective_to < today:
             source_status = "source_stale"
+            if not include_stale:
+                continue
         results.append(RetrievalResult(snippet, source, score, source_status))
 
-    return sorted(results, key=lambda item: item.score, reverse=True)[:3]
+    return sorted(results, key=lambda item: item.score, reverse=True)[:limit]
 
 
 def score_snippet(

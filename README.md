@@ -2,7 +2,7 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current phase: Phase 4 knowledge base governance with mock retrieval.
+Current phase: Phase 5A CRM operator dashboard API readiness.
 
 ## Stack
 
@@ -69,6 +69,8 @@ Phase 3 extends the same mock chat flow with lead qualification: contact extract
 
 Phase 4 adds a controlled local knowledge base: approved sources, snippets, source status governance, language/category/program filtering, stale-source flags, and mock keyword retrieval. Chat answers can now mark whether they used an approved source, found no approved source, or hit a stale source.
 
+Phase 5A prepares backend-only operator dashboard API responses: dashboard overview cards, filtered inbox, conversation details, lead list/detail, task list, pipeline board data, and knowledge admin filters. No frontend is included.
+
 Real Claude API calls, frontend, widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
 ## Run Migrations
@@ -92,6 +94,8 @@ alembic upgrade head
 - Deadlines: `/deadlines`
 - Chat: `/chat/session/start`, `/chat/message`, `/chat/handover/{conversation_id}`, `/chat/session/{conversation_id}/qualification`
 - Knowledge: `/knowledge/sources`, `/knowledge/snippets`, `/knowledge/snippets/search`
+- Dashboard: `/dashboard/overview`
+- Operator readiness: filtered `/inbox`, `/leads`, `/tasks`, `/conversations/{id}/detail`, `/leads/{id}/detail`, `/pipelines/{id}/board`
 
 ## Phase 2 Chat Examples
 
@@ -168,3 +172,35 @@ curl "http://127.0.0.1:8000/knowledge/snippets/search?query=business%20admission
 ```
 
 Chat retrieval uses approved local snippets only. If no approved source exists for tuition, scholarship, or requirements questions, the chat response asks for verified admissions/consultant confirmation instead of inventing details.
+
+## Phase 5A Operator API Examples
+
+Dashboard overview:
+
+```powershell
+curl http://127.0.0.1:8000/dashboard/overview
+```
+
+Filtered inbox:
+
+```powershell
+curl "http://127.0.0.1:8000/inbox?limit=20&offset=0&channel=website_chat&q=business"
+```
+
+Lead list:
+
+```powershell
+curl "http://127.0.0.1:8000/leads?source_domain=join.alte.edu.ge&medical_track=true"
+```
+
+Task list:
+
+```powershell
+curl "http://127.0.0.1:8000/tasks?status=open&overdue=false"
+```
+
+Pipeline board:
+
+```powershell
+curl "http://127.0.0.1:8000/pipelines/<pipeline_id>/board?leads_per_stage=20"
+```

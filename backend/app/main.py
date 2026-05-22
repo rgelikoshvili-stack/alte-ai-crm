@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes_chat import router as chat_router
 from app.api.routes_conversations import router as conversations_router
 from app.api.routes_customers import router as customers_router
+from app.api.routes_dashboard import router as dashboard_router
 from app.api.routes_deadlines import router as deadlines_router
 from app.api.routes_departments import router as departments_router
 from app.api.routes_inbox import router as inbox_router
@@ -36,6 +37,7 @@ app.add_middleware(
 
 app.include_router(system_router)
 app.include_router(chat_router)
+app.include_router(dashboard_router)
 app.include_router(departments_router)
 app.include_router(customers_router)
 app.include_router(pipelines_router)
