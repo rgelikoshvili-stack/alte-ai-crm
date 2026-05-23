@@ -691,3 +691,20 @@ python -m app.scripts.verify_deployment_docs
 ```
 
 Phase 8D-Prep adds concrete Google Cloud command templates only. Do not run the commands until `PROJECT_ID`, region, Cloud SQL cost, secrets, CORS and rollback are reviewed.
+
+## Phase 8D Final Preflight
+
+Final preflight docs:
+
+- `docs/deployment/GITHUB_BACKUP_AND_RELEASE.md`
+- `docs/deployment/FINAL_PREFLIGHT_GATE.md`
+
+Final preflight verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_final_preflight
+```
+
+Actual Cloud Run deployment remains blocked until GitHub backup/tag, Cloud SQL cost/tier, Secret Manager values, website access and privacy approval are confirmed.
