@@ -4,9 +4,9 @@
 
 - Project: Alte AI CRM Chatbot
 - Repo path: `C:\tmp\alte-ai-crm`
-- Latest known commit before Phase 7F: `2f41c51 phase 7e: local e2e demo hardening`
-- Current phase: Phase 7F - Release Checkpoint, GitHub Readiness and Local MVP Packaging
-- Latest verified tests: 92 passed
+- Latest known commit before Phase 8A-Docs: `a7255bc phase 8a: controlled claude live test readiness`
+- Current phase: Phase 8A-Docs - External Service Registration and Integration Readiness Guide
+- Latest verified tests: 100 passed
 - Release checkpoint: `v0.7-local-mvp`
 
 ## Feature Matrix
@@ -25,9 +25,11 @@
 | Analytics/SLA | Complete | Overview, leads, SLA, knowledge, AI analytics |
 | Widget demo | Complete | Static embeddable widget and local demo page |
 | Local E2E smoke | Complete | Setup script, HTTP smoke script, diagnostics endpoint |
+| External services docs | Complete | Account setup, environment variables, and next phase roadmap |
 
 ## Remaining Roadmap
 
+- Phase 8B Real Claude Live Validation after Anthropic API key is configured locally.
 - GitHub remote setup, CI workflow, tags, and backup packaging.
 - Operator UI polish for knowledge review, live inbox, and lead operations.
 - Controlled staging deployment plan.

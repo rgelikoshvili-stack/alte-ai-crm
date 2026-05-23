@@ -10,6 +10,9 @@ Checkpoint docs:
 - `docs/LOCAL_MVP_CHECKLIST.md`
 - `docs/GITHUB_SETUP.md`
 - `docs/releases/v0.7-local-mvp.md`
+- `docs/EXTERNAL_SERVICES_SETUP.md`
+- `docs/ENVIRONMENT_VARIABLES.md`
+- `docs/NEXT_PHASES.md`
 
 Release verification:
 
@@ -25,6 +28,21 @@ Local package:
 cd C:\tmp\alte-ai-crm
 .\scripts\create_local_mvp_package.ps1
 ```
+
+External Services / Registration Checklist:
+
+- GitHub repository
+- Anthropic Console / Claude API
+- Google Cloud project
+- Cloud SQL PostgreSQL
+- Alte website admin/developer access
+- Meta Developers later, after website chat is stable
+
+See:
+
+- `docs/EXTERNAL_SERVICES_SETUP.md`
+- `docs/ENVIRONMENT_VARIABLES.md`
+- `docs/NEXT_PHASES.md`
 
 ## Stack
 
