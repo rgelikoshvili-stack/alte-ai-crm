@@ -4,10 +4,13 @@
 
 - Project: Alte AI CRM Chatbot
 - Repo path: `C:\tmp\alte-ai-crm`
-- Latest known commit before Phase 8A-Docs: `a7255bc phase 8a: controlled claude live test readiness`
-- Current phase: Phase 8A-Docs - External Service Registration and Integration Readiness Guide
-- Latest verified tests: 100 passed
+- Latest GitHub release tag: `v0.8-deployment-ready`
+- Latest deployment-ready commit: `162db35 phase 8d-final-preflight: github backup and deployment gate`
+- Current phase: Phase 8D-GitHub - GitHub Backup and Release Tag
+- Latest verified tests: 110 passed
 - Release checkpoint: `v0.7-local-mvp`
+- GitHub remote: `https://github.com/rgelikoshvili-stack/alte-ai-crm`
+- GitHub backup: completed for `master`
 
 ## Feature Matrix
 
@@ -26,11 +29,17 @@
 | Widget demo | Complete | Static embeddable widget and local demo page |
 | Local E2E smoke | Complete | Setup script, HTTP smoke script, diagnostics endpoint |
 | External services docs | Complete | Account setup, environment variables, and next phase roadmap |
+| Deployment preparation | Complete | Dockerfile, Cloud Run/Cloud SQL/Secret Manager docs, preflight gates |
+| GitHub backup/tag | Complete | `master` pushed and `v0.8-deployment-ready` tag created |
 
 ## Remaining Roadmap
 
-- Phase 8B Real Claude Live Validation after Anthropic API key is configured locally.
-- GitHub remote setup, CI workflow, tags, and backup packaging.
+- Phase 8D-Execution Actual Cloud Run deployment after remaining blockers are cleared.
+- Cloud SQL tier/cost confirmation.
+- Secret Manager values creation without exposing secrets.
+- Alte website admin/developer access confirmation.
+- Data privacy approval.
+- CI workflow setup.
 - Operator UI polish for knowledge review, live inbox, and lead operations.
 - Controlled staging deployment plan.
 - Real Alte content approval workflow and source ownership.

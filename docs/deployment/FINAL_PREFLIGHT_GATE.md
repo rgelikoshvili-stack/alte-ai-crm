@@ -7,8 +7,8 @@ Keep `NO-GO` until every required item below is checked.
 | Area | Check | Status |
 | --- | --- | --- |
 | GitHub | Remote configured | Done: `https://github.com/rgelikoshvili-stack/alte-ai-crm` |
-| GitHub | Code pushed | Pending |
-| GitHub | Release tag `v0.8-deployment-ready` created | Pending |
+| GitHub | Code pushed | Done: `master` pushed to `origin/master` at `162db35` |
+| GitHub | Release tag `v0.8-deployment-ready` created | Done: tag pushed to origin at `162db35` |
 | Google Cloud | `PROJECT_ID` confirmed | Done: `project-1e145fd0-c30e-4aac-a34` |
 | Google Cloud | Billing enabled | Done: user confirmed |
 | Google Cloud | Region confirmed | Done: `europe-west1` |
