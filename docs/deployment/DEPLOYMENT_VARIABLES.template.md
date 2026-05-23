@@ -6,8 +6,8 @@ Fill this file only with non-secret deployment planning values. Do not put real 
 
 | Variable | Planned value | Status / note |
 | --- | --- | --- |
-| `PROJECT_ID` | `TODO_GCP_PROJECT_ID` | Required from Google Cloud project. Do not use a secret. |
-| `REGION` | `europe-west1` | Recommended for Georgia/EU proximity. `europe-west3` is also acceptable. |
+| `PROJECT_ID` | `project-1e145fd0-c30e-4aac-a34` | User-provided Google Cloud project ID. |
+| `REGION` | `europe-west1` | User-confirmed region. |
 | `SERVICE_NAME` | `alte-ai-crm-backend` | Safe default. |
 | `ARTIFACT_REPOSITORY` | `alte-ai-crm` | Safe default. |
 | `IMAGE_NAME` | `alte-ai-crm-backend` | Safe default. |
@@ -19,15 +19,17 @@ Fill this file only with non-secret deployment planning values. Do not put real 
 | `DATABASE_URL_SECRET` | `alte-database-url` | Secret Manager name only; stores full production DB URL later. |
 | `JWT_SECRET_NAME` | `alte-jwt-secret` | Secret Manager name only. |
 | `ANTHROPIC_SECRET_NAME` | `alte-anthropic-api-key` | Secret Manager name only. |
-| `CORS_ORIGINS` | `https://alte.edu.ge,https://join.alte.edu.ge` | Confirm both domains before deploy. |
+| `CORS_ORIGINS` | `https://alte.edu.ge,https://join.alte.edu.ge` | User-confirmed production origins. |
+| `GITHUB_REMOTE_URL` | `https://github.com/rgelikoshvili-stack/alte-ai-crm` | User-provided repository URL. |
+| `BILLING_STATUS` | `enabled` | User-confirmed. |
 
 ## Values Needed From Project Owner
 
-- `PROJECT_ID`
-- Confirm `REGION`
+- Confirm GitHub push permissions.
+- Confirm release tag name.
 - Confirm Cloud SQL instance tier/cost
 - Confirm Alte website admin/developer access
-- Confirm whether `join.alte.edu.ge` is included at first launch
+- Confirm whether `join.alte.edu.ge` is included at first launch. Current draft includes it.
 
 ## Notes
 
