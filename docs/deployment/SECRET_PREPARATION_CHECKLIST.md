@@ -1,5 +1,11 @@
 # Secret Preparation Checklist
 
+Secret creation must happen only after:
+
+- Cloud SQL tier/cost is approved.
+- Cloud SQL instance creation is explicitly approved.
+- User confirms Phase 8F-Execution.
+
 ## Required Secrets
 
 ### 1. `alte-db-password`

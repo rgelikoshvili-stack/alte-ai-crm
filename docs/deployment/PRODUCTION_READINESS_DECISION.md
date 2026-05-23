@@ -13,7 +13,7 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - [ ] `startup_check` passes with production-like env. Local/dev check passed; production-like Secret Manager values are not configured yet.
 - [x] Google Cloud project selected. `PROJECT_ID=project-1e145fd0-c30e-4aac-a34`.
 - [x] Billing understood. User confirmed billing is enabled.
-- [ ] Cloud SQL cost accepted. Draft prepared; awaiting explicit user/billing-owner approval.
+- [ ] Cloud SQL cost accepted. Recommended option: Low-cost pilot production tier. Cost/financial approval still pending.
 - [ ] Anthropic key created and stored in Secret Manager.
 - [x] CORS origins confirmed. `https://alte.edu.ge,https://join.alte.edu.ge`.
 - [ ] Alte website admin/developer access confirmed.
@@ -55,12 +55,15 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Cloud SQL tier/cost decision document prepared.
 - Cloud SQL cost approval form prepared; status remains `PENDING_USER_APPROVAL`.
 - Cloud SQL tier/cost draft prepared, but not approved.
+- Recommended Cloud SQL option: Low-cost pilot production tier.
 - Secret Manager values runbook prepared.
 - Secret preparation checklist prepared.
 - Production env mapping reviewed.
 - Production migration/seed runbook prepared.
 - Website/privacy approval checklist prepared.
 - Phase 8F execution plan prepared for later explicit approval.
+- Cloud SQL creation still blocked until explicit user approval.
+- Secret Manager creation still blocked until explicit user approval.
 
 ## No-Go If
 

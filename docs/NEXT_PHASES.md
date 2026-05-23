@@ -87,6 +87,7 @@ Only after:
 
 - Cloud SQL cost/tier approved.
 - Next required user action: review Cloud SQL cost/tier draft and confirm: "Cloud SQL cost/tier approved for pilot".
+- Review Cloud SQL tier recommendation and reply one of: "Cloud SQL pilot tier approved", "Change Cloud SQL tier recommendation", or "Keep deployment blocked".
 - Secret values prepared locally and not exposed.
 - User explicitly approves resource creation.
 

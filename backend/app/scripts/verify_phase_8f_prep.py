@@ -24,6 +24,13 @@ SECRET_PATTERNS = [
     re.compile(r"ANTHROPIC_API_KEY\s*=\s*sk-", re.IGNORECASE),
 ]
 
+EXACT_PRICE_PATTERNS = [
+    re.compile(r"\$\s*\d", re.IGNORECASE),
+    re.compile(r"\bUSD\s*\d", re.IGNORECASE),
+    re.compile(r"\bEUR\s*\d", re.IGNORECASE),
+    re.compile(r"\bGEL\s*\d", re.IGNORECASE),
+]
+
 
 @dataclass
 class PrepCheck:
@@ -39,6 +46,17 @@ def required_docs_exist(root: Path = DEPLOYMENT_DOCS) -> list[PrepCheck]:
 def cloud_sql_pending_approval(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
     text = (root / "CLOUD_SQL_COST_APPROVAL_FORM.md").read_text(encoding="utf-8")
     return PrepCheck("Cloud SQL approval remains pending", "PENDING_USER_APPROVAL" in text)
+
+
+def cloud_sql_recommendation_exists(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
+    text = (root / "CLOUD_SQL_COST_APPROVAL_FORM.md").read_text(encoding="utf-8")
+    return PrepCheck("Cloud SQL pilot recommendation exists", "Low-cost pilot production tier" in text)
+
+
+def cloud_sql_has_no_exact_final_price(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
+    text = (root / "CLOUD_SQL_COST_APPROVAL_FORM.md").read_text(encoding="utf-8")
+    findings = [pattern.pattern for pattern in EXACT_PRICE_PATTERNS if pattern.search(text)]
+    return PrepCheck("Cloud SQL form has no exact final price", not findings, ", ".join(findings))
 
 
 def decision_remains_no_go(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
@@ -95,6 +113,8 @@ def run_checks(root: Path = DEPLOYMENT_DOCS) -> list[PrepCheck]:
         required_docs_exist(root)
         + [
             cloud_sql_pending_approval(root),
+            cloud_sql_recommendation_exists(root),
+            cloud_sql_has_no_exact_final_price(root),
             decision_remains_no_go(root),
             no_secret_patterns(root),
             env_not_tracked(root.parents[1]),
