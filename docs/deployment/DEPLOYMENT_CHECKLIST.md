@@ -1,5 +1,13 @@
 # Deployment Checklist
 
+Before using this checklist, fill/review:
+
+- `DEPLOYMENT_VARIABLES.template.md`
+- `GOOGLE_CLOUD_PREFLIGHT.md`
+- `COMMAND_PLAN_GCLOUD.md`
+- `DEPLOYMENT_RISK_REGISTER.md`
+- `PRODUCTION_READINESS_DECISION.md`
+
 ## Before Deployment
 
 - [ ] Tests pass with `AI_PROVIDER=mock`.

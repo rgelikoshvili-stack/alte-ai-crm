@@ -23,6 +23,14 @@ Status: prepared in repository; no real Google Cloud deployment yet.
 
 ## Phase 8D: Actual Cloud Run Deployment
 
+Pre-deployment planning package:
+
+- `docs/deployment/DEPLOYMENT_VARIABLES.template.md`
+- `docs/deployment/GOOGLE_CLOUD_PREFLIGHT.md`
+- `docs/deployment/COMMAND_PLAN_GCLOUD.md`
+- `docs/deployment/DEPLOYMENT_RISK_REGISTER.md`
+- `docs/deployment/PRODUCTION_READINESS_DECISION.md`
+
 - Create/confirm Google Cloud project resources.
 - Build and push backend image.
 - Configure Cloud Run, Cloud SQL, and Secret Manager.

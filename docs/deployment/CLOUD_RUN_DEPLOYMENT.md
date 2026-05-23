@@ -2,6 +2,14 @@
 
 This guide prepares Alte AI CRM for a future Google Cloud Run deployment. It does not require or perform deployment by itself.
 
+Review these planning files before running any cloud command:
+
+- `DEPLOYMENT_VARIABLES.template.md`
+- `GOOGLE_CLOUD_PREFLIGHT.md`
+- `COMMAND_PLAN_GCLOUD.md`
+- `DEPLOYMENT_RISK_REGISTER.md`
+- `PRODUCTION_READINESS_DECISION.md`
+
 ## Prerequisites
 
 - Google Cloud project with billing enabled

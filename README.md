@@ -659,6 +659,11 @@ Deployment docs:
 - `docs/deployment/SECRET_MANAGER.md`
 - `docs/deployment/CORS_AND_WIDGET_ORIGINS.md`
 - `docs/deployment/DEPLOYMENT_CHECKLIST.md`
+- `docs/deployment/DEPLOYMENT_VARIABLES.template.md`
+- `docs/deployment/GOOGLE_CLOUD_PREFLIGHT.md`
+- `docs/deployment/COMMAND_PLAN_GCLOUD.md`
+- `docs/deployment/DEPLOYMENT_RISK_REGISTER.md`
+- `docs/deployment/PRODUCTION_READINESS_DECISION.md`
 
 Production startup readiness check:
 
@@ -676,3 +681,13 @@ cd C:\tmp\alte-ai-crm
 ```
 
 The Docker image expects production secrets from Secret Manager or equivalent runtime environment configuration. Do not include `.env`, local SQLite databases, or API keys in the image.
+
+Deployment docs verification:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_deployment_docs
+```
+
+Phase 8D-Prep adds concrete Google Cloud command templates only. Do not run the commands until `PROJECT_ID`, region, Cloud SQL cost, secrets, CORS and rollback are reviewed.
