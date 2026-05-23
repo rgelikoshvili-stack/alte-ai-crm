@@ -27,7 +27,7 @@ Use these Phase 8F-Secrets-Prep references before execution:
 
 Status: `NOT_CREATED / PENDING_USER_GENERATION`
 
-Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
+Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 
 - [ ] Generated locally.
 - [ ] Not pasted into chat.
@@ -52,7 +52,7 @@ postgresql+asyncpg://USER:PASSWORD@HOST:5432/alte_ai_crm
 
 Status: `NOT_CREATED / PENDING_USER_GENERATION`
 
-Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
+Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 
 - [ ] Generated locally.
 - [ ] Long random value.
@@ -62,7 +62,7 @@ Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
 
 Status: `NOT_CREATED / PENDING_USER_CONFIRMATION`
 
-Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
+Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 
 - [ ] Created in Anthropic Console.
 - [ ] If ever exposed, revoked and rotated.

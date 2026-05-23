@@ -39,19 +39,32 @@ Execution status: `SECRET_MANAGER_EXECUTION_CONTAINERS_CREATED`
 
 Secret containers:
 
-- alte-db-password: CONTAINER_CREATED / VERSION_PENDING
-- alte-jwt-secret: CONTAINER_CREATED / VERSION_PENDING
-- alte-anthropic-api-key: CONTAINER_CREATED / VERSION_PENDING
+- alte-db-password: CONTAINER_CREATED / VERSION_ADDED
+- alte-jwt-secret: CONTAINER_CREATED / VERSION_ADDED
+- alte-anthropic-api-key: CONTAINER_CREATED / VERSION_ADDED
 - alte-database-url: CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS
 
 Version status:
 
-- DB password version added: `pending` because `.local-secrets/alte-db-password.txt` was not present.
-- JWT secret version added: `pending` because `.local-secrets/alte-jwt-secret.txt` was not present.
-- Anthropic key version added: `pending` because `.local-secrets/alte-anthropic-api-key.txt` was not present.
+- DB password version added: `yes`
+- JWT secret version added: `yes`
+- Anthropic key version added: `yes`
 - DATABASE_URL version: `pending until Cloud SQL exists`.
 
 No secret payload values were printed or read.
+
+## Phase 8F-Secret-Versions-Execution Result
+
+Execution status: `SECRET_MANAGER_VERSIONS_ADDED`
+
+Secret versions:
+
+- alte-db-password: CONTAINER_CREATED / VERSION_ADDED
+- alte-jwt-secret: CONTAINER_CREATED / VERSION_ADDED
+- alte-anthropic-api-key: CONTAINER_CREATED / VERSION_ADDED
+- alte-database-url: CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS
+
+Secret versions were added only from ignored `.local-secrets/*.txt` files. `alte-database-url` was intentionally not populated because Cloud SQL does not exist yet.
 
 ## Local Secret Values Preparation
 

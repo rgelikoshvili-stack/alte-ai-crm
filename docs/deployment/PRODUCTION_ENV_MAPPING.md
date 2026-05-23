@@ -2,9 +2,9 @@
 
 | Env var | Source | Production value / placeholder | Required | Secret | Validation rule | Current status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `DATABASE_URL` | Secret Manager | `alte-database-url` | Yes | Yes | Must be PostgreSQL async URL | Pending secret creation |
-| `JWT_SECRET` | Secret Manager | `alte-jwt-secret` | Yes | Yes | Must be non-placeholder long random value | Pending secret creation |
-| `ANTHROPIC_API_KEY` | Secret Manager | `alte-anthropic-api-key` | Yes | Yes | Must be non-placeholder Anthropic key | Pending secret creation |
+| `DATABASE_URL` | Secret Manager | `alte-database-url` | Yes | Yes | Must be PostgreSQL async URL | Container created; version pending until Cloud SQL exists |
+| `JWT_SECRET` | Secret Manager | `alte-jwt-secret` | Yes | Yes | Must be non-placeholder long random value | Secret version added |
+| `ANTHROPIC_API_KEY` | Secret Manager | `alte-anthropic-api-key` | Yes | Yes | Must be non-placeholder Anthropic key | Secret version added |
 | `ENVIRONMENT` | Plain env var | `production` | Yes | No | Must equal `production` | Planned |
 | `APP_VERSION` | Plain env var | `0.8.0` | Yes | No | Non-empty version | Planned |
 | `AUTH_REQUIRED` | Plain env var | `true` | Yes | No | Must be true in production | Planned |

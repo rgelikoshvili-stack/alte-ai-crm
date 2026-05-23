@@ -143,6 +143,20 @@ Next recommended phase:
 - Prepare local secret files and add Secret Manager versions, or create Cloud SQL first if DATABASE_URL is required.
 - Keep `NO-GO_FOR_ACTUAL_DEPLOYMENT` until Cloud SQL, DATABASE_URL, website access, privacy/data approval, and deployment approval are complete.
 
+## Phase 8F-Secret-Versions-Execution: Secret Versions Added
+
+- `alte-db-password` version added.
+- `alte-jwt-secret` version added.
+- `alte-anthropic-api-key` version added.
+- `alte-database-url` version remains pending until Cloud SQL exists.
+- No secret payloads were printed.
+- No Cloud SQL, Cloud Run, Docker image, or deployment was created.
+
+Next recommended phase:
+
+- Phase 8G-Cloud-SQL-Prep or Phase 8G-Cloud-SQL-Execution after explicit approval.
+- Build final `DATABASE_URL` only after Cloud SQL exists.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

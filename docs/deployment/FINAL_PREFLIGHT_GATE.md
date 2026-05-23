@@ -18,9 +18,10 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | Cloud SQL cost approval form | Done: `CLOUD_SQL_COST_APPROVAL_FORM.md`; recommended option: Low-cost pilot production tier; status `APPROVED_FOR_PILOT` |
 | Google Cloud | Cloud SQL instance created | Not yet; requires approval |
 | Google Cloud | Secret Manager containers created | Done: four `alte-*` secret containers created |
-| Google Cloud | Secret Manager values created | Not yet; versions pending |
+| Google Cloud | Secret Manager DB/JWT/Anthropic values created | Done: versions added without printing payloads |
+| Google Cloud | Secret Manager DATABASE_URL value created | Pending until Cloud SQL exists |
 | Google Cloud | Secret Manager creation approval | Done for next execution phase: `APPROVED_FOR_NEXT_EXECUTION` |
-| Google Cloud | Secret Manager execution | Container creation completed; payload versions pending |
+| Google Cloud | Secret Manager execution | Container creation completed; DB/JWT/Anthropic versions added |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
 | Google Cloud | Secret preparation checklist | Done: `SECRET_PREPARATION_CHECKLIST.md`; values not created |
 | Google Cloud | Secret values preparation worksheet | Done: `SECRET_VALUES_PREPARATION_WORKSHEET.md`; no real values |
