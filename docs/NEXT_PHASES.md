@@ -73,6 +73,22 @@ Only after:
 - Privacy approval owner confirmed.
 - Website access confirmed or accepted as pending for backend-only deployment.
 
+## Phase 8F-Prep: Cloud SQL Cost Approval And Secret Execution Checklist
+
+- Cloud SQL cost approval form.
+- Secret preparation checklist.
+- Phase 8F execution plan.
+- Pre-execution verifier.
+- No cloud resource creation.
+
+Next possible phase: Phase 8F-Execution - Actual Secret Manager and Cloud SQL creation.
+
+Only after:
+
+- Cloud SQL cost/tier approved.
+- Secret values prepared locally and not exposed.
+- User explicitly approves resource creation.
+
 - Backend public URL.
 - Widget public URL.
 - CORS for `https://alte.edu.ge` and `https://join.alte.edu.ge`.

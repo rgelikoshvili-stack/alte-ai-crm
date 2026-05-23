@@ -53,10 +53,13 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Claude live validation completed.
 - Docker/Cloud Run docs prepared.
 - Cloud SQL tier/cost decision document prepared.
+- Cloud SQL cost approval form prepared; status remains `PENDING_APPROVAL`.
 - Secret Manager values runbook prepared.
+- Secret preparation checklist prepared.
 - Production env mapping reviewed.
 - Production migration/seed runbook prepared.
 - Website/privacy approval checklist prepared.
+- Phase 8F execution plan prepared for later explicit approval.
 
 ## No-Go If
 

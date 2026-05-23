@@ -15,9 +15,11 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | APIs ready to enable | Planned |
 | Google Cloud | Cloud SQL tier/cost accepted | Pending |
 | Google Cloud | Cloud SQL tier/cost decision doc | Done: `CLOUD_SQL_TIER_DECISION.md`; status `PENDING_APPROVAL` |
+| Google Cloud | Cloud SQL cost approval form | Done: `CLOUD_SQL_COST_APPROVAL_FORM.md`; status `PENDING_APPROVAL` |
 | Google Cloud | Cloud SQL instance created | Not yet; requires approval |
 | Google Cloud | Secret Manager values created | Not yet; requires approval |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
+| Google Cloud | Secret preparation checklist | Done: `SECRET_PREPARATION_CHECKLIST.md`; values not created |
 | Security | `.env` not tracked | Done |
 | Security | No secrets in docs | Done by verifier |
 | Security | Anthropic key rotated if previously exposed | Pending owner confirmation |
@@ -36,6 +38,7 @@ Keep `NO-GO` until every required item below is checked.
 | Website | Website developer/admin access | Pending |
 | Website | Privacy/consent text approval | Pending |
 | Website | Website/privacy checklist | Done: `WEBSITE_AND_PRIVACY_APPROVAL.md`; statuses pending |
+| Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 
 ## Decision
 

@@ -730,3 +730,23 @@ python -m app.scripts.verify_phase_8e_readiness
 ```
 
 Actual cloud resource creation remains blocked until Cloud SQL cost/tier, Secret Manager values, website access and privacy approval are completed.
+
+## Phase 8F-Prep Cloud SQL And Secret Execution Checklist
+
+Phase 8F-Prep prepares the approval form and execution checklist for the next cloud-resource phase. It does not run `gcloud`.
+
+Docs:
+
+- `docs/deployment/CLOUD_SQL_COST_APPROVAL_FORM.md`
+- `docs/deployment/SECRET_PREPARATION_CHECKLIST.md`
+- `docs/deployment/PHASE_8F_EXECUTION_PLAN.md`
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8f_prep
+```
+
+Actual Cloud SQL and Secret Manager creation stays blocked until explicit approval.
