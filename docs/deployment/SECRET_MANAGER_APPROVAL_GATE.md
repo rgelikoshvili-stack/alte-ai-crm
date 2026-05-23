@@ -1,10 +1,12 @@
 # Secret Manager Approval Gate
 
-Initial status: `PENDING_APPROVAL`
+Approval status: `APPROVED_FOR_NEXT_EXECUTION`
 
-Secret Manager creation remains blocked until the user explicitly says:
+Secret Manager creation is approved for the next execution planning phase only. This does not mean secrets were created. Actual Secret Manager creation still requires Phase 8F-Execution command approval.
 
-`Approve Secret Manager creation`
+Actual execution remains blocked until the user explicitly says:
+
+`Approve Phase 8F-Execution for Secret Manager creation`
 
 ## Before Creating Secrets
 
@@ -20,11 +22,11 @@ Secret Manager creation remains blocked until the user explicitly says:
 
 ## Approval Fields
 
-- Secret creation approved: `YES/NO`
-- Approved by: `PENDING`
-- Approval date: `PENDING`
-- Notes: `PENDING`
+- Secret creation approved: `YES`
+- Approved by: `User / project owner`
+- Approval date: `2026-05-24`
+- Notes: Approval is recorded for the next execution phase only. No Secret Manager secrets have been created.
 
 ## Decision
 
-Do not create Secret Manager secrets until approval is explicit and current.
+Do not create Secret Manager secrets until the separate Phase 8F-Execution command approval is explicit and current.

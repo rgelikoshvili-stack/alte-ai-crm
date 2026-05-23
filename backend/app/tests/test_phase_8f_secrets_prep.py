@@ -10,8 +10,12 @@ def test_phase_8f_secrets_prep_verifier_importable_and_required_files_exist():
     assert all(check.passed for check in checks)
 
 
-def test_phase_8f_secrets_prep_approval_gate_pending():
-    assert verify_phase_8f_secrets_prep.approval_gate_pending().passed is True
+def test_phase_8f_secrets_prep_approval_gate_approved_for_next_execution():
+    assert verify_phase_8f_secrets_prep.approval_gate_approved_for_next_execution().passed is True
+
+
+def test_phase_8f_secrets_prep_secret_statuses_remain_pending():
+    assert verify_phase_8f_secrets_prep.secret_statuses_still_pending().passed is True
 
 
 def test_phase_8f_secrets_prep_decision_remains_no_go():

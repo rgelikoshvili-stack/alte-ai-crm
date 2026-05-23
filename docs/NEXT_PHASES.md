@@ -101,7 +101,15 @@ Only after:
 - No Cloud SQL creation.
 - No Google Cloud resource creation.
 
-Next possible phase: Phase 8F-Execution - Secret Manager and Cloud SQL resource creation.
+Secret Manager creation is approved for the next execution phase, but no secrets have been created.
+
+Next recommended phase: Phase 8F-Execution-Prep - confirm actual secret values are ready locally and prepare interactive `gcloud` steps without printing values.
+
+Actual Secret Manager creation requires the exact approval phrase:
+
+`Approve Phase 8F-Execution for Secret Manager creation`
+
+Next possible phase after that approval: Phase 8F-Execution - Secret Manager and Cloud SQL resource creation.
 
 Only after:
 

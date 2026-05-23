@@ -42,9 +42,23 @@ def required_files_exist(files: list[Path] | None = None) -> list[SecretsPrepChe
     return [SecretsPrepCheck(f"{path.name} exists", path.exists(), str(path)) for path in paths]
 
 
-def approval_gate_pending(root: Path = DEPLOYMENT_DOCS) -> SecretsPrepCheck:
+def approval_gate_approved_for_next_execution(root: Path = DEPLOYMENT_DOCS) -> SecretsPrepCheck:
     text = (root / "SECRET_MANAGER_APPROVAL_GATE.md").read_text(encoding="utf-8")
-    return SecretsPrepCheck("Secret Manager approval remains pending", "PENDING_APPROVAL" in text)
+    return SecretsPrepCheck(
+        "Secret Manager approval recorded for next execution",
+        "APPROVED_FOR_NEXT_EXECUTION" in text,
+    )
+
+
+def secret_statuses_still_pending(root: Path = DEPLOYMENT_DOCS) -> SecretsPrepCheck:
+    text = (root / "SECRET_PREPARATION_CHECKLIST.md").read_text(encoding="utf-8")
+    required_statuses = [
+        "NOT_CREATED / PENDING_USER_GENERATION",
+        "NOT_CREATED / PENDING_CLOUD_SQL_CREATION",
+        "NOT_CREATED / PENDING_USER_CONFIRMATION",
+    ]
+    missing = [status for status in required_statuses if status not in text]
+    return SecretsPrepCheck("Secret statuses remain not created/pending", not missing, ", ".join(missing))
 
 
 def decision_remains_no_go(root: Path = DEPLOYMENT_DOCS) -> SecretsPrepCheck:
@@ -84,7 +98,8 @@ def run_checks(root: Path = DEPLOYMENT_DOCS) -> list[SecretsPrepCheck]:
     return (
         required_files_exist()
         + [
-            approval_gate_pending(root),
+            approval_gate_approved_for_next_execution(root),
+            secret_statuses_still_pending(root),
             decision_remains_no_go(root),
             no_secret_patterns(),
             env_not_tracked(root.parents[1]),

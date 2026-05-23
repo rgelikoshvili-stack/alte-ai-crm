@@ -8,6 +8,8 @@ Secret creation must happen only after:
 
 Cloud SQL pilot tier is now approved, so the next required step is secret values preparation and Secret Manager creation approval.
 
+Secret Manager creation approval: `APPROVED_FOR_NEXT_EXECUTION`
+
 Use these Phase 8F-Secrets-Prep references before execution:
 
 - `SECRET_VALUES_PREPARATION_WORKSHEET.md`
@@ -19,12 +21,16 @@ Use these Phase 8F-Secrets-Prep references before execution:
 
 ### 1. `alte-db-password`
 
+Status: `NOT_CREATED / PENDING_USER_GENERATION`
+
 - [ ] Generated locally.
 - [ ] Not pasted into chat.
 - [ ] Not committed.
 - [ ] Stored in password manager or secure local note until Secret Manager creation.
 
 ### 2. `alte-database-url`
+
+Status: `NOT_CREATED / PENDING_CLOUD_SQL_CREATION`
 
 - [ ] Built only after Cloud SQL host/connection info is known.
 - [ ] Not committed.
@@ -36,11 +42,15 @@ postgresql+asyncpg://USER:PASSWORD@HOST:5432/alte_ai_crm
 
 ### 3. `alte-jwt-secret`
 
+Status: `NOT_CREATED / PENDING_USER_GENERATION`
+
 - [ ] Generated locally.
 - [ ] Long random value.
 - [ ] Not committed.
 
 ### 4. `alte-anthropic-api-key`
+
+Status: `NOT_CREATED / PENDING_USER_CONFIRMATION`
 
 - [ ] Created in Anthropic Console.
 - [ ] If ever exposed, revoked and rotated.
