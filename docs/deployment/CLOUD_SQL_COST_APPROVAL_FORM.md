@@ -58,7 +58,7 @@ Do not use this document as a price source. The user must verify the final price
 
 `APPROVED_FOR_PILOT`
 
-Do not create the Cloud SQL instance until Phase 8F-Execution is explicitly approved.
+Cloud SQL execution is approved and completed for the pilot instance.
 
 ## H. Approval Notes
 
@@ -69,3 +69,17 @@ Do not create the Cloud SQL instance until Phase 8F-Execution is explicitly appr
 - User/billing owner must explicitly approve before Phase 8F-Execution.
 - Production-critical use should later review HA, backups, storage growth, and monitoring.
 - Approval is for the pilot-tier direction only. Exact cost must still be reviewed in Google Cloud Console during actual resource creation before confirming final billing.
+
+## I. Phase 8G Execution Result
+
+- Previous Enterprise Plus/default attempt with `db-f1-micro` failed and was stopped safely.
+- Corrected approach uses Cloud SQL Enterprise edition with a low-cost/shared-core pilot tier.
+- Instance: `alte-ai-crm-db`
+- Engine: PostgreSQL 16
+- Region: `europe-west1`
+- Tier: `db-f1-micro`
+- Storage: `10GB SSD`
+- High availability: disabled for pilot (`ZONAL`)
+- Status: `CLOUD_SQL_INSTANCE_CREATED`
+
+No Enterprise Plus or performance-optimized tier was selected.

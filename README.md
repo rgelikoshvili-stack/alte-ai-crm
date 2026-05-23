@@ -791,3 +791,18 @@ python -m app.scripts.verify_local_secret_values_prep
 ```
 
 The helper script may write to `.local-secrets/`, which is ignored by Git. Treat that folder as sensitive. Actual Secret Manager creation remains blocked until the explicit execution phase is approved.
+
+## Phase 8G Cloud SQL Pilot Database
+
+Phase 8G creates the approved low-cost Cloud SQL PostgreSQL pilot database without deploying Cloud Run.
+
+Status:
+
+- Cloud SQL instance: `alte-ai-crm-db`
+- Edition/tier: Enterprise edition, `db-f1-micro`
+- Region: `europe-west1`
+- Database: `alte_ai_crm`
+- App user: `alte_app`
+- `alte-database-url` secret version: added without documenting the URL
+
+Cloud Run is still not deployed, Docker images are not pushed, and production migrations/seed are still pending.

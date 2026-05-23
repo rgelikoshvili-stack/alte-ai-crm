@@ -37,7 +37,7 @@ def secret_manager_execution_recorded(root: Path = DEPLOYMENT_DOCS) -> SecretMan
         "alte-db-password: CONTAINER_CREATED / VERSION_ADDED",
         "alte-jwt-secret: CONTAINER_CREATED / VERSION_ADDED",
         "alte-anthropic-api-key: CONTAINER_CREATED / VERSION_ADDED",
-        "alte-database-url: CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS",
+        "alte-database-url: CONTAINER_CREATED / VERSION_ADDED",
     ]
     missing = [item for item in required if item not in text]
     return SecretManagerExecutionCheck("Secret Manager execution status recorded", not missing, ", ".join(missing))
@@ -48,7 +48,7 @@ def decision_remains_no_go(root: Path = DEPLOYMENT_DOCS) -> SecretManagerExecuti
     return SecretManagerExecutionCheck("Production decision remains NO-GO", "NO-GO_FOR_ACTUAL_DEPLOYMENT" in text)
 
 
-def database_url_pending_until_cloud_sql(root: Path = DEPLOYMENT_DOCS) -> SecretManagerExecutionCheck:
+def database_url_version_added(root: Path = DEPLOYMENT_DOCS) -> SecretManagerExecutionCheck:
     combined = "\n".join(
         [
             (root / "SECRET_MANAGER_APPROVAL_GATE.md").read_text(encoding="utf-8"),
@@ -57,8 +57,9 @@ def database_url_pending_until_cloud_sql(root: Path = DEPLOYMENT_DOCS) -> Secret
         ]
     )
     return SecretManagerExecutionCheck(
-        "DATABASE_URL version remains pending until Cloud SQL exists",
-        "VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS" in combined,
+        "DATABASE_URL version added",
+        "alte-database-url: CONTAINER_CREATED / VERSION_ADDED" in combined
+        or "Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`" in combined,
     )
 
 
@@ -110,7 +111,7 @@ def run_checks(root: Path = DEPLOYMENT_DOCS) -> list[SecretManagerExecutionCheck
     return [
         secret_manager_execution_recorded(root),
         decision_remains_no_go(root),
-        database_url_pending_until_cloud_sql(root),
+        database_url_version_added(root),
         no_secret_patterns(),
         env_not_tracked(root.parents[1]),
         local_secrets_not_tracked(root.parents[1]),

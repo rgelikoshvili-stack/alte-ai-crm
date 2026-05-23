@@ -157,6 +157,27 @@ Next recommended phase:
 - Phase 8G-Cloud-SQL-Prep or Phase 8G-Cloud-SQL-Execution after explicit approval.
 - Build final `DATABASE_URL` only after Cloud SQL exists.
 
+## Phase 8G-Execution: Cloud SQL Pilot Database
+
+- Initial Enterprise Plus/default attempt with `db-f1-micro` failed and was stopped safely.
+- Corrected approach used Cloud SQL Enterprise edition with low-cost/shared-core pilot tier.
+- Instance status: `CLOUD_SQL_INSTANCE_CREATED`
+- Instance: `alte-ai-crm-db`
+- Region: `europe-west1`
+- Tier: `db-f1-micro`
+- Database status: `DATABASE_CREATED`
+- Database: `alte_ai_crm`
+- App user status: `DB_USER_CREATED`
+- App user: `alte_app`
+- `alte-database-url` secret version: `VERSION_ADDED`
+- Cloud Run was not deployed.
+- Docker image was not pushed.
+
+Next recommended phase:
+
+- Phase 8H: production migration/seed planning or execution after explicit approval.
+- Keep `NO-GO_FOR_ACTUAL_DEPLOYMENT` until migrations, seed, Cloud Run deployment, website access, privacy/data approval, and deployment approval are complete.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

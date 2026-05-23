@@ -42,14 +42,14 @@ Secret containers:
 - alte-db-password: CONTAINER_CREATED / VERSION_ADDED
 - alte-jwt-secret: CONTAINER_CREATED / VERSION_ADDED
 - alte-anthropic-api-key: CONTAINER_CREATED / VERSION_ADDED
-- alte-database-url: CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS
+- alte-database-url: CONTAINER_CREATED / VERSION_ADDED
 
 Version status:
 
 - DB password version added: `yes`
 - JWT secret version added: `yes`
 - Anthropic key version added: `yes`
-- DATABASE_URL version: `pending until Cloud SQL exists`.
+- DATABASE_URL version: `yes`
 
 No secret payload values were printed or read.
 
@@ -62,9 +62,9 @@ Secret versions:
 - alte-db-password: CONTAINER_CREATED / VERSION_ADDED
 - alte-jwt-secret: CONTAINER_CREATED / VERSION_ADDED
 - alte-anthropic-api-key: CONTAINER_CREATED / VERSION_ADDED
-- alte-database-url: CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS
+- alte-database-url: CONTAINER_CREATED / VERSION_ADDED
 
-Secret versions were added only from ignored `.local-secrets/*.txt` files. `alte-database-url` was intentionally not populated because Cloud SQL does not exist yet.
+Secret versions were added only from ignored `.local-secrets/*.txt` files. `alte-database-url` was populated after the Cloud SQL pilot instance was created.
 
 ## Local Secret Values Preparation
 

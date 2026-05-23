@@ -8,6 +8,15 @@ Run:
 alembic upgrade head
 ```
 
+Current Phase 8G status:
+
+- Cloud SQL instance status: `CLOUD_SQL_INSTANCE_CREATED`
+- Database status: `DATABASE_CREATED`
+- App user status: `DB_USER_CREATED`
+- `DATABASE_URL` secret version: `VERSION_ADDED`
+- Production migrations have not been run yet.
+- Production seed has not been run yet.
+
 ## B. Knowledge Seed
 
 Run:

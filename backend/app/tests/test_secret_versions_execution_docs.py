@@ -13,8 +13,8 @@ def test_secret_versions_execution_statuses_documented():
     assert verify_secret_versions_execution_docs.secret_version_statuses_documented().passed is True
 
 
-def test_secret_versions_execution_database_url_pending():
-    assert verify_secret_versions_execution_docs.database_url_pending_until_cloud_sql().passed is True
+def test_secret_versions_execution_database_url_version_added():
+    assert verify_secret_versions_execution_docs.database_url_version_added().passed is True
 
 
 def test_secret_versions_execution_decision_remains_no_go():

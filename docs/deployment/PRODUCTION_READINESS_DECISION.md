@@ -2,7 +2,7 @@
 
 Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot tier direction is approved, Secret preparation docs are created, Secret Manager containers are created, and DB/JWT/Anthropic secret versions are added. Actual deployment remains blocked until Cloud SQL is created, DATABASE_URL is finalized, website access, privacy approval, and explicit deployment approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, and required secret versions including DATABASE_URL are added. Actual deployment remains blocked until production migrations and seed are run, Cloud Run is deployed, website access, privacy approval, and explicit deployment approval are completed.
 
 ## Go Only If
 
@@ -71,17 +71,20 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
   - `alte-db-password`: `CONTAINER_CREATED / VERSION_ADDED`
   - `alte-jwt-secret`: `CONTAINER_CREATED / VERSION_ADDED`
   - `alte-anthropic-api-key`: `CONTAINER_CREATED / VERSION_ADDED`
-  - `alte-database-url`: `CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS`
+  - `alte-database-url`: `CONTAINER_CREATED / VERSION_ADDED`
+- Corrected Cloud SQL approach documented: Enterprise edition, low-cost pilot tier, no Enterprise Plus/performance-optimized tier.
+- Cloud SQL instance status: `CLOUD_SQL_INSTANCE_CREATED`
+- Cloud SQL database status: `DATABASE_CREATED`
+- Cloud SQL app user status: `DB_USER_CREATED`
 - `DATABASE_URL` construction guide prepared.
 - Local secret preparation helper script prepared.
 - Production env mapping reviewed.
 - Production migration/seed runbook prepared.
 - Website/privacy approval checklist prepared.
 - Phase 8F execution plan prepared for later explicit approval.
-- Cloud SQL creation still blocked until explicit Phase 8F-Execution approval.
-- Secret Manager execution still blocked until explicit Phase 8F-Execution approval.
-- `DATABASE_URL` secret version is not created.
-- `DATABASE_URL` is not finalized because Cloud SQL does not exist.
+- Production migrations have not been run against Cloud SQL.
+- Production knowledge seed has not been run against Cloud SQL.
+- Cloud Run is not deployed.
 
 ## No-Go If
 

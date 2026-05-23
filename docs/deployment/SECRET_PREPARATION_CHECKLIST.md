@@ -38,7 +38,9 @@ Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 
 Status: `NOT_CREATED / PENDING_CLOUD_SQL_CREATION`
 
-Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS`
+Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
+
+Cloud SQL status: `CLOUD_SQL_INSTANCE_CREATED / DATABASE_CREATED / DB_USER_CREATED`
 
 - [ ] Built only after Cloud SQL host/connection info is known.
 - [ ] Not committed.
