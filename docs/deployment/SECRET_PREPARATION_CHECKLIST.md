@@ -16,6 +16,8 @@ Use these Phase 8F-Secrets-Prep references before execution:
 - `SECRET_MANAGER_APPROVAL_GATE.md`
 - `DATABASE_URL_CONSTRUCTION.md`
 - `scripts/prepare_secret_values.ps1`
+- `LOCAL_SECRET_VALUES_PREP.md`
+- `scripts/prepare_local_secret_values.ps1`
 
 ## Required Secrets
 
@@ -66,4 +68,5 @@ Status: `NOT_CREATED / PENDING_USER_CONFIRMATION`
 - [ ] None saved in docs.
 - [ ] None committed.
 - [ ] Secret Manager creation explicitly approved.
+- [ ] Local secret values preparation completed, if using the helper script.
 - [ ] Real secret values entered only into Secret Manager or a password manager.

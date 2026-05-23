@@ -771,3 +771,23 @@ python -m app.scripts.verify_phase_8f_secrets_prep
 ```
 
 Secret Manager creation remains blocked until explicit approval. Do not paste API keys, DB passwords, JWT secrets, or real `DATABASE_URL` values into docs or chat.
+
+## Phase 8F Secret Values Local Prep
+
+Phase 8F-Secret-Values-Local-Prep adds a local-only workflow for preparing DB password and JWT secret values without committing them.
+
+Docs and scripts:
+
+- `docs/deployment/LOCAL_SECRET_VALUES_PREP.md`
+- `scripts/prepare_local_secret_values.ps1`
+- `backend/app/scripts/verify_local_secret_values_prep.py`
+
+Run the verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_local_secret_values_prep
+```
+
+The helper script may write to `.local-secrets/`, which is ignored by Git. Treat that folder as sensitive. Actual Secret Manager creation remains blocked until the explicit execution phase is approved.

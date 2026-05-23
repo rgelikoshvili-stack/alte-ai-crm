@@ -76,3 +76,12 @@ Status: `PENDING_CLOUD_SQL_CREATION`
 ## Strong Warning
 
 Never write real secret values into this worksheet. The final values must be entered only into Secret Manager or a secure local password manager.
+
+## Local Preparation Step
+
+Local secret values preparation is ready:
+
+- Guide: `LOCAL_SECRET_VALUES_PREP.md`
+- Helper script: `scripts/prepare_local_secret_values.ps1`
+
+The helper creates only local ignored files when the user explicitly confirms. It does not create Secret Manager secrets and does not call `gcloud`.

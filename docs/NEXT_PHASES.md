@@ -111,6 +111,21 @@ Actual Secret Manager creation requires the exact approval phrase:
 
 Next possible phase after that approval: Phase 8F-Execution - Secret Manager and Cloud SQL resource creation.
 
+## Phase 8F-Secret-Values-Local-Prep: Local Secret Generation Readiness
+
+- `.gitignore` excludes `.local-secrets/` and local secret file patterns.
+- Local preparation guide: `LOCAL_SECRET_VALUES_PREP.md`.
+- Local helper script: `scripts/prepare_local_secret_values.ps1`.
+- Local verifier: `python -m app.scripts.verify_local_secret_values_prep`.
+- No real secrets are committed.
+- `DATABASE_URL` remains pending until Cloud SQL exists.
+
+Next step for Secret Manager execution:
+
+- User prepares DB password and JWT secret locally.
+- User confirms Anthropic key readiness without sharing the value.
+- User approves the exact Secret Manager execution phase.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .env
+.local-secrets/
+*.secret
+*.secrets
+production-secrets.local.*
+secret-values.local.*
 *.db
 *.sqlite
 *.sqlite3

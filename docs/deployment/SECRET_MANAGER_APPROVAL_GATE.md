@@ -30,3 +30,12 @@ Actual execution remains blocked until the user explicitly says:
 ## Decision
 
 Do not create Secret Manager secrets until the separate Phase 8F-Execution command approval is explicit and current.
+
+## Local Secret Values Preparation
+
+Local secret values preparation is ready for user action:
+
+- `LOCAL_SECRET_VALUES_PREP.md`
+- `scripts/prepare_local_secret_values.ps1`
+
+This local step may generate DB password and JWT values into ignored local files, but it does not create Secret Manager secrets. The Anthropic API key must never be printed or stored in docs.
