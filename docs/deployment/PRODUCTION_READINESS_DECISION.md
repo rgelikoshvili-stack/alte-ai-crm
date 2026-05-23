@@ -2,13 +2,13 @@
 
 Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
 
-Reason: the repository is deployment-prepared and project/region/CORS/billing/repo URL are recorded, but Cloud SQL cost confirmation, Secret Manager values, release tag, GitHub push backup, and website access confirmation are not all recorded yet.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Actual deployment remains blocked until Cloud SQL tier/cost, Secret Manager values, website access and privacy approval are completed.
 
 ## Go Only If
 
 - [x] GitHub remote exists. Current remote: `https://github.com/rgelikoshvili-stack/alte-ai-crm`.
-- [ ] Release tag exists. Current check: no local tag found.
-- [x] Tests pass. Latest Phase 8D-Prep check: `106 passed` with `AI_PROVIDER=mock`.
+- [x] Release tag exists. `v0.8-deployment-ready` was pushed.
+- [x] Tests pass. Latest Phase 8D-GitHub check: `110 passed` with `AI_PROVIDER=mock`.
 - [ ] Docker build passes. Not run in this prep step.
 - [ ] `startup_check` passes with production-like env. Local/dev check passed; production-like Secret Manager values are not configured yet.
 - [x] Google Cloud project selected. `PROJECT_ID=project-1e145fd0-c30e-4aac-a34`.
@@ -41,9 +41,22 @@ Reason: the repository is deployment-prepared and project/region/CORS/billing/re
 
 - Confirm Cloud SQL cost/tier.
 - Confirm Secret Manager values are created without exposing them.
-- Confirm GitHub push backup and release tag.
 - Confirm Alte website admin/developer access.
 - Confirm data privacy approval.
+
+## Completed Deployment Readiness Items
+
+- GitHub remote configured.
+- GitHub push completed.
+- Release tag created: `v0.8-deployment-ready`.
+- Deployment docs prepared.
+- Claude live validation completed.
+- Docker/Cloud Run docs prepared.
+- Cloud SQL tier/cost decision document prepared.
+- Secret Manager values runbook prepared.
+- Production env mapping reviewed.
+- Production migration/seed runbook prepared.
+- Website/privacy approval checklist prepared.
 
 ## No-Go If
 

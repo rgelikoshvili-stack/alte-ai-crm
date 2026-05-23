@@ -708,3 +708,25 @@ python -m app.scripts.verify_final_preflight
 ```
 
 Actual Cloud Run deployment remains blocked until GitHub backup/tag, Cloud SQL cost/tier, Secret Manager values, website access and privacy approval are confirmed.
+
+## Phase 8E Infrastructure Decision Gate
+
+Phase 8E prepares final infrastructure decision documents. It does not create cloud resources.
+
+Readiness docs:
+
+- `docs/deployment/CLOUD_SQL_TIER_DECISION.md`
+- `docs/deployment/SECRET_VALUES_RUNBOOK.md`
+- `docs/deployment/PRODUCTION_ENV_MAPPING.md`
+- `docs/deployment/PRODUCTION_MIGRATION_AND_SEED.md`
+- `docs/deployment/WEBSITE_AND_PRIVACY_APPROVAL.md`
+
+Phase 8E verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8e_readiness
+```
+
+Actual cloud resource creation remains blocked until Cloud SQL cost/tier, Secret Manager values, website access and privacy approval are completed.

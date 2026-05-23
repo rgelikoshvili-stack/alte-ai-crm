@@ -57,6 +57,22 @@ Preconditions before actual deployment:
 
 ## Phase 8E: Staging Website Widget Embed
 
+Before staging embed, Phase 8E infrastructure gate must be closed:
+
+- Cloud SQL tier/cost decision.
+- Secret values runbook.
+- Production env mapping.
+- Production migration/seed runbook.
+- Website and privacy approval checklist.
+
+Next possible phase: Phase 8F - Actual Secret Manager and Cloud SQL creation.
+
+Only after:
+
+- Cloud SQL cost/tier approved.
+- Privacy approval owner confirmed.
+- Website access confirmed or accepted as pending for backend-only deployment.
+
 - Backend public URL.
 - Widget public URL.
 - CORS for `https://alte.edu.ge` and `https://join.alte.edu.ge`.
