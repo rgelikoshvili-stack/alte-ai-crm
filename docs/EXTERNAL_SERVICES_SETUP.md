@@ -22,7 +22,7 @@ Required values:
 
 - `ANTHROPIC_API_KEY`
 - `AI_PROVIDER=claude`
-- `AI_MODEL=claude-sonnet-4-5` or the current Sonnet model
+- `AI_MODEL=claude-sonnet-4-5-20250929` or the current Sonnet model ID
 
 Where to configure locally:
 
@@ -34,7 +34,7 @@ Example:
 
 ```env
 AI_PROVIDER=claude
-AI_MODEL=claude-sonnet-4-5
+AI_MODEL=claude-sonnet-4-5-20250929
 ANTHROPIC_API_KEY=your-real-key
 AUTH_REQUIRED=false
 ```

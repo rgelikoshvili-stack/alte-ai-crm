@@ -12,7 +12,7 @@
 | `AUTH_REQUIRED` | Yes | Yes | `false` | Enables auth/RBAC middleware | No |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Yes | Yes | `480` | Login token lifetime | No |
 | `AI_PROVIDER` | Yes | Yes | `mock` or `claude` | Selects mock or Claude AI provider | No |
-| `AI_MODEL` | Yes | Yes | `claude-sonnet-4-5` | Claude model name | No |
+| `AI_MODEL` | Yes | Yes | `claude-sonnet-4-5-20250929` | Claude model ID | No |
 | `AI_TIMEOUT_SECONDS` | Yes | Yes | `20` | AI request timeout | No |
 | `AI_CONFIDENCE_THRESHOLD` | Yes | Yes | `0.70` | Below this, force safe handover | No |
 | `AI_MAX_TOKENS` | Yes | Yes | `1200` | Max Claude output tokens | No |
@@ -29,7 +29,7 @@ APP_VERSION=0.1.0
 AUTH_REQUIRED=false
 ACCESS_TOKEN_EXPIRE_MINUTES=480
 AI_PROVIDER=mock
-AI_MODEL=claude-sonnet-4-5
+AI_MODEL=claude-sonnet-4-5-20250929
 AI_TIMEOUT_SECONDS=20
 AI_CONFIDENCE_THRESHOLD=0.70
 AI_MAX_TOKENS=1200
@@ -47,7 +47,7 @@ APP_VERSION=0.1.0
 AUTH_REQUIRED=false
 ACCESS_TOKEN_EXPIRE_MINUTES=480
 AI_PROVIDER=claude
-AI_MODEL=claude-sonnet-4-5
+AI_MODEL=claude-sonnet-4-5-20250929
 AI_TIMEOUT_SECONDS=20
 AI_CONFIDENCE_THRESHOLD=0.70
 AI_MAX_TOKENS=1200
@@ -65,7 +65,7 @@ APP_VERSION=0.1.0
 AUTH_REQUIRED=true
 ACCESS_TOKEN_EXPIRE_MINUTES=480
 AI_PROVIDER=claude
-AI_MODEL=claude-sonnet-4-5
+AI_MODEL=claude-sonnet-4-5-20250929
 AI_TIMEOUT_SECONDS=20
 AI_CONFIDENCE_THRESHOLD=0.70
 AI_MAX_TOKENS=1200
