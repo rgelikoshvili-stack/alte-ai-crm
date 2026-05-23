@@ -2,9 +2,11 @@
 
 Secret creation must happen only after:
 
-- Cloud SQL tier/cost is approved.
+- Cloud SQL pilot tier is approved.
 - Cloud SQL instance creation is explicitly approved.
 - User confirms Phase 8F-Execution.
+
+Cloud SQL pilot tier is now approved, so the next required step is secret values preparation and Secret Manager creation approval.
 
 ## Required Secrets
 

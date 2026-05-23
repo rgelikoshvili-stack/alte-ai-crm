@@ -16,9 +16,9 @@
 - Backup enabled: Yes for pilot, but confirm cost.
 - High availability: No for pilot/MVP. Review HA later for production-critical launch.
 - Estimated monthly cost: `PENDING_USER_REVIEW_IN_GOOGLE_CLOUD_PRICING_CALCULATOR`
-- Billing owner: `PENDING_USER`
-- Approval date: `PENDING`
-- Approved by: `PENDING`
+- Billing owner: User / billing owner
+- Approval date: `2026-05-24`
+- Approved by: User / billing owner
 
 ## C. Recommendation
 
@@ -56,9 +56,9 @@ Do not use this document as a price source. The user must verify the final price
 
 ## G. Current Status
 
-`PENDING_USER_APPROVAL`
+`APPROVED_FOR_PILOT`
 
-Do not create the Cloud SQL instance until this form is approved.
+Do not create the Cloud SQL instance until Phase 8F-Execution is explicitly approved.
 
 ## H. Approval Notes
 
@@ -68,3 +68,4 @@ Do not create the Cloud SQL instance until this form is approved.
 - Cloud SQL can create ongoing monthly cost.
 - User/billing owner must explicitly approve before Phase 8F-Execution.
 - Production-critical use should later review HA, backups, storage growth, and monitoring.
+- Approval is for the pilot-tier direction only. Exact cost must still be reviewed in Google Cloud Console during actual resource creation before confirming final billing.

@@ -43,9 +43,9 @@ def required_docs_exist(root: Path = DEPLOYMENT_DOCS) -> list[PrepCheck]:
     return [PrepCheck(f"{doc} exists", (root / doc).exists(), str(root / doc)) for doc in REQUIRED_DOCS]
 
 
-def cloud_sql_pending_approval(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
+def cloud_sql_pilot_approved(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
     text = (root / "CLOUD_SQL_COST_APPROVAL_FORM.md").read_text(encoding="utf-8")
-    return PrepCheck("Cloud SQL approval remains pending", "PENDING_USER_APPROVAL" in text)
+    return PrepCheck("Cloud SQL pilot tier approved", "APPROVED_FOR_PILOT" in text)
 
 
 def cloud_sql_recommendation_exists(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
@@ -112,7 +112,7 @@ def run_checks(root: Path = DEPLOYMENT_DOCS) -> list[PrepCheck]:
     return (
         required_docs_exist(root)
         + [
-            cloud_sql_pending_approval(root),
+            cloud_sql_pilot_approved(root),
             cloud_sql_recommendation_exists(root),
             cloud_sql_has_no_exact_final_price(root),
             decision_remains_no_go(root),

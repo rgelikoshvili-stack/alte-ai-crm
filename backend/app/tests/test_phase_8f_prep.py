@@ -10,8 +10,8 @@ def test_phase_8f_verifier_importable_and_required_docs_exist():
     assert all(check.passed for check in checks)
 
 
-def test_phase_8f_requires_pending_approval():
-    check = verify_phase_8f_prep.cloud_sql_pending_approval()
+def test_phase_8f_records_pilot_approval():
+    check = verify_phase_8f_prep.cloud_sql_pilot_approved()
 
     assert check.passed is True
 
@@ -25,7 +25,7 @@ def test_phase_8f_secret_pattern_detection(tmp_path: Path):
     docs = tmp_path / "deployment"
     docs.mkdir()
     for name in verify_phase_8f_prep.REQUIRED_DOCS:
-        content = "NO-GO_FOR_ACTUAL_DEPLOYMENT\nPENDING_USER_APPROVAL\nproject-1e145fd0-c30e-4aac-a34\nhttps://alte.edu.ge\nhttps://join.alte.edu.ge\n"
+        content = "NO-GO_FOR_ACTUAL_DEPLOYMENT\nAPPROVED_FOR_PILOT\nproject-1e145fd0-c30e-4aac-a34\nhttps://alte.edu.ge\nhttps://join.alte.edu.ge\n"
         if name == "SECRET_PREPARATION_CHECKLIST.md":
             content += "ANTHROPIC_API_KEY=sk-ant-example\n"
         (docs / name).write_text(content, encoding="utf-8")
@@ -39,7 +39,7 @@ def test_phase_8f_exact_price_detection(tmp_path: Path):
     docs = tmp_path / "deployment"
     docs.mkdir()
     form = docs / "CLOUD_SQL_COST_APPROVAL_FORM.md"
-    form.write_text("Low-cost pilot production tier\nPENDING_USER_APPROVAL\nEstimated monthly cost: $123", encoding="utf-8")
+    form.write_text("Low-cost pilot production tier\nAPPROVED_FOR_PILOT\nEstimated monthly cost: $123", encoding="utf-8")
 
     check = verify_phase_8f_prep.cloud_sql_has_no_exact_final_price(docs)
 
