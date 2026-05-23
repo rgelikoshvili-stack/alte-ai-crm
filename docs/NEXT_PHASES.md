@@ -126,6 +126,23 @@ Next step for Secret Manager execution:
 - User confirms Anthropic key readiness without sharing the value.
 - User approves the exact Secret Manager execution phase.
 
+## Phase 8F-Secret-Manager-Execution: Secret Container Creation
+
+- Secret Manager API enabled.
+- Secret containers created:
+  - `alte-db-password`
+  - `alte-jwt-secret`
+  - `alte-anthropic-api-key`
+  - `alte-database-url`
+- Secret payload versions are pending because local secret files were not present.
+- `alte-database-url` version remains pending until Cloud SQL exists.
+- No Cloud SQL, Cloud Run, Docker image, or deployment was created.
+
+Next recommended phase:
+
+- Prepare local secret files and add Secret Manager versions, or create Cloud SQL first if DATABASE_URL is required.
+- Keep `NO-GO_FOR_ACTUAL_DEPLOYMENT` until Cloud SQL, DATABASE_URL, website access, privacy/data approval, and deployment approval are complete.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -10,6 +10,8 @@ Cloud SQL pilot tier is now approved, so the next required step is secret values
 
 Secret Manager creation approval: `APPROVED_FOR_NEXT_EXECUTION`
 
+Secret Manager execution status: `SECRET_MANAGER_EXECUTION_CONTAINERS_CREATED`
+
 Use these Phase 8F-Secrets-Prep references before execution:
 
 - `SECRET_VALUES_PREPARATION_WORKSHEET.md`
@@ -25,6 +27,8 @@ Use these Phase 8F-Secrets-Prep references before execution:
 
 Status: `NOT_CREATED / PENDING_USER_GENERATION`
 
+Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
+
 - [ ] Generated locally.
 - [ ] Not pasted into chat.
 - [ ] Not committed.
@@ -33,6 +37,8 @@ Status: `NOT_CREATED / PENDING_USER_GENERATION`
 ### 2. `alte-database-url`
 
 Status: `NOT_CREATED / PENDING_CLOUD_SQL_CREATION`
+
+Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS`
 
 - [ ] Built only after Cloud SQL host/connection info is known.
 - [ ] Not committed.
@@ -46,6 +52,8 @@ postgresql+asyncpg://USER:PASSWORD@HOST:5432/alte_ai_crm
 
 Status: `NOT_CREATED / PENDING_USER_GENERATION`
 
+Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
+
 - [ ] Generated locally.
 - [ ] Long random value.
 - [ ] Not committed.
@@ -53,6 +61,8 @@ Status: `NOT_CREATED / PENDING_USER_GENERATION`
 ### 4. `alte-anthropic-api-key`
 
 Status: `NOT_CREATED / PENDING_USER_CONFIRMATION`
+
+Secret Manager status: `CONTAINER_CREATED / VERSION_PENDING`
 
 - [ ] Created in Anthropic Console.
 - [ ] If ever exposed, revoked and rotated.

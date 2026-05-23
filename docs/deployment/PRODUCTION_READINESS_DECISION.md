@@ -2,7 +2,7 @@
 
 Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot tier direction is approved, Secret preparation docs are created, and Secret Manager creation is approved for the next execution phase. Actual deployment remains blocked until Secret Manager secrets are created, Cloud SQL is created, website access, privacy approval, and explicit resource-creation approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot tier direction is approved, Secret preparation docs are created, and Secret Manager containers are created. Actual deployment remains blocked until Secret Manager versions are added, Cloud SQL is created, DATABASE_URL is finalized, website access, privacy approval, and explicit deployment approval are completed.
 
 ## Go Only If
 
@@ -61,6 +61,12 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Secret values preparation worksheet prepared.
 - Secret Manager approval gate prepared; status `APPROVED_FOR_NEXT_EXECUTION`.
 - Secret Manager creation approval recorded for the next execution phase.
+- Secret Manager execution approved and container creation completed.
+- Secret containers created/existing:
+  - `alte-db-password`: `CONTAINER_CREATED / VERSION_PENDING`
+  - `alte-jwt-secret`: `CONTAINER_CREATED / VERSION_PENDING`
+  - `alte-anthropic-api-key`: `CONTAINER_CREATED / VERSION_PENDING`
+  - `alte-database-url`: `CONTAINER_CREATED / VERSION_PENDING_UNTIL_CLOUD_SQL_EXISTS`
 - `DATABASE_URL` construction guide prepared.
 - Local secret preparation helper script prepared.
 - Production env mapping reviewed.
@@ -69,8 +75,9 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Phase 8F execution plan prepared for later explicit approval.
 - Cloud SQL creation still blocked until explicit Phase 8F-Execution approval.
 - Secret Manager execution still blocked until explicit Phase 8F-Execution approval.
-- Secret Manager secrets are not created.
+- Secret Manager versions are not created.
 - Secret values are not entered into Secret Manager.
+- `DATABASE_URL` is not finalized because Cloud SQL does not exist.
 
 ## No-Go If
 

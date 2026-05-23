@@ -17,14 +17,16 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | Cloud SQL tier/cost decision doc | Done: `CLOUD_SQL_TIER_DECISION.md`; status `PENDING_APPROVAL` |
 | Google Cloud | Cloud SQL cost approval form | Done: `CLOUD_SQL_COST_APPROVAL_FORM.md`; recommended option: Low-cost pilot production tier; status `APPROVED_FOR_PILOT` |
 | Google Cloud | Cloud SQL instance created | Not yet; requires approval |
-| Google Cloud | Secret Manager values created | Not yet; requires Phase 8F-Execution |
+| Google Cloud | Secret Manager containers created | Done: four `alte-*` secret containers created |
+| Google Cloud | Secret Manager values created | Not yet; versions pending |
 | Google Cloud | Secret Manager creation approval | Done for next execution phase: `APPROVED_FOR_NEXT_EXECUTION` |
-| Google Cloud | Secret Manager execution | Blocked until explicit Phase 8F-Execution command approval |
+| Google Cloud | Secret Manager execution | Container creation completed; payload versions pending |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
 | Google Cloud | Secret preparation checklist | Done: `SECRET_PREPARATION_CHECKLIST.md`; values not created |
 | Google Cloud | Secret values preparation worksheet | Done: `SECRET_VALUES_PREPARATION_WORKSHEET.md`; no real values |
 | Google Cloud | Secret Manager approval gate | Done: `SECRET_MANAGER_APPROVAL_GATE.md`; status `APPROVED_FOR_NEXT_EXECUTION` |
 | Google Cloud | DATABASE_URL construction guide | Done: `DATABASE_URL_CONSTRUCTION.md`; placeholders only |
+| Google Cloud | DATABASE_URL secret version | Pending until Cloud SQL exists |
 | Google Cloud | Local secret helper script | Done: `scripts/prepare_secret_values.ps1`; guidance only |
 | Security | `.env` not tracked | Done |
 | Security | No secrets in docs | Done by verifier |
@@ -53,7 +55,7 @@ Do not proceed to actual Cloud Run deployment until:
 - GitHub backup is pushed and tagged.
 - Cloud SQL tier/cost is accepted.
 - Cloud SQL cost/tier approval is explicitly confirmed by user/billing owner.
-- Secret Manager values are created without exposing secrets.
+- Secret Manager payload versions are created without exposing secrets.
 - Secret Manager Phase 8F-Execution is explicitly approved.
 - Alte website access is confirmed.
 - Data privacy approval is confirmed.
