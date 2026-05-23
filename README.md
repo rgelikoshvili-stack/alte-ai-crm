@@ -647,3 +647,32 @@ GET /diagnostics/ai
 ```
 
 The smoke script refuses placeholder keys and never prints the key. Claude still returns structured analysis only; CRM writes remain in service/business logic.
+
+## Phase 8C Production Deployment Preparation
+
+Deployment preparation files are available, but no Google Cloud deployment has been performed yet.
+
+Deployment docs:
+
+- `docs/deployment/CLOUD_RUN_DEPLOYMENT.md`
+- `docs/deployment/CLOUD_SQL_POSTGRES.md`
+- `docs/deployment/SECRET_MANAGER.md`
+- `docs/deployment/CORS_AND_WIDGET_ORIGINS.md`
+- `docs/deployment/DEPLOYMENT_CHECKLIST.md`
+
+Production startup readiness check:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.startup_check
+```
+
+Local Docker build check:
+
+```powershell
+cd C:\tmp\alte-ai-crm
+.\scripts\docker_build_check.ps1
+```
+
+The Docker image expects production secrets from Secret Manager or equivalent runtime environment configuration. Do not include `.env`, local SQLite databases, or API keys in the image.

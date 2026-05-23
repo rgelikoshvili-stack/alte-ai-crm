@@ -11,6 +11,8 @@
 
 ## Phase 8C: Production Deployment Preparation
 
+Status: prepared in repository; no real Google Cloud deployment yet.
+
 - Dockerfile review.
 - Cloud Run configuration.
 - Cloud SQL configuration.
@@ -19,7 +21,15 @@
 - Health and diagnostics checks.
 - No real deployment until explicit approval.
 
-## Phase 8D: Alte Website Embed Preparation
+## Phase 8D: Actual Cloud Run Deployment
+
+- Create/confirm Google Cloud project resources.
+- Build and push backend image.
+- Configure Cloud Run, Cloud SQL, and Secret Manager.
+- Run migrations and approved seed.
+- Verify production health and diagnostics.
+
+## Phase 8E: Staging Website Widget Embed
 
 - Backend public URL.
 - Widget public URL.
