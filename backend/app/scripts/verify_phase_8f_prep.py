@@ -38,7 +38,7 @@ def required_docs_exist(root: Path = DEPLOYMENT_DOCS) -> list[PrepCheck]:
 
 def cloud_sql_pending_approval(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:
     text = (root / "CLOUD_SQL_COST_APPROVAL_FORM.md").read_text(encoding="utf-8")
-    return PrepCheck("Cloud SQL approval remains pending", "PENDING_APPROVAL" in text)
+    return PrepCheck("Cloud SQL approval remains pending", "PENDING_USER_APPROVAL" in text)
 
 
 def decision_remains_no_go(root: Path = DEPLOYMENT_DOCS) -> PrepCheck:

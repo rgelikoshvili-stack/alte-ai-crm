@@ -15,7 +15,7 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | APIs ready to enable | Planned |
 | Google Cloud | Cloud SQL tier/cost accepted | Pending |
 | Google Cloud | Cloud SQL tier/cost decision doc | Done: `CLOUD_SQL_TIER_DECISION.md`; status `PENDING_APPROVAL` |
-| Google Cloud | Cloud SQL cost approval form | Done: `CLOUD_SQL_COST_APPROVAL_FORM.md`; status `PENDING_APPROVAL` |
+| Google Cloud | Cloud SQL cost approval form | Draft prepared: `CLOUD_SQL_COST_APPROVAL_FORM.md`; status `PENDING_USER_APPROVAL` |
 | Google Cloud | Cloud SQL instance created | Not yet; requires approval |
 | Google Cloud | Secret Manager values created | Not yet; requires approval |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
@@ -46,6 +46,7 @@ Do not proceed to actual Cloud Run deployment until:
 
 - GitHub backup is pushed and tagged.
 - Cloud SQL tier/cost is accepted.
+- Cloud SQL cost/tier approval is explicitly confirmed by user/billing owner.
 - Secret Manager values are created without exposing secrets.
 - Alte website access is confirmed.
 - Data privacy approval is confirmed.

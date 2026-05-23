@@ -11,14 +11,14 @@
 
 ## B. Tier Decision Fields
 
-- Selected tier:
-- Storage size:
-- Backup enabled: yes/no
-- High availability: yes/no
-- Estimated monthly cost:
-- Billing owner:
-- Approval date:
-- Approved by:
+- Selected tier: Smallest acceptable low-cost Cloud SQL PostgreSQL tier for pilot/MVP. Suggested placeholder: `db-f1-micro` or the current lowest available shared-core PostgreSQL tier in Google Cloud Console.
+- Storage size: Minimum practical starting storage for pilot. Suggested: 10 GB SSD or the minimum allowed by Google Cloud SQL.
+- Backup enabled: Yes for pilot, but confirm cost.
+- High availability: No for pilot/MVP. Review HA later for production-critical launch.
+- Estimated monthly cost: `PENDING_USER_REVIEW_IN_GOOGLE_CLOUD_PRICING_CALCULATOR`
+- Billing owner: `PENDING_USER`
+- Approval date: `PENDING`
+- Approved by: `PENDING`
 
 ## C. Recommendation
 
@@ -28,6 +28,14 @@ Do not use this document as a price source. The user must verify the final price
 
 ## D. Current Status
 
-`PENDING_APPROVAL`
+`PENDING_USER_APPROVAL`
 
 Do not create the Cloud SQL instance until this form is approved.
+
+## E. Approval Notes
+
+- This is not final approval.
+- Actual pricing must be checked in Google Cloud Console or Google Cloud Pricing Calculator.
+- Cloud SQL can create ongoing monthly cost.
+- User/billing owner must explicitly approve before Phase 8F-Execution.
+- Production-critical use should later review HA, backups, storage growth, and monitoring.

@@ -86,6 +86,7 @@ Next possible phase: Phase 8F-Execution - Actual Secret Manager and Cloud SQL cr
 Only after:
 
 - Cloud SQL cost/tier approved.
+- Next required user action: review Cloud SQL cost/tier draft and confirm: "Cloud SQL cost/tier approved for pilot".
 - Secret values prepared locally and not exposed.
 - User explicitly approves resource creation.
 

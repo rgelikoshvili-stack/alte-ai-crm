@@ -20,7 +20,7 @@ def test_phase_8f_secret_pattern_detection(tmp_path: Path):
     docs = tmp_path / "deployment"
     docs.mkdir()
     for name in verify_phase_8f_prep.REQUIRED_DOCS:
-        content = "NO-GO_FOR_ACTUAL_DEPLOYMENT\nPENDING_APPROVAL\nproject-1e145fd0-c30e-4aac-a34\nhttps://alte.edu.ge\nhttps://join.alte.edu.ge\n"
+        content = "NO-GO_FOR_ACTUAL_DEPLOYMENT\nPENDING_USER_APPROVAL\nproject-1e145fd0-c30e-4aac-a34\nhttps://alte.edu.ge\nhttps://join.alte.edu.ge\n"
         if name == "SECRET_PREPARATION_CHECKLIST.md":
             content += "ANTHROPIC_API_KEY=sk-ant-example\n"
         (docs / name).write_text(content, encoding="utf-8")
