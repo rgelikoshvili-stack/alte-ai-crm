@@ -8,6 +8,13 @@ Secret creation must happen only after:
 
 Cloud SQL pilot tier is now approved, so the next required step is secret values preparation and Secret Manager creation approval.
 
+Use these Phase 8F-Secrets-Prep references before execution:
+
+- `SECRET_VALUES_PREPARATION_WORKSHEET.md`
+- `SECRET_MANAGER_APPROVAL_GATE.md`
+- `DATABASE_URL_CONSTRUCTION.md`
+- `scripts/prepare_secret_values.ps1`
+
 ## Required Secrets
 
 ### 1. `alte-db-password`
@@ -48,3 +55,5 @@ postgresql+asyncpg://USER:PASSWORD@HOST:5432/alte_ai_crm
 - [ ] None pasted into chat.
 - [ ] None saved in docs.
 - [ ] None committed.
+- [ ] Secret Manager creation explicitly approved.
+- [ ] Real secret values entered only into Secret Manager or a password manager.

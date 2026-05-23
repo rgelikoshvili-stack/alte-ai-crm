@@ -9,6 +9,13 @@
 | `alte-jwt-secret` | JWT signing secret | NOT_CREATED / PENDING |
 | `alte-anthropic-api-key` | Anthropic Claude API key | NOT_CREATED / PENDING |
 
+Related Phase 8F-Secrets-Prep references:
+
+- `SECRET_VALUES_PREPARATION_WORKSHEET.md`
+- `SECRET_MANAGER_APPROVAL_GATE.md`
+- `DATABASE_URL_CONSTRUCTION.md`
+- `scripts/prepare_secret_values.ps1`
+
 ## B. Generate Values Safely
 
 ### DB Password
@@ -68,3 +75,5 @@ gcloud secrets versions list SECRET_NAME
 - `alte-database-url`: NOT_CREATED / PENDING
 - `alte-jwt-secret`: NOT_CREATED / PENDING
 - `alte-anthropic-api-key`: NOT_CREATED / PENDING
+
+Secret Manager creation is still blocked until the approval gate is explicitly closed.

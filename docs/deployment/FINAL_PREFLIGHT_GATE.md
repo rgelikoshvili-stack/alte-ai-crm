@@ -21,6 +21,10 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | Secret Manager creation | Blocked until explicit user approval |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
 | Google Cloud | Secret preparation checklist | Done: `SECRET_PREPARATION_CHECKLIST.md`; values not created |
+| Google Cloud | Secret values preparation worksheet | Done: `SECRET_VALUES_PREPARATION_WORKSHEET.md`; no real values |
+| Google Cloud | Secret Manager approval gate | Done: `SECRET_MANAGER_APPROVAL_GATE.md`; status `PENDING_APPROVAL` |
+| Google Cloud | DATABASE_URL construction guide | Done: `DATABASE_URL_CONSTRUCTION.md`; placeholders only |
+| Google Cloud | Local secret helper script | Done: `scripts/prepare_secret_values.ps1`; guidance only |
 | Security | `.env` not tracked | Done |
 | Security | No secrets in docs | Done by verifier |
 | Security | Anthropic key rotated if previously exposed | Pending owner confirmation |
@@ -49,5 +53,6 @@ Do not proceed to actual Cloud Run deployment until:
 - Cloud SQL tier/cost is accepted.
 - Cloud SQL cost/tier approval is explicitly confirmed by user/billing owner.
 - Secret Manager values are created without exposing secrets.
+- Secret Manager creation is explicitly approved.
 - Alte website access is confirmed.
 - Data privacy approval is confirmed.

@@ -15,3 +15,12 @@
 | `AI_CONFIDENCE_THRESHOLD` | Plain env var | `0.70` | Yes | No | Float between 0 and 1 | Planned |
 | `AI_MAX_TOKENS` | Plain env var | `1200` | Yes | No | Positive integer | Planned |
 | `CORS_ORIGINS` | Plain env var | `https://alte.edu.ge,https://join.alte.edu.ge` | Yes | No | No wildcard in production | Confirmed draft |
+
+## Secret Preparation References
+
+- Use `SECRET_VALUES_PREPARATION_WORKSHEET.md` to track which secret values the user must prepare locally.
+- Use `SECRET_MANAGER_APPROVAL_GATE.md` before any Secret Manager creation.
+- Use `DATABASE_URL_CONSTRUCTION.md` to build the final PostgreSQL async URL after Cloud SQL connection details are known.
+- Use `scripts/prepare_secret_values.ps1` for local guidance only. It does not create secrets or call `gcloud`.
+
+All secret-backed env vars remain pending until Secret Manager creation is explicitly approved and completed.

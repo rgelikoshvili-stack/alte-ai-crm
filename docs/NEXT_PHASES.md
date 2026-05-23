@@ -90,6 +90,26 @@ Only after:
 - Secret values prepared locally and not exposed.
 - User explicitly approves resource creation.
 
+## Phase 8F-Secrets-Prep: Secret Values Preparation Gate
+
+- Secret values preparation worksheet.
+- Secret Manager approval gate.
+- `DATABASE_URL` construction guide.
+- Local guidance-only helper script.
+- Secret preparation verifier.
+- No Secret Manager creation.
+- No Cloud SQL creation.
+- No Google Cloud resource creation.
+
+Next possible phase: Phase 8F-Execution - Secret Manager and Cloud SQL resource creation.
+
+Only after:
+
+- Secret Manager creation is explicitly approved.
+- Secret values are generated locally and not exposed.
+- Website/privacy blockers are accepted or deferred for backend-only deployment.
+- User explicitly approves actual resource creation.
+
 - Backend public URL.
 - Widget public URL.
 - CORS for `https://alte.edu.ge` and `https://join.alte.edu.ge`.

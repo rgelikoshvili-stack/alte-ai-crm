@@ -26,7 +26,10 @@ FORBIDDEN_PATTERNS = [
     re.compile(r"sk-ant-", re.IGNORECASE),
     re.compile(r"ANTHROPIC_API_KEY\s*=\s*sk-", re.IGNORECASE),
     re.compile(r"-----BEGIN (RSA |EC |OPENSSH |)PRIVATE KEY-----", re.IGNORECASE),
-    re.compile(r"postgresql\+asyncpg://(?!USER:PASSWORD@)[^:\s]+:[^@\s]+@[^/\s]+/[^\s`]+", re.IGNORECASE),
+    re.compile(
+        r"postgresql\+asyncpg://(?!USER:PASSWORD@)(?!alte_app:DB_PASSWORD@)[^:\s]+:[^@\s]+@[^/\s]+/[^\s`]+",
+        re.IGNORECASE,
+    ),
 ]
 
 

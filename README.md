@@ -750,3 +750,24 @@ python -m app.scripts.verify_phase_8f_prep
 ```
 
 Actual Cloud SQL and Secret Manager creation stays blocked until explicit approval.
+
+## Phase 8F-Secrets-Prep Secret Values Gate
+
+Phase 8F-Secrets-Prep prepares secret value handling without creating any Google Cloud resources.
+
+Docs:
+
+- `docs/deployment/SECRET_VALUES_PREPARATION_WORKSHEET.md`
+- `docs/deployment/SECRET_MANAGER_APPROVAL_GATE.md`
+- `docs/deployment/DATABASE_URL_CONSTRUCTION.md`
+- `scripts/prepare_secret_values.ps1`
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8f_secrets_prep
+```
+
+Secret Manager creation remains blocked until explicit approval. Do not paste API keys, DB passwords, JWT secrets, or real `DATABASE_URL` values into docs or chat.
