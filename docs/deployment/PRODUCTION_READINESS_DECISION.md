@@ -2,7 +2,7 @@
 
 Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, and required secret versions including DATABASE_URL are added. Actual deployment remains blocked until production migrations and seed are run, Cloud Run is deployed, website access, privacy approval, and explicit deployment approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, and production migrations/seed have completed. Actual deployment remains blocked until Cloud Run is deployed, website access, privacy approval, and explicit deployment approval are completed.
 
 ## Go Only If
 
@@ -14,7 +14,7 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - [x] Google Cloud project selected. `PROJECT_ID=project-1e145fd0-c30e-4aac-a34`.
 - [x] Billing understood. User confirmed billing is enabled.
 - [x] Cloud SQL cost/tier direction accepted for pilot. Recommended option: Low-cost pilot production tier. Exact final price still must be reviewed during actual resource creation.
-- [ ] Anthropic key created and stored in Secret Manager.
+- [x] Anthropic key created and stored in Secret Manager.
 - [x] CORS origins confirmed. `https://alte.edu.ge,https://join.alte.edu.ge`.
 - [ ] Alte website admin/developer access confirmed.
 - [x] Rollback plan documented. See `DEPLOYMENT_CHECKLIST.md` and `DEPLOYMENT_RISK_REGISTER.md`.
@@ -80,10 +80,16 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Local secret preparation helper script prepared.
 - Production env mapping reviewed.
 - Production migration/seed runbook prepared.
+- Alembic version table width correction applied: `alembic_version.version_num VARCHAR(128)`.
+- Production DB connectivity checked: `PASS`.
+- Production migrations completed against Cloud SQL: `MIGRATIONS_COMPLETED`.
+- Current Alembic revision: `006_phase_7b_knowledge_governance`.
+- Production schema verification completed.
+- Production-safe bootstrap completed: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`.
+- Production knowledge seed completed: `KNOWLEDGE_SEED_COMPLETED`.
+- Production DB seed verification completed: `PRODUCTION_DB_SEED_VERIFIED`.
 - Website/privacy approval checklist prepared.
 - Phase 8F execution plan prepared for later explicit approval.
-- Production migrations have not been run against Cloud SQL.
-- Production knowledge seed has not been run against Cloud SQL.
 - Cloud Run is not deployed.
 
 ## No-Go If

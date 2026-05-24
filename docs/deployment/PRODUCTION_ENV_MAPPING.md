@@ -23,4 +23,13 @@
 - Use `DATABASE_URL_CONSTRUCTION.md` to build the final PostgreSQL async URL after Cloud SQL connection details are known.
 - Use `scripts/prepare_secret_values.ps1` for local guidance only. It does not create secrets or call `gcloud`.
 
-All secret-backed env vars remain pending until Secret Manager creation is explicitly approved and completed.
+Secret-backed env vars have Secret Manager versions available. Plain production env vars remain to be configured during Cloud Run deployment.
+
+## Phase 8H Database Status
+
+- `DATABASE_URL` was used only from ignored local secret storage for migration and seed execution.
+- Alembic migration status: `MIGRATIONS_COMPLETED`
+- Current revision: `006_phase_7b_knowledge_governance`
+- Production-safe core bootstrap: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`
+- Knowledge seed: `KNOWLEDGE_SEED_COMPLETED`
+- Cloud Run env var mapping is still not deployed.

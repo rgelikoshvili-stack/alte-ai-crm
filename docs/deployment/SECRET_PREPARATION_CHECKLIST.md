@@ -42,6 +42,8 @@ Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 
 Cloud SQL status: `CLOUD_SQL_INSTANCE_CREATED / DATABASE_CREATED / DB_USER_CREATED`
 
+Phase 8H usage status: `DATABASE_URL_USED_FOR_MIGRATION_AND_SEED_WITHOUT_PRINTING`
+
 - [ ] Built only after Cloud SQL host/connection info is known.
 - [ ] Not committed.
 - [ ] Uses PostgreSQL async format:
@@ -82,3 +84,11 @@ Secret Manager status: `CONTAINER_CREATED / VERSION_ADDED`
 - [ ] Secret Manager creation explicitly approved.
 - [ ] Local secret values preparation completed, if using the helper script.
 - [ ] Real secret values entered only into Secret Manager or a password manager.
+
+## Phase 8H Safety Status
+
+- `DATABASE_URL` secret value was not printed.
+- DB password was not printed.
+- Secret payloads were not printed.
+- Production migrations completed after the Alembic version table width correction.
+- Production-safe bootstrap and knowledge seed completed.

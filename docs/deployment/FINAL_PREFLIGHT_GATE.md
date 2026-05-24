@@ -42,6 +42,11 @@ Keep `NO-GO` until every required item below is checked.
 | Application | `startup_check` passes with production-like env | Pending |
 | Application | Docker build check planned/pass | Planned, not run in final preflight |
 | Application | Claude live validation passed | Done |
+| Application | Alembic version table width correction | Done: `alembic_version.version_num VARCHAR(128)` |
+| Application | Production migrations against Cloud SQL | Done: `MIGRATIONS_COMPLETED`, current revision `006_phase_7b_knowledge_governance` |
+| Application | Production-safe core bootstrap | Done: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`; no fake customers/leads/messages |
+| Application | Knowledge seed against Cloud SQL | Done: `KNOWLEDGE_SEED_COMPLETED` |
+| Application | Production DB seed verification | Done: `PRODUCTION_DB_SEED_VERIFIED` |
 | Application | `AI_PROVIDER=mock` for tests | Required |
 | Application | `AI_PROVIDER=claude` for production | Planned |
 | Website | `alte.edu.ge` CORS confirmed | Done |
@@ -60,7 +65,7 @@ Do not proceed to actual Cloud Run deployment until:
 - Cloud SQL cost/tier approval is explicitly confirmed by user/billing owner.
 - Secret Manager payload versions are created without exposing secrets.
 - Secret Manager Phase 8F-Execution is explicitly approved.
-- Production migrations are run against Cloud SQL.
-- Production seed is run against Cloud SQL.
+- Production migrations are run against Cloud SQL. Done in Phase 8H-Correction.
+- Production seed is run against Cloud SQL. Done in Phase 8H-Correction.
 - Alte website access is confirmed.
 - Data privacy approval is confirmed.

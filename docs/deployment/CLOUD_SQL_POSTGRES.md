@@ -63,6 +63,17 @@ Run the approved local knowledge seed:
 python -m app.scripts.seed_alte_knowledge
 ```
 
+## Phase 8H Migration And Seed Status
+
+- DB connectivity checked: `PASS`
+- Alembic version table width correction applied: `alembic_version.version_num VARCHAR(128)`
+- Alembic migration status: `MIGRATIONS_COMPLETED`
+- Current revision: `006_phase_7b_knowledge_governance`
+- Production-safe bootstrap status: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`
+- Knowledge seed status: `KNOWLEDGE_SEED_COMPLETED`
+- Production DB seed verification: `PRODUCTION_DB_SEED_VERIFIED`
+- Fake customers/leads/conversations/messages were not seeded.
+
 ## Warnings
 
 - Never use SQLite in production.

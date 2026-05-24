@@ -806,3 +806,30 @@ Status:
 - `alte-database-url` secret version: added without documenting the URL
 
 Cloud Run is still not deployed, Docker images are not pushed, and production migrations/seed are still pending.
+
+## Phase 8H Production Migration And Seed
+
+Phase 8H ran the approved production migration and seed flow against the Cloud SQL PostgreSQL pilot database.
+
+Status:
+
+- Production DB connectivity: `PASS`
+- Alembic version table width correction: `alembic_version.version_num VARCHAR(128)`
+- Alembic migration: `MIGRATIONS_COMPLETED`
+- Current revision: `006_phase_7b_knowledge_governance`
+- Production schema verification: `PASS`
+- Production-safe core bootstrap: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`
+- Knowledge seed: `KNOWLEDGE_SEED_COMPLETED`
+- Production DB seed verification: `PRODUCTION_DB_SEED_VERIFIED`
+
+Production-safe bootstrap created only departments, the admissions pipeline, and pipeline stages. It did not create fake customers, fake leads, fake conversations, or fake messages.
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8h_migration_seed_docs
+```
+
+Cloud Run is still not deployed, Docker images are not pushed, and the deployment decision remains `NO-GO_FOR_ACTUAL_DEPLOYMENT` until website access, privacy/data approval, and explicit Cloud Run deployment approval are complete.
