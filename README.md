@@ -1082,4 +1082,39 @@ Verifier:
 python -m app.scripts.verify_phase_8o_standalone_chatbot
 ```
 
+## Phase 8P Standalone API Smoke
+
+Phase 8P ran the safe standalone API smoke against the production backend without the contact-flow flag.
+
+Result:
+
+- `/health`: PASS
+- `/version`: PASS
+- `/diagnostics/ai`: PASS
+- KA greeting: PASS
+- KA finance question: PASS, no exact invented price
+- EN medicine/international question: PASS
+- Contact-flow test: not run
+- Contact details submitted: no
+- Intentional lead/task creation: no
+- Observed side effect: the medicine/international admission message triggered existing backend business rules to create a lead/task.
+
+Production test knowledge seed remains pending approval:
+
+```text
+PENDING_APPROVAL
+```
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL
+```
+
+Verifier:
+
+```powershell
+python -m app.scripts.verify_phase_8p_api_smoke_docs
+```
+
 The page uses the production backend. Do not enter real student data unless production test records are approved.

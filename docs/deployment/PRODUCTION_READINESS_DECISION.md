@@ -1,12 +1,13 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED`
+Current decision: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, and the full standalone chatbot test site plus required test knowledge package are prepared. Full production launch remains blocked until website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, and safe standalone API smoke has passed. Full production launch remains blocked until test knowledge seed approval, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
 Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL` remains true.
+Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED` remains true.
 
 ## Go Only If
 
@@ -143,6 +144,16 @@ Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSI
   - API smoke command: `python -m app.scripts.standalone_chatbot_api_smoke`
   - standalone test runbooks prepared
 - Production seed was not run in Phase 8O.
+- Phase 8P safe standalone API smoke completed:
+  - `/health`, `/version`, `/diagnostics/ai`: PASS
+  - `alte.edu.ge` / `ka` greeting: PASS
+  - `alte.edu.ge` / `ka` finance question: PASS, no exact invented price, handover true
+  - `join.alte.edu.ge` / `en` medicine/international question: PASS, routed to international admissions
+  - contact-flow flag was not used
+  - no phone/email/contact details were submitted
+  - no lead/task was intentionally created
+  - observed side effect: medicine/international admission message triggered existing backend business rules to create a lead/task
+- Production test knowledge seed approval gate created: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`; status `PENDING_APPROVAL`.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers
@@ -153,6 +164,7 @@ Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSI
 - Final widget asset URL pending.
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Official content/privacy review pending before public launch.
+- Production test knowledge seed pending approval.
 - Full public launch approval pending.
 
 ## No-Go If

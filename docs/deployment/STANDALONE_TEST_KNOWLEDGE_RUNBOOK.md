@@ -38,6 +38,24 @@ Do not run this seed against production Cloud SQL unless the content has been re
 
 The seed script refuses production mode unless an approval flag is provided.
 
+Current production seed approval status:
+
+```text
+PENDING_APPROVAL
+```
+
+Required approval gate:
+
+```text
+TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md
+```
+
+Required explicit phrase:
+
+```text
+Approve Phase 8Q-Execution for production test knowledge seed
+```
+
 ## Review Guidance
 
 Review seeded snippets in the knowledge admin/review workflow before treating them as final official answers.

@@ -14,19 +14,28 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 
 ## Safe Test Cases
 
-- [ ] KA greeting: `გამარჯობა`
+- [x] KA greeting: `გამარჯობა`
 - [ ] EN greeting: `Hello`
 - [ ] General info no lead.
 - [ ] Admissions interest without contact asks for contact and does not create a lead.
 - [ ] Admissions interest with controlled test contact creates customer/lead/task only if explicitly approved.
-- [ ] Finance exact price question does not invent a price.
+- [x] Finance exact price question does not invent a price.
 - [ ] Deadline question does not invent a deadline.
-- [ ] Medicine from India routes as international/medicine.
+- [x] Medicine from India routes as international/medicine.
 - [ ] Human request creates handover/task only if controlled side effects are approved.
 - [ ] `sourceDomain=alte.edu.ge` behavior.
 - [ ] `sourceDomain=join.alte.edu.ge` behavior.
 - [ ] No secrets visible in browser console/network.
 - [ ] Consent text visible in KA and EN.
+
+## Phase 8P API Smoke Result
+
+- Backend/API smoke passed without browser CORS.
+- Contact-flow flag was not used.
+- No phone/email/contact details were submitted.
+- No lead/task was intentionally created.
+- Observed side effect: the medicine/international admission message triggered existing backend business rules to create a lead/task.
+- Production test knowledge seed was not run.
 
 ## CORS Caveat
 

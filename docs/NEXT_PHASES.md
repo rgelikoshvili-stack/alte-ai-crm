@@ -337,6 +337,23 @@ Next recommended phase:
 - Review and approve required test knowledge, then run the seed in the intended environment.
 - Continue real-site embed only after website/privacy approval and final widget asset URL are ready.
 
+## Phase 8P: Standalone Chatbot Safe API Smoke And Seed Approval Gate
+
+- Safe standalone API smoke completed against the production backend.
+- Contact-flow flag was not used.
+- No phone/email/contact details were submitted.
+- No lead/task was intentionally created.
+- Observed side effect: the safe medicine/international admissions message triggered existing backend business rules to create a lead/task.
+- Production test knowledge seed was not run.
+- Test knowledge seed approval gate created: `docs/deployment/TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`
+- Smoke result recorded: `docs/deployment/STANDALONE_CHATBOT_API_SMOKE_RESULT.md`
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL`
+
+Next recommended phase:
+
+- Phase 8Q-Execution: production test knowledge seed only after the user explicitly says:
+  `Approve Phase 8Q-Execution for production test knowledge seed`
+
 Only after:
 
 - Secret Manager creation is explicitly approved.
