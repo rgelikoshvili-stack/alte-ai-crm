@@ -1328,3 +1328,21 @@ BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW
 ```
 
 Public launch remains blocked pending reviewer decisions, privacy approval, final widget asset hosting, real site embed, and real-domain browser smoke.
+
+## Phase 8Y Finance No-Contact Guard
+
+The Phase 8W smoke found a tuition/finance no-contact lead bug: a tuition question without phone/email returned `should_create_lead=true` even though no lead/task IDs were created.
+
+The service-layer guard is fixed locally:
+
+- finance/tuition/scholarship/deadline questions without phone/email force `should_create_lead=false`
+- no customer, lead, or task is created for no-contact finance information requests
+- phone/email is not forced for pure information finance questions
+- sensitive finance content remains `review_required=true`
+- production redeploy required before this behavior reaches Cloud Run
+
+Decision:
+
+```text
+BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY
+```

@@ -219,6 +219,12 @@ Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED
   - review-required records: 379
   - sensitive official facts remain review-required and are not public-approved automatically
   - decision state: `BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW`
+- Phase 8Y finance no-contact lead guard fixed locally:
+  - tuition/finance no-contact lead bug found in Phase 8W
+  - finance/tuition/scholarship/deadline information questions without phone/email now force `should_create_lead=false`
+  - no customer/lead/task is created for no-contact finance information requests
+  - production redeploy required before Cloud Run behavior changes
+  - decision state: `BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY`
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

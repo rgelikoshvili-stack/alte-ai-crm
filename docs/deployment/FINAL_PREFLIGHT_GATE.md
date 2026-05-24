@@ -118,6 +118,7 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
 | Website | Alte study docs Knowledge Base import | Done: copied local study docs, normalized 11 records, imported 11 sources / 11 snippets into Knowledge Base; sensitive records remain review-required |
 | Website | Full local Alte KB import | Done: copied local full KB/prototype evidence, normalized 647 records, imported 240 sources and 645 snippets into Knowledge Base; 379 sensitive records remain review-required |
 | Website | Production knowledge smoke after study docs | Needs review: `22 passed`, `1 failed`; tuition no-contact response returned `should_create_lead=true` with no lead/task IDs |
+| Website | Finance no-contact lead guard | Code fixed locally: finance/tuition/scholarship/deadline info questions without phone/email force `should_create_lead=false`; production redeploy required |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

@@ -95,3 +95,18 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 8Y Follow-Up
+
+The tuition/finance no-contact lead bug from this smoke result has been fixed locally in the service layer.
+
+- finance/tuition/scholarship/deadline questions without phone/email now force `should_create_lead=false`
+- no customer/lead/task is created for no-contact finance information requests
+- sensitive finance content remains review-required and conservative
+- production redeploy required before Cloud Run behavior changes
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY
+```

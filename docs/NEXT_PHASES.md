@@ -530,6 +530,20 @@ Next recommended phase:
 
 - Have a human reviewer fill `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`, then apply official decisions only through the content review flow.
 
+## Phase 8Y: Finance No-Contact Guard
+
+- Tuition/finance no-contact lead bug found in Phase 8W.
+- Service-layer guard fixed locally:
+  - finance/tuition/scholarship/deadline information questions without phone/email return `should_create_lead=false`
+  - no customer/lead/task is created
+  - sensitive finance content remains review-required
+- Production redeploy required before Cloud Run behavior changes.
+- Decision state: `BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY`
+
+Next recommended phase:
+
+- Build and deploy a new Cloud Run revision with the finance no-contact guard, then rerun safe production knowledge smoke.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -143,6 +143,15 @@ def assert_case(case: dict[str, str], payload: dict[str, Any]) -> list[SmokeAsse
     )
 
     if case["kind"] == "tuition":
+        assertions.append(
+            SmokeAssertion(
+                "tuition no-contact lead guard",
+                preview["should_create_lead"] is not True
+                and preview["created_lead_id"] is None
+                and preview["created_task_id"] is None,
+                json.dumps(preview, ensure_ascii=False, sort_keys=True),
+            )
+        )
         conservative = not has_exact_price(reply) and has_consultation_language(reply)
         assertions.append(
             SmokeAssertion(

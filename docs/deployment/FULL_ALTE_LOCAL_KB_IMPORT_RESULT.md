@@ -82,3 +82,16 @@ This import makes the uploaded/study KB available to the application Knowledge B
 - DATABASE_URL not printed.
 - `.env` and `.local-secrets` not committed.
 - Bridge Hub not touched.
+
+## Phase 8Y Finance Guard Follow-Up
+
+After this import, production smoke still showed a tuition/finance no-contact lead bug: a tuition question without phone/email returned `should_create_lead=true` while no lead/task IDs were created.
+
+The service-layer guard is fixed locally:
+
+- finance/tuition/scholarship/deadline information questions without phone/email force `should_create_lead=false`
+- no customer/lead/task is created for no-contact finance information requests
+- sensitive finance facts remain `review_required=true`
+- production redeploy required before Cloud Run behavior changes
+
+Decision state: `BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY`

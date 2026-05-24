@@ -25,6 +25,8 @@ from app.services.knowledge_service import search_knowledge_snippets
 
 CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "international_admission", "medicine_admission"}
 CONTACT_FIELD = "phone_or_email"
+INFO_ONLY_NO_CONTACT_INTENTS = {"finance_question", "deadline_question"}
+INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS = {"tuition_fee", "scholarship", "schedule"}
 
 
 async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> ChatSessionStartResponse:
@@ -104,6 +106,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
     apply_no_contact_lead_guard(analysis)
+    apply_info_only_no_contact_guard(analysis)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -380,6 +383,23 @@ def apply_no_contact_lead_guard(analysis: AIAnalysisResult) -> None:
         analysis.missing_fields.append("first_name")
     analysis.qualification.recommended_next_action = "ask_contact_details"
     analysis.reply = ensure_contact_request_reply(analysis)
+
+
+def apply_info_only_no_contact_guard(analysis: AIAnalysisResult) -> None:
+    """Keep finance/deadline information requests from surfacing lead intent without contact."""
+    if has_contact(analysis) or not is_info_only_no_contact_question(analysis):
+        return
+    analysis.should_create_lead = False
+    analysis.missing_fields = [field for field in analysis.missing_fields if field != CONTACT_FIELD]
+    if analysis.qualification.recommended_next_action in {"ask_phone_or_email", "create_follow_up_task"}:
+        analysis.qualification.recommended_next_action = "answer_or_handover_without_lead"
+
+
+def is_info_only_no_contact_question(analysis: AIAnalysisResult) -> bool:
+    return analysis.intent in INFO_ONLY_NO_CONTACT_INTENTS or (
+        analysis.qualification.intent in INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS
+        and analysis.intent not in CONTACT_GATED_LEAD_INTENTS
+    )
 
 
 def ensure_contact_request_reply(analysis: AIAnalysisResult) -> str:
