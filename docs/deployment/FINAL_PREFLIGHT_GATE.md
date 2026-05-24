@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
+Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 
@@ -81,6 +81,10 @@ Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` rem
 | Website | Standalone demo README | Done: `widget/STANDALONE_PRODUCTION_DEMO.md` |
 | Website | Transfer package | Done: `WIDGET_TRANSFER_TO_ALTE_SITE.md` |
 | Website | Standalone smoke checklist | Done: `STANDALONE_WIDGET_SMOKE_CHECKLIST.md` |
+| Website | Standalone backend/API smoke | Done: local page `200`, widget asset `200`, backend `/health`, `/version`, `/diagnostics/ai` `200`, safe chat API PASS for `alte.edu.ge` / `ka` and `join.alte.edu.ge` / `en` |
+| Website | Production domain CORS preflight | Done: `https://alte.edu.ge` PASS, `https://join.alte.edu.ge` PASS |
+| Website | Localhost browser CORS | Blocked as expected: `http://127.0.0.1:5500` FAIL `400`; `LOCALHOST_CORS_NOT_APPROVED_FOR_PRODUCTION` |
+| Website | Real-domain browser widget smoke | Pending |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

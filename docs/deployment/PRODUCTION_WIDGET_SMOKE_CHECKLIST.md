@@ -18,16 +18,21 @@ Do not create production test leads unless the owner approves test records.
 
 ## A. Staging / Test Page Smoke
 
-- [ ] Open `widget/standalone-production-demo.html` locally for standalone sandbox testing.
+- [x] Open `widget/standalone-production-demo.html` locally for standalone sandbox testing.
 - [ ] Open `widget/production-embed-test.html` locally or on staging.
 - [ ] Verify chat bubble appears.
 - [ ] Verify widget opens and closes.
 - [ ] Verify language toggle works.
-- [ ] Verify session starts.
-- [ ] Verify reply from Cloud Run.
-- [ ] Verify no CORS error.
+- [x] Verify backend API session starts outside browser CORS.
+- [x] Verify backend API reply from Cloud Run outside browser CORS.
+- [x] Verify production endpoint `/health: 200`.
+- [x] Verify production endpoint `/version: 200`.
+- [x] Verify production endpoint `/diagnostics/ai: 200`; Claude enabled; no secrets exposed.
+- [x] Verify `https://alte.edu.ge` CORS preflight PASS.
+- [x] Verify `https://join.alte.edu.ge` CORS preflight PASS.
+- [x] Verify localhost browser CORS is blocked as expected: `http://127.0.0.1:5500` preflight FAIL `400`.
 - [ ] Verify no secrets appear in browser console.
-- [ ] Verify consent text is visible.
+- [x] Verify consent text is visible in KA and EN.
 - [ ] Verify `alte.edu.ge` source domain mode.
 - [ ] Verify `join.alte.edu.ge` source domain mode.
 
@@ -86,4 +91,8 @@ Only after website/privacy approval.
 - Privacy/data approval: `PENDING`
 - Actual website widget embed: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
 - Production widget smoke: `PENDING`
-- Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
+- Standalone backend/API smoke: `PASSED`
+- Production domain CORS: `PASSED`
+- Localhost browser CORS: `BLOCKED_AS_EXPECTED`
+- Real-domain browser widget smoke: `PENDING`
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`

@@ -280,6 +280,26 @@ Next recommended phase:
 
 - Phase 8M: run standalone smoke, then record website/privacy approval and final asset URL before any real website embed.
 
+## Phase 8M-CORS-Decision-Record: Standalone Widget Smoke CORS Decision
+
+- Standalone static demo page returned `200`.
+- Versioned widget asset returned `200`.
+- Production backend `/health`, `/version`, and `/diagnostics/ai` returned `200`.
+- Claude diagnostics passed with no secrets exposed.
+- Backend API safe chat smoke passed for:
+  - `alte.edu.ge` / `ka`
+  - `join.alte.edu.ge` / `en`
+- Production CORS preflight passed for:
+  - `https://alte.edu.ge`
+  - `https://join.alte.edu.ge`
+- Localhost browser CORS failed as expected for `http://127.0.0.1:5500` because localhost is not in production CORS.
+- Localhost remains not approved for production CORS: `LOCALHOST_CORS_NOT_APPROVED_FOR_PRODUCTION`.
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`.
+
+Next recommended phase:
+
+- Phase 8N: real-domain staging/hidden-page widget smoke after website admin/developer access and privacy/data approval.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

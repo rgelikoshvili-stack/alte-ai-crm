@@ -966,4 +966,44 @@ cd C:\tmp\alte-ai-crm\backend
 python -m app.scripts.verify_phase_8l_standalone_widget
 ```
 
+## Phase 8M Standalone Widget CORS Smoke Decision
+
+Phase 8M records the standalone widget smoke result without changing production CORS or redeploying Cloud Run.
+
+Results:
+
+- Local static demo page: `200`
+- Widget JS asset: `200`
+- Production `/health`: `200`
+- Production `/version`: `200`
+- Production `/diagnostics/ai`: `200`, Claude enabled, no secrets exposed
+- Backend API safe chat smoke:
+  - `alte.edu.ge` / `ka`: PASS
+  - `join.alte.edu.ge` / `en`: PASS
+- Production CORS:
+  - `https://alte.edu.ge`: PASS
+  - `https://join.alte.edu.ge`: PASS
+- Localhost browser CORS:
+  - `http://127.0.0.1:5500`: blocked as expected
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE
+```
+
+Localhost is not approved for production CORS by default:
+
+```text
+LOCALHOST_CORS_NOT_APPROVED_FOR_PRODUCTION
+```
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8m_cors_decision
+```
+
 The page uses the production backend. Do not enter real student data unless production test records are approved.

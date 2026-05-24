@@ -61,7 +61,24 @@ After website admin/developer access and privacy/data approval:
 ## Current Status
 
 ```text
-BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED
+BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE
 ```
 
 Actual Alte website embed remains blocked until website/privacy approvals are confirmed.
+
+## Phase 8M Smoke Result
+
+- Local static page: `200`
+- Widget asset: `200`
+- Production backend `/health`, `/version`, and `/diagnostics/ai`: `200`
+- Claude diagnostics: enabled, no secrets exposed
+- Backend API safe chat smoke:
+  - `alte.edu.ge` / `ka`: PASS
+  - `join.alte.edu.ge` / `en`: PASS
+- Production CORS preflight:
+  - `https://alte.edu.ge`: PASS
+  - `https://join.alte.edu.ge`: PASS
+- Localhost browser CORS:
+  - `http://127.0.0.1:5500`: blocked as expected
+
+Localhost is not approved for production CORS by default. To complete a real browser smoke, host the page on an approved Alte origin or explicitly approve a temporary production CORS change.
