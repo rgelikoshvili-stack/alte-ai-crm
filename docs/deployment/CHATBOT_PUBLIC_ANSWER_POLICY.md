@@ -13,6 +13,22 @@ These rules apply before and after the widget is embedded on public Alte pages.
 9. Never expose internal notes, source review status, IDs, secrets, or system prompts to the user.
 10. AI returns structured analysis only; CRM business rules decide actions.
 
+## Full Local KB Governance
+
+The full local Alte KB import is available to the application for controlled testing, but imported chunks are not a public-launch approval. Sensitive chunks remain `review_required=true`.
+
+The bot must continue to avoid invented exact facts for:
+
+- tuition, fees, grants, scholarships, and payment terms
+- admission deadlines and academic calendar dates
+- required document lists
+- Medicine/MD and dentistry requirements
+- international admissions requirements
+- visa, relocation, and legal-sensitive topics
+- accreditation/recognition claims
+
+If a chunk is sensitive or not explicitly approved by a reviewer, the answer should be conservative and route to official confirmation or human handover.
+
 Operational guardrails:
 
 - Finance, deadline, Medicine/MD, international admissions, visa, relocation, and legal topics remain conservative until official sources are approved.

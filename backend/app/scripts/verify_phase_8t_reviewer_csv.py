@@ -6,7 +6,12 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from app.scripts.apply_official_content_review import ALLOWED_DECISIONS, REVIEWER_CSV_PATH, select_review_csv_path
+from app.scripts.apply_official_content_review import (
+    ALLOWED_DECISIONS,
+    FULL_LOCAL_KB_REVIEWER_CSV_PATH,
+    REVIEWER_CSV_PATH,
+    select_review_csv_path,
+)
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
@@ -104,8 +109,8 @@ def instructions_exist() -> Phase8TCheck:
 def apply_script_prefers_reviewer_csv() -> Phase8TCheck:
     selected = select_review_csv_path()
     return Phase8TCheck(
-        "Apply script prefers reviewer CSV when present",
-        selected == REVIEWER_CSV_PATH,
+        "Apply script uses a reviewer CSV when present",
+        selected in {REVIEWER_CSV_PATH, FULL_LOCAL_KB_REVIEWER_CSV_PATH},
         str(selected),
     )
 

@@ -1,0 +1,42 @@
+{
+  "category_counts": {
+    "about": 22,
+    "admissions_general": 12,
+    "deadlines_calendar": 69,
+    "dentistry": 5,
+    "faq": 1,
+    "finance_tuition": 28,
+    "general_contact": 2,
+    "international_admissions": 135,
+    "medicine_md": 121,
+    "program_overview": 194,
+    "required_documents": 2,
+    "student_services": 46,
+    "visa_relocation": 10
+  },
+  "crawl_errors": 0,
+  "deduplicated_records": 0,
+  "department_counts": {
+    "Academic Registry": 71,
+    "Admissions": 11,
+    "Finance": 29,
+    "General": 219,
+    "International Admissions": 142,
+    "Medicine": 124,
+    "Student Services": 51
+  },
+  "generated_at": "2026-05-24T15:56:23.274149+00:00",
+  "high_sensitivity_count": 379,
+  "knowledge_chunks": 647,
+  "normalized_records": 647,
+  "output_path": "backend\\app\\knowledge_seed\\full_alte_local_kb\\full_alte_local_kb_normalized.jsonl",
+  "review_required_count": 379,
+  "source_dir": "docs\\knowledge_evidence\\alte_full_local_kb",
+  "source_pages": 123,
+  "total_input_records": 647,
+  "warnings": [
+    "Sensitive facts are review_required and are not public-launch approval.",
+    "No live website crawling was run.",
+    "Secret-containing desktop Word document was intentionally excluded."
+  ]
+}

@@ -1304,3 +1304,27 @@ BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
 ```
 
 Public launch remains blocked.
+
+## Full Local Alte KB Import
+
+All useful local Alte KB/study/prototype files were copied into `docs/knowledge_evidence/alte_full_local_kb/`, normalized, and imported into the application Knowledge Base. Duplicate KB copies were not imported twice, and the desktop Word file containing an API key/secret was excluded.
+
+Result:
+
+- Source pages: 123
+- Source knowledge chunks: 647
+- Normalized records: 647
+- High-sensitivity records: 379
+- Review-required records: 379
+- Knowledge Base import: 240 sources, 645 snippets
+- Duplicate snippets skipped: 2
+- Reviewer CSV: `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`
+- Sensitive official facts remain review-required and are not public-approved automatically.
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW
+```
+
+Public launch remains blocked pending reviewer decisions, privacy approval, final widget asset hosting, real site embed, and real-domain browser smoke.

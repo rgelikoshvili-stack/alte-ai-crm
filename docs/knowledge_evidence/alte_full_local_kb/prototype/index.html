@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ka">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alte AI Assistant Prototype</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="site-shell">
+      <nav class="topbar" aria-label="Demo navigation">
+        <div class="brand">
+          <span class="brand-mark">A</span>
+          <span>Alte University</span>
+        </div>
+        <div class="nav-links">
+          <span>მიღება</span>
+          <span>სწავლა</span>
+          <span>სტუდენტებისთვის</span>
+          <span>კონტაქტი</span>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">AI admissions assistant demo</p>
+          <h1>ალტეს ჩატბოტი, რომელიც აბიტურიენტს სწრაფად მიიყვანს სწორ პასუხამდე.</h1>
+          <p class="lead">
+            პროტოტიპი აჩვენებს როგორ იმუშავებს website chat widget:
+            პროგრამების პასუხები, მიღების ბილიკი, contact capture და human handover.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <button class="chat-launcher" id="chatLauncher" aria-label="Open Alte assistant">
+      <span class="chat-launcher-dot"></span>
+      <span>Chat</span>
+    </button>
+
+    <section class="chat-widget is-open" id="chatWidget" aria-label="Alte AI assistant">
+      <header class="chat-header">
+        <div class="assistant-avatar">A</div>
+        <div>
+          <h2>Alte Assistant</h2>
+          <p>პროგრამები, მიღება, დაფინანსება</p>
+        </div>
+        <div class="header-actions">
+          <button class="ghost-btn" id="languageToggle" type="button">EN</button>
+          <button class="icon-btn" id="closeChat" type="button" aria-label="Close chat">x</button>
+        </div>
+      </header>
+
+      <div class="trust-row">
+        <span></span>
+        პასუხები მოდის Alte-ს ოფიციალური გვერდებიდან
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite"></div>
+
+      <div class="quick-replies" id="quickReplies"></div>
+
+      <form class="composer" id="composer">
+        <input
+          id="messageInput"
+          autocomplete="off"
+          placeholder="მკითხე პროგრამაზე, მიღებაზე ან დაფინანსებაზე..."
+          aria-label="Message"
+        />
+        <button type="submit">გაგზავნა</button>
+      </form>
+    </section>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

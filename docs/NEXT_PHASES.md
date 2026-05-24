@@ -509,6 +509,27 @@ Next recommended phase:
 
 - Fix or adjust the finance/tuition no-contact `should_create_lead` behavior, then redeploy and rerun Phase 8W smoke.
 
+## Full Local Alte KB Import
+
+- Evidence folder: `docs/knowledge_evidence/alte_full_local_kb/`
+- Normalized seed: `backend/app/knowledge_seed/full_alte_local_kb/full_alte_local_kb_normalized.jsonl`
+- Reviewer queue: `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`
+- Production Knowledge Base import completed:
+  - source pages: 123
+  - source chunks: 647
+  - normalized records: 647
+  - sources created/updated into app KB: 240 created, 390 updated
+  - snippets created: 645
+  - duplicate snippets skipped: 2
+  - high-sensitivity records: 379
+  - review-required records: 379
+- Sensitive facts remain review-required and are not final public approval.
+- Decision state: `BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW`
+
+Next recommended phase:
+
+- Have a human reviewer fill `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`, then apply official decisions only through the content review flow.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -25,7 +25,10 @@ def test_phase_8t_decision_column_not_prefilled_from_recommended_action():
 
 
 def test_phase_8t_apply_script_chooses_reviewer_csv_if_present():
-    assert apply_official_content_review.select_review_csv_path() == apply_official_content_review.REVIEWER_CSV_PATH
+    assert apply_official_content_review.select_review_csv_path() in {
+        apply_official_content_review.REVIEWER_CSV_PATH,
+        apply_official_content_review.FULL_LOCAL_KB_REVIEWER_CSV_PATH,
+    }
     assert verify_phase_8t_reviewer_csv.apply_script_prefers_reviewer_csv().passed is True
 
 

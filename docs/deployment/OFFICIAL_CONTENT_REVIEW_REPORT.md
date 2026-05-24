@@ -42,6 +42,20 @@ The chatbot must not invent tuition prices, admission deadlines, official docume
 
 ```text
 OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
+
+## Full Local KB Import Evidence
+
+The full local Alte KB package was imported into the application Knowledge Base for controlled testing and review:
+
+- Evidence folder: `docs/knowledge_evidence/alte_full_local_kb/`
+- Normalized seed: `backend/app/knowledge_seed/full_alte_local_kb/full_alte_local_kb_normalized.jsonl`
+- Reviewer queue: `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`
+- Source pages: 123
+- Knowledge chunks: 647
+- High-sensitivity records: 379
+- Review-required records: 379
+
+This import does not approve public launch. Tuition, deadlines, grants, official requirements, required documents, Medicine/MD, international admissions, visa/relocation/legal, and accreditation/recognition content must remain conservative until human reviewer decisions are applied.
 ```
 
 ## Review Queue Export

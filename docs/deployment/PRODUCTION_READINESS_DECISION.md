@@ -209,6 +209,16 @@ Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED
   - production Knowledge Base import: `sources_created=11`, `snippets_created=11`
   - sensitive records remain `review_required=true`
   - decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW`
+- Full local Alte KB import completed:
+  - evidence copied to `docs/knowledge_evidence/alte_full_local_kb/`
+  - normalized seed: `backend/app/knowledge_seed/full_alte_local_kb/full_alte_local_kb_normalized.jsonl`
+  - source pages: 123
+  - knowledge chunks: 647
+  - production Knowledge Base import: 240 sources created, 390 sources updated, 645 snippets created, 2 duplicate snippets skipped
+  - high-sensitivity records: 379
+  - review-required records: 379
+  - sensitive official facts remain review-required and are not public-approved automatically
+  - decision state: `BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW`
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

@@ -18,6 +18,8 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_ROOT = BACKEND_ROOT.parent
 CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue.csv"
 REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue_for_review.csv"
+EVIDENCE_REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue_for_review_with_evidence.csv"
+FULL_LOCAL_KB_REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "full_alte_local_kb_reviewer_decision_queue.csv"
 
 ALLOWED_DECISIONS = {"APPROVE", "REWRITE", "ARCHIVE", "HANDOVER_ONLY", "NEEDS_OFFICIAL_SOURCE"}
 SENSITIVE_CATEGORIES = {
@@ -63,7 +65,15 @@ def reviewer_decision_column_present(csv_path: Path = CSV_PATH) -> bool:
 def select_review_csv_path(
     reviewer_csv_path: Path = REVIEWER_CSV_PATH, fallback_csv_path: Path = CSV_PATH
 ) -> Path:
-    return reviewer_csv_path if reviewer_csv_path.exists() else fallback_csv_path
+    for path in [
+        FULL_LOCAL_KB_REVIEWER_CSV_PATH,
+        EVIDENCE_REVIEWER_CSV_PATH,
+        reviewer_csv_path,
+        fallback_csv_path,
+    ]:
+        if path.exists():
+            return path
+    return fallback_csv_path
 
 
 def load_review_rows(csv_path: Path | None = None) -> list[ReviewRow]:

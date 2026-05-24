@@ -1,0 +1,140 @@
+# Alte chatbot knowledge-base index
+
+ეს ფაილი არის წყაროების ინდექსი chatbot knowledge-base-ისთვის. სრული chunk-ები წერია `alte_knowledge_base_ka.jsonl`-ში.
+
+- წყარო გვერდები: 123
+- knowledge chunks: 647
+- crawl errors: 0
+
+## Answering policy
+
+- ბოტმა უნდა უპასუხოს მხოლოდ active source/chunk-იდან.
+- ფასები, მიღების ვადები, გრანტები, მოთხოვნები და ოფიციალური წესები source-ის გარეშე არ გამოიგონოს.
+- თუ confidence დაბალია ან source არ მოიძებნა, შესთავაზოს human handover.
+- admission/program interest + contact data -> CRM lead; general info -> conversation only.
+
+## Sources
+
+- [https://alte.edu.ge/ka/](https://alte.edu.ge/ka/) - chunks: 2; tags: general; lastmod: 2023-07-05T13:37:24+00:00
+- [https://alte.edu.ge/ka/abiturientebisatvis-biznesis-online-skola-itsyeba](https://alte.edu.ge/ka/abiturientebisatvis-biznesis-online-skola-itsyeba) - chunks: 3; tags: admission, program; lastmod: 2026-05-21T12:43:56+00:00
+- [https://alte.edu.ge/ka/abiturientebisatvis-biznesis-online-skola-itsyeba-2](https://alte.edu.ge/ka/abiturientebisatvis-biznesis-online-skola-itsyeba-2) - chunks: 2; tags: admission, program; lastmod: 2026-05-21T12:49:07+00:00
+- [https://alte.edu.ge/ka/abiturientebistvis](https://alte.edu.ge/ka/abiturientebistvis) - chunks: 14; tags: admission; lastmod: 2026-02-16T08:47:13+00:00
+- [https://alte.edu.ge/ka/adamianis-uflebebis-samartlis-kvireuli](https://alte.edu.ge/ka/adamianis-uflebebis-samartlis-kvireuli) - chunks: 2; tags: program; lastmod: 2024-01-03T19:17:39+00:00
+- [https://alte.edu.ge/ka/adamianis-uflebebisa-da-omis-samartlis-urtiertqmedeba-ukrainis-magaliti](https://alte.edu.ge/ka/adamianis-uflebebisa-da-omis-samartlis-urtiertqmedeba-ukrainis-magaliti) - chunks: 2; tags: program; lastmod: 2024-01-05T09:46:45+00:00
+- [https://alte.edu.ge/ka/administratsiuli-registratsia-meditsinisa-da-kompiuteruli-metsnierebis-programebistvis](https://alte.edu.ge/ka/administratsiuli-registratsia-meditsinisa-da-kompiuteruli-metsnierebis-programebistvis) - chunks: 2; tags: program; lastmod: 2024-09-19T08:31:00+00:00
+- [https://alte.edu.ge/ka/admission-for-spring-2024-is-open](https://alte.edu.ge/ka/admission-for-spring-2024-is-open) - chunks: 2; tags: admission; lastmod: 2024-01-03T17:34:46+00:00
+- [https://alte.edu.ge/ka/akademiuri-informatsia](https://alte.edu.ge/ka/akademiuri-informatsia) - chunks: 15; tags: general; lastmod: 2024-01-18T12:03:50+00:00
+- [https://alte.edu.ge/ka/akademiuri-kalendari](https://alte.edu.ge/ka/akademiuri-kalendari) - chunks: 3; tags: general; lastmod: 2024-01-18T12:12:07+00:00
+- [https://alte.edu.ge/ka/akademiuri-programebi](https://alte.edu.ge/ka/akademiuri-programebi) - chunks: 5; tags: program; lastmod: 2023-12-27T12:35:16+00:00
+- [https://alte.edu.ge/ka/akhali-sabakalavro-programa-ai-da-monatsemta-analitika](https://alte.edu.ge/ka/akhali-sabakalavro-programa-ai-da-monatsemta-analitika) - chunks: 2; tags: program; lastmod: 2025-05-14T13:43:26+00:00
+- [https://alte.edu.ge/ka/albas-biznesis-samagistro-skola](https://alte.edu.ge/ka/albas-biznesis-samagistro-skola) - chunks: 5; tags: program; lastmod: 2026-04-29T10:46:16+00:00
+- [https://alte.edu.ge/ka/alte-universiteti-atskhadebs-ghia-konkurss-meditsinis-saertashoriso-skolashi](https://alte.edu.ge/ka/alte-universiteti-atskhadebs-ghia-konkurss-meditsinis-saertashoriso-skolashi) - chunks: 1; tags: about, program; lastmod: 2024-03-23T21:32:13+00:00
+- [https://alte.edu.ge/ka/alte-universiteti-atskhadebs-ghia-konkurss-samartlisa-da-sotsialur-metsnierebata-skolashi](https://alte.edu.ge/ka/alte-universiteti-atskhadebs-ghia-konkurss-samartlisa-da-sotsialur-metsnierebata-skolashi) - chunks: 1; tags: about, program; lastmod: 2024-03-23T21:38:27+00:00
+- [https://alte.edu.ge/ka/alte-universiteti-samartlis-skolata-saertashoriso-asotsiatsiashi-ials-gatsevrianda](https://alte.edu.ge/ka/alte-universiteti-samartlis-skolata-saertashoriso-asotsiatsiashi-ials-gatsevrianda) - chunks: 2; tags: about, program; lastmod: 2024-11-28T10:48:47+00:00
+- [https://alte.edu.ge/ka/alte-universiteti-samartlis-skolata-saertashoriso-asotsiatsiis-ials-tsevri-gakhda](https://alte.edu.ge/ka/alte-universiteti-samartlis-skolata-saertashoriso-asotsiatsiis-ials-tsevri-gakhda) - chunks: 2; tags: about, program; lastmod: 2024-11-21T08:50:05+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-biznesis-administrirebis-sabakalavro-programis-sagnebma-baf-is-akreditatsia-moipova](https://alte.edu.ge/ka/alte-universitetis-biznesis-administrirebis-sabakalavro-programis-sagnebma-baf-is-akreditatsia-moipova) - chunks: 3; tags: about, program; lastmod: 2025-10-17T11:47:23+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-meditsinis-programa](https://alte.edu.ge/ka/alte-universitetis-meditsinis-programa) - chunks: 2; tags: about, program; lastmod: 2023-07-26T09:11:56+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-meditsinis-qartulenovanma-programam-akreditatsia-moipova](https://alte.edu.ge/ka/alte-universitetis-meditsinis-qartulenovanma-programam-akreditatsia-moipova) - chunks: 2; tags: about, program; lastmod: 2023-07-26T07:26:38+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-meditsinis-qartulenovanma-programam-akreditatsia-moipova-2](https://alte.edu.ge/ka/alte-universitetis-meditsinis-qartulenovanma-programam-akreditatsia-moipova-2) - chunks: 2; tags: about, program; lastmod: 2024-01-03T17:12:04+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-meditsinis-saertashoriso-programis-kurstamdavrebulebma-fmge-gamotsda-chaabares](https://alte.edu.ge/ka/alte-universitetis-meditsinis-saertashoriso-programis-kurstamdavrebulebma-fmge-gamotsda-chaabares) - chunks: 2; tags: about, program; lastmod: 2024-08-14T12:53:21+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-meditsinis-saertashoriso-skola-jandatsvis-asotsiatsiis-tsevri-gakhda](https://alte.edu.ge/ka/alte-universitetis-meditsinis-saertashoriso-skola-jandatsvis-asotsiatsiis-tsevri-gakhda) - chunks: 2; tags: about, program; lastmod: 2025-02-12T11:30:26+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-profesoris-publikatsia-saertashoriso-samartlis-zhurnalshi](https://alte.edu.ge/ka/alte-universitetis-profesoris-publikatsia-saertashoriso-samartlis-zhurnalshi) - chunks: 3; tags: about, program; lastmod: 2026-04-02T09:10:37+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-samartlis-samagistro-programa](https://alte.edu.ge/ka/alte-universitetis-samartlis-samagistro-programa) - chunks: 1; tags: about, program; lastmod: 2024-06-10T11:49:36+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-samartlisa-da-sotsialur-metsnierebata-skola-evropuli-samartlis-fakultetebis-asotsiatsiis-elfa-tsevri-gakhda](https://alte.edu.ge/ka/alte-universitetis-samartlisa-da-sotsialur-metsnierebata-skola-evropuli-samartlis-fakultetebis-asotsiatsiis-elfa-tsevri-gakhda) - chunks: 2; tags: about, program; lastmod: 2024-12-27T10:15:47+00:00
+- [https://alte.edu.ge/ka/alte-universitetis-turizmisa-da-maspindzlobis-menejmentis-sabakalavro-programam-sruli-7-tsliani-akreditatsia-moipova](https://alte.edu.ge/ka/alte-universitetis-turizmisa-da-maspindzlobis-menejmentis-sabakalavro-programam-sruli-7-tsliani-akreditatsia-moipova) - chunks: 2; tags: about, program; lastmod: 2024-01-03T15:05:04+00:00
+- [https://alte.edu.ge/ka/alte-universitetshi-samartlis-kongresi-gaimarta](https://alte.edu.ge/ka/alte-universitetshi-samartlis-kongresi-gaimarta) - chunks: 2; tags: about, program; lastmod: 2024-12-10T10:03:39+00:00
+- [https://alte.edu.ge/ka/atenis-ekonomikisa-da-biznesis-universiteti](https://alte.edu.ge/ka/atenis-ekonomikisa-da-biznesis-universiteti) - chunks: 5; tags: about, program; lastmod: 2025-07-04T12:27:06+00:00
+- [https://alte.edu.ge/ka/biblioteka](https://alte.edu.ge/ka/biblioteka) - chunks: 11; tags: student_services; lastmod: 2024-01-18T12:46:37+00:00
+- [https://alte.edu.ge/ka/biznesis](https://alte.edu.ge/ka/biznesis) - chunks: 4; tags: program; lastmod: 2023-07-24T11:20:49+00:00
+- [https://alte.edu.ge/ka/biznesis-administrireba-mba](https://alte.edu.ge/ka/biznesis-administrireba-mba) - chunks: 9; tags: program; lastmod: 2026-04-06T11:56:05+00:00
+- [https://alte.edu.ge/ka/biznesis-administrirebis](https://alte.edu.ge/ka/biznesis-administrirebis) - chunks: 15; tags: program; lastmod: 2026-04-06T10:46:05+00:00
+- [https://alte.edu.ge/ka/biznesis-administrirebis-eng](https://alte.edu.ge/ka/biznesis-administrirebis-eng) - chunks: 10; tags: program; lastmod: 2026-05-04T10:49:36+00:00
+- [https://alte.edu.ge/ka/biznesis-administrirebis-eng-programa](https://alte.edu.ge/ka/biznesis-administrirebis-eng-programa) - chunks: 13; tags: program; lastmod: 2026-05-04T10:54:50+00:00
+- [https://alte.edu.ge/ka/biznesis-skola](https://alte.edu.ge/ka/biznesis-skola) - chunks: 4; tags: program; lastmod: 2023-12-21T08:57:00+00:00
+- [https://alte.edu.ge/ka/biznesis-skolis-akademiuri-konkursis-shedegebi](https://alte.edu.ge/ka/biznesis-skolis-akademiuri-konkursis-shedegebi) - chunks: 2; tags: program; lastmod: 2024-11-29T12:18:23+00:00
+- [https://alte.edu.ge/ka/biznesis-skolis-akademiuri-tanamdebobis-konkursis-shedegebi-tsnobilia](https://alte.edu.ge/ka/biznesis-skolis-akademiuri-tanamdebobis-konkursis-shedegebi-tsnobilia) - chunks: 2; tags: program; lastmod: 2024-01-03T17:09:48+00:00
+- [https://alte.edu.ge/ka/biznesis-skolis-dekani-davit-kikvidze-si-leadership-programmes-saertashoriso-liderobis-programa-impact-pioneers-25-is-monatsilea](https://alte.edu.ge/ka/biznesis-skolis-dekani-davit-kikvidze-si-leadership-programmes-saertashoriso-liderobis-programa-impact-pioneers-25-is-monatsilea) - chunks: 3; tags: program; lastmod: 2025-07-18T12:30:35+00:00
+- [https://alte.edu.ge/ka/biznesis-skolis-network-saghamo](https://alte.edu.ge/ka/biznesis-skolis-network-saghamo) - chunks: 2; tags: program; lastmod: 2025-05-02T11:42:23+00:00
+- [https://alte.edu.ge/ka/biznesis-skolis-network-saghamo-2](https://alte.edu.ge/ka/biznesis-skolis-network-saghamo-2) - chunks: 2; tags: program; lastmod: 2025-05-02T11:45:10+00:00
+- [https://alte.edu.ge/ka/erasmus-bip-konkursi-kompiuteruli-metsnierebis-sabakalavro-programis-studentebistvis](https://alte.edu.ge/ka/erasmus-bip-konkursi-kompiuteruli-metsnierebis-sabakalavro-programis-studentebistvis) - chunks: 3; tags: program, student_services; lastmod: 2026-01-28T13:54:31+00:00
+- [https://alte.edu.ge/ka/faq](https://alte.edu.ge/ka/faq) - chunks: 1; tags: faq; lastmod: 2023-12-14T09:06:13+00:00
+- [https://alte.edu.ge/ka/gamotsdebis-shesakheb](https://alte.edu.ge/ka/gamotsdebis-shesakheb) - chunks: 3; tags: general; lastmod: 2024-01-18T12:25:43+00:00
+- [https://alte.edu.ge/ka/ghia-akademiuri-konkursis-pirveladi-shedegebi-biznesis-skola](https://alte.edu.ge/ka/ghia-akademiuri-konkursis-pirveladi-shedegebi-biznesis-skola) - chunks: 3; tags: program; lastmod: 2026-01-20T09:52:38+00:00
+- [https://alte.edu.ge/ka/ghia-konkursi-biznesis-skolashi](https://alte.edu.ge/ka/ghia-konkursi-biznesis-skolashi) - chunks: 1; tags: program; lastmod: 2024-03-24T19:57:35+00:00
+- [https://alte.edu.ge/ka/karieruli-ganvitareba](https://alte.edu.ge/ka/karieruli-ganvitareba) - chunks: 4; tags: student_services; lastmod: 2024-01-18T11:10:44+00:00
+- [https://alte.edu.ge/ka/kompiuteruli-metsnierebis-inglisurenovani](https://alte.edu.ge/ka/kompiuteruli-metsnierebis-inglisurenovani) - chunks: 14; tags: program; lastmod: 2026-04-06T11:35:35+00:00
+- [https://alte.edu.ge/ka/kompiuteruli-metsnierebis-qartulenovani](https://alte.edu.ge/ka/kompiuteruli-metsnierebis-qartulenovani) - chunks: 14; tags: program; lastmod: 2026-04-24T08:07:08+00:00
+- [https://alte.edu.ge/ka/kontaqti](https://alte.edu.ge/ka/kontaqti) - chunks: 2; tags: contact; lastmod: 2023-12-14T09:25:25+00:00
+- [https://alte.edu.ge/ka/maltis-biznesis-skola](https://alte.edu.ge/ka/maltis-biznesis-skola) - chunks: 4; tags: program; lastmod: 2026-04-29T13:23:53+00:00
+- [https://alte.edu.ge/ka/mbs-biznesis-skola](https://alte.edu.ge/ka/mbs-biznesis-skola) - chunks: 4; tags: program; lastmod: 2026-01-29T12:37:08+00:00
+- [https://alte.edu.ge/ka/meditsinis-inglisurenovani](https://alte.edu.ge/ka/meditsinis-inglisurenovani) - chunks: 10; tags: program; lastmod: 2023-12-27T21:43:20+00:00
+- [https://alte.edu.ge/ka/meditsinis-me-4-saertashoriso-multidistsiplinur-konferentsia](https://alte.edu.ge/ka/meditsinis-me-4-saertashoriso-multidistsiplinur-konferentsia) - chunks: 3; tags: program; lastmod: 2025-06-25T11:42:28+00:00
+- [https://alte.edu.ge/ka/meditsinis-me-4-saertashoriso-multidistsiplinur-konferentsia-2](https://alte.edu.ge/ka/meditsinis-me-4-saertashoriso-multidistsiplinur-konferentsia-2) - chunks: 3; tags: program; lastmod: 2025-07-07T09:54:44+00:00
+- [https://alte.edu.ge/ka/meditsinis-programis-studentebis-registratsia-itsyeba](https://alte.edu.ge/ka/meditsinis-programis-studentebis-registratsia-itsyeba) - chunks: 2; tags: program, student_services; lastmod: 2024-01-03T17:28:37+00:00
+- [https://alte.edu.ge/ka/meditsinis-qartulenovani](https://alte.edu.ge/ka/meditsinis-qartulenovani) - chunks: 10; tags: program; lastmod: 2023-12-27T22:33:28+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso](https://alte.edu.ge/ka/meditsinis-saertashoriso) - chunks: 4; tags: program; lastmod: 2023-12-18T10:36:12+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-2](https://alte.edu.ge/ka/meditsinis-saertashoriso-2) - chunks: 4; tags: program; lastmod: 2023-12-18T10:40:01+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-tanamdebobebis-konkursis-shedegebi-tsnobilia](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-tanamdebobebis-konkursis-shedegebi-tsnobilia) - chunks: 2; tags: program; lastmod: 2024-01-03T16:37:10+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-vakansiebis-ghia-konkursis-pirveladi-shedegebi](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-vakansiebis-ghia-konkursis-pirveladi-shedegebi) - chunks: 3; tags: program; lastmod: 2025-12-09T12:50:05+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-vakansiebis-ghia-konkursis-saboloo-shedegebi](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-akademiuri-vakansiebis-ghia-konkursis-saboloo-shedegebi) - chunks: 3; tags: program; lastmod: 2025-12-12T05:57:42+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-gamosashvebi-saghamo-2025](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-gamosashvebi-saghamo-2025) - chunks: 2; tags: program; lastmod: 2025-03-28T14:01:35+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-ghia-karis-dghe](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-ghia-karis-dghe) - chunks: 2; tags: program; lastmod: 2024-01-05T09:07:59+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-ghia-karis-dghe-alte-universitetshi](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-ghia-karis-dghe-alte-universitetshi) - chunks: 2; tags: about, program; lastmod: 2024-01-05T11:04:25+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-kursdamtavrebulebma-tsarmatebit-chaabares-fmge-gamotsda](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-kursdamtavrebulebma-tsarmatebit-chaabares-fmge-gamotsda) - chunks: 2; tags: program; lastmod: 2025-02-24T14:31:21+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-proeqti-gamotsade-eqimoba-abiturientebistvis](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-proeqti-gamotsade-eqimoba-abiturientebistvis) - chunks: 3; tags: admission, program; lastmod: 2026-05-21T12:37:42+00:00
+- [https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-proeqti-gamotsade-eqimoba-abiturientebistvis-2](https://alte.edu.ge/ka/meditsinis-saertashoriso-skolis-proeqti-gamotsade-eqimoba-abiturientebistvis-2) - chunks: 2; tags: admission, program; lastmod: 2026-05-21T12:47:14+00:00
+- [https://alte.edu.ge/ka/meditsinis-skolis-gamosashvebi-saghamo-2025-3](https://alte.edu.ge/ka/meditsinis-skolis-gamosashvebi-saghamo-2025-3) - chunks: 1; tags: program; lastmod: 2025-09-03T13:12:49+00:00
+- [https://alte.edu.ge/ka/meditsinis-skolis-pirveli-kursis-saertashoriso-studentebisatvis-pirveli-sastsavlo-semestri-itsyeba](https://alte.edu.ge/ka/meditsinis-skolis-pirveli-kursis-saertashoriso-studentebisatvis-pirveli-sastsavlo-semestri-itsyeba) - chunks: 2; tags: program, student_services; lastmod: 2024-01-03T13:46:33+00:00
+- [https://alte.edu.ge/ka/migheba](https://alte.edu.ge/ka/migheba) - chunks: 6; tags: admission; lastmod: 2024-01-05T13:12:55+00:00
+- [https://alte.edu.ge/ka/mosamartlis-roli-shejibrebit-protsesshi](https://alte.edu.ge/ka/mosamartlis-roli-shejibrebit-protsesshi) - chunks: 2; tags: program; lastmod: 2024-01-05T09:13:40+00:00
+- [https://alte.edu.ge/ka/namdvili-eqimebi-alte-universitetis-meditsinis-saertashoriso-skola](https://alte.edu.ge/ka/namdvili-eqimebi-alte-universitetis-meditsinis-saertashoriso-skola) - chunks: 1; tags: about, program; lastmod: 2026-05-15T12:56:37+00:00
+- [https://alte.edu.ge/ka/ombudsmeni](https://alte.edu.ge/ka/ombudsmeni) - chunks: 3; tags: student_services; lastmod: 2024-01-18T11:17:12+00:00
+- [https://alte.edu.ge/ka/omis-samartali-ukrainashi](https://alte.edu.ge/ka/omis-samartali-ukrainashi) - chunks: 2; tags: general; lastmod: 2024-01-05T09:03:29+00:00
+- [https://alte.edu.ge/ka/ras-gastsavlis-saertashoriso-urtiertobebi](https://alte.edu.ge/ka/ras-gastsavlis-saertashoriso-urtiertobebi) - chunks: 2; tags: general; lastmod: 2024-01-05T07:16:44+00:00
+- [https://alte.edu.ge/ka/reklamis-fsiqologia](https://alte.edu.ge/ka/reklamis-fsiqologia) - chunks: 2; tags: general; lastmod: 2025-03-28T11:49:56+00:00
+- [https://alte.edu.ge/ka/relokatsiis-servisebi](https://alte.edu.ge/ka/relokatsiis-servisebi) - chunks: 3; tags: general; lastmod: 2024-01-26T09:58:29+00:00
+- [https://alte.edu.ge/ka/sabakalavro-programebi](https://alte.edu.ge/ka/sabakalavro-programebi) - chunks: 106; tags: program; lastmod: 2024-01-10T07:10:24+00:00
+- [https://alte.edu.ge/ka/saertashoriso-studentebistvis](https://alte.edu.ge/ka/saertashoriso-studentebistvis) - chunks: 2; tags: student_services; lastmod: 2023-12-27T13:36:44+00:00
+- [https://alte.edu.ge/ka/saertashoriso-urtiertobebi](https://alte.edu.ge/ka/saertashoriso-urtiertobebi) - chunks: 14; tags: general; lastmod: 2023-12-27T21:33:37+00:00
+- [https://alte.edu.ge/ka/saertashoriso-urtiertobebi-3](https://alte.edu.ge/ka/saertashoriso-urtiertobebi-3) - chunks: 15; tags: general; lastmod: 2024-03-01T13:19:48+00:00
+- [https://alte.edu.ge/ka/saertashoriso-urtiertobebis](https://alte.edu.ge/ka/saertashoriso-urtiertobebis) - chunks: 11; tags: general; lastmod: 2023-12-27T21:41:12+00:00
+- [https://alte.edu.ge/ka/samartlis](https://alte.edu.ge/ka/samartlis) - chunks: 13; tags: program; lastmod: 2026-04-06T10:59:00+00:00
+- [https://alte.edu.ge/ka/samartlis-kongresi-2025](https://alte.edu.ge/ka/samartlis-kongresi-2025) - chunks: 2; tags: program; lastmod: 2025-03-20T07:57:57+00:00
+- [https://alte.edu.ge/ka/samartlis-kongresi-2025-2](https://alte.edu.ge/ka/samartlis-kongresi-2025-2) - chunks: 2; tags: program; lastmod: 2025-03-20T08:03:57+00:00
+- [https://alte.edu.ge/ka/samartlis-samagistro](https://alte.edu.ge/ka/samartlis-samagistro) - chunks: 9; tags: program; lastmod: 2024-01-25T07:29:39+00:00
+- [https://alte.edu.ge/ka/samartlis-skolis-akademiuri-tanamdebobis-konkursis-shedegi-tsnobilia](https://alte.edu.ge/ka/samartlis-skolis-akademiuri-tanamdebobis-konkursis-shedegi-tsnobilia) - chunks: 2; tags: program; lastmod: 2024-01-03T16:44:22+00:00
+- [https://alte.edu.ge/ka/samartlisa-da-ekonomikis-tsentri](https://alte.edu.ge/ka/samartlisa-da-ekonomikis-tsentri) - chunks: 3; tags: program; lastmod: 2024-06-14T12:58:12+00:00
+- [https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skola](https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skola) - chunks: 5; tags: program; lastmod: 2023-12-14T09:52:37+00:00
+- [https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skola-2](https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skola-2) - chunks: 5; tags: program; lastmod: 2023-12-14T10:06:13+00:00
+- [https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skolashi-gamotskhadebuli-akademiuri-konkursis-shedegebi](https://alte.edu.ge/ka/samartlisa-da-sotsialur-metsnierebata-skolashi-gamotskhadebuli-akademiuri-konkursis-shedegebi) - chunks: 3; tags: program; lastmod: 2025-09-15T11:40:19+00:00
+- [https://alte.edu.ge/ka/saqartvelos-turizmis-erovnuli-administratsia](https://alte.edu.ge/ka/saqartvelos-turizmis-erovnuli-administratsia) - chunks: 3; tags: program; lastmod: 2024-04-15T16:48:24+00:00
+- [https://alte.edu.ge/ka/sauketeso-klinikuri-praqtika-meditsinis-saertashoriso-skola](https://alte.edu.ge/ka/sauketeso-klinikuri-praqtika-meditsinis-saertashoriso-skola) - chunks: 1; tags: program; lastmod: 2024-06-10T11:57:20+00:00
+- [https://alte.edu.ge/ka/shekhvedra-meditsinis-skolis-kursdamtavrebulebtan](https://alte.edu.ge/ka/shekhvedra-meditsinis-skolis-kursdamtavrebulebtan) - chunks: 1; tags: program; lastmod: 2024-11-25T06:56:28+00:00
+- [https://alte.edu.ge/ka/stomatologia-inglisurenovani](https://alte.edu.ge/ka/stomatologia-inglisurenovani) - chunks: 10; tags: general; lastmod: 2023-12-27T20:54:16+00:00
+- [https://alte.edu.ge/ka/stsavla](https://alte.edu.ge/ka/stsavla) - chunks: 4; tags: general; lastmod: 2023-07-06T07:50:55+00:00
+- [https://alte.edu.ge/ka/studentebis-sakonsultatsio-saatebi](https://alte.edu.ge/ka/studentebis-sakonsultatsio-saatebi) - chunks: 3; tags: student_services; lastmod: 2024-04-10T10:40:08+00:00
+- [https://alte.edu.ge/ka/studentebis-viziti-fsiqoterapiis-sakhlshi-kamara](https://alte.edu.ge/ka/studentebis-viziti-fsiqoterapiis-sakhlshi-kamara) - chunks: 3; tags: student_services; lastmod: 2026-04-07T13:45:24+00:00
+- [https://alte.edu.ge/ka/studentebistvis](https://alte.edu.ge/ka/studentebistvis) - chunks: 2; tags: student_services; lastmod: 2026-02-23T11:31:29+00:00
+- [https://alte.edu.ge/ka/studentta-ketildgheobisa-da-tsarmatebis-mentori](https://alte.edu.ge/ka/studentta-ketildgheobisa-da-tsarmatebis-mentori) - chunks: 4; tags: student_services; lastmod: 2026-02-17T08:00:23+00:00
+- [https://alte.edu.ge/ka/studentta-ketildgheobisa-da-tsarmatebis-mentori-2](https://alte.edu.ge/ka/studentta-ketildgheobisa-da-tsarmatebis-mentori-2) - chunks: 4; tags: student_services; lastmod: 2026-02-17T08:05:57+00:00
+- [https://alte.edu.ge/ka/studentta-sayuradghebod](https://alte.edu.ge/ka/studentta-sayuradghebod) - chunks: 2; tags: student_services; lastmod: 2024-08-28T13:25:29+00:00
+- [https://alte.edu.ge/ka/studentu-banakshi-registratsia-daitsyo](https://alte.edu.ge/ka/studentu-banakshi-registratsia-daitsyo) - chunks: 3; tags: student_services; lastmod: 2025-11-07T13:18:01+00:00
+- [https://alte.edu.ge/ka/studenturi-gzamkvlevi](https://alte.edu.ge/ka/studenturi-gzamkvlevi) - chunks: 3; tags: student_services; lastmod: 2024-02-07T12:19:01+00:00
+- [https://alte.edu.ge/ka/studenturi-konferentsia-2025](https://alte.edu.ge/ka/studenturi-konferentsia-2025) - chunks: 3; tags: student_services; lastmod: 2025-07-01T08:31:33+00:00
+- [https://alte.edu.ge/ka/studenturi-kvleviti-habis-pirveli-shekhvedra-tsarmatebit-gaimarta](https://alte.edu.ge/ka/studenturi-kvleviti-habis-pirveli-shekhvedra-tsarmatebit-gaimarta) - chunks: 3; tags: student_services; lastmod: 2026-04-21T13:41:23+00:00
+- [https://alte.edu.ge/ka/studenturi-servisebi](https://alte.edu.ge/ka/studenturi-servisebi) - chunks: 13; tags: student_services; lastmod: 2024-01-18T11:04:09+00:00
+- [https://alte.edu.ge/ka/studenturi-tskhovreba](https://alte.edu.ge/ka/studenturi-tskhovreba) - chunks: 8; tags: student_services; lastmod: 2024-01-18T11:19:25+00:00
+- [https://alte.edu.ge/ka/studenturi-tvitmmartveloba](https://alte.edu.ge/ka/studenturi-tvitmmartveloba) - chunks: 3; tags: student_services; lastmod: 2024-02-23T10:43:15+00:00
+- [https://alte.edu.ge/ka/turizmi-2](https://alte.edu.ge/ka/turizmi-2) - chunks: 13; tags: program; lastmod: 2023-12-27T21:47:01+00:00
+- [https://alte.edu.ge/ka/turizmis](https://alte.edu.ge/ka/turizmis) - chunks: 10; tags: program; lastmod: 2023-12-27T21:54:57+00:00
+- [https://alte.edu.ge/ka/turizmis-industriis-trendebi-shesadzleblobebi-da-gamotsvevebi](https://alte.edu.ge/ka/turizmis-industriis-trendebi-shesadzleblobebi-da-gamotsvevebi) - chunks: 2; tags: program; lastmod: 2024-01-05T11:17:14+00:00
+- [https://alte.edu.ge/ka/turizmisa-da-ekologiis-sauniversiteto-koleji](https://alte.edu.ge/ka/turizmisa-da-ekologiis-sauniversiteto-koleji) - chunks: 5; tags: about, program; lastmod: 2024-04-10T15:40:03+00:00
+- [https://alte.edu.ge/ka/turizmisa-da-maspindzlobis-menejmentis-programa](https://alte.edu.ge/ka/turizmisa-da-maspindzlobis-menejmentis-programa) - chunks: 1; tags: program; lastmod: 2024-04-17T11:47:56+00:00
+- [https://alte.edu.ge/ka/ukrainis-erovnul-metsnierebata-akademiis-kievis-samartlis-universiteti](https://alte.edu.ge/ka/ukrainis-erovnul-metsnierebata-akademiis-kievis-samartlis-universiteti) - chunks: 5; tags: about, program; lastmod: 2024-04-15T13:37:43+00:00
+- [https://alte.edu.ge/ka/universiteti-erti-shekhedvit](https://alte.edu.ge/ka/universiteti-erti-shekhedvit) - chunks: 18; tags: about; lastmod: 2024-01-11T12:04:57+00:00
+- [https://alte.edu.ge/ka/universitetis-shesakheb](https://alte.edu.ge/ka/universitetis-shesakheb) - chunks: 2; tags: about; lastmod: 2023-06-28T14:11:56+00:00
+- [https://alte.edu.ge/ka/video-konkursi-meditsinis-saertashoriso-skolis-studentebistvis](https://alte.edu.ge/ka/video-konkursi-meditsinis-saertashoriso-skolis-studentebistvis) - chunks: 3; tags: program, student_services; lastmod: 2025-06-23T11:03:35+00:00
+- [https://alte.edu.ge/ka/vorkshopebis-seria-meditsinis-studentebistvis](https://alte.edu.ge/ka/vorkshopebis-seria-meditsinis-studentebistvis) - chunks: 2; tags: program, student_services; lastmod: 2025-02-07T10:14:41+00:00
+- [https://alte.edu.ge/ka/vorkshopebis-seria-meditsinis-studentebistvis-2](https://alte.edu.ge/ka/vorkshopebis-seria-meditsinis-studentebistvis-2) - chunks: 2; tags: program, student_services; lastmod: 2025-02-07T11:34:27+00:00
+- [https://alte.edu.ge/ka/zhurnal-tanamedrove-shromis-samartlis-mimokhilvis-spetsialuri-nomris-tsardgena](https://alte.edu.ge/ka/zhurnal-tanamedrove-shromis-samartlis-mimokhilvis-spetsialuri-nomris-tsardgena) - chunks: 2; tags: program; lastmod: 2024-01-05T09:05:10+00:00
+- [https://alte.edu.ge/ka/zhurnalistika](https://alte.edu.ge/ka/zhurnalistika) - chunks: 13; tags: program; lastmod: 2024-09-03T06:58:26+00:00

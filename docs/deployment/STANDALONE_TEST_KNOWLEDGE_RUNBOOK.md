@@ -162,3 +162,16 @@ Latest result:
 - Review item: one tuition no-contact response returned `should_create_lead=true` without `created_lead_id` or `created_task_id`.
 
 Do not proceed to public launch until this review item and official content review are resolved.
+
+## Full Local Alte KB Import
+
+The full local Alte KB has been copied, normalized, and imported into the application Knowledge Base for controlled testing:
+
+- Evidence: `docs/knowledge_evidence/alte_full_local_kb/`
+- Normalized seed: `backend/app/knowledge_seed/full_alte_local_kb/full_alte_local_kb_normalized.jsonl`
+- Reviewer CSV: `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`
+- Imported snippets: 645
+- High-sensitivity records: 379
+- Review-required records: 379
+
+This makes the available local KB usable by the program, but it does not approve public launch. A human reviewer must fill reviewer decisions before sensitive facts can become official public answers.
