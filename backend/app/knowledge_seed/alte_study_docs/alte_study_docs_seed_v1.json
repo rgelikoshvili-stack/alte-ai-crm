@@ -1,0 +1,239 @@
+[
+  {
+    "source_key": "alte_study_programs_overview_v1",
+    "title": "Study programs overview - KA",
+    "language": "ka",
+    "category": "program_overview",
+    "department": "Admissions",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "ალტეს ჩათბოტმა სასწავლო პროგრამების კითხვებზე უნდა უპასუხოს Knowledge Base-ზე დაყრდნობით. სასწავლო მიმართულებების კონტექსტში ფაილებში ნახსენებია საბაკალავრო, სამაგისტრო და ერთსაფეხურიანი სამედიცინო პროგრამები, ასევე Business, Law, Psychology, International Relations, Tourism, Computer Science, AI & Data Analytics და Journalism. კონკრეტული პროგრამის დეტალები, ენა, ხანგრძლივობა ან მიღების პირობა უნდა დადასტურდეს აქტიური ოფიციალური წყაროდან ან კონსულტანტთან.",
+    "keywords": [
+      "სასწავლო პროგრამები",
+      "პროგრამები",
+      "ბაკალავრიატი",
+      "მაგისტრატურა",
+      "Business",
+      "Law",
+      "Psychology",
+      "Tourism",
+      "Computer Science",
+      "AI",
+      "Journalism"
+    ],
+    "sensitivity": "medium",
+    "stale_after_days": 90
+  },
+  {
+    "source_key": "alte_study_programs_overview_v1",
+    "title": "Study programs overview - EN",
+    "language": "en",
+    "category": "program_overview",
+    "department": "Admissions",
+    "source_domain": "join.alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "For study program questions, the chatbot should answer only from active Knowledge Base sources. The study documents mention bachelor, master and one-step medical programs, including Business, Law, Psychology, International Relations, Tourism, Computer Science, AI & Data Analytics and Journalism. Exact program requirements, language, duration or admission rules must be confirmed from an active official source or by an admissions consultant.",
+    "keywords": [
+      "study programs",
+      "programs",
+      "bachelor",
+      "master",
+      "business",
+      "law",
+      "psychology",
+      "tourism",
+      "computer science",
+      "medicine"
+    ],
+    "sensitivity": "medium",
+    "stale_after_days": 90
+  },
+  {
+    "source_key": "alte_study_admissions_rules_v1",
+    "title": "Admissions interest without contact - KA",
+    "language": "ka",
+    "category": "admissions_general",
+    "department": "Admissions",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": false,
+    "content": "თუ მომხმარებელი დაინტერესებულია პროგრამით, ჩარიცხვით ან კონსულტაციით, მაგრამ არ ტოვებს ტელეფონს ან ელფოსტას, ბოტმა უნდა სთხოვოს საკონტაქტო მონაცემები და არ უნდა შექმნას lead/task. საუბარი და AI summary შეიძლება შეინახოს.",
+    "keywords": [
+      "ჩარიცხვა",
+      "მიღება",
+      "კონსულტაცია",
+      "საკონტაქტო",
+      "lead"
+    ],
+    "sensitivity": "medium",
+    "stale_after_days": 120
+  },
+  {
+    "source_key": "alte_study_admissions_rules_v1",
+    "title": "Admissions interest with contact - EN",
+    "language": "en",
+    "category": "admissions_general",
+    "department": "Admissions",
+    "source_domain": "join.alte.edu.ge",
+    "status": "approved",
+    "review_required": false,
+    "content": "Admission, program or consultation interest should create or update a customer, lead and follow-up task only after phone or email exists. Without contact data, the chatbot should ask for the missing contact fields and keep the interaction as conversation context.",
+    "keywords": [
+      "admission",
+      "apply",
+      "consultation",
+      "phone",
+      "email",
+      "lead"
+    ],
+    "sensitivity": "medium",
+    "stale_after_days": 120
+  },
+  {
+    "source_key": "alte_study_required_documents_v1",
+    "title": "Required documents safe answer - KA",
+    "language": "ka",
+    "category": "required_documents",
+    "department": "Admissions",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "საბუთების ზუსტი სია არ უნდა გამოიგონოს ბოტმა. შეუძლია თქვას, რომ საჭირო დოკუმენტები დამოკიდებულია პროგრამაზე და აპლიკანტის სტატუსზე, ხოლო საბოლოო სია უნდა დადასტურდეს Admissions გუნდთან ან აქტიურ ოფიციალურ წყაროსთან.",
+    "keywords": [
+      "საბუთები",
+      "დოკუმენტები",
+      "ჩარიცხვა",
+      "მიღება",
+      "Admissions"
+    ],
+    "sensitivity": "high",
+    "stale_after_days": 30
+  },
+  {
+    "source_key": "alte_study_finance_policy_v1",
+    "title": "Tuition and fees safe answer - KA",
+    "language": "ka",
+    "category": "finance_tuition",
+    "department": "Finance",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "სწავლის საფასურის, გადასახადის, გრანტის ან დაფინანსების ზუსტი თანხა ბოტმა არ უნდა გამოიგონოს. თუ აქტიური ოფიციალური წყარო არ არის, პასუხი უნდა იყოს კონსერვატიული: ზუსტი თანხა უნდა დადასტურდეს Finance ან Admissions გუნდთან.",
+    "keywords": [
+      "სწავლის საფასური",
+      "საფასური",
+      "გადასახადი",
+      "გრანტი",
+      "დაფინანსება",
+      "tuition"
+    ],
+    "sensitivity": "high",
+    "stale_after_days": 30
+  },
+  {
+    "source_key": "alte_study_deadline_policy_v1",
+    "title": "Deadlines safe answer - KA",
+    "language": "ka",
+    "category": "deadlines_calendar",
+    "department": "Academic Registry",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "ჩარიცხვის, განაცხადის, გამოცდის ან აკადემიური კალენდრის ზუსტი ვადები ბოტმა არ უნდა გამოიგონოს. თუ აქტიური ოფიციალური წყარო არ არის, ბოტმა უნდა გადაამისამართოს Admissions ან Academic Registry გუნდთან.",
+    "keywords": [
+      "ვადა",
+      "ვადები",
+      "კალენდარი",
+      "გამოცდა",
+      "ჩარიცხვა",
+      "deadline"
+    ],
+    "sensitivity": "high",
+    "stale_after_days": 30
+  },
+  {
+    "source_key": "alte_study_international_admissions_v1",
+    "title": "International admissions routing - EN",
+    "language": "en",
+    "category": "international_admissions",
+    "department": "International Admissions",
+    "source_domain": "join.alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "International student questions should route to International Admissions. Country, city, interested program and intake should be preserved in the conversation analysis. Exact document, visa, relocation, deadline, eligibility or tuition requirements must not be invented and require official confirmation.",
+    "keywords": [
+      "international",
+      "join.alte.edu.ge",
+      "country",
+      "visa",
+      "documents",
+      "admission"
+    ],
+    "sensitivity": "high",
+    "stale_after_days": 60
+  },
+  {
+    "source_key": "alte_study_medicine_md_v1",
+    "title": "Medicine MD routing - EN",
+    "language": "en",
+    "category": "medicine_md",
+    "department": "International Admissions",
+    "source_domain": "join.alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "program_name": "Medicine / MD",
+    "content": "Medicine or MD interest should be treated as a separate medical track and routed to the Medicine pipeline or International Admissions. Without phone or email, no lead/task should be created; the bot should ask for contact details. Exact MD requirements, documents, tuition and deadlines require an approved official source.",
+    "keywords": [
+      "medicine",
+      "MD",
+      "medical",
+      "India",
+      "international",
+      "pipeline"
+    ],
+    "sensitivity": "high",
+    "stale_after_days": 60
+  },
+  {
+    "source_key": "alte_study_contact_v1",
+    "title": "Alte contact from study docs - KA",
+    "language": "ka",
+    "category": "general_contact",
+    "department": "General",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": true,
+    "content": "სწავლის დოკუმენტებში მითითებულია საკონტაქტო ინფორმაცია: Tbilisi, University St. N10, ZIP 0177; (+995 32) 2 40 29 46/48; info@alte.edu.ge. საჯარო პასუხისთვის ეს ინფორმაცია მაინც უნდა გადამოწმდეს ოფიციალურ წყაროსთან, თუ stale ან source missing მდგომარეობაა.",
+    "keywords": [
+      "კონტაქტი",
+      "მისამართი",
+      "ტელეფონი",
+      "ელფოსტა",
+      "info@alte.edu.ge"
+    ],
+    "sensitivity": "low",
+    "stale_after_days": 90
+  },
+  {
+    "source_key": "alte_study_handover_policy_v1",
+    "title": "Fallback and human handover policy - KA",
+    "language": "ka",
+    "category": "handover",
+    "department": "Admissions",
+    "source_domain": "alte.edu.ge",
+    "status": "approved",
+    "review_required": false,
+    "content": "თუ confidence ნაკლებია 0.70-ზე, აქტიური წყარო არ მოიძებნა, ან კითხვა ეხება ფასს, ვადას, გრანტს, საბუთებს ან ოფიციალურ მოთხოვნებს წყაროს გარეშე, ბოტმა უნდა გამოიყენოს fallback პასუხი და შესთავაზოს ადამიანთან გადამისამართება.",
+    "keywords": [
+      "handover",
+      "ადამიანი",
+      "ოპერატორი",
+      "confidence",
+      "fallback"
+    ],
+    "sensitivity": "medium",
+    "stale_after_days": 120
+  }
+]

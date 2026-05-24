@@ -1257,3 +1257,24 @@ Decision:
 ```text
 BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW
 ```
+
+## Alte Study Docs Knowledge Import
+
+The local Alte study/planning files from `C:\tmp\alte-docs-extracted` were copied into `docs/knowledge_evidence/alte_study_docs/`, normalized, and imported into the production Knowledge Base for controlled chatbot testing.
+
+Result:
+
+- Seed file: `backend/app/knowledge_seed/alte_study_docs/alte_study_docs_seed_v1.json`
+- Records imported: 11
+- Sources created: 11
+- Snippets created: 11
+- High-sensitivity records: 5
+- Review-required records: 8
+- Sensitive topics remain review-required: finance, deadlines, required documents, international admissions, Medicine/MD
+- Public launch remains blocked pending official review, privacy approval, website embed, and real-domain smoke
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW
+```

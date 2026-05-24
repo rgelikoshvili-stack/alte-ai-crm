@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-24T15:15:45.390229+00:00",
+  "source_dir": "docs\\knowledge_evidence\\alte_study_docs",
+  "source_files": [
+    {
+      "file": "AI_CRM_Needs_Detailed.txt",
+      "exists": true,
+      "bytes": 44121,
+      "lines": 485
+    },
+    {
+      "file": "Alte_AI_CRM_Chatbot_Codex_Master_Plan_GEO.txt",
+      "exists": true,
+      "bytes": 27039,
+      "lines": 533
+    },
+    {
+      "file": "Alte_AI_CRM_Chatbot_Complete_Master_Plan_GEO.txt",
+      "exists": true,
+      "bytes": 28981,
+      "lines": 438
+    },
+    {
+      "file": "Alte_AI_CRM_Master_Plan_v3_FINAL.txt",
+      "exists": true,
+      "bytes": 42757,
+      "lines": 990
+    },
+    {
+      "file": "Alte_AI_CRM_v2_Additions.txt",
+      "exists": true,
+      "bytes": 19022,
+      "lines": 513
+    }
+  ],
+  "records": 11,
+  "approved_status_records": 11,
+  "review_required_records": 8,
+  "high_sensitivity_records": 5,
+  "seed_path": "backend\\app\\knowledge_seed\\alte_study_docs\\alte_study_docs_seed_v1.json"
+}

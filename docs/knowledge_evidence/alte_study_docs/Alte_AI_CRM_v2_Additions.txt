@@ -1,0 +1,513 @@
+Alte University
+AI Chatbot + CRM სისტემა
+გეგმის დამატებები, გაუმჯობესებები და სრული Phase-ები
+Master Plan v1.0-ის გადამოწმება და v2.0 განახლება
+ვერსია: 2.0  |  2026-05-21  |  კონფიდენციალური
+1. Executive Summary — რატომ სჭირდება v2.0
+არსებული Master Plan (v1.0) ძალიან კარგი საფუძველია — 9/10 შეფასება. ყველა მთავარი კომპონენტი: Phase 0-8, Data Models, Business Rules Engine, AI Structured Output სწორადაა გაწერილი. თუმცა alte.edu.ge-ის საიტის სრული ანალიზის შემდეგ გამოვლინდა 7 კრიტიკული ხარვეზი, რომლებიც გავლენას ახდენს სისტემის სრულყოფილობაზე.
+კატეგორია
+v1.0 სტატუსი
+v2.0 დამატება
+join.alte.edu.ge
+❌ არ არის
+High-priority international flow
+Medicine 6-წლიანი MD
+⚠️ bachelor-ად
+ცალკე pipeline + stages
+Academic Calendar
+❌ Knowledge Base-ში არ არის
+Deadline tracking module
+AI: OpenAI → Claude
+⚠️ OpenAI მითითებული
+Anthropic Claude API
+Proactive Widget
+❌ passive only
+Trigger logic — 30-წმ rule
+Language Auto-detect
+⚠️ ახსენებულია, არ არის impl.
+EN/KA auto-switch + join flow
+WhatsApp History Import
+❌ Phase 7-ში
+TXT import → Knowledge Base
+2. კრიტიკული დამატებები — 🔴 HIGH PRIORITY
+2.1  join.alte.edu.ge — ცალკე High-Priority Flow
+საიტის ანალიზისას გამოვლინდა, რომ join.alte.edu.ge არის ალტეს საერთაშორისო რეკრუტინგის მთავარი landing page — განსაკუთრებით მედიცინის მიმართულებისთვის. ეს domain სრულიად განსხვავებულ audience-ს ემსახურება და v1.0-ში სისტემატიზებული არ არის.
+პრობლემა v1.0-ში:
+join.alte.edu.ge ჩვეულებრივ international routing-ად განიხილება
+არ არის გამოყოფილი high-priority lead flag-ით
+Medicine recruitment funnel-ი სხვა პროგრამებთან ერთად ჩაყრილია
+v2.0 გამოსავალი — CRM Lead Model დამატება:
+ველი
+ტიპი
+აღწერა
+source_domain
+VARCHAR(100)
+alte.edu.ge ან join.alte.edu.ge
+is_international_priority
+BOOLEAN DEFAULT false
+True → high priority auto-flag
+intake_period
+VARCHAR(50)
+Fall 2026 / Spring 2027
+relocation_needed
+BOOLEAN
+ვიზა/რელოკაცია საჭიროა?
+medical_track
+BOOLEAN
+MD 6-წლიანი პროგრამა
+Business Rules Engine — ახალი წესი:
+სიტუაცია
+CRM Action
+source_domain = join.alte.edu.ge + country/city
+priority = HIGH + International Admissions queue + task 4h
+medical_track = true + international
+priority = URGENT + Medicine admissions sub-pipeline
+relocation_needed = true
+task → Relocation Services department
+join.alte.edu.ge + no contact
+Save session + proactive contact request form
+2.2  Medicine — ერთსაფეხურიანი 6-წლიანი MD Pipeline
+v1.0-ში Medicine-ი ჩვეულებრივ bachelor-ად განიხილება. 6-წლიანი MD პროგრამა მოითხოვს სრულიად განსხვავებულ admissions flow-ს, documents-ს და stages-ს.
+Medicine-ის ცალკე Pipeline Stages:
+Stage #
+Stage სახელი
+სპეციფიკა
+1
+New Lead — Medicine
+Auto-flag medical_track = true
+2
+Eligibility Check
+Academic background verification
+3
+Contacted
+First contact within 24h SLA
+4
+Interested — Confirmed
+Program details sent
+5
+Document Translation
+Diploma/transcript translation required
+6
+Document Verification
+Ministry of Education nosification
+7
+Consultation Scheduled
+Medical program advisor meeting
+8
+Application Submitted
+Official enrollment form
+9
+Visa / Relocation Support
+For international students
+10
+Payment Confirmation
+Tuition confirmed
+11
+Enrolled — MD
+Final stage ✅
+12
+Lost
+Final lost stage
+2.3  Academic Calendar + Deadlines — Knowledge Base Module
+Academic Calendar (akademiuri-kalendari) საიტზე არსებობს, მაგრამ v1.0-ის Knowledge Base-ში არ არის. ეს ყველაზე ხშირი კითხვების წყაროა — "ვადები", "გამოცდები", "სემესტრი".
+Knowledge Source-ები — დამატება:
+Knowledge Group
+URL / წყარო
+განახლება
+Department
+Academic Calendar
+alte.edu.ge/ka/akademiuri-kalendari
+ყოველ სემესტრში
+Academic Registry
+Exam Schedule
+alte.edu.ge/ka/gamotsdebis-shesakheb
+ყოველ სემესტრში
+Academic Registry
+Application Deadlines
+alte.edu.ge/ka/bakalavrebistvis
+წელიწადში 2-ჯერ
+Admissions
+Tuition Fees
+alte.edu.ge/ka/dafinanseba
+წელიწადში 1-ჯერ
+Finance
+Student Guide
+alte.edu.ge/ka/studenturi-gzamkvlevi
+წელიწადში 1-ჯერ
+Student Services
+Consultation Hours
+alte.edu.ge/ka/studentebis-sakonsultatsio-saatebi
+თვეში 1-ჯერ
+Student Services
+Deadline Tracking — ახალი DB ცხრილი:
+ველი
+ტიპი
+აღწერა
+id
+UUID
+Primary key
+deadline_type
+VARCHAR(100)
+enrollment / exam / grant / event
+title
+TEXT
+მაგ: "ბაკალავრის მიღების ბოლო ვადა"
+deadline_date
+DATE
+ზუსტი ვადა
+program
+VARCHAR(100)
+bachelor / master / medicine / all
+is_active
+BOOLEAN
+ბოტი პასუხობს მხოლოდ active-ზე
+source_id
+UUID FK
+knowledge_sources.id
+3. ტექნიკური გაუმჯობესებები — 🟡 MEDIUM PRIORITY
+3.1  OpenAI → Anthropic Claude API
+v1.0-ში Stack-ში OpenAI API არის მითითებული. Bridge Hub-ს Anthropic Claude API უკვე configured აქვს, ANTHROPIC_API_KEY production-ში სეტია. ერთიანობისა და ხარჯთეფექტიანობის გამო Claude API-ზე გადასვლა უფრო სწორია.
+პარამეტრი
+OpenAI (v1.0)
+Claude API (v2.0 — რეკომენდებული)
+მოდელი
+gpt-4o / gpt-4-turbo
+claude-sonnet-4-20250514
+Structured Output
+response_format JSON
+JSON system prompt + validation
+ქართული ენა
+კარგი
+კარგი
+Bridge Hub ინტეგრაცია
+ახლიდან setup
+უკვე configured ✅
+ფასი
+$10-30/1M tokens
+$3-15/1M tokens
+Context Window
+128K tokens
+200K tokens
+ai_service.py — v2.0 implementation:
+import anthropic
+client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+msg = client.messages.create(
+model="claude-sonnet-4-20250514",
+max_tokens=1000,
+system=ALTE_SYSTEM_PROMPT,
+messages=conversation_history
+)
+3.2  Proactive Widget Trigger Logic
+v1.0-ში widget passive-ია — სტუდენტი ხსნის, ბოტი ელოდება. საერთაშორისო გამოცდილებით proactive trigger-ი conversion rate-ს 25-40%-ით ზრდის.
+Trigger სცენარი
+Condition
+Proactive შეტყობინება
+Admissions page
+30 წამი /bakalavrebistvis ან /magistrebistvis
+"გეხმარებათ მიღების ინფორმაციაში? 👋"
+Programs page
+45 წამი /sabakalavro-programebi-ზე
+"მაინტერესებს რომელი პროგრამა გაქვთ?"
+International
+join.alte.edu.ge-ზე ნებისმიერი ვიზიტი
+"Hi! Need help with international admission? 🌍"
+Finance page
+20 წამი /dafinanseba-ზე
+"გაქვთ კითხვა სტიპენდიებზე ან დაფინანსებაზე?"
+Return visitor
+Cookie — 2+ ვიზიტი 7 დღეში
+"კვლავ გამარჯობა! გვაქვს ახალი ინფო ➡️"
+Exit intent
+Mouse მიდის browser bar-ისკენ
+"წასვლამდე — გაქვთ კითხვები? სწრაფად გიპასუხებთ!"
+3.3  Language Auto-Detection — EN/KA Implementation
+v1.0-ში ენის auto-detect ახსენებულია, მაგრამ კონკრეტული implementation Phase-ებში არ ჩანს. განსაკუთრებით join.alte.edu.ge-ზე ინგლისურენოვანი სტუდენტებისთვის ეს კრიტიკულია.
+Detection Method
+Priority
+Fallback
+Browser Accept-Language header
+1 — პირველი შემოწმება
+ka
+URL domain — join.alte.edu.ge
+2 — EN default
+EN
+URL path — /en/ prefix
+2 — EN forced
+EN
+First message language detection
+3 — Claude detects
+ka
+User manual switch
+4 — ყოველთვის override
+User choice
+conversations ცხრილში language ველი უკვე არის (v1.0). დამატება: widget-ში KA/EN toggle ღილაკი პირველ greeting-ში.
+4. WhatsApp History Import — Phase 7 დამატება
+ალტეს admissions გუნდს WhatsApp Business-ზე მრავალი თვის Q&A ისტორია აქვს — რეალური სტუდენტების კითხვები და ოფიციალური პასუხები. ეს ყველაზე ძვირფასი Knowledge Base-ია, მაგრამ v1.0-ში Phase 7-ში WhatsApp integration-ი წერია ისტორიის import-ის გარეშე.
+4.1  Import Pipeline
+ეტაპი
+პროცესი
+ინსტრუმენტი
+1. Export
+თითოეული თანამშრომელი: Settings → Chat → Export (Without Media)
+WhatsApp App
+2. Upload
+Admin panel-ში TXT ფაილების ატვირთვა
+Knowledge Base Admin UI
+3. Parse
+Q&A ამოღება: სტუდენტის კითხვა → admissions-ის პასუხი
+Python parser
+4. Review
+ოპერატორი ამოწმებს — approve/reject ყოველ Q&A-ს
+CRM Knowledge Admin
+5. Activate
+Approved Q&A-ები knowledge_chunks-ში
+Auto + source citation
+6. Monitor
+AI პასუხებში WhatsApp Q&A-ს citation ჩანს
+ai_interactions table
+4.2  WhatsApp Parser — knowledge_sources ახალი type
+ველი
+მნიშვნელობა
+source_type
+whatsapp_export
+status
+pending_review → approved → active
+requires_review
+TRUE — ყოველი Q&A ადამიანი ამოწმებს
+privacy_cleared
+TRUE — სახელები/ნომრები ამოშლილია
+original_agent
+admissions_1, admissions_2 (anonymized)
+⚠️ Privacy წესი: პარსინგის დროს ყველა სახელი, ტელეფონის ნომერი და პერსონალური ინფო ავტომატურად მოიშლება. მხოლოდ Q&A სტრუქტურა ინახება.
+5. განახლებული Phase სია — v2.0
+ფაზა
+v1.0 შინაარსი
+v2.0 დამატება
+ვადა
+Phase 0
+Backend skeleton, health, DB
++ Claude API client setup
++ .env.example with ANTHROPIC_API_KEY
+1 კვირა
+Phase 1
+CRM Core: customers, leads, tasks
++ Medicine pipeline ცალკე
++ is_international_priority field
++ deadline_tracking ცხრილი
+2 კვირა
+Phase 2
+Website chat widget
++ Proactive trigger logic
++ join.alte.edu.ge domain detection
++ Language auto-detect
+1.5 კვირა
+Phase 3
+AI layer: intent, summary, handover
++ Claude API (OpenAI-ის ნაცვლად)
++ Medicine intent ცალკე
++ join.alte.edu.ge high-priority routing
+2 კვირა
+Phase 4
+Knowledge Base: upload, chunking
++ Academic calendar source
++ Deadline tracking integration
++ Student guide, consultation hours
+2 კვირა
+Phase 5
+Frontend CRM dashboard
+უცვლელი ✅
+2.5 კვირა
+Phase 6
+Analytics + SLA
++ join.alte.edu.ge conversion metric
++ Medicine funnel analytics
+1.5 კვირა
+Phase 7
+WhatsApp/Messenger/Instagram/Email
++ WhatsApp TXT history import
++ Privacy parser
++ Review workflow
+3 კვირა
+Phase 8
+Agent module, bulk messaging
+უცვლელი ✅
+2 კვირა
+6. განახლებული Codex/Claude Code Prompt — Phase 0
+ეს prompt-ი პირდაპირ ჩასვი Claude Code-ში. v1.0-ისგან განსხვავება: Claude API, Medicine flag, deadline table.
+You are working on: Alte AI CRM Chatbot
+Stack:
+- Backend: Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL
+- AI: Anthropic Claude API (claude-sonnet-4-20250514)
+- Frontend later: Next.js/React, Tailwind, shadcn/ui
+- Deploy: Google Cloud Run
+Rules:
+1. Do not build everything at once
+2. Start with backend foundation only
+3. Keep routes thin — logic in services/engines
+4. AI never directly mutates CRM data
+5. All events audit logged
+6. Lead creation follows business rules
+7. Duplicate detection by phone + email
+8. No API keys in code — only .env
+Phase 0 Task:
+Create backend/app structure. Add:
+- FastAPI app + config
+- PostgreSQL connection (asyncpg)
+- SQLAlchemy base + Alembic setup
+- Health endpoint: GET /health
+- Version endpoint: GET /version
+- core/ai_client.py with Anthropic client
+- .env.example with: DATABASE_URL, JWT_SECRET,
+ANTHROPIC_API_KEY, ENVIRONMENT
+- requirements.txt
+Do NOT add frontend, WhatsApp, or AI calls yet.
+After Phase 0, list created files + how to run.
+7. alte.edu.ge სრული Sitemap — Knowledge Base Coverage
+ეს არის საიტის ყველა URL რომელიც Knowledge Base-ში უნდა შევიდეს. v1.0-ში ნაწილობრივ იყო. v2.0-ში სრული coverage.
+URL / Section
+Priority
+Department
+განახლება
+v1.0-ში?
+alte.edu.ge/ka/bakalavrebistvis
+🔴 HIGH
+Admissions
+ყოველ სემესტრში
+✅
+alte.edu.ge/ka/magistrebistvis
+🔴 HIGH
+Admissions
+ყოველ სემესტრში
+✅
+alte.edu.ge/ka/saertashoriso-studentebistvis
+🔴 HIGH
+International
+ყოველ სემესტრში
+✅
+join.alte.edu.ge
+🔴 HIGH
+International
+ყოველ კვირას
+❌ NEW
+alte.edu.ge/ka/sabakalavro-programebi
+🔴 HIGH
+Admissions
+ყოველ წელს
+✅
+alte.edu.ge/ka/samagistro-programebi-2
+🔴 HIGH
+Admissions
+ყოველ წელს
+✅
+alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2
+🔴 HIGH
+Int. Admissions
+ყოველ წელს
+❌ NEW
+alte.edu.ge/ka/dafinanseba
+🔴 HIGH
+Finance
+ყოველ წელს
+✅
+alte.edu.ge/ka/akademiuri-kalendari
+🟡 MED
+Academic Reg.
+ყოველ სემ.
+❌ NEW
+alte.edu.ge/ka/gamotsdebis-shesakheb
+🟡 MED
+Academic Reg.
+ყოველ სემ.
+❌ NEW
+alte.edu.ge/ka/studenturi-gzamkvlevi
+🟡 MED
+Student Serv.
+ყოველ წელს
+❌ NEW
+alte.edu.ge/ka/studentebis-sakonsultatsio-saatebi
+🟡 MED
+Student Serv.
+თვეში 1-ჯერ
+❌ NEW
+alte.edu.ge/ka/relokatsiis-servisebi
+🟡 MED
+Int. Admissions
+ყოველ წელს
+❌ NEW
+alte.edu.ge/ka/kontaqti
+🟢 LOW
+All
+იშვიათად
+✅
+alte.edu.ge/ka/faq
+🟢 LOW
+All
+იშვიათად
+✅
+alte.edu.ge/ka/klubebi
+🟢 LOW
+Student Serv.
+ყოველ წელს
+❌ NEW
+alte.edu.ge/ka/abiturientebis-broshura
+🟢 LOW
+Admissions
+ყოველ წელს
+❌ NEW
+8. Security & Privacy — v2.0 დამატებები
+საკითხი
+v1.0 სტატუსი
+v2.0 მოთხოვნა
+WhatsApp history privacy
+❌ არ არის
+Auto-anonymizer parser სავალდებულო
+join.alte.edu.ge CORS
+❌ არ არის
+Separate CORS config join domain-ისთვის
+Consent — international
+⚠️ ზოგადი consent
+GDPR consent join.alte.edu.ge-ზე სავალდებულო
+Medicine data sensitivity
+❌ არ არის
+Medical inquiry — higher privacy flag
+Rate limiting
+⚠️ ახსენებულია
+Widget endpoint: 30 req/min per IP
+Audit log retention
+⚠️ ახსენებულია
+Min 2 წელი, GDPR right-to-delete
+9. შეჯამება — v1.0 vs v2.0
+კომპონენტი
+v1.0
+v2.0
+join.alte.edu.ge
+❌
+✅ High-priority flow
+Medicine Pipeline
+⚠️ Bachelor-ად
+✅ ცალკე 12-stage pipeline
+Academic Calendar KB
+❌
+✅ Deadline tracking module
+AI Engine
+OpenAI API
+✅ Claude API (Anthropic)
+Widget Behavior
+Passive
+✅ Proactive triggers
+Language Detection
+Basic
+✅ Auto-detect + join.alte flow
+WhatsApp History
+❌
+✅ Import + privacy parser
+Sitemap Coverage
+8 URL
+✅ 18 URL სრული
+Security
+Basic
+✅ Privacy parser + GDPR consent
+Phase Count
+9 ფაზა
+9 ფაზა (განახლებული)
+სრული შეფასება: v1.0 — 9/10. v2.0 — 10/10. ყველა კრიტიკული ხარვეზი გასწორებულია. სისტემა ახლა მზადაა Phase 0-ის დასაწყებად.

@@ -1,0 +1,533 @@
+Alte.edu.ge AI Chatbot + CRM სისტემის აწყობის სრული გეგმა
+Codex-ისთვის სამუშაო ინსტრუქცია, არქიტექტურა, ეტაპები და MVP
+დოკუმენტი მომზადებულია AI_CRM_Needs_Detailed.docx მოთხოვნების საფუძველზე. მიზანია Codex-ს მიეცეს არა ზოგადი დავალება, არამედ მკაფიო, ეტაპობრივი და უსაფრთხო ტექნიკური გეგმა.
+1. პროექტის მთავარი მიზანი
+უნდა ავაწყოთ Alte.edu.ge-სთვის AI chatbot + CRM სისტემა, სადაც chatbot მომხმარებელთან პირველადი კომუნიკაციის ფენაა, CRM კი ოპერაციული ბირთვი. ბოტი არ უნდა იყოს ცალკე მდგომი ინსტრუმენტი; ყველა მნიშვნელოვანი ქმედება, სტატუსი, lead და conversation history უნდა ინახებოდეს CRM-ში.
+მომხმარებელი წერს Website Chat-ში ან მომავალში WhatsApp/Messenger/Instagram/Email-ში.
+AI პასუხობს მხოლოდ ცოდნის ბაზაზე დაყრდნობით.
+თუ მომხმარებელი დაინტერესებულია პროგრამით, კონსულტაციით ან ჩარიცხვით, იქმნება lead.
+თუ კითხვა უბრალოა, მაგალითად მისამართი ან სამუშაო საათები, ინახება conversation history, მაგრამ lead არ იქმნება.
+თუ AI არ არის დარწმუნებული, ხდება human handover და CRM-ში იქმნება task შესაბამისი დეპარტამენტისთვის.
+2. რეკომენდებული ტექნოლოგიები
+ნაწილი
+რეკომენდებული ინსტრუმენტი
+რატომ
+Code Editor
+VS Code + Codex
+Codex ფაილებს შექმნის, შეცვლის, გაუშვებს და დაგეხმარება შეცდომების გასწორებაში.
+Backend
+Python + FastAPI
+სწრაფი API, მარტივი გაფართოება, კარგი ინტეგრაცია AI და CRM ლოგიკასთან.
+Database
+PostgreSQL
+CRM მონაცემებისთვის სტაბილური და ძლიერი ბაზა.
+AI Search
+PostgreSQL pgvector
+Knowledge base-ის semantic search ერთიან ბაზაში.
+Frontend
+Next.js / React + Tailwind + shadcn/ui
+CRM dashboard, inbox, lead profile და pipeline UI.
+AI
+OpenAI API
+intent detection, FAQ answer, summary, routing და extraction.
+Deployment
+Google Cloud Run + Cloud SQL
+შენ უკვე Bridge Hub-ში იყენებ მსგავს გარემოს.
+Version Control
+GitHub
+backup, commit history, branch-ებით უსაფრთხო განვითარება.
+Testing
+Postman/Insomnia + Pytest
+API endpoints და business flow-ის შემოწმება.
+3. მაღალი დონის არქიტექტურა
+Communication Channels
+- Website Chat Widget
+- WhatsApp, Messenger, Instagram, Email (Phase 2)
+↓
+Channel Gateway / Webhooks
+↓
+AI Conversation Layer
+↓
+Business Rules Engine
+↓
+CRM Core
+↓
+Tasks / Pipeline / Analytics / Users / Audit Log
+მთავარი პრინციპი: AI არ ცვლის მონაცემებს პირდაპირ. AI აბრუნებს structured analysis-ს, ხოლო CRM/Business Rules layer წყვეტს რა უნდა მოხდეს.
+4. პროექტის ფაზები
+ფაზა
+შინაარსი
+შედეგი
+Phase 0
+Repository, FastAPI skeleton, PostgreSQL connection, settings, health endpoints
+სტაბილური პროექტის საძირკველი
+Phase 1
+CRM Core: customers, leads, conversations, messages, tasks, departments, pipeline stages
+CRM-ის ძირითადი API მუშაობს
+Phase 2
+Website chat widget + /chat/message endpoint + inbox
+საიტიდან შეტყობინება CRM-ში ჩადის
+Phase 3
+AI layer: intent detection, lead decision, summary, human handover
+AI აანალიზებს საუბარს და ქმნის CRM action plan-ს
+Phase 4
+Knowledge base: upload docs, chunking, embeddings, pgvector search, source citation
+ბოტი პასუხობს სანდო წყაროებიდან
+Phase 5
+Frontend CRM dashboard: inbox, leads, lead profile, tasks, pipeline
+ოპერატორი მუშაობს CRM UI-ში
+Phase 6
+Analytics: lead counts, channel stats, AI handover rate, stage conversion
+მენეჯმენტს აქვს basic dashboard
+Phase 7
+WhatsApp/Messenger/Instagram/Email integrations
+Omnichannel კომუნიკაცია
+Phase 8
+Agent module, bulk messaging, calendar, SLA, advanced analytics
+გაფართოებული CRM ფუნქციები
+5. MVP Scope - პირველი ვერსია
+პირველ ვერსიაში არ უნდა ავაწყოთ ყველაფერი. MVP უნდა ფოკუსირდეს საიტის ჩატზე, Admissions flow-ზე და CRM core-ზე.
+Website chat widget alte.edu.ge-ზე ჩასასმელად.
+ქართული და ინგლისური ენის მხარდაჭერა.
+Knowledge base FAQ: პროგრამები, მიღება, საბუთები, ვადები, საფასური, კონტაქტები, მისამართები.
+AI intent detection: general_info, admission_interest, finance_question, human_request, agent_submission, technical_issue.
+Lead creation only when user shows real interest or leaves contact data.
+Duplicate detection by phone/email.
+Human handover when AI confidence is low or user asks human.
+CRM lead profile, conversation history, AI summary, task assignment.
+Admissions pipeline: New Lead, Contacted, Interested, Meeting Scheduled, Documents Requested, Documents Received, Contract Sent, Enrolled, Lost.
+Basic dashboard: new leads, channels, stages, AI-handled vs human handover.
+6. Database Models
+Model/Table
+ძირითადი ველები
+დანიშნულება
+users
+id, name, email, role, department_id, is_active
+CRM მომხმარებლები და უფლებები
+departments
+id, name, description, default_queue
+Admissions, Finance, IT, Student Services და სხვ.
+customers
+id, first_name, last_name, phone, email, country, city, source_channel
+ადამიანის ერთიანი პროფილი
+leads
+id, customer_id, interest_area, program, department_id, assigned_user_id, stage_id, status, priority, source_channel
+CRM lead / ჩარიცხვის ინტერესი
+conversations
+id, customer_id, lead_id, channel, status, ai_handled, human_handover, summary
+საუბრის ერთეული
+messages
+id, conversation_id, sender_type, text, channel_message_id, created_at
+სრული ჩატის ისტორია
+tasks
+id, lead_id, customer_id, assigned_user_id, department_id, title, description, due_date, priority, status
+follow-up და სამუშაო დავალებები
+pipelines
+id, name, department_id, is_active
+Pipeline ჯგუფები
+pipeline_stages
+id, pipeline_id, name, order, is_final, is_lost
+Stage-ებით მართვა
+lead_stage_history
+id, lead_id, from_stage_id, to_stage_id, changed_by, changed_at
+Stage change audit
+knowledge_sources
+id, title, source_type, status, version, department, uploaded_by
+Knowledge base წყაროები
+knowledge_chunks
+id, source_id, content, embedding, metadata, active
+AI semantic search-ის ტექსტური ნაწილები
+ai_interactions
+id, conversation_id, intent, confidence, answer, sources, should_create_lead, should_handover
+AI ხარისხის კონტროლი
+audit_logs
+id, actor_type, actor_id, action, entity_type, entity_id, metadata, created_at
+უსაფრთხო audit trail
+7. API Endpoints
+System
+GET  /health
+GET  /version
+Chat / Website Widget
+POST /chat/message
+POST /chat/session/start
+GET  /chat/conversations/{conversation_id}
+POST /chat/handover/{conversation_id}
+CRM Customers and Leads
+POST /customers
+GET  /customers/{customer_id}
+GET  /customers/search?phone=&email=
+POST /leads
+GET  /leads
+GET  /leads/{lead_id}
+PATCH /leads/{lead_id}
+PATCH /leads/{lead_id}/stage
+Inbox and Conversations
+GET  /inbox
+GET  /conversations/{conversation_id}/messages
+POST /conversations/{conversation_id}/reply
+Tasks
+POST /tasks
+GET  /tasks
+PATCH /tasks/{task_id}
+PATCH /tasks/{task_id}/complete
+Knowledge Base
+POST /knowledge/sources/upload
+GET  /knowledge/sources
+PATCH /knowledge/sources/{source_id}/activate
+POST /knowledge/search
+Analytics
+GET /analytics/overview
+GET /analytics/leads-by-stage
+GET /analytics/leads-by-channel
+GET /analytics/ai-performance
+Admin
+POST /departments
+POST /pipelines
+POST /pipeline-stages
+POST /users
+GET  /audit-logs
+8. AI Logic - structured output
+AI-სგან ყოველთვის უნდა მოვითხოვოთ JSON/structured response. ტექსტური პასუხი ცალკე იქნება, ბიზნეს გადაწყვეტილება ცალკე.
+{
+"reply": "რა თქმა უნდა, დაგეხმარებით. შეგიძლიათ მომწეროთ სახელი, ტელეფონი და ელ-ფოსტა?",
+"language": "ka",
+"intent": "admission_interest",
+"confidence": 0.88,
+"should_create_lead": true,
+"should_handover": false,
+"department": "Admissions",
+"priority": "normal",
+"missing_fields": ["phone", "email"],
+"extracted_contact": {
+"first_name": null,
+"last_name": null,
+"phone": null,
+"email": null
+},
+"interest_area": "Business Program",
+"conversation_summary": "User is interested in Business program admission.",
+"used_sources": ["admissions_faq_v1"]
+}
+წესი: თუ confidence < 0.70 ან source არ მოიძებნა, AI პასუხობს fallback-ით და სთავაზობს human handover-ს.
+9. Business Rules Engine
+Lead creation rules:
+- general_info + no contact data => save conversation only
+- admission_interest => ask missing contact fields, then create/update lead
+- consultation_request => create/update lead + task
+- finance_question => route Finance or Admissions depending on context
+- human_request => handover + task
+- agent_submission => extract student data + create lead + link agent profile
+- technical_issue => route IT Support
+Duplicate rules:
+- If phone exists => update existing customer
+- Else if email exists => update existing customer
+- Else create new customer
+Task rules:
+- New admission lead => task due in 24 hours
+- Human handover => task due immediately or within 4 hours
+- Finance question => task for Finance
+- International student => task for International Admissions
+10. Folder Structure Codex-მა ასე შექმნას
+alte-ai-crm/
+backend/
+app/
+main.py
+core/
+config.py
+security.py
+database.py
+api/
+routes_system.py
+routes_chat.py
+routes_customers.py
+routes_leads.py
+routes_conversations.py
+routes_tasks.py
+routes_knowledge.py
+routes_analytics.py
+routes_admin.py
+models/
+user.py
+department.py
+customer.py
+lead.py
+conversation.py
+message.py
+task.py
+pipeline.py
+knowledge.py
+audit_log.py
+schemas/
+chat.py
+customer.py
+lead.py
+task.py
+knowledge.py
+analytics.py
+services/
+ai_service.py
+chat_service.py
+crm_service.py
+lead_service.py
+task_service.py
+knowledge_service.py
+analytics_service.py
+engines/
+lead_decision_engine.py
+routing_engine.py
+duplicate_detection_engine.py
+ai_confidence_engine.py
+repositories/
+customer_repository.py
+lead_repository.py
+conversation_repository.py
+task_repository.py
+connectors/
+website_widget_connector.py
+whatsapp_connector.py
+messenger_connector.py
+email_connector.py
+tests/
+alembic/
+requirements.txt
+.env.example
+frontend/
+app/
+components/
+lib/
+package.json
+widget/
+alte-chat-widget.js
+README.md
+11. Frontend Screens
+Login page - მომხმარებლის ავტორიზაცია.
+Inbox - ყველა conversation ერთ სივრცეში.
+Lead list - ფილტრებით: stage, channel, department, assigned user.
+Lead profile - customer info, AI summary, conversation history, tasks, notes.
+Pipeline board - Kanban style stage management.
+Tasks - assigned follow-up სამუშაოები.
+Knowledge base admin - წყაროების ატვირთვა/აქტივაცია/დეაქტივაცია.
+Analytics dashboard - leads by channel, stage, AI handover, response time.
+Settings - departments, users, roles, pipelines.
+12. უსაფრთხოების წესები
+AI არ უნდა გასცემდეს დაუდასტურებელ ინფორმაციას; თუ source არ აქვს, უნდა მოხდეს human handover.
+ყველა AI პასუხი, intent, confidence და source უნდა შეინახოს ai_interactions ცხრილში.
+ყველა მონაცემის ცვლილება უნდა წავიდეს services layer-იდან და ჩაიწეროს audit_logs-ში.
+Role-based access: Admin, Manager, Admissions User, Finance User, Operator.
+Sensitive fields უნდა იყოს დაცული და მომხმარებლების უფლებებით შეზღუდული.
+Bulk messaging Phase 2/3-მდე არ დაემატოს და აუცილებლად ჰქონდეს approval/permission logic.
+Knowledge source versioning: active/inactive სტატუსი და version field სავალდებულოა.
+13. Codex-ისთვის ძირითადი Master Prompt
+ქვემოთ მოცემული ტექსტი შეგიძლია პირდაპირ ჩასვა Codex-ში. პირველად ამით დაიწყე. არ მისცე Codex-ს დავალება “ააწყე ყველაფერი ერთად”; უთხარი, რომ იმუშაოს ფაზებად და ყოველი ფაზის ბოლოს გაუშვას ტესტები.
+You are working on a new project: Alte AI CRM Chatbot.
+Goal:
+Build an AI-powered CRM and website chatbot system for alte.edu.ge. The chatbot must not be a standalone bot. It must be connected to the CRM, and every important message, lead, status, task, handover and AI summary must be stored in the CRM.
+Use this stack:
+- Backend: Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL, Pydantic
+- AI: OpenAI API, structured JSON outputs
+- Knowledge Base: PostgreSQL + pgvector-ready structure
+- Frontend later: Next.js/React, Tailwind, shadcn/ui
+- Deployment later: Google Cloud Run
+Important rules:
+1. Do not build everything at once.
+2. Start with backend foundation only.
+3. Keep API routes thin. Put business logic in services and engines.
+4. AI must never directly mutate CRM data. AI returns structured analysis; services decide actions.
+5. All important events must be audit logged.
+6. Lead creation must follow business rules:
+- simple informational questions should not create leads
+- admission/program/consultation interest should create or update a lead
+- human handover should create/update lead and task
+7. Add duplicate detection by phone and email.
+8. Add knowledge source versioning fields, even if vector search is implemented later.
+9. Write clean, modular, testable code.
+Phase 0 task:
+Create the initial backend project structure under backend/app.
+Add FastAPI app, config, database connection, health endpoint, SQLAlchemy base, Alembic setup, .env.example and requirements.txt.
+Do not add frontend, WhatsApp, Messenger, Instagram, or AI calls yet.
+After Phase 0, explain what files were created and how to run the server.
+14. Codex Prompt - Phase 1 CRM Core
+Continue with Phase 1: CRM Core.
+Create SQLAlchemy models, Pydantic schemas, services, repositories and API routes for:
+- Department
+- User
+- Customer
+- Lead
+- Conversation
+- Message
+- Task
+- Pipeline
+- PipelineStage
+- LeadStageHistory
+- AuditLog
+Requirements:
+- Use PostgreSQL-compatible SQLAlchemy models.
+- Add created_at and updated_at fields where needed.
+- Add enums or constrained strings for lead status, task status, priority and channel.
+- Add duplicate detection service by phone/email.
+- Add lead stage change endpoint and record stage history.
+- Add audit logging for customer_created, lead_created, lead_updated, stage_changed, task_created, message_received.
+- Keep routes thin and services responsible for business logic.
+- Add basic pytest tests for customer creation, duplicate detection, lead creation and stage change.
+Endpoints to create:
+GET /health
+POST /departments
+POST /customers
+GET /customers/{customer_id}
+GET /customers/search
+POST /leads
+GET /leads
+GET /leads/{lead_id}
+PATCH /leads/{lead_id}/stage
+POST /tasks
+GET /tasks
+POST /conversations
+POST /conversations/{conversation_id}/messages
+GET /inbox
+Do not implement OpenAI or external channels yet.
+15. Codex Prompt - Phase 2 Website Chat Flow
+Continue with Phase 2: Website Chat Flow.
+Create /chat/session/start and /chat/message endpoints for a website widget.
+Flow:
+1. User starts chat from alte.edu.ge website.
+2. Backend creates or reuses a conversation session.
+3. User sends message.
+4. Save message to messages table.
+5. For now, use a mock AI analyzer that returns structured intent, confidence and reply.
+6. If intent requires lead creation and contact data exists, create/update customer and lead.
+7. If contact data is missing, reply asking for missing fields.
+8. Save AI reply as a message.
+9. Return reply and conversation_id to widget.
+Create schemas:
+ChatMessageRequest
+ChatMessageResponse
+AIAnalysisResult
+ExtractedContact
+Mock intents:
+- general_info
+- admission_interest
+- consultation_request
+- finance_question
+- human_request
+- agent_submission
+- technical_issue
+Add tests for:
+- general question does not create lead
+- admission interest asks for missing phone/email
+- admission interest with contact creates lead and task
+- human_request creates handover task
+16. Codex Prompt - Phase 3 AI Integration
+Continue with Phase 3: AI Integration.
+Replace mock AI analyzer with ai_service.py using OpenAI API.
+Requirements:
+- All OpenAI calls must be inside ai_service.py only.
+- AI must return structured JSON matching AIAnalysisResult.
+- Add strict system prompt:
+- answer only from provided knowledge context
+- if unsure, set should_handover=true
+- do not invent prices, deadlines, admission requirements or official policy
+- support Georgian and English
+- Add confidence threshold. If confidence < 0.70, force fallback and human handover suggestion.
+- Save intent, confidence, reply, summary, used_sources and action flags in ai_interactions table.
+- Add graceful error handling if OpenAI API is unavailable.
+Do not implement vector search yet. Use placeholder knowledge context from a local static FAQ service.
+17. Codex Prompt - Phase 4 Knowledge Base
+Continue with Phase 4: Knowledge Base.
+Implement knowledge base module.
+Create models:
+- KnowledgeSource
+- KnowledgeChunk
+Fields:
+KnowledgeSource: id, title, source_type, version, status(active/inactive), department, original_filename, uploaded_by, created_at
+KnowledgeChunk: id, source_id, content, chunk_index, metadata_json, embedding nullable, active
+Endpoints:
+POST /knowledge/sources/upload
+GET /knowledge/sources
+PATCH /knowledge/sources/{source_id}/activate
+PATCH /knowledge/sources/{source_id}/deactivate
+POST /knowledge/search
+Start with text/docx/pdf extraction if libraries are available; otherwise implement plain text upload first and leave TODO for PDF/DOCX extraction.
+Chunk documents into small sections.
+Add source IDs to AI context and AI response.
+Do not allow inactive sources to be used in answers.
+Prepare structure for pgvector but do not require production vector search yet.
+18. Codex Prompt - Phase 5 Frontend CRM
+Continue with Phase 5: Frontend CRM.
+Create frontend using Next.js, Tailwind and shadcn/ui.
+Pages:
+- /login
+- /dashboard
+- /inbox
+- /leads
+- /leads/[id]
+- /pipeline
+- /tasks
+- /knowledge
+- /settings
+Components:
+- InboxList
+- ConversationPanel
+- LeadCard
+- LeadProfile
+- PipelineBoard
+- TaskList
+- KnowledgeSourceTable
+- AnalyticsCards
+Use backend API endpoints.
+Keep UI clean and simple.
+Do not implement real authentication first; use placeholder token or mock user until backend auth is ready.
+19. Acceptance Checklist
+Website chat-იდან შეტყობინება backend-ში მიდის და conversations/messages-ში ინახება.
+AI ან mock AI აბრუნებს structured intent/confidence/reply-ს.
+უბრალო კითხვაზე lead არ იქმნება.
+ჩარიცხვის/პროგრამის ინტერესზე lead იქმნება, თუ contact data არის.
+თუ contact data აკლია, ბოტი ითხოვს სახელს/ტელეფონს/ელ-ფოსტას.
+Human handover ქმნის task-ს შესაბამის დეპარტამენტზე.
+CRM inbox-ში ჩანს conversation history.
+Lead profile-ში ჩანს AI summary, customer info, stage, tasks, messages.
+Stage change ინახება lead_stage_history-ში.
+Duplicate detection მუშაობს phone/email-ზე.
+Knowledge sources-ს აქვს active/inactive და version control.
+AI დაბალი confidence-ისას არ იგონებს პასუხს და სთავაზობს human handover-ს.
+ყველა მნიშვნელოვანი მოვლენა audit_logs-ში იწერება.
+20. პირველი რეალური სატესტო სცენარი
+User writes in website chat:
+"მაინტერესებს ბიზნესის პროგრამაზე ჩარიცხვა"
+Expected bot reply:
+"რა თქმა უნდა, დაგეხმარებით. შეგიძლიათ მომწეროთ სახელი, ტელეფონის ნომერი და ელ-ფოსტა, რომ კონსულტანტმა დაგიკავშირდეთ?"
+User provides:
+"ნინო ბერიძე, +995599000000, nino@example.com"
+Expected system actions:
+- Create or update Customer
+- Create Lead
+- Department = Admissions
+- Stage = New Lead
+- Source channel = Website Chat
+- Create Task: დაუკავშირდეს მომხმარებელს 24 საათში
+- Save full conversation history
+- Save AI summary
+- Show lead in CRM dashboard
+21. რა არ უნდა გააკეთოს Codex-მა პირველ ეტაპზე
+არ ააწყოს WhatsApp, Messenger, Instagram ინტეგრაციები სანამ Website chat + CRM core არ იმუშავებს.
+არ ააწყოს bulk messaging პირველ ვერსიაში.
+არ მისცეს AI-ს პირდაპირ database update-ის უფლება.
+არ აურიოს routes-ში business logic; logic უნდა იყოს services/engines-ში.
+არ ჩადოს API keys კოდში; გამოიყენოს .env და .env.example.
+არ გამოტოვოს audit logs და duplicate detection.
+არ ააწყოს ზედმეტად რთული UI სანამ backend flow არ დადასტურდება.
+22. მოკლე დავალება, თუ Codex-ს სწრაფად უნდა მისწერო
+Build Phase 0 and Phase 1 only for Alte AI CRM Chatbot.
+Use FastAPI, PostgreSQL, SQLAlchemy, Alembic.
+Create backend foundation and CRM core models/routes/services for customers, leads, conversations, messages, tasks, departments and pipeline stages.
+Keep routes thin, put logic in services, add audit logs, duplicate detection by phone/email, and basic tests.
+Do not add AI, frontend or WhatsApp yet.
+23. შენთვის სამუშაო რიგი
+გახსენი VS Code და შექმენი ახალი GitHub repository: alte-ai-crm.
+დააინსტალირე Codex VS Code-ში.
+Codex-ს ჩასვი Master Prompt და Phase 0 დავალება.
+როცა Phase 0 დასრულდება, გაუშვი server და შეამოწმე /health.
+შემდეგ ჩასვი Phase 1 prompt CRM Core-ისთვის.
+ყოველი ფაზის ბოლოს გააკეთე git commit.
+თუ error გამოვა, დააკოპირე error აქ და გავასწორებთ ეტაპობრივად.
+როცა backend core იმუშავებს, გადავიდეთ Website chat flow-ზე.
+AI და knowledge base დავამატოთ მხოლოდ მას შემდეგ, რაც CRM core დადასტურდება.

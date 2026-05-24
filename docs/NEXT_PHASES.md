@@ -474,6 +474,24 @@ Next recommended phase:
 
 - Human reviewer fills `knowledge_review_queue_for_review.csv`, then rerun Phase 8S-Apply.
 
+## Alte Study Docs Knowledge Import
+
+- Source folder found: `C:\tmp\alte-docs-extracted`
+- Project evidence folder: `docs/knowledge_evidence/alte_study_docs/`
+- Normalized seed: `backend/app/knowledge_seed/alte_study_docs/alte_study_docs_seed_v1.json`
+- Production Knowledge Base import completed:
+  - records read: 11
+  - sources created: 11
+  - snippets created: 11
+  - high-sensitivity records: 5
+  - review-required records: 8
+- Sensitive facts remain review-required and are not final public approval.
+- Decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW`
+
+Next recommended phase:
+
+- Official reviewer fills decisions for public launch readiness; keep real-site embed blocked until website/privacy approvals are complete.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

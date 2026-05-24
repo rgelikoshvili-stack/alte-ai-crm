@@ -1,8 +1,8 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
+Current decision: `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, and the reviewer decision CSV is prepared. No reviewer decisions are filled yet, so no content was automatically approved. Full production launch remains blocked until reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, the reviewer decision CSV is prepared, and local Alte study/planning documents have been imported into the Knowledge Base for controlled chatbot testing. No reviewer decisions are filled yet, so no content was automatically approved for full public launch. Full production launch remains blocked until reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -13,6 +13,7 @@ Previous no-contact guard state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_RED
 Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
 Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED` remains true and now advances to the official content review gate.
 Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW` remains true and now advances to reviewer-decision-CSV-ready-pending-human-review.
+Previous reviewer CSV state `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW` remains true; study docs are now also imported into Knowledge Base pending official review.
 
 ## Go Only If
 
@@ -201,6 +202,12 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
   - decision column prefilled: NO
   - `--apply` run: NO
   - decision state: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
+- Alte study docs Knowledge Base import completed:
+  - source evidence copied to `docs/knowledge_evidence/alte_study_docs/`
+  - normalized seed: `backend/app/knowledge_seed/alte_study_docs/alte_study_docs_seed_v1.json`
+  - production Knowledge Base import: `sources_created=11`, `snippets_created=11`
+  - sensitive records remain `review_required=true`
+  - decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW`
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

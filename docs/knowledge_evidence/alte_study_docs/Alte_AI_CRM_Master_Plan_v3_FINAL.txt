@@ -1,0 +1,990 @@
+Alte University
+AI Chatbot + CRM სისტემა
+სრული განვითარების გეგმა
+ბიზნეს მოთხოვნები · არქიტექტურა · Phase 0–8 · Claude Code Prompts
+ვერსია: 3.0  |  2026-05-22  |  კონფიდენციალური
+დოკუმენტი
+შინაარსი
+AI_CRM_Needs_Detailed.docx
+ბიზნეს მოთხოვნები, Use Cases, კლიენტის ხედვა
+Alte_AI_CRM_Chatbot_Codex_Master_Plan_GEO.docx
+ტექნიკური არქიტექტურა, DB Models, Phase Prompts
+Alte_AI_CRM_Chatbot_Complete_Master_Plan_GEO.docx
+Sitemap, Knowledge Base Plan, Business Rules
+Alte_AI_CRM_v2_Additions.docx
+v2.0 დამატებები — Medicine, join.alte.edu.ge, Claude API
+1. პროექტის მიზანი და მთავარი პრინციპი
+მიზანია შეიქმნას ერთიანი სისტემა, რომელიც მომხმარებლებთან კომუნიკაციას, AI chatbot-ის დახმარებით პირველადი ინფორმაციის დამუშავებას, ლიდების ავტომატურ გენერირებას, შესაბამის დეპარტამენტებზე გადამისამართებას, CRM-ში ლიდების მართვას, კომუნიკაციის ისტორიას, დავალებებსა და ანალიტიკას გააერთიანებს ერთ პროცესში.
+⚠️  მთავარი პრინციპი
+AI chatbot არ უნდა იყოს ცალკე მდგომი ინსტრუმენტი. ის უნდა იყოს მიბმული CRM-ზე და ყველა მნიშვნელოვანი ინფორმაცია, ქმედება და სტატუსი უნდა აისახოს CRM-ში. AI არ ცვლის მონაცემებს პირდაპირ — AI აბრუნებს structured analysis-ს, Business Rules Engine წყვეტს რა მოხდეს.
+1.1  სისტემის ორი ძირითადი კომპონენტი
+კომპონენტი
+აღწერა
+ფუნქციები
+AI Chatbot
+Conversational Layer
+მომხმარებელთან პირველადი კომუნიკაციის ფენა
+კითხვებზე პასუხი, მონაცემების შეგროვება, lead კვალიფიკაცია, human handover
+CRM
+Operational Backend
+ოპერაციული ბირთვი — ყველა მონაცემი
+Lead მართვა, stage, task, კომუნიკაციის ისტორია, analytics, routing
+1.2  მაღალი დონის არქიტექტურა
+Communication Channels
+Website Chat | WhatsApp | Facebook Messenger | Instagram | Email
+↓
+Channel Gateway / Webhooks
+↓
+AI Conversation Layer  ←→  Knowledge Base
+↓
+Business Rules Engine
+↓
+CRM Core
+↓           ↓           ↓           ↓
+Tasks    Pipeline    Analytics    Audit Log
+2. საკომუნიკაციო არხები
+სისტემა უნდა მუშაობდეს ქვემოთ ჩამოთვლილ ყველა არხზე. Phase 1-ში მხოლოდ Website Chat. დანარჩენი — Phase 7-ში.
+არხი
+Phase
+სტატუსი
+შენიშვნა
+Website Chat Widget
+Phase 2
+🔴 MVP — პირველი
+alte.edu.ge + join.alte.edu.ge
+WhatsApp Business API
+Phase 7
+🟡 მომდევნო
+Meta verification 2-4 კვირა
+Facebook Messenger
+Phase 7
+🟡 მომდევნო
+Facebook Page-ს სჭირდება
+Instagram Messaging
+Phase 7
+🟡 მომდევნო
+Instagram Business Account
+Email
+Phase 7
+🟡 მომდევნო
+IMAP/SMTP ინტეგრაცია
+SMS
+Phase 8
+🟢 მომავალი
+Twilio ან ქართული პროვაიდერი
+⚠️  WhatsApp, Messenger, Instagram, Email Phase 7-მდე არ დაემატოს, სანამ Website Chat + CRM Core სრულად არ დადასტურდება.
+3. AI Chatbot — ფუნქციური მოთხოვნები
+3.1  კითხვებზე პასუხი
+AI chatbot-მა უნდა შეძლოს მომხმარებლის კითხვებზე პასუხის გაცემა მხოლოდ knowledge base-ის საფუძველზე. AI არ იგონებს ფასებს, ვადებს ან ოფიციალურ მოთხოვნებს.
+თემა
+მაგალითი კითხვა
+სამიზნე
+სასწავლო პროგრამები
+ბიზნეს ადმინისტრირება რა ხანგრძლივია?
+Admissions
+მიღების პროცესი
+როდის იწყება ბაკალავრის მიღება?
+Admissions
+საბუთები
+რა საბუთებია საჭირო?
+Admissions
+ვადები
+ჩარიცხვის ბოლო ვადა?
+Academic Registry
+გადასახადები
+სწავლის წლიური ღირებულება?
+Finance
+კონტაქტი
+ელფოსტა და მისამართი?
+General
+საერთ. სტუდენტები
+International students — what documents needed?
+International Admissions
+Medicine MD
+How long is the medical program?
+Int. Admissions
+3.2  AI Structured Output — JSON Contract
+AI-სგან ყოველთვის უნდა მოვითხოვოთ structured JSON response. Reply — მომხმარებლისთვის. Action flags — CRM logic-ის input.
+{
+"reply": "რა თქმა უნდა, დაგეხმარებით. შეგიძლიათ მომწეროთ სახელი და ტელეფონი?",
+"language": "ka",
+"intent": "admission_interest",
+"confidence": 0.88,
+"should_create_lead": true,
+"should_handover": false,
+"department": "Admissions",
+"priority": "normal",
+"missing_fields": ["phone", "email"],
+"extracted_contact": {
+"first_name": null, "last_name": null,
+"phone": null, "email": null,
+"country": null, "city": null
+},
+"interest_area": "Business Administration",
+"program_language": "ka",
+"conversation_summary": "User interested in Business program admission.",
+"used_sources": ["alte_for_bachelors_v1", "business_program_v1"],
+"risk_flags": []
+}
+⚠️  Confidence წესი
+თუ confidence < 0.70, source არ მოიძებნა, ან კითხვა ეხება ფასს/ვადებს source-ის გარეშე — AI გადადის fallback + human handover რეჟიმში.
+3.3  AI Engine — Claude API (Anthropic)
+პარამეტრი
+მნიშვნელობა
+მოდელი
+claude-sonnet-4-20250514
+Structured Output
+JSON system prompt + Pydantic validation
+ქართული ენა
+სრული მხარდაჭერა
+Context Window
+200K tokens
+ფასი
+$3–15 / 1M tokens
+Confidence Threshold
+< 0.70 → fallback + handover
+API Key env
+ANTHROPIC_API_KEY (.env only, not in code)
+3.4  Intent Types
+Intent
+აღწერა
+CRM Action
+general_info
+ზოგადი ინფო (მისამართი, საათები)
+Save conversation — no lead
+admission_interest
+პროგრამაზე ჩარიცხვის ინტერესი
+Lead + task 24h
+consultation_request
+კონსულტაციის მოთხოვნა
+Lead + task immediate
+finance_question
+გადასახადი, სტიპენდია
+Source-based reply ან Finance task
+human_request
+ადამიანთან საუბარი
+Handover + task 4h
+international_admission
+საერთ. სტუდენტი
+High-priority lead + Int. Admissions
+medicine_admission
+MD 6-წლიანი პროგრამა
+URGENT lead + Medicine pipeline
+student_service
+არსებული სტუდენტი
+Student Services task (არა admissions lead)
+event_interest
+ღონისძიება, Open Day
+Campaign lead (contact-ის შემთხვევაში)
+technical_issue
+IT პრობლემა
+IT Support task
+4. CRM — ფუნქციური მოთხოვნები
+4.1  Lead შექმნის ლოგიკა
+სიტუაცია
+CRM Action
+general_info + no contact
+Save conversation only — no lead
+program/admission interest + missing contact
+Ask missing fields; save AI summary; no lead
+program/admission interest + phone/email
+Create/update customer + lead; stage New Lead; task 24h
+international_admission + country/city
+Priority HIGH + International Admissions queue + task 4h
+medicine_track + international
+Priority URGENT + Medicine pipeline
+finance_question + source confirms
+Reply with source citation — no lead
+finance_question + source missing
+Task → Finance/Admissions; no auto lead
+human_request
+Handover + task immediately/4h
+technical_issue
+Route IT Support — no admissions lead
+student_service
+Route Student Services — no admissions lead
+event_interest + contact
+Campaign lead + campaign_tag
+join.alte.edu.ge + no contact
+Save session + proactive contact form
+4.2  Admissions Pipeline — ბაკალავრი/მაგისტრი
+Stage
+სახელი
+SLA / Action
+1
+New Lead
+task: დაუკავშირდეს 24h-ში
+2
+Contacted
+პირველი კონტაქტი დაფიქსირდა
+3
+Interested
+პროგრამის ინფო გაეგზავნა
+4
+Consultation Scheduled
+შეხვედრა დაგეგმილია
+5
+Documents Requested
+საბუთების სია გაეგზავნა
+6
+Documents Received
+საბუთები მიღებულია
+7
+Application/Registration Started
+განაცხადი შეივსო
+8
+Contract Sent
+ხელშეკრულება გაეგზავნა
+9
+Enrolled  ✅
+ჩარიცხული
+10
+Lost  ❌
+დაიკარგა — მიზეზი ჩაიწეროს
+4.3  Medicine MD Pipeline — ცალკე 12-Stage
+Stage
+სახელი
+სპეციფიკა
+1
+New Lead — Medicine
+Auto-flag medical_track = true
+2
+Eligibility Check
+Academic background verification
+3
+Contacted
+First contact 24h SLA
+4
+Interested — Confirmed
+MD program details sent
+5
+Document Translation
+Diploma/transcript translation required
+6
+Document Verification
+Ministry of Education nosification
+7
+Consultation Scheduled
+Medical program advisor meeting
+8
+Application Submitted
+Official enrollment form
+9
+Visa / Relocation Support
+For international students
+10
+Payment Confirmation
+Tuition confirmed
+11
+Enrolled — MD  ✅
+Final stage
+12
+Lost  ❌
+Final lost stage
+4.4  CRM-ის ძირითადი ფუნქციები
+Omnichannel Inbox — ყველა არხის შეტყობინება ერთ სივრცეში
+Lead Profile — customer info, AI summary, conversation history, tasks, notes, source citations
+Pipeline Kanban Board — stage-ების ვიზუალური მართვა
+Task Management — follow-up დავალებები, due date, priority, assigned user
+Duplicate Detection — phone/email-ზე, მრავალი არხიდან ერთი პროფილი
+Human Handover — ოპერატორი ხედავს სრულ ჩატის ისტორიას
+Bulk Messaging — Phase 8, approval/permission logic სავალდებულო
+Agent Module — პარტნიორი აგენტები, lead attribution, performance
+5. Database Models — სრული სქემა
+5.1  Core Tables
+Table
+ძირითადი ველები
+დანიშნულება
+users
+id, name, email, role, department_id, is_active
+CRM მომხმარებლები და უფლებები
+departments
+id, name, description, default_queue
+Admissions, Int. Admissions, Finance, IT, Student Services
+customers
+id, first_name, last_name, phone, email, country, city, source_channel, consent_status
+ადამიანის ერთიანი პროფილი
+leads
+id, customer_id, interest_area, program, department_id, assigned_user_id, stage_id, status, priority, source_channel, source_domain, is_international_priority, intake_period, relocation_needed, medical_track, campaign_tag
+CRM lead / ჩარიცხვის ინტერესი
+conversations
+id, customer_id, lead_id, channel, status, language, ai_handled, human_handover, summary
+საუბრის ერთეული
+messages
+id, conversation_id, sender_type, text, channel_message_id, metadata_json, created_at
+სრული ჩატის ისტორია
+tasks
+id, lead_id, customer_id, assigned_user_id, department_id, title, due_date, priority, status
+Follow-up დავალებები
+5.2  Pipeline & Knowledge Tables
+Table
+ძირითადი ველები
+დანიშნულება
+pipelines
+id, name, department_id, is_active
+Pipeline ჯგუფები (Admissions, Medicine, etc.)
+pipeline_stages
+id, pipeline_id, name, order, is_final, is_lost
+Stage-ებით მართვა
+lead_stage_history
+id, lead_id, from_stage_id, to_stage_id, changed_by, changed_at
+Stage change audit
+knowledge_sources
+id, title, url, source_type, status, version, department, last_reviewed_at, uploaded_by
+Knowledge-base source governance
+knowledge_chunks
+id, source_id, content, chunk_index, metadata_json, embedding nullable, active
+AI search chunks — pgvector-ready
+ai_interactions
+id, conversation_id, message_id, intent, confidence, answer, sources, flags, created_at
+AI quality control + audit
+audit_logs
+id, actor_type, actor_id, action, entity_type, entity_id, metadata, created_at
+უსაფრთხო audit trail
+consents
+id, customer_id, channel, consent_type, status, captured_at, source
+GDPR კომუნიკაციის ნებართვები
+deadline_tracking
+id, deadline_type, title, deadline_date, program, is_active, source_id
+Academic calendar + deadline ინფო
+6. API Endpoints — სრული სია
+Module
+Endpoints
+System
+GET /health   |   GET /version
+Chat / Widget
+POST /chat/session/start   |   POST /chat/message   |   POST /chat/handover/{id}   |   GET /chat/conversations/{id}
+CRM — Customers
+POST /customers   |   GET /customers/{id}   |   GET /customers/search
+CRM — Leads
+POST /leads   |   GET /leads   |   GET /leads/{id}   |   PATCH /leads/{id}   |   PATCH /leads/{id}/stage
+Inbox
+GET /inbox   |   GET /conversations/{id}/messages   |   POST /conversations/{id}/reply
+Tasks
+POST /tasks   |   GET /tasks   |   PATCH /tasks/{id}   |   PATCH /tasks/{id}/complete
+Knowledge
+POST /knowledge/sources/upload   |   GET /knowledge/sources   |   PATCH /activate   |   PATCH /deactivate   |   POST /knowledge/search
+Analytics
+GET /analytics/overview   |   /leads-by-stage   |   /leads-by-channel   |   /ai-performance   |   /source-quality
+Admin
+POST /departments   |   POST /pipelines   |   POST /pipeline-stages   |   POST /users   |   GET /audit-logs
+7. Knowledge Base — alte.edu.ge სრული Sitemap
+AI-ს ცოდნის ბაზა აიწყება საიტის სტრუქტურის მიხედვით. თითოეულ source-ს აქვს department, version, status, last_reviewed_at.
+URL / წყარო
+Priority
+Department
+განახლება
+Phase
+alte.edu.ge/ka/bakalavrebistvis
+🔴 HIGH
+Admissions
+ყოველ სემ.
+Phase 4
+alte.edu.ge/ka/magistrebistvis
+🔴 HIGH
+Admissions
+ყოველ სემ.
+Phase 4
+alte.edu.ge/ka/saertashoriso-studentebistvis
+🔴 HIGH
+International
+ყოველ სემ.
+Phase 4
+join.alte.edu.ge
+🔴 HIGH
+International
+ყოველ კვ.
+Phase 4
+alte.edu.ge/ka/sabakalavro-programebi
+🔴 HIGH
+Admissions
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/samagistro-programebi-2
+🔴 HIGH
+Admissions
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2
+🔴 HIGH
+Int. Admissions
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/dafinanseba
+🔴 HIGH
+Finance
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/akademiuri-kalendari
+🟡 MED
+Academic Reg.
+ყოველ სემ.
+Phase 4
+alte.edu.ge/ka/gamotsdebis-shesakheb
+🟡 MED
+Academic Reg.
+ყოველ სემ.
+Phase 4
+alte.edu.ge/ka/studenturi-gzamkvlevi
+🟡 MED
+Student Serv.
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/studentebis-sakonsultatsio-saatebi
+🟡 MED
+Student Serv.
+თვეში 1x
+Phase 4
+alte.edu.ge/ka/relokatsiis-servisebi
+🟡 MED
+Int. Admissions
+ყოველ წელს
+Phase 4
+alte.edu.ge/ka/kontaqti
+🟢 LOW
+All
+იშვიათად
+Phase 4
+alte.edu.ge/ka/faq
+🟢 LOW
+All
+იშვიათად
+Phase 4
+WhatsApp Export TXT History
+🟡 MED
+Admissions
+Phase 7 import
+Phase 7
+PDF ბროშურები
+🟢 LOW
+Admissions
+ყოველ წელს
+Phase 4
+7.1  WhatsApp History Import — Phase 7
+ალტეს admissions გუნდის WhatsApp ისტორია — ყველაზე ძვირფასი Knowledge Base. Import pipeline:
+თანამშრომელი: Settings → Chat → Export (Without Media) → .txt
+Admin panel-ში ფაილის ატვირთვა
+Python parser — Q&A ამოღება, privacy anonymizer (სახელი/ნომერი → -----)
+Operator review — approve/reject ყოველ Q&A-ს
+Approved Q&A → knowledge_chunks, source_type = whatsapp_export
+AI პასუხებში WhatsApp source citation ჩანს
+⚠️  Privacy
+პარსინგის დროს ყველა სახელი, ტელეფონის ნომერი, ელფოსტა ავტომატურად ამოიშლება. მხოლოდ Q&A სტრუქტურა ინახება.
+8. Website Widget — მოთხოვნები
+8.1  ძირითადი მოთხოვნები
+ერთი JS snippet-ით ჩაიტვირთება — საიტის layout/performance არ დაეზიანება
+პირველი გამოჩენა: greeting ქართულად; language auto-detect, manual switch KA/EN
+საწყისი quick replies: პროგრამები | მიღება | საფასური | საერთ. სტუდ. | კონტაქტი | ადამიანი
+session_id + conversation_id ინახება, contact data — მხოლოდ მომხმარებლის შეყვანის შემდეგ
+Contact form: სახელი, ტელეფონი ან email, დაინტერესებული პროგრამა
+Consent text: "მონაცემებს ვიყენებთ კონსულტაციისთვის — Privacy Policy"
+8.2  Proactive Trigger Logic
+Trigger
+Condition
+შეტყობინება
+Admissions page
+30 წამი /bakalavrebistvis ან /magistrebistvis
+გეხმარებათ მიღების ინფორმაციაში? 👋
+Programs page
+45 წამი /sabakalavro-programebi-ზე
+მაინტერესებს რომელი პროგრამა გაქვთ?
+International
+join.alte.edu.ge — ნებისმიერი ვიზიტი
+Hi! Need help with international admission? 🌍
+Finance page
+20 წამი /dafinanseba-ზე
+გაქვთ კითხვა სტიპენდიებზე?
+Return visitor
+Cookie — 2+ ვიზიტი 7 დღეში
+კვლავ გამარჯობა! 👋
+Exit intent
+Mouse → browser bar
+წასვლამდე — გაქვთ კითხვები?
+8.3  Language Detection — EN/KA
+Method
+Priority
+Fallback
+Browser Accept-Language header
+1 — პირველი
+ka
+URL domain — join.alte.edu.ge
+2 — EN default
+EN
+URL path — /en/ prefix
+2 — EN forced
+EN
+First message language detection
+3 — Claude detects
+ka
+User manual switch
+4 — ყოველთვის override
+User choice
+9. მომხმარებლები, როლები და უსაფრთხოება
+9.1  User Roles
+Role
+უფლებები
+წვდომა
+Admin
+ყველაფერი
+სრული სისტემა
+Manager
+Lead ნახვა/რედაქტ., analytics, task
+ყველა დეპარტამენტი
+Admissions User
+Admissions lead-ები, inbox, task
+Admissions pipeline
+International Admissions
+Intl leads, Medicine pipeline
+International queue
+Finance User
+Finance questions, payment stage
+Finance tasks
+Student Services
+Student service conversations
+Student Services queue
+Operator / Agent
+Inbox, assigned leads, reply
+Assigned conversations
+IT Support
+IT issue tasks
+IT Support queue
+9.2  Security & Privacy
+საკითხი
+მოთხოვნა
+API Keys
+მხოლოდ .env და .env.example — კოდში არასდროს
+Audit Log
+ყველა მნიშვნელოვანი ქმედება — retention min 2 წელი
+GDPR
+Consent capture, right-to-delete, data export
+WhatsApp History Privacy
+Auto-anonymizer — სახელი/ნომერი ამოიშლება
+AI Hallucination Protection
+confidence < 0.70 → fallback; source missing → handover
+Rate Limiting
+Widget endpoint: 30 req/min per IP
+Data Storage
+Google Cloud SQL — europe-west1 (GDPR region)
+Role-based Access
+Sensitive fields restricted by role
+join.alte.edu.ge CORS
+Separate CORS config for join domain
+Data Encryption (at-rest + in-transit)
+Google Cloud SQL: encryption-at-rest ავტომატური. TLS/HTTPS: in-transit encryption სავალდებულო. JWT tokens: HS256 minimum. Sensitive fields (credentials): AES-256 Phase 1-ში.
+Admin Panel — AI Prompt Management
+Phase 5 /settings გვერდი: Admin-ს შეუძლია AI system prompt-ის ნახვა და რედაქტირება. Prohibited topics-ის სია. Confidence threshold-ის დარეგულირება. Fallback message-ის შეცვლა. Restricted keywords-ის მართვა.
+Customer Satisfaction Rating
+Phase 6: ჩატის დასრულებისას მომხმარებელს ეკითხება: “დაგვეხმარა ჩვენი ასისტენტი? 1-5”. rating ინახება ai_interactions ცხრილში. Analytics-ში satisfaction score ჩანს დეპარტამენტისა და არხის მიხედვით.
+10. Analytics და Reporting
+10.1  Lead Analytics
+Lead count by stage, channel, department, program, source_domain
+join.alte.edu.ge conversion metric (ცალკე)
+Medicine funnel analytics (ცალკე)
+Agent performance — lead attribution
+Campaign analytics — event_interest, open_day
+10.2  AI Performance Analytics
+AI-handled vs human-handled conversations
+Confidence distribution — low confidence trends
+Most frequent intents — რომელი კითხვები ყველაზე ხშირია
+Unanswered questions — AI ვერ პასუხობს სად
+Source quality — რომელი knowledge source ყველაზე გამოიყენება
+Handover rate by department
+10.3  Channel Analytics
+Lead quality by channel
+Response time by channel
+Conversion rate by channel
+10.4  Export & Dashboard
+Dashboard-ების შექმნა
+ფილტრაცია: თარიღი, department, stage, channel, campaign
+Excel/CSV export
+Scheduled reports
+User-level access reports
+11. ტექნოლოგიური Stack
+კომპონენტი
+ტექნოლოგია
+მიზეზი
+Code Editor
+VS Code + Claude Code
+ფაილების შექმნა, debug, ეტაპობრივი განვითარება
+Backend
+Python + FastAPI
+სწრაფი API, Pydantic/AI integration, მარტივი ტესტირება
+Database
+PostgreSQL (Cloud SQL)
+სტაბილური CRM მონაცემები
+AI Search
+pgvector (PostgreSQL extension)
+Knowledge base semantic search ერთ DB-ში
+Frontend
+Next.js + React + Tailwind + shadcn/ui
+CRM dashboard, inbox, pipeline UI
+AI Engine
+Anthropic Claude API
+Structured outputs, ქართული, 200K context
+Deployment
+Google Cloud Run + Cloud SQL
+Container deploy, auto-scale, GDPR region
+Version Control
+GitHub
+Backup, commit history, branch-ები
+Testing
+Pytest + Playwright + Postman
+Backend + frontend + API testing
+Observability
+Structured logs + audit_logs + analytics tables
+AI + CRM action traceability
+WhatsApp API
+360dialog ან Twilio (Phase 7)
+Meta Business API gateway
+11.1  Folder Structure
+alte-ai-crm/
+backend/
+app/
+main.py
+core/          ← config, db, ai_client, security
+api/           ← thin routes only
+models/        ← SQLAlchemy models
+schemas/       ← Pydantic schemas
+services/      ← business logic
+engines/       ← AI, business rules, routing
+repositories/  ← DB queries
+connectors/    ← WhatsApp, Messenger (Phase 7)
+tests/
+alembic/
+requirements.txt
+.env.example
+frontend/
+app/             ← Next.js pages
+components/
+lib/
+package.json
+widget/
+alte-chat-widget.js
+docs/
+knowledge-source-inventory.md
+api-contract.md
+README.md
+12. განვითარების Phase-ები — სრული გეგმა
+Phase
+შინაარსი
+შედეგი
+ვადა
+Phase 0
+Repository, FastAPI skeleton, PostgreSQL, health/version endpoints, Claude API client, .env.example
+სტაბილური backend foundation
+1 კვირა
+Phase 1
+CRM Core: customers, leads, conversations, messages, tasks, departments, pipelines, pipeline_stages, lead_stage_history, audit_logs. Duplicate detection. Medicine pipeline ცალკე.
+CRM API სრულად მუშაობს
+2 კვირა
+Phase 2
+Website chat widget + /chat/session/start + /chat/message endpoint + inbox. Mock AI analyzer. Proactive triggers. join.alte.edu.ge domain detection. Language auto-detect.
+საიტიდან შეტყობინება CRM-ში ჩადის
+1.5 კვირა
+Phase 3
+Real AI layer: Claude API structured intent, summary, handover. Confidence threshold. ai_interactions persistence. Medicine + International intents. join.alte.edu.ge high-priority routing.
+AI აანალიზებს და CRM action plan-ს ქმნის
+2 კვირა
+Phase 4
+Knowledge Base: upload, chunking, source citation, pgvector-ready. Academic calendar, deadlines, 18 URL sitemap coverage. Source version control.
+ბოტი პასუხობს სანდო წყაროებიდან
+2 კვირა
+Phase 5
+Frontend CRM: /login, /dashboard, /inbox, /leads, /leads/[id], /pipeline, /tasks, /knowledge, /settings. Operational clean UI.
+ოპერატორი მუშაობს CRM UI-ში
+2.5 კვირა
+Phase 6
+Analytics: overview, leads-by-stage/channel/program, AI performance, source quality, SLA, join.alte.edu.ge conversion, Medicine funnel.
+მენეჯმენტს აქვს სრული dashboard
+1.5 კვირა
+Phase 7
+WhatsApp Business API, Messenger, Instagram, Email integrations. WhatsApp TXT history import + privacy parser + review workflow.
+Omnichannel კომუნიკაცია
+3 კვირა
+Phase 8
+Agent module, bulk messaging (approval required), Google/Outlook Calendar, SLA rules, advanced analytics, scheduled reports.
+სრული Enterprise CRM
+2 კვირა
+13. Claude Code Prompts — ნაბიჯ-ნაბიჯ
+ყოველი prompt ცალ-ცალკე გაუშვი Claude Code-ში. შემდეგ Phase-ზე გადახვიდე მხოლოდ მას შემდეგ, რაც წინა Phase-ის ტესტები გაივლის.
+Phase 0 Prompt — Backend Foundation
+You are working on: Alte AI CRM Chatbot
+Stack:
+- Backend: Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL
+- AI: Anthropic Claude API (claude-sonnet-4-20250514)
+- Frontend later: Next.js/React, Tailwind, shadcn/ui
+- Deploy: Google Cloud Run
+Rules:
+1. Do not build everything at once
+2. Start with backend foundation only
+3. Keep routes thin — logic in services/engines
+4. AI never directly mutates CRM data
+5. All events audit logged
+6. Lead creation follows business rules
+7. Duplicate detection by phone + email
+8. No API keys in code — only .env
+Phase 0 Task:
+Create backend/app structure. Add:
+- FastAPI app + config (settings.py)
+- PostgreSQL async connection (asyncpg + SQLAlchemy)
+- SQLAlchemy declarative base + Alembic setup
+- GET /health endpoint
+- GET /version endpoint
+- core/ai_client.py with Anthropic client init
+- .env.example with: DATABASE_URL, JWT_SECRET,
+ANTHROPIC_API_KEY, ENVIRONMENT
+- requirements.txt
+Do NOT add frontend, WhatsApp, AI calls, or CRM models yet.
+After Phase 0: list created files + how to run server.
+Phase 1 Prompt — CRM Core
+Continue with Phase 1: CRM Core.
+Create SQLAlchemy models, Pydantic schemas, services,
+repositories and API routes for:
+- Department
+- User
+- Customer (with duplicate detection by phone + email)
+- Lead (include: source_domain, is_international_priority,
+intake_period, relocation_needed, medical_track, campaign_tag)
+- Conversation
+- Message
+- Task
+- Pipeline (create 2: "Admissions" and "Medicine MD")
+- PipelineStage (Admissions: 10 stages, Medicine: 12 stages)
+- LeadStageHistory
+- AuditLog
+- Consent
+- DeadlineTracking
+Add audit logging for all create/update operations.
+Add duplicate detection: before creating Customer,
+check phone + email uniqueness.
+Add Alembic migration for all tables.
+Add tests for duplicate detection, lead creation,
+stage change, audit log.
+Phase 2 Prompt — Website Chat + Widget
+Continue with Phase 2: Website Chat Flow.
+Create /chat/session/start and /chat/message endpoints.
+Use mock AI analyzer that returns structured AIAnalysisResult.
+Widget requirements:
+- Save user message to conversations/messages
+- Detect domain: alte.edu.ge vs join.alte.edu.ge
+- Auto-detect language from Accept-Language header
+- Apply business rules:
+* general_info + no contact → no lead
+* admission interest + contact → create lead + task 24h
+* join.alte.edu.ge → is_international_priority = true
+* medical_track → use Medicine pipeline
+* human_request → handover task 4h
+- Return reply + conversation_id to widget
+Also create: alte-chat-widget.js
+- Embeds as single <script> tag
+- Proactive triggers: 30s on /bakalavrebistvis,
+immediate on join.alte.edu.ge
+- KA/EN toggle
+- Contact form with consent text
+Mock intents: general_info, admission_interest,
+consultation_request, finance_question, human_request,
+international_admission, medicine_admission,
+student_service, event_interest, technical_issue
+Add tests for all business rule scenarios.
+Phase 3 Prompt — Real AI Integration
+Continue with Phase 3: AI Integration.
+Replace mock analyzer with ai_service.py using
+Anthropic Claude API (claude-sonnet-4-20250514).
+Requirements:
+- All Claude API calls inside ai_service.py only
+- Return structured JSON: AIAnalysisResult schema
+- System prompt rules:
+* Answer ONLY from provided knowledge context
+* If confidence < 0.70: should_handover = true
+* Never invent prices, deadlines, requirements
+* Support Georgian (ka) and English (en)
+* Detect medicine_track from keywords
+* Detect international from country/city
+- Save intent, confidence, reply, summary,
+used_sources, risk_flags in ai_interactions table
+- Graceful error handling if API unavailable
+- Fallback to human handover on any AI error
+Do NOT implement vector search yet.
+Use static FAQ service as knowledge context.
+Phase 4 Prompt — Knowledge Base
+Continue with Phase 4: Knowledge Base.
+Implement full knowledge base module.
+Models: KnowledgeSource, KnowledgeChunk, DeadlineTracking
+KnowledgeSource fields:
+id, title, url, source_type (website/pdf/docx/whatsapp_export),
+status (active/inactive/pending_review), version,
+department, last_reviewed_at, uploaded_by, requires_review,
+privacy_cleared
+KnowledgeChunk fields:
+id, source_id, content, chunk_index,
+metadata_json, embedding (nullable, pgvector-ready), active
+Endpoints:
+POST /knowledge/sources/upload
+GET /knowledge/sources
+PATCH /knowledge/sources/{id}/activate
+PATCH /knowledge/sources/{id}/deactivate
+POST /knowledge/search
+POST /knowledge/deadlines
+GET /knowledge/deadlines
+Priority sources to seed:
+- alte.edu.ge/ka/bakalavrebistvis
+- alte.edu.ge/ka/magistrebistvis
+- alte.edu.ge/ka/saertashoriso-studentebistvis
+- join.alte.edu.ge
+- alte.edu.ge/ka/dafinanseba
+- alte.edu.ge/ka/akademiuri-kalendari
+- alte.edu.ge/ka/kontaqti
+- alte.edu.ge/ka/faq
+Inactive sources must never appear in AI answers.
+Add source version control and last_reviewed_at tracking.
+Phase 5 Prompt — Frontend CRM
+Continue with Phase 5: Frontend CRM.
+Create Next.js frontend with Tailwind + shadcn/ui.
+Pages:
+/login
+/dashboard — lead count, channels, AI stats, SLA
+/inbox — all conversations, omnichannel
+/leads — list with filters: stage, channel,
+department, program, assigned_user
+/leads/[id] — full lead profile:
+customer info, AI summary,
+conversation history, tasks,
+notes, source citations
+/pipeline — Kanban stage board
+/tasks — follow-up tasks
+/knowledge — source list, upload, activate/deactivate
+/settings — departments, users, roles, pipelines
+Components:
+InboxList, ConversationPanel, LeadCard,
+LeadProfile, PipelineBoard, TaskList,
+KnowledgeSourceTable, AnalyticsCards
+Use clean operational UI.
+Mock auth for now (placeholder token).
+14. Use Cases — ბიზნეს სცენარები
+Use Case 1: სტუდენტი წერს WhatsApp-ზე — ჩარიცხვის ინტერესი
+ნაბიჯი
+ქმედება
+1
+სტუდენტი: "მაინტერესებს ბიზნესის პროგრამაზე ჩარიცხვა"
+2
+AI: პასუხობს ძირითად კითხვებს knowledge base-ის მიხედვით
+3
+AI: ეკითხება სახელს, ტელეფონს, ელფოსტას
+4
+სტუდენტი: "ნინო ბერიძე, +995599000000, nino@example.com"
+5
+Business Rules: intent=admission_interest + contact data → create lead
+6
+CRM: Customer შეიქმნა. Duplicate check — ახალი პროფილი
+7
+CRM: Lead შეიქმნა — Department=Admissions, Stage=New Lead, Priority=Normal
+8
+CRM: Task შეიქმნა — "დაუკავშირდეს 24h-ში", assigned to Admissions team
+9
+CRM: AI summary ჩაიწერა lead profile-ში
+10
+Operator: inbox-ში ხედავს სრულ ჩატს + summary + task
+11
+Operator: CRM-იდან WhatsApp-ზე პასუხობს
+12
+Stage-ის შეცვლა: New Lead → Contacted → Interested...
+Use Case 2: საერთაშორისო სტუდენტი — join.alte.edu.ge
+ნაბიჯი
+ქმედება
+1
+სტუდენტი join.alte.edu.ge-ზე: "I want to study Medicine at Alte"
+2
+Widget: domain=join.alte.edu.ge → EN language, proactive trigger
+3
+AI: intent=medicine_admission, is_international_priority=true
+4
+AI: ეკითხება country, program, contact
+5
+CRM: Lead — Priority=URGENT, medical_track=true, Department=Int. Admissions
+6
+CRM: Medicine MD pipeline — Stage 1: New Lead — Medicine
+7
+Task: 4h-ის განმავლობაში დაუკავშირდეს
+8
+International Admissions operator: inbox-ში URGENT flag-ით ჩანს
+Use Case 3: AI ვერ პასუხობს — Human Handover
+ნაბიჯი
+ქმედება
+1
+სტუდენტი: სპეციფიკური კითხვა რომელზეც source არ არის
+2
+AI: confidence < 0.70 → should_handover=true
+3
+AI reply: "ამ საკითხზე ზუსტი ინფორმაციისთვის გადაგრთავთ სპეციალისტთან"
+4
+CRM: conversation status = human_handover
+5
+CRM: Task შეიქმნა შესაბამის department-ზე — immediate priority
+6
+Operator: notification + ჩატის ისტორია + AI summary
+7
+Operator: CRM-იდან პასუხობს
+8
+ai_interactions-ში ჩაიწერა: intent, confidence, flags
+15. Acceptance Checklist — MVP-ის მიღების კრიტერიუმები
+Backend & CRM Core
+Website chat-იდან შეტყობინება backend-ში მიდის და conversations/messages-ში ინახება
+AI (ან mock) აბრუნებს structured intent/confidence/reply JSON-ს
+უბრალო კითხვაზე lead არ იქმნება
+ჩარიცხვის ინტერესზე + contact data → lead + task 24h
+contact data-ს გარეშე ბოტი ითხოვს სახელს/ტელეფონს/ელფოსტას
+Human handover → task შესაბამის department-ზე
+Duplicate detection მუშაობს phone/email-ზე
+Stage change ინახება lead_stage_history-ში
+ყველა მნიშვნელოვანი ქმედება audit_logs-ში
+AI & Knowledge Base
+AI confidence < 0.70 → fallback + handover (source არ იგონება)
+Knowledge source-ს აქვს active/inactive + version control
+AI პასუხში ჩანს used_sources citation
+Medicine intent → medical_track=true + Medicine pipeline
+join.alte.edu.ge → is_international_priority=true
+Frontend CRM
+CRM inbox-ში ჩანს conversation history
+Lead profile-ში ჩანს: AI summary, customer info, stage, tasks, messages, citations
+Pipeline Kanban board მუშაობს
+Knowledge admin-ში შეიძლება source-ის activate/deactivate
+Widget
+alte.edu.ge-ზე widget ჩაიტვირთება ერთი script tag-ით
+join.alte.edu.ge-ზე EN default + proactive trigger
+KA/EN manual switch მუშაობს
+Consent form contact data-ს წინ ჩანს
+16. რაც არ უნდა გაკეთდეს — წესები
+❌ აკრძალული
+მიზეზი
+AI-ს პირდაპირ database update-ის უფლება
+AI მხოლოდ structured JSON აბრუნებს
+Routes-ში business logic
+logic — services/engines-ში
+API keys კოდში
+მხოლოდ .env; .env.example-ში placeholder
+WhatsApp/Messenger/Instagram Phase 7-მდე
+Website chat + CRM core-ი პირველ. ჯერ
+Bulk messaging Phase 8-მდე
+approval/permission logic სავალდებულოა
+ყველა Phase ერთდროულად
+ეტაპობრივი განვითარება — ტესტი ყოველ Phase-ზე
+Audit logs გამოტოვება
+ყველა მნიშვნელოვანი ქმედება იწერება
+Duplicate detection გამოტოვება
+ერთი customer — ერთი პროფილი
+WhatsApp history-ის anonymizer გამოტოვება
+GDPR + privacy სავალდებულო
+17. სამუშაო რიგი — პირველი ნაბიჯები
+გახსენი VS Code
+შექმენი ახალი GitHub repository: alte-ai-crm
+დააინსტალირე Claude Code: npm install -g @anthropic-ai/claude-code
+გახსენი ტერმინალი, alte-ai-crm საქაღალდეში: claude
+ჩასვი Section 13-ის Phase 0 Prompt
+Phase 0 დასრულების შემდეგ გაუშვი server: python -m uvicorn app.main:app --reload
+შეამოწმე: GET http://localhost:8000/health → {"ok": true}
+git commit Phase 0
+ჩასვი Phase 1 Prompt — CRM Core
+ყოველი Phase-ის ბოლოს git commit + test
+Phase 3-ის შემდეგ — real AI test ქართულ კითხვებზე
+Phase 5-ის შემდეგ — demo ალტეს გუნდისთვის
+🚀  მზად ხარ — დაიწყე Phase 0-ით
