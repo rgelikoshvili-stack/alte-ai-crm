@@ -2,71 +2,80 @@
 
 ## Purpose
 
-Choose how to host `alte-chat-widget.v0.8.js` for the production website embed.
+Choose where to host the reviewed Safe Pro widget asset for the production website embed.
 
-Current status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
+```text
+WIDGET_ASSET_HOSTING_STATUS=PENDING_FINAL_URL
+```
 
-## Option A - Website/CMS Static Asset Hosting
+## Option A - Host Widget File On Alte Website/CDN
 
-Upload `widget/alte-chat-widget.v0.8.js` to the website or CMS static assets.
+Best for production.
 
-Recommended if Alte developer/admin access is available.
+Requires Alte website developer/admin access.
 
-Pros:
+Final URL example:
 
-- Easiest first production embed path.
-- Website team controls the asset lifecycle.
-- Rollback is simple by removing the script tag or replacing the uploaded file.
-- No new Google Cloud Storage bucket or CDN configuration required.
+```text
+https://alte.edu.ge/path/to/alte-university-ai-chatbot-safe-pro.html
+```
 
-Cons:
+or, if the widget is converted to a JS asset later:
 
-- Requires Alte website developer/admin access.
-- Cache invalidation depends on website/CMS tooling.
-
-Decision: Recommended for first production embed.
-
-## Option B - Google Cloud Storage Static Asset
-
-Host the versioned JavaScript file in a Cloud Storage bucket, optionally with CDN later.
+```text
+https://alte.edu.ge/path/to/alte-university-ai-chatbot-safe-pro.js
+```
 
 Pros:
 
-- Versioned asset hosting can be independent of the CMS.
-- CDN can be added later.
+- Alte controls the asset lifecycle.
+- Rollback is straightforward through the website/CMS.
+- No new Google Cloud static hosting resource is required.
 
 Cons:
 
-- Requires bucket, CORS, cache headers, IAM, and public asset configuration.
-- Adds another cloud resource to operate.
+- Requires website admin/developer access.
+- Cache invalidation depends on Alte website/CDN tooling.
 
-Decision: Later option only. Do not create Cloud Storage unless explicitly approved.
+Decision: recommended for real site launch if available.
 
-## Option C - Cloud Run Static Route
+## Option B - Host Widget Static Asset On Approved Cloud Storage/CDN Later
 
-Serve the widget asset from the backend.
+Requires a separately approved GCP static hosting setup.
 
 Pros:
 
-- Same backend URL can serve API and widget file.
-- Avoids website/CMS asset upload if unavailable.
+- Versioned static assets can be managed independently from the website CMS.
+- CDN can be added later if approved.
 
 Cons:
 
-- Requires backend static route/config and a new Cloud Run revision.
-- Couples widget asset delivery to backend app deploys.
+- Requires new cloud resource configuration.
+- Requires CORS/cache/IAM/public asset decisions.
+- Not approved in this phase.
 
-Decision: Not recommended unless website/CMS hosting and Cloud Storage are unavailable.
+Decision: later option only; do not create Cloud Storage/CDN in Phase 9C.
+
+## Option C - Temporary Standalone Page
+
+Good for demo/review.
+
+Current preview:
+
+```text
+widget/standalone-safe-pro-demo.html
+```
+
+Cons:
+
+- Not a final public embed path.
+- Local browser requests may be blocked by production CORS.
+- Does not replace real-domain browser smoke.
+
+Decision: use only for UI preview.
 
 ## Recommendation
 
-Use Option A - Website/CMS static asset hosting for the first production embed.
+For real site launch, use Alte-controlled hosting if possible.
 
-If website access is not available yet, prepare only:
-
-- `widget/alte-chat-widget.v0.8.js`
-- `WIDGET_EMBED_SNIPPETS_FINAL.md`
-- `WEBSITE_DEVELOPER_HANDOFF.md`
-- `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
-
-Do not perform the actual website embed until website admin/developer access and privacy/data approval are confirmed.
+If Alte-controlled hosting is not possible, prepare approved static asset hosting in a later phase. Do not perform the actual website embed until final asset URL, privacy/data approval, official content approval, website deployment confirmation, and real-domain smoke approval are complete.

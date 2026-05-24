@@ -1,5 +1,26 @@
 # Production Widget Smoke Checklist
 
+## Phase 9C Real-Domain Smoke Pending
+
+Real-domain browser smoke must follow:
+
+```text
+docs/deployment/REAL_DOMAIN_WIDGET_SMOKE_PLAN.md
+```
+
+Current status:
+
+- Selected widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Actual site embed: not complete.
+- Contact-flow test: not run.
+- Contact details in safe smoke: not allowed.
+- Public launch: not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```
 Use this checklist after website admin/developer access and privacy approval are complete.
 
 Do not create production test leads unless the owner approves test records.

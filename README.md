@@ -1446,3 +1446,27 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9C Final Pre-Embed Gate
+
+The final approval gate before actual website embedding has been prepared.
+
+- Gate: `docs/deployment/FINAL_PRE_EMBED_APPROVAL_GATE.md`
+- Asset hosting decision: `docs/deployment/WIDGET_ASSET_HOSTING_DECISION.md`
+- Readiness checklist: `docs/deployment/FINAL_EMBED_READINESS_CHECKLIST.md`
+- Real-domain smoke plan: `docs/deployment/REAL_DOMAIN_WIDGET_SMOKE_PLAN.md`
+- Rollback plan: `docs/deployment/WIDGET_EMBED_ROLLBACK_PLAN.md`
+- Privacy/data approval record: `docs/deployment/PRIVACY_DATA_APPROVAL_RECORD.md`
+- Selected widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Final asset URL: pending
+- Privacy/data approval: pending
+- Official content approval: pending
+- Actual site embed: not done
+- Real-domain browser smoke: pending
+- Public launch: not complete
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```

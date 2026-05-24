@@ -29,3 +29,20 @@
 ```text
 NO-GO_FOR_ACTUAL_SITE_EMBED
 ```
+
+## Phase 9C Update
+
+Final pre-embed approval gate is ready, but the actual embed remains NO-GO.
+
+- Selected widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Pre-embed status: `FINAL_PRE_EMBED_STATUS=NO_GO_PENDING_APPROVALS`
+- Asset hosting status: `WIDGET_ASSET_HOSTING_STATUS=PENDING_FINAL_URL`
+- Privacy/data approval status: `PRIVACY_DATA_APPROVAL_STATUS=PENDING`
+- Actual embed is not complete.
+- Public launch is not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```

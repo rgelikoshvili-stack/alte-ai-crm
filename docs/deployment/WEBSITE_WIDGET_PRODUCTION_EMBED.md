@@ -24,6 +24,29 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9C Final Pre-Embed Gate
+
+Selected widget:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+Current status:
+
+- Final asset URL: pending.
+- Privacy/data approval: pending.
+- Official content approval: pending.
+- Actual site embed: not complete.
+- Real-domain browser smoke: pending.
+- Public launch: not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```
 ## A. Purpose
 
 Prepare script snippets for adding the Alte AI CRM Chat Widget to:

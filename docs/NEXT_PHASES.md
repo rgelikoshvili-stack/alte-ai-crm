@@ -643,3 +643,20 @@ No omnichannel implementation before the website chat flow is stable.
 - Backend remains the source of truth for AI, Knowledge Base, and CRM actions.
 - Public launch remains blocked pending reviewer decisions, official content approval, privacy/data approval, final asset URL, actual site embed, and real-domain browser smoke.
 - Decision state: `BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED`
+
+## Phase 9C: Final Pre-Embed Approval Gate
+
+- Final pre-embed approval gate created: `docs/deployment/FINAL_PRE_EMBED_APPROVAL_GATE.md`
+- Selected widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Design: compact PIP-style widget with Pro polish.
+- Asset hosting decision updated: final URL pending.
+- Privacy/data approval record created: status pending.
+- Real-domain widget smoke plan created.
+- Rollback/removal plan created.
+- Actual embed is not complete.
+- Public launch is not complete.
+- Decision state: `BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS`
+
+Next recommended phase:
+
+- Get human reviewer decisions, official content approval, privacy/data approval, final asset URL, and website admin/developer confirmation before actual embed.

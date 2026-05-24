@@ -68,3 +68,17 @@ window.AlteChatWidgetConfig = {
 - Final widget asset URL.
 - Actual website embed approval.
 - Real-domain browser smoke from `alte.edu.ge` and `join.alte.edu.ge`.
+
+## Phase 9C Gate
+
+This snippet remains a draft until:
+
+- `FINAL_PRE_EMBED_STATUS=NO_GO_PENDING_APPROVALS` is replaced by an explicit GO approval in a later phase.
+- `WIDGET_ASSET_HOSTING_STATUS=PENDING_FINAL_URL` is replaced by a final URL.
+- `PRIVACY_DATA_APPROVAL_STATUS=PENDING` is approved.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```

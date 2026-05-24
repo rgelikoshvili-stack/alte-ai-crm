@@ -22,6 +22,29 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9C Pre-Embed Gate
+
+Before transferring the Safe Pro widget to the real Alte website, complete:
+
+- human reviewer decisions;
+- official content approval;
+- privacy/data approval;
+- final widget asset URL;
+- website admin/developer confirmation;
+- real-domain browser smoke approval.
+
+Current gate:
+
+```text
+FINAL_PRE_EMBED_STATUS=NO_GO_PENDING_APPROVALS
+```
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
+```
 Current state:
 
 ```text
