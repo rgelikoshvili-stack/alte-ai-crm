@@ -670,3 +670,13 @@ Next recommended phase:
 - No-contact lead guard remains backend-enforced.
 - Production redeploy is required before Cloud Run reflects the code change.
 - Decision state: `BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY`
+
+## Phase 9D-UI: Safe Pro Sidebar Layout
+
+- Safe Pro widget switched from compact PIP to sidebar Pro layout.
+- Compact PIP archived at `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`.
+- Sidebar department clicks set `selected_department` and `selected_topic`.
+- Widget variant is `safe_pro_sidebar`.
+- Frontend remains backend-connected only.
+- Actual embed remains pending.
+- Decision state: `BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED`

@@ -89,3 +89,19 @@ Decision state:
 ```text
 BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
 ```
+
+## Phase 9D-UI Sidebar Layout
+
+The selected UI is now the Safe Pro Sidebar Layout.
+
+- Main widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Archived compact PIP alternate: `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`
+- Sidebar department selection drives backend context through `selected_department` and `selected_topic`.
+- Actual embed remains pending.
+- Public launch is not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```

@@ -45,6 +45,10 @@ Run this only after the widget is embedded on an approved real-domain page.
   - medicine/MD -> Medicine / MD
   - portal/login -> IT Support
   - student services -> Student Services
+- Sidebar layout is visible:
+  - left department menu is present
+  - active department is highlighted
+  - selected department context is sent to backend
 
 ## Status
 

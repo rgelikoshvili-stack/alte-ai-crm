@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alte Safe Pro Widget Demo</title>
+  <title>Alte Safe Pro Sidebar Widget Demo</title>
   <style>
     :root {
       --alte-teal: #074045;
@@ -68,14 +68,14 @@
 <body>
   <main>
     <section>
-      <h1>Alte AI Chatbot - Safe Pro UI Preview</h1>
+      <h1>Alte AI Chatbot - Safe Pro Sidebar Preview</h1>
       <p>
-        This standalone preview loads the safe backend-connected widget candidate.
-        It is for UI review before final asset hosting and real site embed.
+        This standalone preview loads the Safe Pro sidebar layout with department navigation.
+        The browser sends department context to the FastAPI backend; Claude, Knowledge Base, routing, and CRM rules stay server-side.
       </p>
       <div class="notice">
-        Localhost browser calls may be blocked by production CORS. Real browser smoke must be done from an allowed domain.
-        API smoke should use backend scripts. This demo is for UI preview until final asset hosting and site embed are approved.
+        This is the sidebar Pro layout. Localhost browser calls may be blocked by production CORS.
+        For full browser testing, host it on an allowed domain. Safe architecture: browser -> FastAPI backend -> Claude / Knowledge Base / CRM.
       </div>
     </section>
 

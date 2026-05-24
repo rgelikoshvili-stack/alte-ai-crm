@@ -69,6 +69,28 @@ window.AlteChatWidgetConfig = {
 - Actual website embed approval.
 - Real-domain browser smoke from `alte.edu.ge` and `join.alte.edu.ge`.
 
+## Phase 9D-UI Sidebar Decision
+
+The preferred widget UI is now the Safe Pro Sidebar Layout:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+The compact PIP version is archived as an alternate:
+
+```text
+widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html
+```
+
+The sidebar widget sends `selected_department`, `selected_topic`, and `widget_variant=safe_pro_sidebar` to the backend.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```
+
 ## Phase 9C Gate
 
 This snippet remains a draft until:

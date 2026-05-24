@@ -57,6 +57,21 @@ Recommendation:
 
 Public launch remains blocked until official content review, privacy/data approval, final widget asset URL, actual site embed, and real-domain browser smoke are complete.
 
+## Phase 9D-UI Update
+
+The final preferred UI has changed from compact PIP to Safe Pro Sidebar Layout after user review.
+
+- Sidebar layout is preferred because department routing is central to the chatbot product goal.
+- Compact PIP is archived as an alternate at `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`.
+- Main Safe Pro widget is now `widget/alte-university-ai-chatbot-safe-pro.html`.
+- The widget keeps safe backend architecture and sends selected department/topic context to the backend.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```
+
 ## Phase 9B Status
 
 The uploaded design concepts have been imported as evidence, and a safe production candidate has been created at `widget/alte-university-ai-chatbot-safe-pro.html`.

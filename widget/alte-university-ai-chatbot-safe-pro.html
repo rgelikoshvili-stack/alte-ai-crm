@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ka">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alte AI Chatbot - Safe Pro Candidate</title>
+  <title>Alte AI Chatbot - Safe Pro Sidebar</title>
   <style>
     :root {
       --alte-teal: #074045;
@@ -13,7 +13,7 @@
       --alte-line: #dce9e7;
       --alte-text: #142527;
       --alte-muted: #5e7472;
-      --alte-good: #1c7f5d;
+      --alte-soft: #f7fbfa;
       --alte-warn: #8a5a00;
       color-scheme: light;
     }
@@ -25,266 +25,322 @@
       color: var(--alte-text);
       font-family: Inter, "Noto Sans Georgian", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .preview-page {
+    .demo-shell {
       min-height: 100vh;
-      padding: 32px;
-      display: grid;
-      align-content: center;
-      gap: 16px;
-      max-width: 980px;
-    }
-    .preview-page h1 { margin: 0; font-size: 34px; line-height: 1.12; }
-    .preview-page p { margin: 0; max-width: 640px; color: var(--alte-muted); line-height: 1.6; }
-    .preview-note {
-      max-width: 700px;
-      border: 1px solid #efd58d;
-      background: #fff8df;
-      color: var(--alte-warn);
-      border-radius: 10px;
-      padding: 12px 14px;
-      line-height: 1.45;
-      font-size: 14px;
-    }
-    .alte-chat-widget {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 9999;
-      font-family: inherit;
-    }
-    .alte-launcher {
-      width: 64px;
-      height: 64px;
-      border: 0;
-      border-radius: 22px;
-      background: var(--alte-teal);
-      color: #fff;
-      box-shadow: 0 18px 42px rgba(7, 64, 69, .28);
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-size: 21px;
-    }
-    .alte-launcher span {
-      display: block;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #fff;
-      color: var(--alte-teal);
+      padding: 28px;
       display: grid;
       place-items: center;
     }
-    .alte-panel {
-      width: min(390px, calc(100vw - 32px));
-      height: min(680px, calc(100vh - 32px));
-      display: none;
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
-      border: 1px solid rgba(7, 64, 69, .15);
+    .alte-chat-app {
+      width: min(1120px, calc(100vw - 36px));
+      height: min(760px, calc(100vh - 56px));
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      border: 1px solid var(--alte-line);
       border-radius: 18px;
-      background: #fff;
-      box-shadow: 0 24px 70px rgba(7, 64, 69, .24);
       overflow: hidden;
+      background: #fff;
+      box-shadow: 0 22px 70px rgba(7, 64, 69, .14);
     }
-    .alte-chat-widget.open .alte-panel { display: grid; }
-    .alte-chat-widget.open .alte-launcher { display: none; }
-    .alte-head {
+    .alte-sidebar {
       background: var(--alte-teal);
       color: #fff;
-      padding: 14px;
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
+      min-width: 0;
     }
-    .alte-logo {
-      width: 38px;
-      height: 38px;
+    .brand {
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
       border-radius: 14px;
-      background: #fff;
-      color: var(--alte-teal);
       display: grid;
       place-items: center;
+      background: #fff;
+      color: var(--alte-teal);
       font-weight: 900;
-      flex: 0 0 auto;
+      font-size: 22px;
+      margin-bottom: 12px;
     }
-    .alte-title { min-width: 0; flex: 1; }
-    .alte-title strong { display: block; font-size: 14px; }
-    .alte-title small { display: block; opacity: .78; font-size: 11px; margin-top: 2px; }
-    .alte-head-actions { display: flex; gap: 6px; align-items: center; }
-    .alte-icon-btn, .alte-lang {
-      border: 1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.08);
-      color: #fff;
-      border-radius: 8px;
-      min-width: 30px;
-      height: 30px;
+    .brand strong { display: block; font-size: 17px; line-height: 1.2; }
+    .brand span { display: block; margin-top: 6px; color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.4; }
+    .sidebar-section {
+      padding: 14px 12px 6px;
+      color: rgba(255,255,255,.62);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .dept-list {
+      display: grid;
+      gap: 6px;
+      padding: 0 10px;
+    }
+    .dept-btn {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,.86);
+      border-radius: 12px;
+      padding: 10px 10px;
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      text-align: left;
       cursor: pointer;
-      font-weight: 800;
+      font: inherit;
+      align-items: center;
     }
-    .alte-lang.active { background: #fff; color: var(--alte-teal); }
-    .alte-notice {
-      padding: 10px 14px;
-      background: #fff7df;
-      color: var(--alte-warn);
-      border-bottom: 1px solid #efd58d;
+    .dept-btn:hover { background: rgba(255,255,255,.08); }
+    .dept-btn.active {
+      background: #fff;
+      color: var(--alte-teal);
+      border-color: rgba(255,255,255,.4);
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    }
+    .dept-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.12);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .dept-btn.active .dept-icon { background: var(--alte-mint); }
+    .dept-label strong { display: block; font-size: 13px; line-height: 1.15; }
+    .dept-label span { display: block; margin-top: 3px; font-size: 11px; opacity: .74; line-height: 1.25; }
+    .sidebar-foot {
+      margin-top: auto;
+      padding: 14px;
+      color: rgba(255,255,255,.68);
       font-size: 12px;
-      line-height: 1.4;
+      line-height: 1.45;
+      border-top: 1px solid rgba(255,255,255,.14);
     }
-    .alte-chips {
-      padding: 12px 12px 8px;
+    .chat-main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      background: linear-gradient(180deg, #fff 0%, #f8fbfb 100%);
+    }
+    .chat-head {
+      min-width: 0;
       display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 20px;
       border-bottom: 1px solid var(--alte-line);
-      background: #fbfdfd;
+      background: #fff;
     }
-    .alte-chip {
+    .chat-title strong { display: block; font-size: 20px; line-height: 1.2; }
+    .chat-title span { display: block; margin-top: 5px; color: var(--alte-muted); font-size: 13px; }
+    .head-actions { display: flex; align-items: center; gap: 8px; }
+    .lang-btn, .reset-btn {
+      height: 34px;
+      border-radius: 10px;
       border: 1px solid var(--alte-line);
       background: #fff;
       color: var(--alte-teal);
+      cursor: pointer;
+      font-weight: 900;
+      padding: 0 10px;
+    }
+    .lang-btn.active { background: var(--alte-teal); color: #fff; border-color: var(--alte-teal); }
+    .context-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--alte-line);
+      background: var(--alte-soft);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       border-radius: 999px;
+      border: 1px solid var(--alte-line);
+      background: #fff;
+      color: var(--alte-teal);
       padding: 7px 10px;
       font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
+      font-weight: 900;
     }
-    .alte-chip:hover { border-color: var(--alte-teal); }
-    .alte-chip.active {
-      background: var(--alte-teal);
-      color: #fff;
-      border-color: var(--alte-teal);
-    }
-    .alte-context {
-      padding: 8px 14px;
-      border-bottom: 1px solid var(--alte-line);
-      background: #fff;
+    .trust {
       color: var(--alte-muted);
       font-size: 12px;
-      line-height: 1.35;
     }
-    .alte-messages {
-      padding: 14px;
+    .messages {
       overflow: auto;
-      background: linear-gradient(180deg, #fff 0%, #f8fbfb 100%);
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
-    .alte-msg { max-width: 86%; display: flex; gap: 8px; align-items: flex-end; }
-    .alte-msg.user { align-self: flex-end; flex-direction: row-reverse; }
-    .alte-bubble {
-      padding: 10px 12px;
-      border-radius: 15px;
+    .msg {
+      max-width: 78%;
+      display: flex;
+      gap: 9px;
+      align-items: flex-end;
+    }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: var(--alte-teal);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+    .bubble {
+      padding: 12px 14px;
+      border-radius: 16px;
+      line-height: 1.48;
       font-size: 14px;
-      line-height: 1.45;
       white-space: pre-wrap;
     }
-    .alte-msg.bot .alte-bubble {
+    .msg.bot .bubble {
       background: #eef6f5;
       border: 1px solid #dce9e7;
       border-bottom-left-radius: 5px;
     }
-    .alte-msg.user .alte-bubble {
+    .msg.user .bubble {
       background: var(--alte-teal);
       color: #fff;
       border-bottom-right-radius: 5px;
     }
-    .alte-avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 9px;
-      background: var(--alte-teal);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 11px;
-      font-weight: 900;
-      flex: 0 0 auto;
-    }
-    .alte-source-list, .alte-handover, .alte-contact {
-      margin-top: 8px;
-      border-radius: 12px;
-      border: 1px solid #d8e8e5;
-      background: #fff;
-      padding: 9px;
-      font-size: 12px;
-      color: var(--alte-muted);
-    }
-    .alte-source-list a {
-      display: block;
-      color: var(--alte-teal);
-      text-decoration: none;
-      overflow-wrap: anywhere;
-      margin-top: 4px;
-    }
-    .alte-handover strong, .alte-contact strong { color: var(--alte-text); display: block; margin-bottom: 4px; }
-    .alte-composer {
-      border-top: 1px solid var(--alte-line);
-      padding: 10px;
-      display: grid;
-      grid-template-columns: 1fr 42px;
+    .quick-row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 8px;
+      padding: 0 20px 14px;
       background: #fff;
     }
-    .alte-input {
+    .quick-btn {
+      border: 1px solid var(--alte-line);
+      background: #fff;
+      color: var(--alte-teal);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .composer {
+      border-top: 1px solid var(--alte-line);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 44px;
+      gap: 10px;
+      background: #fff;
+    }
+    .input {
       border: 1px solid var(--alte-line);
       border-radius: 12px;
-      min-height: 42px;
-      padding: 0 12px;
+      min-height: 44px;
+      padding: 0 13px;
       font: inherit;
       outline: none;
     }
-    .alte-send {
+    .send {
       border: 0;
       border-radius: 12px;
       background: var(--alte-teal);
       color: #fff;
-      cursor: pointer;
       font-weight: 900;
+      cursor: pointer;
     }
-    .alte-send:disabled { opacity: .5; cursor: wait; }
-    @media (max-width: 520px) {
-      .preview-page { padding: 18px; }
-      .alte-chat-widget { inset: auto 10px 10px 10px; }
-      .alte-panel { width: 100%; height: min(680px, calc(100vh - 20px)); }
-      .alte-launcher { margin-left: auto; }
+    .send:disabled { opacity: .55; cursor: wait; }
+    .source-list, .handover-card, .contact-card {
+      margin-top: 9px;
+      border-radius: 13px;
+      border: 1px solid #d8e8e5;
+      background: #fff;
+      padding: 10px;
+      font-size: 12px;
+      color: var(--alte-muted);
+    }
+    .handover-card { border-color: #efd58d; background: #fff9e8; }
+    .source-list strong, .handover-card strong, .contact-card strong { display: block; color: var(--alte-text); margin-bottom: 5px; }
+    .source-list a { display: block; color: var(--alte-teal); text-decoration: none; margin-top: 5px; overflow-wrap: anywhere; }
+    @media (max-width: 760px) {
+      .demo-shell { padding: 10px; }
+      .alte-chat-app {
+        width: 100%;
+        min-height: 680px;
+        height: calc(100vh - 20px);
+        grid-template-columns: 1fr;
+      }
+      .alte-sidebar {
+        max-height: 210px;
+        overflow: auto;
+      }
+      .brand { display: none; }
+      .dept-list { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 10px; }
+      .sidebar-foot { display: none; }
+      .msg { max-width: 92%; }
     }
   </style>
 </head>
 <body>
-  <main class="preview-page">
-    <h1>Alte AI Chatbot - Safe Pro Candidate</h1>
-    <p>Compact PIP-style public-site widget with Pro-style department routing. Browser calls only the FastAPI backend; AI, Knowledge Base, and CRM business rules stay server-side.</p>
-    <div class="preview-note">Localhost browser calls may be blocked by production CORS. Use this file for UI preview unless hosted on an allowed Alte domain. API smoke should use backend scripts.</div>
-  </main>
-
-  <div class="alte-chat-widget" id="alteChatWidget">
-    <button class="alte-launcher" id="alteLauncher" aria-label="Open Alte AI chat"><span>A</span></button>
-    <section class="alte-panel" aria-label="Alte AI chat">
-      <header class="alte-head">
-        <div class="alte-logo">A</div>
-        <div class="alte-title">
+  <main class="demo-shell">
+    <section class="alte-chat-app" aria-label="Alte AI Assistant sidebar chat">
+      <aside class="alte-sidebar">
+        <div class="brand">
+          <div class="brand-mark">A</div>
           <strong>Alte AI Assistant</strong>
-          <small id="alteStatus">Backend-connected</small>
+          <span>Department-aware student support</span>
         </div>
-        <div class="alte-head-actions">
-          <button class="alte-lang active" data-lang="ka" type="button">KA</button>
-          <button class="alte-lang" data-lang="en" type="button">EN</button>
-          <button class="alte-icon-btn" id="alteClear" type="button" title="Clear chat">↺</button>
-          <button class="alte-icon-btn" id="alteClose" type="button" title="Close">×</button>
+        <div class="sidebar-section" data-i18n="mainSection">Main</div>
+        <nav class="dept-list" id="mainDepartments"></nav>
+        <div class="sidebar-section" data-i18n="otherSection">Other</div>
+        <nav class="dept-list" id="otherDepartments"></nav>
+        <div class="sidebar-foot">
+          Browser -> FastAPI backend -> Claude / Knowledge Base / CRM rules.
         </div>
-      </header>
-      <div class="alte-notice">საკონტაქტო მონაცემებს ვიყენებთ მხოლოდ კონსულტაციისთვის. No secrets run in this browser.</div>
-      <div class="alte-chips" id="alteChips"></div>
-      <div class="alte-context" id="alteContext"></div>
-      <div class="alte-messages" id="alteMessages"></div>
-      <form class="alte-composer" id="alteForm">
-        <input class="alte-input" id="alteInput" autocomplete="off" placeholder="დაწერეთ კითხვა..." />
-        <button class="alte-send" id="alteSend" type="submit">➤</button>
-      </form>
+      </aside>
+
+      <section class="chat-main">
+        <header class="chat-head">
+          <div class="chat-title">
+            <strong>Alte AI Assistant</strong>
+            <span id="statusText">Online / Backend connected</span>
+          </div>
+          <div class="head-actions">
+            <button class="lang-btn active" data-lang="ka" type="button">KA</button>
+            <button class="lang-btn" data-lang="en" type="button">EN</button>
+            <button class="reset-btn" id="resetBtn" type="button">Reset</button>
+          </div>
+        </header>
+
+        <div class="context-bar">
+          <div class="badge" id="departmentBadge">Admissions</div>
+          <div class="trust">No API keys in browser. CRM actions are backend-decided.</div>
+        </div>
+
+        <div class="messages" id="messages"></div>
+        <div class="quick-row" id="quickRow"></div>
+        <form class="composer" id="form">
+          <input class="input" id="input" autocomplete="off" placeholder="დაწერეთ კითხვა..." />
+          <button class="send" id="sendBtn" type="submit">-></button>
+        </form>
+      </section>
     </section>
-  </div>
+  </main>
 
   <script>
     window.AlteChatWidgetConfig = window.AlteChatWidgetConfig || {
@@ -294,154 +350,170 @@
     };
 
     const cfg = window.AlteChatWidgetConfig;
+    const departments = [
+      { key: "admissions", group: "main", icon: "A", ka: "პროგრამები", en: "Programs", topic: "programs", promptKa: "მაინტერესებს პროგრამები", promptEn: "What programs are available?" },
+      { key: "admissions", group: "main", icon: "IN", ka: "მიღება", en: "Admissions", topic: "admissions", promptKa: "მაინტერესებს მიღება", promptEn: "How can I apply?" },
+      { key: "finance", group: "main", icon: "₾", ka: "საფასური", en: "Finance / Tuition", topic: "tuition", promptKa: "მაინტერესებს სწავლის საფასური", promptEn: "How much is tuition?" },
+      { key: "international", group: "main", icon: "GL", ka: "საერთაშორისო", en: "International", topic: "international_admissions", promptKa: "რა საბუთებია საჭირო საერთაშორისო სტუდენტებისთვის?", promptEn: "What documents do international students need?" },
+      { key: "medicine", group: "main", icon: "MD", ka: "მედიცინა / MD", en: "Medicine / MD", topic: "medicine_md", promptKa: "მაინტერესებს MD პროგრამა", promptEn: "I want to apply for medicine from India" },
+      { key: "student_services", group: "other", icon: "SS", ka: "სტუდ. სერვისები", en: "Student Services", topic: "student_services", promptKa: "მაინტერესებს სტუდენტური სერვისები", promptEn: "I have a student services question" },
+      { key: "it_support", group: "other", icon: "IT", ka: "IT დახმარება", en: "IT Support", topic: "technical_support", promptKa: "პორტალზე შესვლის ტექნიკური პრობლემა მაქვს", promptEn: "I have a portal login problem" },
+      { key: "admissions", group: "other", icon: "C", ka: "კონტაქტი", en: "Contact", topic: "contact", promptKa: "როგორ დავუკავშირდე უნივერსიტეტს?", promptEn: "How can I contact admissions?" },
+      { key: "general", group: "other", icon: "OP", ka: "ოპერატორი", en: "Human Operator", topic: "human_request", promptKa: "მინდა ადამიანთან საუბარი", promptEn: "I want to speak with a human" }
+    ];
+
+    const text = {
+      ka: {
+        mainSection: "მთავარი",
+        otherSection: "სხვა",
+        placeholder: "დაწერეთ კითხვა...",
+        greeting: "გამარჯობა. აირჩიეთ დეპარტამენტი მარცხნივ ან დაწერეთ კითხვა. თუ ზუსტ პასუხს ვერ დავადასტურებ Knowledge Base-იდან, სწორ დეპარტამენტთან გადაგამისამართებთ.",
+        sourceTitle: "წყაროები",
+        handoverTitle: "ოპერატორთან გადამისამართება",
+        contactTitle: "საკონტაქტო ინფორმაცია",
+        contactBody: "შეგიძლიათ დატოვოთ ტელეფონი ან ელფოსტა, თუ კონსულტაცია გსურთ.",
+        error: "კავშირი დროებით მიუწვდომელია. სცადეთ მოგვიანებით ან გამოიყენეთ ოფიციალური საკონტაქტო არხი.",
+        online: "Online / Backend connected"
+      },
+      en: {
+        mainSection: "Main",
+        otherSection: "Other",
+        placeholder: "Type your question...",
+        greeting: "Hello. Choose a department on the left or ask a question. If I cannot confirm the answer from the Knowledge Base, I will route you to the right department.",
+        sourceTitle: "Sources",
+        handoverTitle: "Human handover",
+        contactTitle: "Contact details",
+        contactBody: "You may leave your phone or email if you want consultation.",
+        error: "The connection is temporarily unavailable. Please try later or use an official contact channel.",
+        online: "Online / Backend connected"
+      }
+    };
+
     const state = {
       apiBaseUrl: cfg.apiBaseUrl,
       sourceDomain: cfg.sourceDomain || "alte.edu.ge",
-      language: localStorage.getItem("alteSafeProLanguage") || cfg.defaultLanguage || "ka",
-      sessionId: localStorage.getItem("alteSafeProSessionId"),
-      conversationId: localStorage.getItem("alteSafeProConversationId"),
-      selectedDepartment: localStorage.getItem("alteSafeProSelectedDepartment") || "",
-      selectedTopic: localStorage.getItem("alteSafeProSelectedTopic") || "",
+      language: localStorage.getItem("alteSafeProSidebarLanguage") || cfg.defaultLanguage || "ka",
+      sessionId: localStorage.getItem("alteSafeProSidebarSessionId"),
+      conversationId: localStorage.getItem("alteSafeProSidebarConversationId"),
+      selectedDepartment: localStorage.getItem("alteSafeProSidebarDepartment") || "admissions",
+      selectedTopic: localStorage.getItem("alteSafeProSidebarTopic") || "programs",
       busy: false
     };
 
-    const labels = {
-      ka: {
-        placeholder: "დაწერეთ კითხვა...",
-        greeting: "გამარჯობა, მე ვარ Alte AI Assistant. აირჩიეთ მიმართულება ან დამისვით კითხვა.",
-        error: "კავშირი დროებით მიუწვდომელია. სცადეთ მოგვიანებით ან დაუკავშირდით უნივერსიტეტს ოფიციალური არხით.",
-        handover: "ადამიანთან გადამისამართება",
-        contact: "საკონტაქტო ინფორმაცია საჭიროა",
-        context: "არჩეული მიმართულება",
-        noContext: "აირჩიეთ მიმართულება ან დასვით კითხვა",
-        chips: [
-          { label: "პროგრამები", message: "რა პროგრამები აქვს ალტე უნივერსიტეტს?", department: "admissions", topic: "programs" },
-          { label: "მიღება", message: "როგორ ხდება ჩარიცხვა?", department: "admissions", topic: "admissions" },
-          { label: "საფასური", message: "რა ღირს სწავლა?", department: "finance", topic: "tuition" },
-          { label: "საერთაშორისო", message: "რა საბუთებია საჭირო საერთაშორისო სტუდენტებისთვის?", department: "international", topic: "international_admissions" },
-          { label: "მედიცინა", message: "მაინტერესებს მედიცინის პროგრამა", department: "medicine", topic: "medicine_md" },
-          { label: "სტუდ. სერვისები", message: "მაინტერესებს სტუდენტური სერვისები", department: "student_services", topic: "student_services" },
-          { label: "IT", message: "პორტალზე შესვლის ტექნიკური პრობლემა მაქვს", department: "it_support", topic: "technical_support" },
-          { label: "ოპერატორი", message: "მინდა ადამიანთან საუბარი", department: "general", topic: "human_request" }
-        ]
-      },
-      en: {
-        placeholder: "Type your question...",
-        greeting: "Hello, I am the Alte AI Assistant. Choose a department or ask a question.",
-        error: "The connection is temporarily unavailable. Please try later or contact the university through an official channel.",
-        handover: "Human handover",
-        contact: "Contact details requested",
-        context: "Selected department",
-        noContext: "Choose a department or ask a question",
-        chips: [
-          { label: "Programs", message: "What programs are available?", department: "admissions", topic: "programs" },
-          { label: "Admissions", message: "How can I apply?", department: "admissions", topic: "admissions" },
-          { label: "Tuition", message: "How much is tuition?", department: "finance", topic: "tuition" },
-          { label: "International", message: "What documents do international students need?", department: "international", topic: "international_admissions" },
-          { label: "Medicine", message: "I want to apply for medicine from India", department: "medicine", topic: "medicine_md" },
-          { label: "Student Services", message: "I have a student services question", department: "student_services", topic: "student_services" },
-          { label: "IT", message: "I have a portal login problem", department: "it_support", topic: "technical_support" },
-          { label: "Human", message: "I want to speak with a human", department: "general", topic: "human_request" }
-        ]
-      }
-    };
-    const widget = document.getElementById("alteChatWidget");
-    const launcher = document.getElementById("alteLauncher");
-    const closeBtn = document.getElementById("alteClose");
-    const clearBtn = document.getElementById("alteClear");
-    const messages = document.getElementById("alteMessages");
-    const chips = document.getElementById("alteChips");
-    const contextEl = document.getElementById("alteContext");
-    const form = document.getElementById("alteForm");
-    const input = document.getElementById("alteInput");
-    const sendBtn = document.getElementById("alteSend");
-    const statusEl = document.getElementById("alteStatus");
-    const langButtons = Array.from(document.querySelectorAll(".alte-lang"));
+    const mainDepartments = document.getElementById("mainDepartments");
+    const otherDepartments = document.getElementById("otherDepartments");
+    const messages = document.getElementById("messages");
+    const quickRow = document.getElementById("quickRow");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const statusText = document.getElementById("statusText");
+    const departmentBadge = document.getElementById("departmentBadge");
+    const langButtons = Array.from(document.querySelectorAll(".lang-btn"));
 
-    launcher.addEventListener("click", () => {
-      widget.classList.add("open");
-      ensureSession();
-      input.focus();
-    });
-    closeBtn.addEventListener("click", () => widget.classList.remove("open"));
-    clearBtn.addEventListener("click", () => {
-      localStorage.removeItem("alteSafeProSessionId");
-      localStorage.removeItem("alteSafeProConversationId");
-      localStorage.removeItem("alteSafeProSelectedDepartment");
-      localStorage.removeItem("alteSafeProSelectedTopic");
-      state.sessionId = null;
-      state.conversationId = null;
-      state.selectedDepartment = "";
-      state.selectedTopic = "";
-      messages.innerHTML = "";
-      renderContext();
-      renderGreeting();
-      ensureSession();
-    });
-    langButtons.forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.lang)));
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const text = input.value.trim();
-      if (!text || state.busy) return;
+      const value = input.value.trim();
+      if (!value || state.busy) return;
       input.value = "";
-      sendMessage(text);
+      sendMessage(value);
     });
+    resetBtn.addEventListener("click", resetChat);
+    langButtons.forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.lang)));
 
     function setLanguage(language) {
       state.language = language;
-      localStorage.setItem("alteSafeProLanguage", language);
+      localStorage.setItem("alteSafeProSidebarLanguage", language);
+      input.placeholder = text[language].placeholder;
+      statusText.textContent = text[language].online;
       langButtons.forEach((button) => button.classList.toggle("active", button.dataset.lang === language));
-      input.placeholder = labels[language].placeholder;
-      renderChips();
-      renderContext();
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        node.textContent = text[language][node.dataset.i18n];
+      });
+      renderDepartments();
+      renderQuickActions();
+      updateContext();
       if (!messages.children.length) renderGreeting();
     }
 
-    function renderChips() {
-      chips.innerHTML = "";
-      labels[state.language].chips.forEach((chip) => {
+    function renderDepartments() {
+      mainDepartments.innerHTML = "";
+      otherDepartments.innerHTML = "";
+      departments.forEach((department) => {
         const button = document.createElement("button");
-        button.className = `alte-chip${state.selectedDepartment === chip.department ? " active" : ""}`;
         button.type = "button";
-        button.textContent = chip.label;
-        button.dataset.department = chip.department;
-        button.dataset.topic = chip.topic;
+        button.className = `dept-btn${department.key === state.selectedDepartment && department.topic === state.selectedTopic ? " active" : ""}`;
+        button.dataset.department = department.key;
+        button.dataset.topic = department.topic;
+        button.innerHTML = `
+          <span class="dept-icon">${department.icon}</span>
+          <span class="dept-label"><strong>${department[state.language]}</strong><span>${department.topic.replaceAll("_", " ")}</span></span>
+        `;
         button.addEventListener("click", () => {
-          setSelectedContext(chip.department, chip.topic);
-          sendMessage(chip.message);
+          setDepartment(department.key, department.topic);
+          renderQuickActions();
         });
-        chips.appendChild(button);
+        (department.group === "main" ? mainDepartments : otherDepartments).appendChild(button);
       });
     }
 
-    function setSelectedContext(department, topic) {
-      state.selectedDepartment = department || "";
-      state.selectedTopic = topic || "";
-      localStorage.setItem("alteSafeProSelectedDepartment", state.selectedDepartment);
-      localStorage.setItem("alteSafeProSelectedTopic", state.selectedTopic);
-      renderChips();
-      renderContext();
+    function setDepartment(department, topic) {
+      state.selectedDepartment = department;
+      state.selectedTopic = topic;
+      localStorage.setItem("alteSafeProSidebarDepartment", department);
+      localStorage.setItem("alteSafeProSidebarTopic", topic);
+      renderDepartments();
+      updateContext();
     }
 
-    function renderContext() {
-      contextEl.textContent = state.selectedDepartment
-        ? `${labels[state.language].context}: ${state.selectedDepartment.replaceAll("_", " ")}`
-        : labels[state.language].noContext;
+    function updateContext() {
+      const item = departments.find((entry) => entry.key === state.selectedDepartment && entry.topic === state.selectedTopic)
+        || departments.find((entry) => entry.key === state.selectedDepartment);
+      departmentBadge.textContent = item ? item[state.language] : state.selectedDepartment.replaceAll("_", " ");
+    }
+
+    function renderQuickActions() {
+      quickRow.innerHTML = "";
+      departments
+        .filter((department) => department.key === state.selectedDepartment)
+        .slice(0, 3)
+        .forEach((department) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "quick-btn";
+          button.textContent = department[state.language];
+          button.addEventListener("click", () => {
+            setDepartment(department.key, department.topic);
+            sendMessage(state.language === "ka" ? department.promptKa : department.promptEn);
+          });
+          quickRow.appendChild(button);
+        });
     }
 
     function renderGreeting() {
-      addMessage("bot", labels[state.language].greeting);
+      addMessage("bot", text[state.language].greeting);
     }
 
-    function addMessage(role, text, payload) {
+    function resetChat() {
+      localStorage.removeItem("alteSafeProSidebarSessionId");
+      localStorage.removeItem("alteSafeProSidebarConversationId");
+      state.sessionId = null;
+      state.conversationId = null;
+      messages.innerHTML = "";
+      renderGreeting();
+      ensureSession();
+    }
+
+    function addMessage(role, value, payload) {
       const row = document.createElement("div");
-      row.className = `alte-msg ${role}`;
+      row.className = `msg ${role}`;
       const avatar = document.createElement("div");
-      avatar.className = "alte-avatar";
-      avatar.textContent = role === "user" ? "You".slice(0, 1) : "A";
+      avatar.className = "avatar";
+      avatar.textContent = role === "user" ? "U" : "A";
       const bubble = document.createElement("div");
-      bubble.className = "alte-bubble";
-      bubble.textContent = text;
+      bubble.className = "bubble";
+      bubble.textContent = value;
       if (payload) renderPayloadExtras(bubble, payload);
       row.appendChild(avatar);
       row.appendChild(bubble);
@@ -451,24 +523,29 @@
 
     function renderPayloadExtras(parent, payload) {
       const missing = payload.missing_fields || [];
-      if (missing.includes("phone_or_email") || missing.includes("phone") || missing.includes("email")) {
+      const department = payload.route_department || payload.department || departmentBadge.textContent;
+      if (payload.should_handover || payload.needs_handover || payload.route_department || payload.department_key) {
         const card = document.createElement("div");
-        card.className = "alte-contact";
-        card.innerHTML = `<strong>${labels[state.language].contact}</strong>${state.language === "ka" ? "თუ გსურთ კონსულტაცია, მოგვწერეთ ტელეფონი ან ელ.ფოსტა." : "If you want consultation, please provide phone or email."}`;
+        card.className = "handover-card";
+        card.innerHTML = `
+          <strong>${text[state.language].handoverTitle}</strong>
+          ${state.language === "ka"
+            ? `ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან: ${department}. შეგიძლიათ დატოვოთ ტელეფონი ან ელფოსტა.`
+            : `I can connect you with the right department: ${department}. You may leave your phone or email.`}
+        `;
         parent.appendChild(card);
       }
-      if (payload.should_handover) {
+      if (missing.includes("phone_or_email") || missing.includes("phone") || missing.includes("email")) {
         const card = document.createElement("div");
-        card.className = "alte-handover";
-        const department = payload.route_department || payload.department || state.selectedDepartment || "";
-        card.innerHTML = `<strong>${labels[state.language].handover}</strong>${state.language === "ka" ? "თქვენი კითხვა შეიძლება ოპერატორმა უკეთ დააზუსტოს." : "A human advisor may be best suited to confirm this."}${department ? `<br><span>${department}</span>` : ""}`;
+        card.className = "contact-card";
+        card.innerHTML = `<strong>${text[state.language].contactTitle}</strong>${text[state.language].contactBody}`;
         parent.appendChild(card);
       }
       const sources = payload.used_sources || payload.sources || [];
       if (sources.length) {
-        const sourceBox = document.createElement("div");
-        sourceBox.className = "alte-source-list";
-        sourceBox.innerHTML = "<strong>Sources</strong>";
+        const box = document.createElement("div");
+        box.className = "source-list";
+        box.innerHTML = `<strong>${text[state.language].sourceTitle}</strong>`;
         sources.slice(0, 3).forEach((source) => {
           const url = source.source_url || source.url;
           const title = source.title || source.source_key || url || "Knowledge Base";
@@ -479,9 +556,9 @@
             item.target = "_blank";
             item.rel = "noreferrer";
           }
-          sourceBox.appendChild(item);
+          box.appendChild(item);
         });
-        parent.appendChild(sourceBox);
+        parent.appendChild(box);
       }
     }
 
@@ -502,17 +579,17 @@
         const data = await response.json();
         state.sessionId = data.session_id;
         state.conversationId = data.conversation_id;
-        localStorage.setItem("alteSafeProSessionId", state.sessionId);
-        localStorage.setItem("alteSafeProConversationId", state.conversationId);
-        setBusy(false, "Backend-connected");
+        localStorage.setItem("alteSafeProSidebarSessionId", state.sessionId);
+        localStorage.setItem("alteSafeProSidebarConversationId", state.conversationId);
+        setBusy(false, text[state.language].online);
       } catch (_) {
         setBusy(false, "Backend unavailable");
-        addMessage("bot", labels[state.language].error);
+        addMessage("bot", text[state.language].error);
       }
     }
 
-    async function sendMessage(text) {
-      addMessage("user", text);
+    async function sendMessage(value) {
+      addMessage("user", value);
       await ensureSession();
       if (!state.sessionId || !state.conversationId) return;
       setBusy(true, "Thinking...");
@@ -523,35 +600,33 @@
           body: JSON.stringify({
             conversation_id: state.conversationId,
             session_id: state.sessionId,
-            message: text,
+            message: value,
             language: state.language,
             source_domain: state.sourceDomain,
             selected_department: state.selectedDepartment,
             selected_topic: state.selectedTopic,
             page_url: window.location.href,
-            widget_variant: "safe_pro"
+            widget_variant: "safe_pro_sidebar"
           })
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        addMessage("bot", data.reply || data.message || labels[state.language].error, data);
-        setBusy(false, data.should_create_lead ? "Backend requested CRM follow-up" : "Backend-connected");
+        addMessage("bot", data.reply || data.message || text[state.language].error, data);
+        setBusy(false, text[state.language].online);
       } catch (_) {
         setBusy(false, "Backend unavailable");
-        addMessage("bot", labels[state.language].error);
+        addMessage("bot", text[state.language].error);
       }
     }
 
-    function setBusy(value, status) {
+    function setBusy(value, label) {
       state.busy = value;
       sendBtn.disabled = value;
-      statusEl.textContent = status;
+      statusText.textContent = label;
     }
 
     setLanguage(state.language);
-    renderContext();
-    renderGreeting();
+    ensureSession();
   </script>
 </body>
 </html>
-
