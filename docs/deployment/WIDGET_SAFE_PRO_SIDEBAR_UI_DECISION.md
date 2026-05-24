@@ -62,6 +62,16 @@ The frontend does not:
 - Human Operator sends a human request to backend with the active department context.
 - Fallback/handover UI uses backend department fields first, then selected sidebar department.
 
+## Visual Parity Refinement
+
+The widget was refined again to match the uploaded Pro screenshot more closely:
+
+- compact app-shell proportions similar to the Pro preview;
+- cream left sidebar with approximately 200px department navigation;
+- white chat area with compact header, KA/EN controls, trust bar, message bubbles, and composer;
+- smaller Pro-style typography, spacing, icon cells, borders, and operator/source cards;
+- the compact/PIP visual direction remains archived as alternate, not primary.
+
 ## Status
 
 Actual embed and public launch remain pending.
