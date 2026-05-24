@@ -90,7 +90,7 @@ def run_smoke(
             {
                 "source_domain": "alte.edu.ge",
                 "language": "ka",
-                "messages": ["გამარჯობა", "რა ღირს სწავლა?"],
+                "messages": ["გამარჯობა", "რა ღირს სწავლა?", "როდის არის ჩარიცხვის ბოლო ვადა?"],
             },
             {
                 "source_domain": "join.alte.edu.ge",

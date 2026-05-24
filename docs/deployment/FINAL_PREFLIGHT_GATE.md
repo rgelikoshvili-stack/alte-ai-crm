@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -8,6 +8,7 @@ Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSI
 Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED` remains true.
 Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL` remains true for endpoint availability; no-contact lead/task creation now requires redeploy.
 Previous no-contact guard redeploy state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD` is resolved.
+Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -104,7 +105,10 @@ Previous no-contact guard redeploy state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_
 | Website | Intentional lead/task creation | No; observed backend side effect for medicine/international admission message |
 | Website | No-contact lead/task guard | Deployed and verified: admissions/international/medicine require phone or email before lead/task creation |
 | Website | Safe smoke after no-contact redeploy | Done: contact-flow not run; no contact details sent; medicine/international no-contact returned no lead/task |
-| Website | Production test knowledge seed approval | Pending: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`, status `PENDING_APPROVAL` |
+| Website | Production test knowledge seed approval | Done: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`, status `APPROVED_AND_EXECUTED` |
+| Website | Production test knowledge seed execution | Done: first run created 12 sources / 13 snippets; second run created zero duplicates |
+| Website | Required test knowledge verification | Done: contact, admissions, finance, international, medicine, deadlines PASS |
+| Website | Safe smoke after test knowledge seed | Done: contact-flow not run; no intentional lead/task creation |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

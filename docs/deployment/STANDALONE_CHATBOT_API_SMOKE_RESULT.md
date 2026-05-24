@@ -81,4 +81,6 @@
 - Browser local CORS remains blocked by production CORS for `http://127.0.0.1:5500`.
 - Real-domain browser smoke from `https://alte.edu.ge` or `https://join.alte.edu.ge` remains pending.
 - Official content review remains pending before public launch.
-- Production test knowledge seed remains pending approval and was not run.
+- Historical Phase 8P note: Production test knowledge seed remains pending approval and was not run during Phase 8P.
+- Production test knowledge seed was executed in Phase 8Q after explicit approval.
+- Official review of seeded test knowledge remains required before public launch.

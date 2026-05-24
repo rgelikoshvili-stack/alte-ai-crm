@@ -1,8 +1,8 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, and the no-contact lead/task guard has been deployed and verified. Full production launch remains blocked until test knowledge seed approval, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, and production test knowledge has been seeded with idempotency verified. Full production launch remains blocked until official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -10,6 +10,7 @@ Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSI
 Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED` remains true.
 Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL` remains true for the endpoint checks, with the no-contact lead/task side effect now tracked separately.
 Previous no-contact guard state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD` is resolved by Phase 8P-Redeploy.
+Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
 
 ## Go Only If
 
@@ -166,7 +167,15 @@ Previous no-contact guard state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_RED
   - safe standalone API smoke rerun: PASS
   - medicine/international no-contact side effect fixed: `created_lead_id=null`, `created_task_id=null`, `should_create_lead=false`
   - contact-flow test was not run
-- Production test knowledge seed approval gate created: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`; status `PENDING_APPROVAL`.
+- Production test knowledge seed approval gate created: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`; status `APPROVED_AND_EXECUTED`.
+- Phase 8Q production test knowledge seed completed:
+  - first run: `sources_created=12`, `snippets_created=13`, `skipped_existing=0`, `review_required_count=11`
+  - second run/idempotency: `sources_created=0`, `snippets_created=0`, `skipped_existing=13`
+  - required test knowledge verification: PASS
+  - safe API smoke after seed: PASS
+  - contact-flow test was not run
+  - no intentional production lead/task creation
+  - official content review still required before public launch
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers
@@ -177,7 +186,7 @@ Previous no-contact guard state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_RED
 - Final widget asset URL pending.
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Official content/privacy review pending before public launch.
-- Production test knowledge seed pending approval.
+- Official content review pending before public launch.
 - Full public launch approval pending.
 
 ## No-Go If

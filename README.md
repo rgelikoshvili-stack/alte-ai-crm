@@ -1161,3 +1161,30 @@ Decision:
 ```text
 BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL
 ```
+
+## Phase 8Q Production Test Knowledge Seed
+
+Phase 8Q seeded the curated required test knowledge into production Cloud SQL after explicit approval.
+
+Result:
+
+- First seed run: `sources_created=12`, `snippets_created=13`, `skipped_existing=0`, `review_required_count=11`
+- Second seed run: `sources_created=0`, `snippets_created=0`, `skipped_existing=13`
+- Idempotency: PASS
+- Required test knowledge verification: PASS
+- Safe standalone API smoke after seed: PASS
+- Contact-flow test: not run
+- Intentional lead/task creation: no
+- Official content review: still required before public launch
+
+Verifier:
+
+```powershell
+python -m app.scripts.verify_phase_8q_test_knowledge_seed_docs
+```
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED
+```

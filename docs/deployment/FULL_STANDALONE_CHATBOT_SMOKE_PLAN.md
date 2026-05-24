@@ -41,6 +41,19 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 - Cloud Run redeploy is required before production has the no-contact guard.
 - Production test knowledge seed was not run.
 
+## Phase 8Q Seeded Knowledge Smoke Result
+
+- Production test knowledge seed executed after explicit approval.
+- Idempotency verified: second run created zero new records and skipped existing snippets.
+- Safe API smoke after seed passed.
+- Contact-flow test was not run.
+- No phone/email/contact details were submitted.
+- No intentional production lead/task creation was performed.
+- Finance exact price behavior remains conservative and did not create lead/task.
+- Deadline behavior remains conservative and did not create lead/task.
+- Medicine/international no-contact behavior remains guarded: no lead/task, `phone_or_email` requested.
+- Official content review remains required before public launch.
+
 ## CORS Caveat
 
 Production CORS is intentionally restricted to:

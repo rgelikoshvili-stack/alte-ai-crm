@@ -64,13 +64,14 @@ def smoke_result_documents_safety() -> ApiSmokeDocsCheck:
 
 def approval_gate_pending() -> ApiSmokeDocsCheck:
     text = (DEPLOYMENT_DOCS / "TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md").read_text(encoding="utf-8")
-    required = [
-        "PENDING_APPROVAL",
-        "approved: PENDING",
-        "Approve Phase 8Q-Execution for production test knowledge seed",
-    ]
-    missing = [item for item in required if item not in text]
-    return ApiSmokeDocsCheck("Test knowledge seed approval remains pending", not missing, ", ".join(missing))
+    historical_pending = "PENDING_APPROVAL" in text and "approved: PENDING" in text
+    executed_after_approval = "APPROVED_AND_EXECUTED" in text and "execution status: COMPLETED" in text
+    phrase_present = "Approve Phase 8Q-Execution for production test knowledge seed" in text
+    passed = phrase_present and (historical_pending or executed_after_approval)
+    detail = "pending" if historical_pending else "executed" if executed_after_approval else "missing pending/executed status"
+    if not phrase_present:
+        detail = f"{detail}; missing approval phrase"
+    return ApiSmokeDocsCheck("Test knowledge seed approval gate status is valid", passed, detail)
 
 
 def decision_state_documented() -> ApiSmokeDocsCheck:

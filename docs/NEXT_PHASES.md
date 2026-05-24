@@ -392,6 +392,36 @@ Next recommended phase:
 - Phase 8Q-Execution: production test knowledge seed only after the user explicitly says:
   `Approve Phase 8Q-Execution for production test knowledge seed`
 
+## Phase 8Q: Production Test Knowledge Seed And Safe Smoke
+
+- Production test knowledge seed executed after explicit approval.
+- Seed file: `backend/app/knowledge_seed/alte_required_test_knowledge_v1.json`
+- First run summary:
+  - `sources_created=12`
+  - `snippets_created=13`
+  - `skipped_existing=0`
+  - `review_required_count=11`
+- Second run/idempotency summary:
+  - `sources_created=0`
+  - `snippets_created=0`
+  - `skipped_existing=13`
+- Required test knowledge verification passed for:
+  - general contact
+  - admissions general
+  - finance
+  - international admissions
+  - medicine / MD
+  - deadlines
+- Safe API smoke after seed passed.
+- Contact-flow test was not run.
+- No intentional production lead/task creation was performed.
+- Official content review is still required before public launch.
+- Decision state: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED`
+
+Next recommended phase:
+
+- Official review of seeded knowledge content and/or website embed preparation only after website/privacy approvals are ready.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.
