@@ -44,3 +44,19 @@ BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE
 ```
 
 Actual Alte website embed remains pending.
+
+## Safe Uploaded UI Smoke
+
+Additional standalone page:
+
+```text
+widget/alte-university-ai-chatbot-safe.html
+```
+
+- [x] Original uploaded UI copied as evidence.
+- [x] Direct browser Anthropic call removed in safe version.
+- [x] Safe version uses `/chat/session/start`.
+- [x] Safe version uses `/chat/message`.
+- [x] Safe version uses production FastAPI backend URL.
+- [ ] Browser chat from localhost may be blocked by production CORS, as expected.
+- [ ] Real-domain browser smoke remains pending.

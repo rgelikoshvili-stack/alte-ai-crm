@@ -544,6 +544,21 @@ Next recommended phase:
 
 - Build and deploy a new Cloud Run revision with the finance no-contact guard, then rerun safe production knowledge smoke.
 
+## Phase 8Z: Safe Uploaded Chatbot UI
+
+- Uploaded UI copied as evidence: `docs/knowledge_evidence/uploaded_widget_ui/alte_university_ai_chatbot.html`
+- Safe backend-connected UI created: `widget/alte-university-ai-chatbot-safe.html`
+- Unsafe direct browser Anthropic call removed.
+- Safe UI uses production FastAPI backend:
+  - `/chat/session/start`
+  - `/chat/message`
+- Frontend no longer owns prompt, Claude call, lead creation, or CRM business rules.
+- Decision state: `BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_SAFE_WIDGET_UI_READY_PENDING_REVIEW_AND_SITE_EMBED`
+
+Next recommended phase:
+
+- Redeploy Phase 8Y backend fix to Cloud Run, then run safe production smoke again.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

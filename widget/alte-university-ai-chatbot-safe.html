@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alte University AI Chatbot - Safe Backend Demo</title>
+  <style>
+    :root {
+      --alte-teal: #074045;
+      --alte-mint: #e8f4f2;
+      --alte-border: #c8e4e0;
+      --alte-text: #122224;
+      --alte-muted: #54736f;
+      --alte-bg: #f7fbfa;
+      --alte-warn: #8a5a00;
+      --alte-warn-bg: #fff7df;
+      --alte-danger: #9b1c1c;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--alte-bg);
+      color: var(--alte-text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .demo-shell {
+      width: min(1120px, 100%);
+      height: min(760px, calc(100vh - 48px));
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr) 300px;
+      border: 1px solid var(--alte-border);
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 18px 60px rgba(7, 64, 69, 0.14);
+    }
+
+    .sidebar {
+      background: var(--alte-mint);
+      border-right: 1px solid var(--alte-border);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--alte-border);
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--alte-teal);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .brand-title { font-size: 14px; font-weight: 700; }
+    .brand-sub { font-size: 11px; color: var(--alte-muted); margin-top: 2px; }
+
+    .nav { padding: 10px 8px; overflow: auto; }
+    .nav-label {
+      padding: 12px 10px 6px;
+      color: #5a8a84;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .dept-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #275a56;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.25;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dept-btn:hover { background: rgba(7, 64, 69, .08); }
+    .dept-btn.active { background: var(--alte-teal); color: #fff; }
+
+    .side-footer {
+      margin-top: auto;
+      padding: 14px 16px;
+      border-top: 1px solid var(--alte-border);
+      font-size: 12px;
+      color: var(--alte-muted);
+    }
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #fff;
+    }
+
+    .chat-header {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #e7eeee;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--alte-teal);
+      color: #fff;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .title { font-weight: 700; font-size: 15px; }
+    .status { color: var(--alte-muted); font-size: 12px; margin-top: 2px; }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      display: inline-block;
+      background: #1ca672;
+      margin-right: 5px;
+    }
+
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .pill-btn {
+      border: 1px solid var(--alte-border);
+      background: #fff;
+      border-radius: 7px;
+      height: 30px;
+      padding: 0 10px;
+      color: var(--alte-muted);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: var(--alte-teal);
+      color: #fff;
+      border-color: var(--alte-teal);
+    }
+
+    .notice {
+      padding: 10px 16px;
+      font-size: 12px;
+      line-height: 1.45;
+      background: var(--alte-warn-bg);
+      color: var(--alte-warn);
+      border-bottom: 1px solid #f0d791;
+    }
+
+    .messages {
+      flex: 1;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(#fff, #fbfdfd);
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      max-width: 88%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .bubble {
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .bot .bubble {
+      background: #f0f5f4;
+      border: 1px solid #dce8e6;
+      border-bottom-left-radius: 4px;
+    }
+
+    .user .bubble {
+      background: var(--alte-teal);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .meta {
+      margin-top: 6px;
+      color: var(--alte-muted);
+      font-size: 11px;
+    }
+
+    .sources {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .source-chip {
+      font-size: 11px;
+      padding: 3px 7px;
+      background: #e8f4f2;
+      color: #275a56;
+      border-radius: 999px;
+    }
+
+    .handover-card {
+      margin-top: 8px;
+      border: 1px solid #ffd0a0;
+      background: #fff8f0;
+      color: #5a2e00;
+      border-radius: 9px;
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+
+    .lead-card {
+      margin-top: 8px;
+      border: 1px solid #dce8e6;
+      background: #fff;
+      border-radius: 9px;
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+
+    .composer {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      border-top: 1px solid #e7eeee;
+    }
+
+    .composer input {
+      flex: 1;
+      min-width: 0;
+      height: 40px;
+      border: 1px solid var(--alte-border);
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .composer input:focus { border-color: var(--alte-teal); }
+
+    .send {
+      border: 0;
+      border-radius: 8px;
+      min-width: 92px;
+      padding: 0 14px;
+      background: var(--alte-teal);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .send:disabled { opacity: .55; cursor: wait; }
+
+    .panel {
+      border-left: 1px solid #e7eeee;
+      background: #fbfdfd;
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .panel-section {
+      border: 1px solid #e1ecea;
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--alte-muted);
+      line-height: 1.5;
+    }
+
+    .config-row {
+      margin-top: 8px;
+      color: var(--alte-text);
+      overflow-wrap: anywhere;
+    }
+
+    .select {
+      width: 100%;
+      height: 34px;
+      border: 1px solid var(--alte-border);
+      border-radius: 7px;
+      padding: 0 8px;
+      margin-top: 6px;
+      background: #fff;
+    }
+
+    .quick {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .quick button {
+      border: 1px solid var(--alte-border);
+      border-radius: 7px;
+      background: #fff;
+      padding: 8px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--alte-text);
+      font-size: 12px;
+    }
+
+    .error-text { color: var(--alte-danger); }
+
+    @media (max-width: 900px) {
+      body { padding: 0; }
+      .demo-shell {
+        height: 100vh;
+        min-height: 0;
+        border-radius: 0;
+        grid-template-columns: 1fr;
+      }
+      .sidebar, .panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <div class="brand-title">Alte University</div>
+          <div class="brand-sub">Safe AI Assistant UI</div>
+        </div>
+      </div>
+      <div class="nav" id="departmentNav"></div>
+      <div class="side-footer">
+        Browser UI only. AI, KB retrieval, and CRM actions are handled by the FastAPI backend.
+      </div>
+    </aside>
+
+    <main class="chat">
+      <header class="chat-header">
+        <div class="avatar">A</div>
+        <div>
+          <div class="title">Alte AI Assistant</div>
+          <div class="status"><span class="dot"></span><span id="statusText">Backend-connected</span></div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="pill-btn active" id="kaBtn">KA</button>
+          <button type="button" class="pill-btn" id="enBtn">EN</button>
+          <button type="button" class="pill-btn" id="clearBtn">Clear</button>
+        </div>
+      </header>
+
+      <div class="notice">
+        This safe demo calls the deployed FastAPI backend, not Anthropic directly. Local browser chat may be blocked by production CORS unless this page is hosted on an allowed Alte domain.
+      </div>
+
+      <section class="messages" id="messages" aria-live="polite"></section>
+
+      <form class="composer" id="chatForm">
+        <input id="messageInput" autocomplete="off" placeholder="დაწერეთ შეკითხვა..." />
+        <button class="send" id="sendBtn" type="submit">Send</button>
+      </form>
+    </main>
+
+    <aside class="panel">
+      <h2>Backend Config</h2>
+      <div class="panel-section">
+        <label for="domainSelect">Source domain</label>
+        <select class="select" id="domainSelect">
+          <option value="alte.edu.ge">alte.edu.ge</option>
+          <option value="join.alte.edu.ge">join.alte.edu.ge</option>
+        </select>
+        <div class="config-row"><strong>API:</strong> <span id="apiLabel"></span></div>
+        <div class="config-row"><strong>Conversation:</strong> <span id="conversationLabel">not started</span></div>
+      </div>
+
+      <h2>Quick Tests</h2>
+      <div class="panel-section">
+        <div class="quick" id="quickTests"></div>
+      </div>
+
+      <h2>Policy</h2>
+      <div class="panel-section">
+        No API keys in browser. No frontend lead creation. The backend owns Claude calls, Knowledge Base lookup, no-contact guard, and CRM business rules.
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    window.AlteChatWidgetConfig = {
+      apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+      sourceDomain: "alte.edu.ge",
+      defaultLanguage: "ka"
+    };
+
+    const departments = [
+      ["admissions", "Admissions"],
+      ["international", "International Admissions"],
+      ["medicine", "Medicine / MD"],
+      ["finance", "Finance"],
+      ["student", "Student Services"],
+      ["operator", "Human Handover"]
+    ];
+
+    const quickMessages = {
+      ka: [
+        "რა პროგრამები აქვს ალტე უნივერსიტეტს?",
+        "როგორ ხდება ჩარიცხვა?",
+        "რა ღირს სწავლა?",
+        "მინდა ადამიანთან საუბარი"
+      ],
+      en: [
+        "What programs are available?",
+        "I want to apply for medicine from India",
+        "How much is tuition for medicine?",
+        "I want to speak with a human"
+      ]
+    };
+
+    const state = {
+      apiBaseUrl: window.AlteChatWidgetConfig.apiBaseUrl,
+      sourceDomain: localStorage.getItem("alteSafeUiSourceDomain") || window.AlteChatWidgetConfig.sourceDomain,
+      language: localStorage.getItem("alteSafeUiLanguage") || window.AlteChatWidgetConfig.defaultLanguage,
+      sessionId: localStorage.getItem("alteSafeUiSessionId"),
+      conversationId: localStorage.getItem("alteSafeUiConversationId"),
+      activeDepartment: "admissions"
+    };
+
+    const messagesEl = document.getElementById("messages");
+    const inputEl = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusText = document.getElementById("statusText");
+    const conversationLabel = document.getElementById("conversationLabel");
+    const apiLabel = document.getElementById("apiLabel");
+    const domainSelect = document.getElementById("domainSelect");
+    const quickTests = document.getElementById("quickTests");
+
+    document.getElementById("chatForm").addEventListener("submit", submitMessage);
+    document.getElementById("kaBtn").addEventListener("click", () => setLanguage("ka"));
+    document.getElementById("enBtn").addEventListener("click", () => setLanguage("en"));
+    document.getElementById("clearBtn").addEventListener("click", clearSession);
+    domainSelect.addEventListener("change", () => setSourceDomain(domainSelect.value));
+
+    init();
+
+    function init() {
+      domainSelect.value = state.sourceDomain;
+      apiLabel.textContent = state.apiBaseUrl;
+      renderDepartments();
+      renderQuickTests();
+      updateLanguageButtons();
+      updateConversationLabel();
+      addBotMessage(greeting());
+      ensureSession();
+    }
+
+    function renderDepartments() {
+      const nav = document.getElementById("departmentNav");
+      nav.innerHTML = '<div class="nav-label">Departments</div>';
+      for (const [id, label] of departments) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `dept-btn${state.activeDepartment === id ? " active" : ""}`;
+        button.textContent = label;
+        button.addEventListener("click", () => {
+          state.activeDepartment = id;
+          renderDepartments();
+          addBotMessage(`Routing context selected: ${label}. The backend still decides CRM actions.`);
+        });
+        nav.appendChild(button);
+      }
+    }
+
+    function renderQuickTests() {
+      quickTests.innerHTML = "";
+      for (const text of quickMessages[state.language]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = text;
+        button.addEventListener("click", () => {
+          inputEl.value = text;
+          inputEl.focus();
+        });
+        quickTests.appendChild(button);
+      }
+    }
+
+    function setLanguage(language) {
+      state.language = language;
+      localStorage.setItem("alteSafeUiLanguage", language);
+      updateLanguageButtons();
+      renderQuickTests();
+      inputEl.placeholder = language === "ka" ? "დაწერეთ შეკითხვა..." : "Type your question...";
+    }
+
+    function setSourceDomain(sourceDomain) {
+      state.sourceDomain = sourceDomain;
+      localStorage.setItem("alteSafeUiSourceDomain", sourceDomain);
+      state.language = sourceDomain === "join.alte.edu.ge" ? "en" : "ka";
+      localStorage.setItem("alteSafeUiLanguage", state.language);
+      clearSession(false);
+      updateLanguageButtons();
+      renderQuickTests();
+      ensureSession();
+    }
+
+    function updateLanguageButtons() {
+      document.getElementById("kaBtn").classList.toggle("active", state.language === "ka");
+      document.getElementById("enBtn").classList.toggle("active", state.language === "en");
+    }
+
+    function greeting() {
+      if (state.language === "en") {
+        return "Hello. I can help with programs, admissions, finance questions, and handover to a consultant. I use the backend Knowledge Base and CRM rules.";
+      }
+      return "გამარჯობა. დაგეხმარებით პროგრამების, ჩარიცხვის, ფინანსური კითხვებისა და კონსულტანტთან გადამისამართების საკითხებში. პასუხები მოდის backend Knowledge Base-იდან.";
+    }
+
+    async function ensureSession() {
+      if (state.conversationId && state.sessionId) {
+        updateConversationLabel();
+        return;
+      }
+      statusText.textContent = "Starting backend session...";
+      try {
+        const response = await fetch(`${state.apiBaseUrl}/chat/session/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            channel: "website_chat",
+            source_domain: state.sourceDomain,
+            language: state.language
+          })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        state.conversationId = data.conversation_id;
+        state.sessionId = data.session_id;
+        localStorage.setItem("alteSafeUiConversationId", state.conversationId);
+        localStorage.setItem("alteSafeUiSessionId", state.sessionId);
+        statusText.textContent = "Backend session ready";
+      } catch (error) {
+        statusText.textContent = "Backend unavailable";
+        addBotMessage(safeErrorMessage(), { error: true });
+      }
+      updateConversationLabel();
+    }
+
+    async function submitMessage(event) {
+      event.preventDefault();
+      const message = inputEl.value.trim();
+      if (!message) return;
+      inputEl.value = "";
+      addUserMessage(message);
+      await ensureSession();
+      if (!state.conversationId) return;
+      sendBtn.disabled = true;
+      try {
+        const response = await fetch(`${state.apiBaseUrl}/chat/message`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conversation_id: state.conversationId,
+            session_id: state.sessionId,
+            message,
+            language: state.language,
+            source_domain: state.sourceDomain
+          })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        addBotMessage(data.reply || safeFallback(), { response: data });
+      } catch (error) {
+        addBotMessage(safeErrorMessage(), { error: true });
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    function addUserMessage(text) {
+      const row = document.createElement("div");
+      row.className = "message user";
+      row.innerHTML = `<div class="bubble"></div>`;
+      row.querySelector(".bubble").textContent = text;
+      messagesEl.appendChild(row);
+      scrollBottom();
+    }
+
+    function addBotMessage(text, options = {}) {
+      const row = document.createElement("div");
+      row.className = "message bot";
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      if (options.error) bubble.classList.add("error-text");
+      row.appendChild(bubble);
+
+      if (options.response) {
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const response = options.response;
+        meta.textContent = `intent=${response.intent || "unknown"} · lead=${response.created_lead_id || "none"} · task=${response.created_task_id || "none"}`;
+        bubble.appendChild(meta);
+
+        const sources = response.used_sources || [];
+        if (sources.length) {
+          const sourceBox = document.createElement("div");
+          sourceBox.className = "sources";
+          for (const source of sources.slice(0, 4)) {
+            const chip = document.createElement("span");
+            chip.className = "source-chip";
+            chip.textContent = source;
+            sourceBox.appendChild(chip);
+          }
+          bubble.appendChild(sourceBox);
+        }
+
+        if (response.should_handover || response.handover_reason) {
+          const card = document.createElement("div");
+          card.className = "handover-card";
+          card.textContent = `Operator handover recommended${response.handover_reason ? `: ${response.handover_reason}` : ""}.`;
+          bubble.appendChild(card);
+        }
+
+        if (response.created_lead_id || response.created_task_id) {
+          const lead = document.createElement("div");
+          lead.className = "lead-card";
+          lead.textContent = `Backend CRM action: lead=${response.created_lead_id || "none"}, task=${response.created_task_id || "none"}.`;
+          bubble.appendChild(lead);
+        }
+      }
+
+      messagesEl.appendChild(row);
+      scrollBottom();
+    }
+
+    function clearSession(resetMessages = true) {
+      state.sessionId = null;
+      state.conversationId = null;
+      localStorage.removeItem("alteSafeUiSessionId");
+      localStorage.removeItem("alteSafeUiConversationId");
+      if (resetMessages) {
+        messagesEl.innerHTML = "";
+        addBotMessage(greeting());
+      }
+      updateConversationLabel();
+    }
+
+    function updateConversationLabel() {
+      conversationLabel.textContent = state.conversationId ? state.conversationId : "not started";
+    }
+
+    function scrollBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function safeFallback() {
+      return state.language === "en"
+        ? "I need verified information before giving an exact answer. A consultant can confirm this."
+        : "ზუსტი პასუხისთვის საჭიროა დადასტურებული ინფორმაცია. კონსულტანტი დაგიდასტურებთ დეტალებს.";
+    }
+
+    function safeErrorMessage() {
+      return state.language === "en"
+        ? "The backend is not reachable from this page. If you are running locally, production CORS may block browser requests."
+        : "ამ გვერდიდან backend მიუწვდომელია. თუ ლოკალურად ხსნით, production CORS-მა შეიძლება browser request დაბლოკოს.";
+    }
+  </script>
+</body>
+</html>

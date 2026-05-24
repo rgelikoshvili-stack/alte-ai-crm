@@ -1,0 +1,389 @@
+
+<h2 class="sr-only">ალტე უნივერსიტეტის AI ასისტენტი — დეპარტამენტებით</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.shell{display:flex;height:640px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;font-family:var(--font-sans);background:var(--color-background-primary)}
+.side{width:210px;background:#e8f4f2;border-right:0.5px solid #c8e4e0;display:flex;flex-direction:column;flex-shrink:0}
+.s-brand{padding:16px 14px 12px;border-bottom:0.5px solid #c8e4e0;display:flex;align-items:center;gap:9px}
+.s-logo{width:32px;height:32px;border-radius:50%;background:#074045;color:#fff;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s-title{font-size:13px;font-weight:500;color:#122224}
+.s-sub{font-size:10px;color:#4a7a74;margin-top:1px}
+.s-nav{flex:1;padding:8px 6px;overflow-y:auto}
+.s-sec{font-size:10px;font-weight:500;color:#5a8a84;letter-spacing:.07em;text-transform:uppercase;padding:10px 8px 4px}
+.s-btn{width:100%;display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:7px;border:none;background:none;color:#2a5a56;font-size:12px;cursor:pointer;text-align:left;transition:.12s;line-height:1.3}
+.s-btn:hover{background:rgba(7,64,69,.1);color:#074045}
+.s-btn.on{background:#074045;color:#fff}
+.s-btn.on i{opacity:1}
+.s-btn i{font-size:13px;opacity:.7;flex-shrink:0}
+.s-foot{padding:10px 12px;border-top:0.5px solid #c8e4e0;display:flex;align-items:center;gap:8px}
+.s-av{width:26px;height:26px;border-radius:50%;background:#c0deda;color:#074045;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s-u{font-size:12px;font-weight:500;color:#122224}
+.s-r{font-size:10px;color:#4a7a74}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-background-primary)}
+.c-hdr{padding:11px 14px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:9px}
+.c-av{width:30px;height:30px;border-radius:50%;background:#074045;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.c-info{flex:1}
+.c-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.c-stat{font-size:10px;color:var(--color-text-secondary);display:flex;align-items:center;gap:3px;margin-top:1px}
+.ondot{width:6px;height:6px;border-radius:50%;background:#1ca672;display:inline-block}
+.c-acts{display:flex;gap:5px}
+.l-btn{height:26px;padding:0 9px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:11px;font-weight:500;cursor:pointer;transition:.1s}
+.l-btn.on{background:#074045;color:#fff;border-color:#074045}
+.l-btn:hover:not(.on){background:var(--color-background-secondary)}
+.ic-btn{width:26px;height:26px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
+.ic-btn:hover{background:var(--color-background-secondary)}
+.trust{padding:5px 14px;background:#f0faf8;border-bottom:0.5px solid #c8e8e2;font-size:11px;color:#2d6b60;display:flex;align-items:center;gap:5px}
+.trust i{font-size:12px;color:#1ca672}
+.msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:7px;align-items:flex-end}
+.row.u{flex-direction:row-reverse}
+.m-av{width:22px;height:22px;border-radius:50%;background:#e8f4f2;color:#074045;font-size:9px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-av.u{background:var(--color-background-tertiary);color:var(--color-text-secondary)}
+.m-av.op{background:#fff3e0;color:#e65100}
+.bub{padding:8px 11px;border-radius:11px;font-size:12.5px;line-height:1.55;max-width:80%}
+.bot .bub{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-bottom-left-radius:3px;color:var(--color-text-primary)}
+.u .bub{background:#074045;color:#fff;border-bottom-right-radius:3px}
+.op .bub{background:#fff8f0;border:0.5px solid #ffd0a0;border-bottom-left-radius:3px;color:#5a2e00}
+.src{margin-top:4px;font-size:10px;display:flex;align-items:center;gap:3px;color:var(--color-text-secondary)}
+.src a{color:#2a7a6e;text-decoration:none}
+.handover-card{margin-top:7px;padding:9px 11px;background:var(--color-background-primary);border:0.5px solid #ffd0a0;border-radius:8px;font-size:12px}
+.hc-head{font-weight:500;font-size:12px;color:#e65100;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.hc-dept{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;background:#fff3e0;color:#e65100;margin:2px 0}
+.hc-note{font-size:11px;color:var(--color-text-secondary);margin-top:4px}
+.lcard{margin-top:7px;padding:8px 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;font-size:12px}
+.lcard-h{font-weight:500;font-size:11px;color:var(--color-text-primary);margin-bottom:4px;display:flex;align-items:center;gap:3px}
+.lcard-r{color:var(--color-text-secondary);padding:1px 0}
+.lbadge{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;background:#e8f4f2;color:#074045;margin-top:3px}
+.tdots{display:flex;gap:3px;padding:8px 11px;align-items:center}
+.td{width:5px;height:5px;border-radius:50%;background:var(--color-text-tertiary);animation:bl 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.composer{display:flex;gap:7px;padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
+.composer input{flex:1;height:34px;border:0.5px solid var(--color-border-secondary);border-radius:7px;padding:0 10px;font-size:12.5px;background:var(--color-background-primary);color:var(--color-text-primary);outline:none}
+.composer input:focus{border-color:#074045}
+.composer input::placeholder{color:var(--color-text-tertiary)}
+.sbtn{height:34px;padding:0 12px;border:none;border-radius:7px;background:#074045;color:#fff;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.sbtn:hover{background:#0a5258}
+.dept-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:20px;background:#e8f4f2;color:#074045;margin-bottom:4px}
+</style>
+
+<div class="shell">
+  <nav class="side" aria-label="navigation">
+    <div class="s-brand">
+      <div class="s-logo">A</div>
+      <div>
+        <div class="s-title">Alte University</div>
+        <div class="s-sub">AI Assistant</div>
+      </div>
+    </div>
+    <div class="s-nav" id="sb-nav"></div>
+    <div class="s-foot">
+      <div class="s-av">R</div>
+      <div>
+        <div class="s-u" id="sb-user">სტუმარი</div>
+        <div class="s-r" id="sb-role">მომხმარებელი</div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="c-hdr">
+      <div class="c-av">A</div>
+      <div class="c-info">
+        <div class="c-name" id="hdr-name">Alte AI Assistant</div>
+        <div class="c-stat"><span class="ondot"></span><span id="hdr-stat">ონლაინ · Claude AI</span></div>
+      </div>
+      <div class="c-acts">
+        <button class="l-btn on" id="ka-btn" onclick="setLang('ka')">KA</button>
+        <button class="l-btn" id="en-btn" onclick="setLang('en')">EN</button>
+        <button class="ic-btn" onclick="clearChat()" title="clear"><i class="ti ti-refresh" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="trust">
+      <i class="ti ti-shield-check" aria-hidden="true"></i>
+      <span id="trust-txt">პასუხები alte.edu.ge-ს ოფიციალური წყაროებიდან</span>
+    </div>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <form class="composer" onsubmit="return sub(event)">
+      <input id="inp" autocomplete="off" aria-label="message"/>
+      <button type="submit" class="sbtn"><i class="ti ti-send" aria-hidden="true"></i><span id="send-lbl">გაგზავნა</span></button>
+    </form>
+  </div>
+</div>
+
+<script>
+const SYS=`You are Alte University's official AI assistant powered by Claude. Answer in the user's language (Georgian or English).
+
+KNOWLEDGE BASE:
+Alte University: founded 2002 (formerly Tbilisi Open University, renamed 2021), Tbilisi Georgia. 2,500+ students, 45+ countries. WHO/NCEQE accredited.
+4 Schools: Business, Law & Social Sciences, International Medicine, IT.
+
+PROGRAMS:
+- Bachelor (4yr): Law (Georgian), Business Admin, CS/AI & Data Analytics, Psychology, International Relations, Healthcare Management, Biomedical Science
+- Medical: MD Doctor of Medicine (6yr, $5,500/yr, English), Dentistry (5yr, English)
+- Master (2yr): LLM (requires Law bachelor), MBA
+
+LAW: 4yr, Georgian, digital law, smart contracts, Moot Court, practical training.
+
+ADMISSIONS:
+- Georgian: national exams (NAEC), state grant 100/70/50/30%
+- International: high school cert 50-55%, English B1-B2, nostrifitication, Zoom interview. join.alte.edu.ge
+- Master: national master exam + Alte internal exam + interview. Registration June-September.
+
+FEES: MD $5,500/yr, others $1,750-2,750/semester. Hostel ~$3,000/10mo incl. meals. Scholarships 40-100%. TBC/BOG loans. Erasmus+ available.
+CONTACT: alte@admissionoffice.ge, +995 571 173 333. Fall intake: September. Spring: February/March.
+
+DEPARTMENTS (for routing):
+- admissions: programs, enrollment, application, bachelor, master, deadlines
+- international: international students, visa, relocation, join.alte.edu.ge, MD for foreigners
+- finance: tuition fees, scholarships, grants, payments, costs
+- medicine: MD program, Dentistry, clinical training, WHO recognition
+- student_services: library, career, clubs, student life, ombudsman, mentor
+- it_support: technical issues, EMIS system, portal access
+
+ROUTING RULES:
+- If you cannot answer confidently (confidence < 70%) → set needs_handover=true and route to best department
+- If user explicitly asks for human/operator → set needs_handover=true
+- Always return JSON: {"reply":"...","needs_handover":false,"dept":"admissions","confidence":85,"lang":"ka"}
+- dept options: admissions, international, finance, medicine, student_services, it_support
+- confidence: 0-100 based on how well you can answer from the knowledge base above
+- If needs_handover=true, still write a brief reply explaining you're connecting them`;
+
+const DEPTS={
+  ka:{
+    admissions:{name:'მიღება / Admissions',icon:'ti-clipboard-list',color:'#074045'},
+    international:{name:'საერთ. სტუდენტები',icon:'ti-world',color:'#0a5258'},
+    finance:{name:'ფინანსები',icon:'ti-coin',color:'#074045'},
+    medicine:{name:'მედიცინა / MD',icon:'ti-stethoscope',color:'#074045'},
+    student_services:{name:'სტუდ. სერვისები',icon:'ti-heart',color:'#074045'},
+    it_support:{name:'IT დახმარება',icon:'ti-device-laptop',color:'#074045'},
+  },
+  en:{
+    admissions:{name:'Admissions',icon:'ti-clipboard-list',color:'#074045'},
+    international:{name:'International Students',icon:'ti-world',color:'#0a5258'},
+    finance:{name:'Finance',icon:'ti-coin',color:'#074045'},
+    medicine:{name:'Medicine / MD',icon:'ti-stethoscope',color:'#074045'},
+    student_services:{name:'Student Services',icon:'ti-heart',color:'#074045'},
+    it_support:{name:'IT Support',icon:'ti-device-laptop',color:'#074045'},
+  }
+};
+
+const NAV={
+  ka:[
+    {i:'ti-school',l:'პროგრამები',dept:'admissions'},
+    {i:'ti-clipboard-list',l:'მიღება',dept:'admissions'},
+    {i:'ti-coin',l:'დაფინანსება',dept:'finance'},
+    {i:'ti-world',l:'საერთ. სტუდ.',dept:'international'},
+    {i:'ti-stethoscope',l:'მედიცინა / MD',dept:'medicine'},
+  ],
+  en:[
+    {i:'ti-school',l:'Programs',dept:'admissions'},
+    {i:'ti-clipboard-list',l:'Admission',dept:'admissions'},
+    {i:'ti-coin',l:'Funding',dept:'finance'},
+    {i:'ti-world',l:'International',dept:'international'},
+    {i:'ti-stethoscope',l:'Medicine / MD',dept:'medicine'},
+  ]
+};
+const NAV2={
+  ka:[
+    {i:'ti-books',l:'ბიბლიოთეკა',dept:'student_services'},
+    {i:'ti-briefcase',l:'კარიერა',dept:'student_services'},
+    {i:'ti-device-laptop',l:'IT დახმარება',dept:'it_support'},
+    {i:'ti-phone',l:'კონტაქტი',dept:'admissions'},
+    {i:'ti-user',l:'ოპერატორი',dept:'_human'},
+  ],
+  en:[
+    {i:'ti-books',l:'Library',dept:'student_services'},
+    {i:'ti-briefcase',l:'Career',dept:'student_services'},
+    {i:'ti-device-laptop',l:'IT Support',dept:'it_support'},
+    {i:'ti-phone',l:'Contact',dept:'admissions'},
+    {i:'ti-user',l:'Talk to operator',dept:'_human'},
+  ]
+};
+const SEC={ka:{s1:'მენიუ',s2:'სხვა'},en:{s1:'Menu',s2:'Other'}};
+const PH={ka:'მკითხე პროგრამაზე, მიღებაზე, დაფინანსებაზე...',en:'Ask about programs, admissions, or funding...'};
+const SEND={ka:'გაგზავნა',en:'Send'};
+const TRUST={ka:'პასუხები alte.edu.ge-ს ოფიციალური წყაროებიდან',en:'Answers sourced from alte.edu.ge official pages'};
+const STAT={ka:'ონლაინ · Claude AI',en:'Online · Powered by Claude'};
+const GREET={ka:'გამარჯობა! 👋 მე ვარ ალტე უნივერსიტეტის AI ასისტენტი.\n\nსიდბარდან აირჩიე თემა ან პირდაპირ მომწერე კითხვა.',en:'Hello! 👋 I am Alte University\'s AI Assistant.\n\nChoose a topic from the sidebar or ask me anything.'};
+const OP_MSG={
+  ka:(dept,reason)=>`გესმის — ${reason}. გადაგრთავ <strong>${dept}</strong>-ის ოპერატორთან.\n\nოპერატორი დაგიკავშირდება სამუშაო საათებში.`,
+  en:(dept,reason)=>`Understood — ${reason}. Connecting you to the <strong>${dept}</strong> team.\n\nAn operator will reach out during business hours.`
+};
+const LOW_CONF={ka:'ამ კითხვაზე ზუსტი ინფორმაცია ჩემს ბაზაში არ მაქვს. ',en:'I don\'t have precise information on this in my knowledge base. '};
+
+const SRCS={
+  სამართ:'https://alte.edu.ge/ka/samartlis',law:'https://alte.edu.ge/ka/samartlis',
+  მიღებ:'https://alte.edu.ge/ka/bakalavrebistvis',admission:'https://alte.edu.ge/ka/bakalavrebistvis',
+  საერთ:'https://alte.edu.ge/ka/saertashoriso-studentebistvis',international:'https://alte.edu.ge/ka/saertashoriso-studentebistvis',
+  md:'https://alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2',medicine:'https://alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2',
+  დაფინ:'https://alte.edu.ge/ka/dafinanseba',funding:'https://alte.edu.ge/ka/dafinanseba',
+  კონტ:'https://alte.edu.ge/ka/kontaqti',contact:'https://alte.edu.ge/ka/kontaqti',
+  program:'https://alte.edu.ge/ka/sabakalavro-programebi',
+};
+
+let lang='ka', hist=[], busy=false, ld={}, activeDept='admissions';
+
+function getSrc(q){const ql=q.toLowerCase();for(const[k,v]of Object.entries(SRCS)){if(ql.includes(k))return v;}return null;}
+
+function renderNav(){
+  const nav=document.getElementById('sb-nav');nav.innerHTML='';
+  const sec=SEC[lang];
+  const mk=(items,secLabel)=>{
+    const s=document.createElement('div');s.className='s-sec';s.textContent=secLabel;nav.appendChild(s);
+    items.forEach(item=>{
+      const b=document.createElement('button');
+      b.className='s-btn'+(item.dept===activeDept&&item.dept!=='_human'?' on':'');
+      b.dataset.dept=item.dept;
+      b.innerHTML=`<i class="ti ${item.i}" aria-hidden="true"></i>${item.l}`;
+      b.onclick=function(){
+        if(item.dept==='_human'){triggerHuman();return;}
+        document.querySelectorAll('.s-btn').forEach(x=>x.classList.remove('on'));
+        this.classList.add('on');activeDept=item.dept;
+        const q=lang==='ka'?item.l:item.l;
+        go(q,item.dept);
+      };
+      nav.appendChild(b);
+    });
+  };
+  mk(NAV[lang],sec.s1);
+  mk(NAV2[lang],sec.s2);
+}
+
+function setLang(l){
+  lang=l;
+  document.getElementById('ka-btn').classList.toggle('on',l==='ka');
+  document.getElementById('en-btn').classList.toggle('on',l==='en');
+  document.getElementById('inp').placeholder=PH[l];
+  document.getElementById('send-lbl').textContent=SEND[l];
+  document.getElementById('trust-txt').textContent=TRUST[l];
+  document.getElementById('hdr-stat').textContent=STAT[l];
+  document.getElementById('sb-user').textContent=l==='ka'?'სტუმარი':'Guest';
+  document.getElementById('sb-role').textContent=l==='ka'?'მომხმარებელი':'User';
+  renderNav();
+  const m=document.getElementById('msgs');m.innerHTML='';hist=[];
+  addBotMsg(GREET[l].replace(/\n/g,'<br>'));
+}
+
+function addBotMsg(html,src,dept){
+  const m=document.getElementById('msgs');
+  const row=document.createElement('div');row.className='row bot';
+  const av=document.createElement('div');av.className='m-av';av.textContent='A';
+  const inner=document.createElement('div');
+  if(dept&&DEPTS[lang][dept]){
+    const d=DEPTS[lang][dept];
+    const badge=document.createElement('div');badge.className='dept-badge';
+    badge.innerHTML=`<i class="ti ${d.icon}" aria-hidden="true" style="font-size:10px"></i>${d.name}`;
+    inner.appendChild(badge);
+  }
+  const bub=document.createElement('div');bub.className='bub';bub.innerHTML=html;inner.appendChild(bub);
+  if(src){const d=document.createElement('div');d.className='src';d.innerHTML=`<i class="ti ti-external-link" aria-hidden="true" style="font-size:10px"></i><a href="${src}" target="_blank">${src.replace('https://alte.edu.ge','alte.edu.ge')}</a>`;inner.appendChild(d);}
+  row.appendChild(av);row.appendChild(inner);m.appendChild(row);m.scrollTop=m.scrollHeight;
+}
+
+function addUserMsg(html){
+  const m=document.getElementById('msgs');
+  const row=document.createElement('div');row.className='row u';
+  const av=document.createElement('div');av.className='m-av u';av.textContent='U';
+  const bub=document.createElement('div');bub.className='bub';bub.innerHTML=html;
+  row.appendChild(av);row.appendChild(bub);m.appendChild(row);m.scrollTop=m.scrollHeight;
+}
+
+function addOperatorMsg(dept){
+  const m=document.getElementById('msgs');
+  const d=DEPTS[lang][dept]||DEPTS[lang]['admissions'];
+  const row=document.createElement('div');row.className='row op';
+  const av=document.createElement('div');av.className='m-av op';av.textContent='OP';
+  const inner=document.createElement('div');
+  const bub=document.createElement('div');bub.className='bub';
+  const note=lang==='ka'?
+    `<div class="hc-head"><i class="ti ti-headset" aria-hidden="true" style="font-size:12px"></i>ოპერატორი ჩაერთო</div><div class="hc-dept"><i class="ti ${d.icon}" aria-hidden="true" style="font-size:11px"></i>${d.name}</div><div class="hc-note">სამუშაო საათებში: ორშ–პარ 09:00–18:00. <a href="https://alte.edu.ge/ka/kontaqti" target="_blank">კონტაქტი →</a></div>`:
+    `<div class="hc-head"><i class="ti ti-headset" aria-hidden="true" style="font-size:12px"></i>Operator connected</div><div class="hc-dept"><i class="ti ${d.icon}" aria-hidden="true" style="font-size:11px"></i>${d.name}</div><div class="hc-note">Business hours: Mon–Fri 09:00–18:00. <a href="https://alte.edu.ge/ka/kontaqti" target="_blank">Contact →</a></div>`;
+  bub.innerHTML=`<div class="handover-card">${note}</div>`;
+  inner.appendChild(bub);row.appendChild(av);row.appendChild(inner);
+  m.appendChild(row);m.scrollTop=m.scrollHeight;
+}
+
+function showTyping(){
+  const m=document.getElementById('msgs');
+  const row=document.createElement('div');row.className='row bot';row.id='typ';
+  const av=document.createElement('div');av.className='m-av';av.textContent='A';
+  const bub=document.createElement('div');bub.className='bub';
+  bub.innerHTML='<div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  row.appendChild(av);row.appendChild(bub);m.appendChild(row);m.scrollTop=m.scrollHeight;
+}
+function rmTyping(){const t=document.getElementById('typ');if(t)t.remove();}
+
+function triggerHuman(){
+  const dName=DEPTS[lang][activeDept]?.name||'Admissions';
+  const reason=lang==='ka'?'ოპერატორთან დაკავშირება მოთხოვნილია':'Human operator requested';
+  addBotMsg(OP_MSG[lang](dName,reason));
+  addOperatorMsg(activeDept);
+}
+
+async function go(text,forceDept){
+  if(busy||!text.trim())return;
+  const q=text.trim();
+  document.getElementById('inp').value='';
+  addUserMsg(q.replace(/</g,'&lt;'));
+  if(/(სამართ|law)/i.test(q)) ld.program='სამართალი / Law';
+  if(/(md|მედიც|medicine|dentist)/i.test(q)) ld.program='Medicine MD';
+  if(/(ბიზნ|business|mba)/i.test(q)) ld.program='Business Admin';
+  const hasContact=/@|\+?995\s?5\d{2}|5\d{8}/i.test(q);
+  if(hasContact){
+    const ph=q.match(/(\+?995)?\s?5\d{2}\s?\d{2}\s?\d{2}\s?\d{2}/);
+    const em=q.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    const nm=q.replace(ph?.[0]||'','').replace(em?.[0]||'','').replace(/[,+]/g,' ').trim();
+    ld={...ld,phone:ph?.[0]||'',email:em?.[0]||'',name:nm.length>1?nm:ld.name||''};
+    const lbl=lang==='ka'?'Lead შეიქმნებოდა CRM-ში. Admissions გუნდი 24 სთ-ში დაგიკავშირდება.':'A CRM lead would be created. Admissions will contact you within 24h.';
+    const card=`${lbl}<div class="lcard"><div class="lcard-h"><i class="ti ti-user-check" aria-hidden="true" style="font-size:11px;color:#074045"></i>Lead</div><div class="lcard-r">${lang==='ka'?'სახელი':'Name'}: ${ld.name||'—'}</div><div class="lcard-r">${lang==='ka'?'კონტაქტი':'Contact'}: ${ld.phone||ld.email||'—'}</div><div class="lcard-r">${lang==='ka'?'პროგრამა':'Program'}: ${ld.program||'Admission'}</div><span class="lbadge">New Lead · Admissions</span></div>`;
+    addBotMsg(card,null,'admissions');return;
+  }
+  busy=true;showTyping();
+  const prompt=`User question: "${q}"\n\nRespond ONLY with valid JSON (no markdown, no \`\`\`): {"reply":"...","needs_handover":false,"dept":"admissions","confidence":85,"lang":"${lang}"}`;
+  hist.push({role:'user',content:prompt});
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:SYS,messages:hist})
+    });
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error?.message||'API '+r.status);
+    const raw=d.content?.[0]?.text||'{}';
+    hist.push({role:'assistant',content:raw});
+    rmTyping();
+    let parsed={reply:raw,needs_handover:false,dept:forceDept||activeDept,confidence:80};
+    try{
+      const clean=raw.replace(/```json\n?|\n?```/g,'').trim();
+      parsed={...parsed,...JSON.parse(clean)};
+    }catch(e){}
+    const dept=forceDept||parsed.dept||activeDept;
+    if(dept!==activeDept&&!forceDept){
+      activeDept=dept;
+      document.querySelectorAll('.s-btn').forEach(b=>{
+        if(b.dataset.dept===dept){b.classList.add('on');}else{b.classList.remove('on');}
+      });
+    }
+    const fmt=parsed.reply
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n\n/g,'<br><br>')
+      .replace(/\n/g,'<br>');
+    const lowConf=parsed.confidence<70;
+    const prefix=lowConf?(LOW_CONF[lang]):'';
+    addBotMsg(prefix+fmt,getSrc(q),dept);
+    if(parsed.needs_handover||lowConf){
+      addOperatorMsg(dept);
+    }
+  }catch(e){
+    rmTyping();
+    addBotMsg((lang==='ka'?'შეცდომა: ':'Error: ')+e.message);
+    hist.pop();
+  }
+  busy=false;
+}
+
+function sub(e){e.preventDefault();go(document.getElementById('inp').value);return false;}
+function clearChat(){document.getElementById('msgs').innerHTML='';hist=[];ld={};addBotMsg(GREET[lang].replace(/\n/g,'<br>'));}
+
+setLang('ka');
+</script>

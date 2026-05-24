@@ -155,3 +155,31 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED
 ```
+
+## Safe Uploaded Widget UI
+
+Phase 8Z converted the uploaded `alte_university_ai_chatbot.html` visual demo into a safe backend-connected standalone page:
+
+```text
+alte-university-ai-chatbot-safe.html
+```
+
+The original uploaded UI is kept only as evidence in:
+
+```text
+../docs/knowledge_evidence/uploaded_widget_ui/alte_university_ai_chatbot.html
+```
+
+The safe page uses the production FastAPI backend:
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+It calls `/chat/session/start` and `/chat/message`. It does not call Anthropic from the browser and does not contain API keys or secrets.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_SAFE_WIDGET_UI_READY_PENDING_REVIEW_AND_SITE_EMBED
+```

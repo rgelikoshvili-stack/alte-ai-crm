@@ -120,3 +120,15 @@ Do not run production lead-creating smoke tests until the owner approves test re
 - Transfer package: `WIDGET_TRANSFER_TO_ALTE_SITE.md`
 - Privacy approval status: `PENDING`
 - Production widget smoke status: `PENDING`
+
+## J. Uploaded UI Conversion
+
+The uploaded `alte_university_ai_chatbot.html` demo is approved only as a UI/UX reference. It originally called Anthropic directly from the browser, which is forbidden for production.
+
+Safe converted page:
+
+```text
+widget/alte-university-ai-chatbot-safe.html
+```
+
+The safe version calls the FastAPI backend endpoints `/chat/session/start` and `/chat/message`; the backend remains the source of truth for Claude, Knowledge Base retrieval, and CRM business rules.

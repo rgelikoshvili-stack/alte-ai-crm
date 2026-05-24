@@ -117,3 +117,15 @@ Current decision:
 ```text
 BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL
 ```
+
+## Phase 8Z Safe Uploaded UI
+
+The uploaded `alte_university_ai_chatbot.html` demo was converted into a safe backend-connected standalone UI:
+
+```text
+widget/alte-university-ai-chatbot-safe.html
+```
+
+The converted UI keeps the useful visual pattern, including department navigation, KA/EN switch, message bubbles, handover display, and backend source display. It removes the unsafe browser Anthropic call and uses the production FastAPI backend as the source of truth.
+
+Do not transfer the original uploaded file to the real website. Transfer only the safe backend-connected widget/page or the existing production widget asset after final review.

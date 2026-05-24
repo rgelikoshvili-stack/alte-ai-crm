@@ -1346,3 +1346,23 @@ Decision:
 ```text
 BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY
 ```
+
+## Phase 8Z Safe Uploaded Widget UI
+
+The uploaded `alte_university_ai_chatbot.html` UI was copied as evidence and converted into a safe backend-connected standalone page.
+
+- Evidence: `docs/knowledge_evidence/uploaded_widget_ui/alte_university_ai_chatbot.html`
+- Safe UI: `widget/alte-university-ai-chatbot-safe.html`
+- Removed unsafe direct browser Anthropic call.
+- Removed frontend prompt as production source of truth.
+- Uses production FastAPI backend:
+  - `POST /chat/session/start`
+  - `POST /chat/message`
+- No API keys or secrets in frontend.
+- Public launch remains blocked.
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_SAFE_WIDGET_UI_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
