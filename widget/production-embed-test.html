@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alte Chat Widget Production Backend Test</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #18212f;
+        background: #f6f8fb;
+      }
+
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 32px 20px 120px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+
+      section {
+        margin-top: 24px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #d9e0ea;
+        border-radius: 8px;
+      }
+
+      label,
+      select,
+      code,
+      li {
+        font-size: 15px;
+      }
+
+      select {
+        margin-left: 8px;
+        padding: 8px 10px;
+      }
+
+      .warning {
+        border-color: #d49b38;
+        background: #fff8ea;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Alte Chat Widget Production Backend Test</h1>
+      <p>This page loads the local versioned widget asset and points it at the production backend.</p>
+
+      <section class="warning">
+        <strong>Warning:</strong>
+        This page uses the production backend. Do not enter real student data unless approved.
+      </section>
+
+      <section>
+        <label for="domain-select">Source domain</label>
+        <select id="domain-select">
+          <option value="alte.edu.ge">alte.edu.ge</option>
+          <option value="join.alte.edu.ge">join.alte.edu.ge</option>
+        </select>
+        <p>
+          Backend health:
+          <a href="https://alte-ai-crm-backend-226875230147.europe-west1.run.app/health" target="_blank" rel="noreferrer">
+            /health
+          </a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Test Messages</h2>
+        <ul>
+          <li>გამარჯობა</li>
+          <li>მაინტერესებს ბიზნესის პროგრამაზე ჩარიცხვა</li>
+          <li>What programs are available?</li>
+          <li>I want to apply for medicine from India</li>
+        </ul>
+      </section>
+    </main>
+
+    <script>
+      const select = document.getElementById("domain-select");
+      const savedDomain = window.localStorage.getItem("alteProductionTestSourceDomain") || "alte.edu.ge";
+      select.value = savedDomain;
+
+      function languageForDomain(domain) {
+        return domain === "join.alte.edu.ge" ? "en" : "ka";
+      }
+
+      window.AlteChatWidgetConfig = {
+        apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+        sourceDomain: savedDomain,
+        defaultLanguage: languageForDomain(savedDomain),
+        proactiveEnabled: false,
+        proactiveDelayMs: 30000
+      };
+
+      select.addEventListener("change", () => {
+        window.localStorage.setItem("alteProductionTestSourceDomain", select.value);
+        window.localStorage.removeItem("alteChatWidgetSession");
+        window.localStorage.removeItem("alteChatWidgetLanguage");
+        window.location.reload();
+      });
+    </script>
+    <script src="./alte-chat-widget.v0.8.js"></script>
+  </body>
+</html>

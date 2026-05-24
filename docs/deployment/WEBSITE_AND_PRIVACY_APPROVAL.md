@@ -30,6 +30,12 @@
 
 - Website access status: `PENDING`
 - Privacy approval status: `PENDING`
+- Actual embed status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
+- Widget asset hosting choice: `Option A - Website/CMS static asset hosting`
+- Final widget asset URL: `PENDING`
+- Privacy policy URL: `PENDING`
+- Consent text approval: `PENDING`
+- Rollback/removal owner: `PENDING`
 
 ## Phase 8J Preparation Status
 
@@ -37,5 +43,9 @@
 - Production smoke checklist: `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
 - Alte config example: `widget/production-config.alte.example.js`
 - Join config example: `widget/production-config.join.example.js`
+- Widget asset hosting decision: `WIDGET_ASSET_HOSTING_DECISION.md`
+- Final snippets: `WIDGET_EMBED_SNIPPETS_FINAL.md`
+- Website developer handoff: `WEBSITE_DEVELOPER_HANDOFF.md`
+- Staging/test page: `widget/production-embed-test.html`
 - Actual website widget embed pending.
 - Production widget smoke pending.

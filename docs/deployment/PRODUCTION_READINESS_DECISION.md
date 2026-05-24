@@ -107,6 +107,12 @@ Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backe
 - Production widget embed guide prepared.
 - Production widget smoke checklist prepared.
 - Production widget config examples prepared for `alte.edu.ge` and `join.alte.edu.ge`.
+- Versioned widget asset prepared: `widget/alte-chat-widget.v0.8.js`.
+- Widget asset hosting decision prepared; recommended Option A website/CMS static asset hosting.
+- Final embed snippets prepared: `WIDGET_EMBED_SNIPPETS_FINAL.md`.
+- Website developer handoff prepared: `WEBSITE_DEVELOPER_HANDOFF.md`.
+- Staging/test page package prepared: `widget/production-embed-test.html`.
+- Actual website embed status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

@@ -893,3 +893,37 @@ python -m app.scripts.verify_phase_8j_widget_embed_docs
 ```
 
 Actual website changes were not made. Website admin/developer access, privacy/data approval, actual widget embed, and production widget smoke remain pending.
+
+## Phase 8L Widget Asset Hosting And Embed Gate
+
+Phase 8L prepares the versioned widget asset, final embed snippets, developer handoff, and staging/test page for production backend testing.
+
+Files:
+
+- `widget/alte-chat-widget.v0.8.js`
+- `widget/production-embed-test.html`
+- `docs/deployment/WIDGET_ASSET_HOSTING_DECISION.md`
+- `docs/deployment/WIDGET_EMBED_SNIPPETS_FINAL.md`
+- `docs/deployment/WEBSITE_DEVELOPER_HANDOFF.md`
+
+Recommended asset hosting:
+
+```text
+Option A - Website/CMS static asset hosting
+```
+
+Current embed status:
+
+```text
+ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL
+```
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8l_widget_asset_embed
+```
+
+No real website changes are made in this phase.

@@ -250,6 +250,21 @@ Next recommended phase:
 
 - Phase 8K: website access/privacy approval record, then production widget embed execution only after explicit approval.
 
+## Phase 8L: Widget Asset Hosting And Embed Gate
+
+- Versioned widget asset prepared: `widget/alte-chat-widget.v0.8.js`
+- Asset hosting decision prepared: `docs/deployment/WIDGET_ASSET_HOSTING_DECISION.md`
+- Recommendation: Option A - Website/CMS static asset hosting.
+- Final embed snippets prepared: `docs/deployment/WIDGET_EMBED_SNIPPETS_FINAL.md`
+- Website developer handoff prepared: `docs/deployment/WEBSITE_DEVELOPER_HANDOFF.md`
+- Staging/test page prepared: `widget/production-embed-test.html`
+- Production backend URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Actual website embed status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
+
+Next recommended phase:
+
+- Phase 8M: record website/privacy approval and final asset URL, then execute website embed only after explicit approval.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

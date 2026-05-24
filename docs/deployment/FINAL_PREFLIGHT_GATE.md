@@ -72,6 +72,12 @@ Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployme
 | Website | Production widget smoke checklist | Done: `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md` |
 | Website | Alte config example | Done: `widget/production-config.alte.example.js` |
 | Website | Join config example | Done: `widget/production-config.join.example.js` |
+| Website | Versioned widget asset | Done: `widget/alte-chat-widget.v0.8.js` |
+| Website | Widget asset hosting decision | Done: `WIDGET_ASSET_HOSTING_DECISION.md`; recommended Option A website/CMS static asset hosting |
+| Website | Final widget snippets | Done: `WIDGET_EMBED_SNIPPETS_FINAL.md` |
+| Website | Website developer handoff | Done: `WEBSITE_DEVELOPER_HANDOFF.md` |
+| Website | Staging/test page package | Done: `widget/production-embed-test.html` |
+| Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 
 ## Decision

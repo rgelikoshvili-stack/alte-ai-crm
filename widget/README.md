@@ -88,8 +88,13 @@ Production embed preparation is documented in:
 
 - `../docs/deployment/WEBSITE_WIDGET_PRODUCTION_EMBED.md`
 - `../docs/deployment/PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- `../docs/deployment/WIDGET_ASSET_HOSTING_DECISION.md`
+- `../docs/deployment/WIDGET_EMBED_SNIPPETS_FINAL.md`
+- `../docs/deployment/WEBSITE_DEVELOPER_HANDOFF.md`
 - `production-config.alte.example.js`
 - `production-config.join.example.js`
+- `alte-chat-widget.v0.8.js`
+- `production-embed-test.html`
 
 Current production backend:
 
