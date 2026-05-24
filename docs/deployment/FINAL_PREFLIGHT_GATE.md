@@ -1,9 +1,10 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
+Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL` remains true.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -90,6 +91,10 @@ Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDIN
 | Website | Privacy consent approval doc | Done: `PRIVACY_CONSENT_APPROVAL.md`; status pending |
 | Website | Final widget embed go/no-go | Done: `FINAL_WIDGET_EMBED_GO_NO_GO.md`; `NO-GO_FOR_ACTUAL_SITE_EMBED` |
 | Website | Final widget asset URL decision | Done: `WIDGET_FINAL_ASSET_URL_DECISION.md`; `FINAL_WIDGET_ASSET_URL=PENDING` |
+| Website | Full standalone chatbot test site | Done: `widget/full-standalone-chatbot-test.html` |
+| Website | Required standalone test knowledge package | Done: `alte_required_test_knowledge_v1.json`; production seed not run in Phase 8O |
+| Website | Standalone chatbot API smoke script | Done: `standalone_chatbot_api_smoke.py` |
+| Website | Standalone test runbooks | Done: `STANDALONE_TEST_SITE_RUNBOOK.md`, `STANDALONE_TEST_KNOWLEDGE_RUNBOOK.md`, `FULL_STANDALONE_CHATBOT_SMOKE_PLAN.md` |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

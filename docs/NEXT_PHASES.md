@@ -316,6 +316,27 @@ Next recommended phase:
 - Phase 8O-Execution: actual website widget embed only after the required phrase is provided:
   `Approve Phase 8O-Execution for actual website widget embed`
 
+## Phase 8O-Sandbox: Full Standalone Chatbot Test Site And Knowledge Completion
+
+- Full standalone chatbot test site prepared: `widget/full-standalone-chatbot-test.html`
+- Required manually curated test knowledge prepared: `backend/app/knowledge_seed/alte_required_test_knowledge_v1.json`
+- Seed command prepared: `python -m app.scripts.seed_required_test_knowledge`
+- Backend/API smoke command prepared: `python -m app.scripts.standalone_chatbot_api_smoke`
+- Runbooks prepared:
+  - `STANDALONE_TEST_SITE_RUNBOOK.md`
+  - `STANDALONE_TEST_KNOWLEDGE_RUNBOOK.md`
+  - `FULL_STANDALONE_CHATBOT_SMOKE_PLAN.md`
+- Production seed was not run in this phase.
+- Actual Alte site embed remains pending.
+- Real-domain browser smoke remains pending.
+- Official content/privacy review remains required before public launch.
+- Decision state: `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED`
+
+Next recommended phase:
+
+- Review and approve required test knowledge, then run the seed in the intended environment.
+- Continue real-site embed only after website/privacy approval and final widget asset URL are ready.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -1033,4 +1033,53 @@ cd C:\tmp\alte-ai-crm\backend
 python -m app.scripts.verify_phase_8n_website_privacy_gate
 ```
 
+## Phase 8O Full Standalone Chatbot Test Site
+
+Phase 8O prepares a complete standalone chatbot test page and curated test knowledge package for independent testing before the real Alte site embed.
+
+Files:
+
+- `widget/full-standalone-chatbot-test.html`
+- `backend/app/knowledge_seed/alte_required_test_knowledge_v1.json`
+- `backend/app/scripts/seed_required_test_knowledge.py`
+- `backend/app/scripts/standalone_chatbot_api_smoke.py`
+- `docs/deployment/STANDALONE_TEST_SITE_RUNBOOK.md`
+- `docs/deployment/STANDALONE_TEST_KNOWLEDGE_RUNBOOK.md`
+- `docs/deployment/FULL_STANDALONE_CHATBOT_SMOKE_PLAN.md`
+
+Run the static page:
+
+```powershell
+cd C:\tmp\alte-ai-crm\widget
+python -m http.server 5500
+```
+
+Open:
+
+```text
+http://127.0.0.1:5500/full-standalone-chatbot-test.html
+```
+
+Run backend/API smoke without browser CORS:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.standalone_chatbot_api_smoke
+```
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED
+```
+
+Production seed was not run in Phase 8O. Review the knowledge file before seeding any production database.
+
+Verifier:
+
+```powershell
+python -m app.scripts.verify_phase_8o_standalone_chatbot
+```
+
 The page uses the production backend. Do not enter real student data unless production test records are approved.

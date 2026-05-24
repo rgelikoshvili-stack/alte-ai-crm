@@ -134,3 +134,24 @@ The next actual website embed phase requires:
 - final widget asset URL
 - hidden/staging page smoke plan
 - explicit approval phrase for Phase 8O execution
+
+## Full Standalone Chatbot Test Site
+
+Phase 8O adds a complete standalone test page:
+
+```text
+full-standalone-chatbot-test.html
+```
+
+It uses:
+
+- production backend `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- `alte-chat-widget.v0.8.js`
+- source domains `alte.edu.ge` and `join.alte.edu.ge`
+- languages `ka` and `en`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED
+```

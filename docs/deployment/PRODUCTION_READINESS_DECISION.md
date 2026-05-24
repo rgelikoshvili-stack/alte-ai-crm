@@ -1,11 +1,12 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, and the website/privacy approval gate is prepared. Full production launch remains blocked until website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, and the full standalone chatbot test site plus required test knowledge package are prepared. Full production launch remains blocked until website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
+Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL` remains true.
 
 ## Go Only If
 
@@ -135,6 +136,13 @@ Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDIN
   - `FINAL_WIDGET_EMBED_GO_NO_GO.md`
   - `WIDGET_FINAL_ASSET_URL_DECISION.md`
 - Final widget embed decision: `NO-GO_FOR_ACTUAL_SITE_EMBED`.
+- Phase 8O sandbox package prepared:
+  - full standalone chatbot test site: `widget/full-standalone-chatbot-test.html`
+  - required test knowledge seed: `alte_required_test_knowledge_v1.json`
+  - seed command: `python -m app.scripts.seed_required_test_knowledge`
+  - API smoke command: `python -m app.scripts.standalone_chatbot_api_smoke`
+  - standalone test runbooks prepared
+- Production seed was not run in Phase 8O.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers
@@ -144,6 +152,7 @@ Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDIN
 - Actual website widget embed pending.
 - Final widget asset URL pending.
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
+- Official content/privacy review pending before public launch.
 - Full public launch approval pending.
 
 ## No-Go If
