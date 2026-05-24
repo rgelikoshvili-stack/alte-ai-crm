@@ -1278,3 +1278,29 @@ Decision:
 ```text
 BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW
 ```
+
+## Phase 8W Production Knowledge Smoke After Study Docs
+
+Production endpoint checks passed after the study-docs Knowledge Base import:
+
+- `/health`: `200`
+- `/version`: `200`
+- `/diagnostics/ai`: `200`, Claude enabled, no secrets exposed
+
+Safe no-contact knowledge smoke status:
+
+- Status: `FAILED_NEEDS_REVIEW`
+- Assertions: `22 passed`, `1 failed`
+- Contact-flow test run: no
+- Contact details sent: no
+- Intentional lead/task/customer creation: no
+- Sensitive answers stayed conservative for exact tuition/deadline checks
+- Failure: one tuition question returned `should_create_lead=true` without contact details, although `created_lead_id=null` and `created_task_id=null`
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
+```
+
+Public launch remains blocked.

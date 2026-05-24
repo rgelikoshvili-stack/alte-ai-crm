@@ -492,6 +492,23 @@ Next recommended phase:
 
 - Official reviewer fills decisions for public launch readiness; keep real-site embed blocked until website/privacy approvals are complete.
 
+## Phase 8W: Production Knowledge Smoke After Study Docs
+
+- Production backend endpoints: `/health`, `/version`, `/diagnostics/ai` all returned `200`.
+- Knowledge smoke after study-docs import completed.
+- Status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`
+- Assertions: `22 passed`, `1 failed`
+- Contact-flow test run: no
+- Contact details sent: no
+- Intentional lead/task/customer creation: no
+- Sensitive exact tuition/deadline behavior stayed conservative.
+- Failure to review: one tuition no-contact response returned `should_create_lead=true`, with `created_lead_id=null` and `created_task_id=null`.
+- Decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW`
+
+Next recommended phase:
+
+- Fix or adjust the finance/tuition no-contact `should_create_lead` behavior, then redeploy and rerun Phase 8W smoke.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

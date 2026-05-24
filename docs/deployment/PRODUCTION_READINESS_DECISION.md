@@ -1,8 +1,8 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW`
+Current decision: `BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, the reviewer decision CSV is prepared, and local Alte study/planning documents have been imported into the Knowledge Base for controlled chatbot testing. No reviewer decisions are filled yet, so no content was automatically approved for full public launch. Full production launch remains blocked until reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, the reviewer decision CSV is prepared, and local Alte study/planning documents have been imported into the Knowledge Base for controlled chatbot testing. Phase 8W production knowledge smoke found one review item: a tuition no-contact response returned `should_create_lead=true` while no lead/task IDs were created. No reviewer decisions are filled yet, so no content was automatically approved for full public launch. Full production launch remains blocked until the Phase 8W review item, reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -14,6 +14,7 @@ Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFI
 Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED` remains true and now advances to the official content review gate.
 Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW` remains true and now advances to reviewer-decision-CSV-ready-pending-human-review.
 Previous reviewer CSV state `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW` remains true; study docs are now also imported into Knowledge Base pending official review.
+Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED_PENDING_OFFICIAL_REVIEW` remains true; Phase 8W smoke now requires review before public launch.
 
 ## Go Only If
 
@@ -219,6 +220,7 @@ Previous reviewer CSV state `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDIN
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Official content/privacy review pending before public launch.
 - Official content review pending before public launch.
+- Phase 8W tuition no-contact `should_create_lead=true` behavior needs review.
 - Full public launch approval pending.
 
 ## No-Go If

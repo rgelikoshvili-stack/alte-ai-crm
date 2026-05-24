@@ -19,3 +19,4 @@ Operational guardrails:
 - Review-required content may support controlled testing, but it must not be treated as final public official wording.
 - Public launch remains blocked until official content review and privacy approval are complete.
 - Phase 8S-Apply re-check found no reviewer-owned `decision` column. Generated `recommended_action` values are not reviewer decisions, so conservative policy remains active and no official content was automatically approved.
+- Phase 8W smoke found that one tuition no-contact response returned `should_create_lead=true` despite no lead/task IDs. Finance/tuition no-contact behavior must be reviewed so missing contact details do not imply lead creation.

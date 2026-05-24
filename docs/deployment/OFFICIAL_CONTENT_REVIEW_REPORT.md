@@ -74,6 +74,18 @@ OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
 - Official approval remains pending human review.
 - Decision state: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
 
+## Phase 8W Production Knowledge Smoke Status
+
+- Study docs Knowledge Base import completed before smoke.
+- Production endpoint checks: `/health`, `/version`, `/diagnostics/ai` all `200`.
+- Smoke status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`
+- Contact-flow test run: NO
+- Contact details sent: NO
+- Intentional lead/task/customer creation: NO
+- Sensitive tuition/deadline responses remained conservative on exact facts.
+- Review item: one tuition no-contact response returned `should_create_lead=true` while `created_lead_id=null` and `created_task_id=null`.
+- Official approval remains pending.
+
 ## Required Approval Phrase
 
 Public content may be marked approved only after the user says:

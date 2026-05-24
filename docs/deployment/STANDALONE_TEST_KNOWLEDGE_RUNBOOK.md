@@ -143,3 +143,22 @@ widget/full-standalone-chatbot-test.html
 ```
 
 Local browser calls may be blocked by production CORS. Full browser smoke should happen from an allowed Alte origin or after explicit temporary CORS test-mode approval.
+
+## Phase 8W Study Docs Smoke
+
+After importing the local Alte study documents into Knowledge Base, run:
+
+```powershell
+python -m app.scripts.production_knowledge_smoke_after_study_docs
+```
+
+Latest result:
+
+- Status: `FAILED_NEEDS_REVIEW`
+- Assertions: `22 passed`, `1 failed`
+- Contact-flow test run: no
+- Contact details sent: no
+- Intentional lead/task/customer creation: no
+- Review item: one tuition no-contact response returned `should_create_lead=true` without `created_lead_id` or `created_task_id`.
+
+Do not proceed to public launch until this review item and official content review are resolved.
