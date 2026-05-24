@@ -1188,3 +1188,29 @@ Decision:
 ```text
 BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 8R Official Content Review Gate
+
+Phase 8R adds the content approval gate required before public chatbot launch.
+
+Created:
+
+- `docs/deployment/OFFICIAL_CONTENT_REVIEW_REPORT.md`
+- `docs/deployment/OFFICIAL_CONTENT_REVIEW_CHECKLIST.md`
+- `docs/deployment/CHATBOT_PUBLIC_ANSWER_POLICY.md`
+- `docs/deployment/KNOWLEDGE_REVIEW_QUEUE_TEMPLATE.csv`
+- `python -m app.scripts.export_knowledge_review_queue`
+
+Current review status:
+
+```text
+OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
+```
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW
+```
+
+Public launch remains blocked until official content review, privacy approval, website access, final widget asset hosting, real-site embed, and real-domain browser smoke are complete.

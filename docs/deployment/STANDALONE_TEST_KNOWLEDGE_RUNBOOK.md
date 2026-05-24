@@ -69,6 +69,40 @@ Review seeded snippets in the knowledge admin/review workflow before treating th
 
 High-risk topics such as tuition, deadlines, medicine, international admissions documents, and exact contact details should remain conservative until official source text is approved.
 
+Official content review is required before public launch. Use:
+
+- `OFFICIAL_CONTENT_REVIEW_REPORT.md`
+- `OFFICIAL_CONTENT_REVIEW_CHECKLIST.md`
+- `CHATBOT_PUBLIC_ANSWER_POLICY.md`
+
+## Export Review Queue
+
+To export review-required, stale, draft, finance, deadline, international, and medicine snippets for manual review:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.export_knowledge_review_queue
+```
+
+The script is read-only. It writes:
+
+```text
+backend/reports/knowledge_review_queue.csv
+```
+
+Do not print or commit secrets. If the database URL is not configured locally, the script fails safely and asks for local configuration without printing credentials.
+
+## Approve Or Archive After Review
+
+After official review:
+
+- mark approved snippets as `approved`
+- set `review_required=false`
+- keep finance, deadline, Medicine/MD, international admissions, visa, and relocation wording conservative until exact official sources are approved
+- archive unsafe snippets through the knowledge review workflow
+- do not edit production rows directly outside an approved maintenance process
+
 ## Archive Or Update
 
 If a snippet is wrong or outdated:

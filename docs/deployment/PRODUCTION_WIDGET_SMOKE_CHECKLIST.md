@@ -14,6 +14,7 @@ Do not create production test leads unless the owner approves test records.
 - [ ] Widget asset URL finalized.
 - [ ] Privacy policy URL finalized.
 - [ ] Consent text approved.
+- [ ] Official content review approved.
 - [ ] Rollback/removal owner assigned.
 
 ## A. Staging / Test Page Smoke
@@ -91,6 +92,7 @@ Only after website/privacy approval.
 - Privacy/data approval: `PENDING`
 - Actual website widget embed: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
 - Production widget smoke: `PENDING`
+- Official content review: `PENDING`
 - Standalone backend/API smoke: `PASSED`
 - Production domain CORS: `PASSED`
 - Localhost browser CORS: `BLOCKED_AS_EXPECTED`
@@ -106,3 +108,13 @@ Only after website/privacy approval.
 - Actual site embed remains blocked.
 - Real-domain smoke remains pending.
 - Decision state: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
+
+## Phase 8R Content Review Gate
+
+- Official content review gate created.
+- Public-answer policy created.
+- Review queue export prepared.
+- Public launch remains blocked until official content review is approved.
+- Production backend remains deployed and safe for controlled testing.
+- Contact-flow test still must not run unless explicitly approved.
+- Decision state: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW`

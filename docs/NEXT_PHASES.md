@@ -422,6 +422,24 @@ Next recommended phase:
 
 - Official review of seeded knowledge content and/or website embed preparation only after website/privacy approvals are ready.
 
+## Phase 8R: Official Content Review Gate
+
+- Official content review gate created.
+- Review report: `docs/deployment/OFFICIAL_CONTENT_REVIEW_REPORT.md`
+- Reviewer checklist: `docs/deployment/OFFICIAL_CONTENT_REVIEW_CHECKLIST.md`
+- Public-answer policy: `docs/deployment/CHATBOT_PUBLIC_ANSWER_POLICY.md`
+- Review queue template: `docs/deployment/KNOWLEDGE_REVIEW_QUEUE_TEMPLATE.csv`
+- Review queue export command prepared: `python -m app.scripts.export_knowledge_review_queue`
+- Current status: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING`
+- Production backend remains deployed and safe for controlled testing.
+- Real Alte site embed remains blocked.
+- Contact-flow test remains not run unless approved.
+- Decision state: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW`
+
+Next recommended phase:
+
+- Have the official reviewer approve or rewrite seeded knowledge before public launch.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED`
+Current decision: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -9,6 +9,7 @@ Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_RE
 Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL` remains true for endpoint availability; no-contact lead/task creation now requires redeploy.
 Previous no-contact guard redeploy state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD` is resolved.
 Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
+Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED` remains true and now advances to the official content review gate.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -109,6 +110,8 @@ Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFI
 | Website | Production test knowledge seed execution | Done: first run created 12 sources / 13 snippets; second run created zero duplicates |
 | Website | Required test knowledge verification | Done: contact, admissions, finance, international, medicine, deadlines PASS |
 | Website | Safe smoke after test knowledge seed | Done: contact-flow not run; no intentional lead/task creation |
+| Website | Official content review gate | Done: report, checklist, public-answer policy, review queue template |
+| Website | Official content review status | Pending: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING` |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

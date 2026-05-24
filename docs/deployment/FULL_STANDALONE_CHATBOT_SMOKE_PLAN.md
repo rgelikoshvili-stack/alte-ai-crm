@@ -54,6 +54,15 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 - Medicine/international no-contact behavior remains guarded: no lead/task, `phone_or_email` requested.
 - Official content review remains required before public launch.
 
+## Phase 8R Official Content Review Gate
+
+- Official content review gate created.
+- Public-answer policy now blocks invented tuition prices, deadlines, official document requirements, Medicine/MD requirements, international student requirements, and legal/visa/relocation requirements.
+- Review status: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING`
+- Public launch remains blocked.
+- Real Alte site embed remains blocked.
+- Contact-flow test still must not run unless explicitly approved.
+
 ## CORS Caveat
 
 Production CORS is intentionally restricted to:
