@@ -927,3 +927,43 @@ python -m app.scripts.verify_phase_8l_widget_asset_embed
 ```
 
 No real website changes are made in this phase.
+
+## Phase 8L Sandbox Standalone Production Widget Demo
+
+Phase 8L-Sandbox adds a standalone static demo page that uses the production Cloud Run backend without modifying the real Alte websites.
+
+Files:
+
+- `widget/standalone-production-demo.html`
+- `widget/STANDALONE_PRODUCTION_DEMO.md`
+- `docs/deployment/WIDGET_TRANSFER_TO_ALTE_SITE.md`
+- `docs/deployment/STANDALONE_WIDGET_SMOKE_CHECKLIST.md`
+
+Run locally:
+
+```powershell
+cd C:\tmp\alte-ai-crm\widget
+python -m http.server 5500
+```
+
+Open:
+
+```text
+http://127.0.0.1:5500/standalone-production-demo.html
+```
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED
+```
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8l_standalone_widget
+```
+
+The page uses the production backend. Do not enter real student data unless production test records are approved.

@@ -18,6 +18,7 @@ Do not create production test leads unless the owner approves test records.
 
 ## A. Staging / Test Page Smoke
 
+- [ ] Open `widget/standalone-production-demo.html` locally for standalone sandbox testing.
 - [ ] Open `widget/production-embed-test.html` locally or on staging.
 - [ ] Verify chat bubble appears.
 - [ ] Verify widget opens and closes.
@@ -78,7 +79,11 @@ Only after website/privacy approval.
 - Final snippets prepared: `WIDGET_EMBED_SNIPPETS_FINAL.md`
 - Developer handoff prepared: `WEBSITE_DEVELOPER_HANDOFF.md`
 - Staging/test page prepared: `widget/production-embed-test.html`
+- Standalone production demo prepared: `widget/standalone-production-demo.html`
+- Standalone smoke checklist prepared: `STANDALONE_WIDGET_SMOKE_CHECKLIST.md`
+- Transfer package prepared: `WIDGET_TRANSFER_TO_ALTE_SITE.md`
 - Website admin/developer access: `PENDING`
 - Privacy/data approval: `PENDING`
 - Actual website widget embed: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
 - Production widget smoke: `PENDING`
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`

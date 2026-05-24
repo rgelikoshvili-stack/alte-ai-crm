@@ -265,6 +265,21 @@ Next recommended phase:
 
 - Phase 8M: record website/privacy approval and final asset URL, then execute website embed only after explicit approval.
 
+## Phase 8L-Sandbox: Standalone Production Widget Demo
+
+- Standalone production demo page: `widget/standalone-production-demo.html`
+- Standalone demo README: `widget/STANDALONE_PRODUCTION_DEMO.md`
+- Transfer package: `docs/deployment/WIDGET_TRANSFER_TO_ALTE_SITE.md`
+- Standalone smoke checklist: `docs/deployment/STANDALONE_WIDGET_SMOKE_CHECKLIST.md`
+- Production backend URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
+- Real Alte websites were not modified.
+- Google Cloud resources were not changed.
+
+Next recommended phase:
+
+- Phase 8M: run standalone smoke, then record website/privacy approval and final asset URL before any real website embed.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -95,6 +95,8 @@ Production embed preparation is documented in:
 - `production-config.join.example.js`
 - `alte-chat-widget.v0.8.js`
 - `production-embed-test.html`
+- `standalone-production-demo.html`
+- `STANDALONE_PRODUCTION_DEMO.md`
 
 Current production backend:
 
@@ -103,3 +105,16 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 ```
 
 Do not embed on the real websites until website admin/developer access and privacy/data approval are complete.
+
+Standalone sandbox:
+
+```powershell
+cd C:\tmp\alte-ai-crm\widget
+python -m http.server 5500
+```
+
+Open:
+
+```text
+http://127.0.0.1:5500/standalone-production-demo.html
+```

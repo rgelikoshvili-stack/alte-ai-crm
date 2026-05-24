@@ -114,6 +114,9 @@ Do not run production lead-creating smoke tests until the owner approves test re
 
 - Backend status: `CLOUD_RUN_DEPLOYED`
 - Backend URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
-- Widget embed status: `PENDING_WEBSITE_ACCESS`
+- Widget embed status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`
+- Standalone production demo status: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
+- Standalone demo page: `widget/standalone-production-demo.html`
+- Transfer package: `WIDGET_TRANSFER_TO_ALTE_SITE.md`
 - Privacy approval status: `PENDING`
 - Production widget smoke status: `PENDING`

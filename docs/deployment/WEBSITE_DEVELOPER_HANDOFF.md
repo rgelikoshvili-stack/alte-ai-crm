@@ -82,6 +82,15 @@ Use `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`.
 
 Start with a staging/test page before production pages.
 
+Standalone sandbox package:
+
+- `widget/standalone-production-demo.html`
+- `widget/STANDALONE_PRODUCTION_DEMO.md`
+- `STANDALONE_WIDGET_SMOKE_CHECKLIST.md`
+- `WIDGET_TRANSFER_TO_ALTE_SITE.md`
+
+Current standalone status: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
+
 ## Owner Placeholders
 
 - Project owner: `PENDING`

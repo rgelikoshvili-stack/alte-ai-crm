@@ -1,8 +1,8 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
 
-Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
+Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -77,6 +77,10 @@ Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployme
 | Website | Final widget snippets | Done: `WIDGET_EMBED_SNIPPETS_FINAL.md` |
 | Website | Website developer handoff | Done: `WEBSITE_DEVELOPER_HANDOFF.md` |
 | Website | Staging/test page package | Done: `widget/production-embed-test.html` |
+| Website | Standalone production widget demo | Done: `widget/standalone-production-demo.html` |
+| Website | Standalone demo README | Done: `widget/STANDALONE_PRODUCTION_DEMO.md` |
+| Website | Transfer package | Done: `WIDGET_TRANSFER_TO_ALTE_SITE.md` |
+| Website | Standalone smoke checklist | Done: `STANDALONE_WIDGET_SMOKE_CHECKLIST.md` |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

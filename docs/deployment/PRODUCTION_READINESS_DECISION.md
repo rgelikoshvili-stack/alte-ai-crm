@@ -1,10 +1,10 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SITE_EMBED`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, and the backend is deployed to Cloud Run. Full production launch remains blocked until website access, privacy approval, actual widget embed, widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, and a standalone production widget demo is prepared. Full production launch remains blocked until website access, privacy approval, actual widget embed, widget smoke, and explicit launch approval are completed.
 
-Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
+Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 
 ## Go Only If
 
@@ -113,6 +113,10 @@ Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backe
 - Website developer handoff prepared: `WEBSITE_DEVELOPER_HANDOFF.md`.
 - Staging/test page package prepared: `widget/production-embed-test.html`.
 - Actual website embed status: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL`.
+- Standalone production widget demo prepared: `widget/standalone-production-demo.html`.
+- Standalone production demo README prepared: `widget/STANDALONE_PRODUCTION_DEMO.md`.
+- Standalone smoke checklist prepared: `STANDALONE_WIDGET_SMOKE_CHECKLIST.md`.
+- Transfer package prepared: `WIDGET_TRANSFER_TO_ALTE_SITE.md`.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

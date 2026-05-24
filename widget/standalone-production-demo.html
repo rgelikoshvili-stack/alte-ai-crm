@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Standalone Production Widget Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18212f;
+        --muted: #657083;
+        --line: #d8e0ea;
+        --brand: #9d1d32;
+        --brand-dark: #6f1223;
+        --surface: #ffffff;
+        --bg: #f4f7fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 24px 20px;
+      }
+
+      .topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        font-weight: 700;
+        color: var(--brand);
+        font-size: 20px;
+      }
+
+      .badge {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 10px;
+        color: var(--muted);
+        background: #fbfcfe;
+        font-size: 13px;
+      }
+
+      main {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 28px 20px 128px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+        line-height: 1.15;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+        gap: 18px;
+        margin-top: 22px;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .warning {
+        border-color: #d49b38;
+        background: #fff8ea;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+
+      select,
+      button {
+        font: inherit;
+      }
+
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+      }
+
+      button {
+        margin-top: 12px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--brand);
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: var(--brand-dark);
+      }
+
+      code {
+        word-break: break-all;
+        color: var(--brand-dark);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      li {
+        margin: 8px 0;
+      }
+
+      .links a {
+        display: inline-block;
+        margin: 0 10px 8px 0;
+        color: var(--brand);
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topline {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap topline">
+        <div class="brand">Alte AI CRM</div>
+        <div class="badge">Standalone Production Widget Demo</div>
+      </div>
+    </header>
+
+    <main>
+      <h1>Standalone Production Widget Demo</h1>
+      <p>
+        This static page loads <code>./alte-chat-widget.v0.8.js</code> and points the widget to the production Cloud Run backend.
+      </p>
+
+      <section class="panel warning">
+        <strong>Warning:</strong>
+        This demo uses the production backend. Do not enter real student data unless approved.
+      </section>
+
+      <div class="grid">
+        <section class="panel">
+          <h2>Widget Configuration</h2>
+          <label for="source-domain">Source domain</label>
+          <select id="source-domain">
+            <option value="alte.edu.ge">alte.edu.ge - KA default</option>
+            <option value="join.alte.edu.ge">join.alte.edu.ge - EN default</option>
+          </select>
+          <button type="button" id="reload-widget">Reload widget config</button>
+          <p>
+            Backend:
+            <code>https://alte-ai-crm-backend-226875230147.europe-west1.run.app</code>
+          </p>
+          <p id="active-config"></p>
+        </section>
+
+        <section class="panel">
+          <h2>Backend Links</h2>
+          <div class="links">
+            <a href="https://alte-ai-crm-backend-226875230147.europe-west1.run.app/health" target="_blank" rel="noreferrer">/health</a>
+            <a href="https://alte-ai-crm-backend-226875230147.europe-west1.run.app/version" target="_blank" rel="noreferrer">/version</a>
+            <a href="https://alte-ai-crm-backend-226875230147.europe-west1.run.app/diagnostics/ai" target="_blank" rel="noreferrer">/diagnostics/ai</a>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid">
+        <section class="panel">
+          <h2>Safe Test Messages</h2>
+          <ul>
+            <li>გამარჯობა</li>
+            <li>მაინტერესებს ბიზნესის პროგრამაზე ჩარიცხვა</li>
+            <li>რა ღირს სწავლა?</li>
+            <li>What programs are available?</li>
+            <li>I want to apply for medicine from India</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <h2>Consent Text</h2>
+          <p>საკონტაქტო მონაცემებს ვიყენებთ მხოლოდ კონსულტაციისთვის.</p>
+          <p>We use your contact details only to provide consultation.</p>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const BACKEND_URL = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app";
+      const STORAGE_KEY = "alteStandaloneProductionSourceDomain";
+      const domainSelect = document.getElementById("source-domain");
+      const reloadButton = document.getElementById("reload-widget");
+      const activeConfig = document.getElementById("active-config");
+
+      function languageFor(domain) {
+        return domain === "join.alte.edu.ge" ? "en" : "ka";
+      }
+
+      function proactiveDelayFor(domain) {
+        return domain === "join.alte.edu.ge" ? 5000 : 30000;
+      }
+
+      function applyConfig() {
+        const sourceDomain = window.localStorage.getItem(STORAGE_KEY) || "alte.edu.ge";
+        domainSelect.value = sourceDomain;
+        const defaultLanguage = languageFor(sourceDomain);
+        const proactiveDelayMs = proactiveDelayFor(sourceDomain);
+
+        window.AlteChatWidgetConfig = {
+          apiBaseUrl: BACKEND_URL,
+          sourceDomain,
+          defaultLanguage,
+          proactiveEnabled: true,
+          proactiveDelayMs,
+        };
+
+        activeConfig.textContent = `Active: ${sourceDomain}, language ${defaultLanguage}, proactive delay ${proactiveDelayMs}ms`;
+      }
+
+      domainSelect.addEventListener("change", () => {
+        window.localStorage.setItem(STORAGE_KEY, domainSelect.value);
+      });
+
+      reloadButton.addEventListener("click", () => {
+        window.localStorage.setItem(STORAGE_KEY, domainSelect.value);
+        window.localStorage.removeItem("alteChatWidgetSession");
+        window.localStorage.removeItem("alteChatWidgetLanguage");
+        window.location.reload();
+      });
+
+      applyConfig();
+    </script>
+    <script src="./alte-chat-widget.v0.8.js"></script>
+  </body>
+</html>
