@@ -833,3 +833,36 @@ python -m app.scripts.verify_phase_8h_migration_seed_docs
 ```
 
 Cloud Run is still not deployed, Docker images are not pushed, and the deployment decision remains `NO-GO_FOR_ACTUAL_DEPLOYMENT` until website access, privacy/data approval, and explicit Cloud Run deployment approval are complete.
+
+## Phase 8I Cloud Run Backend Deployment
+
+Phase 8I deployed the FastAPI backend to Google Cloud Run.
+
+Status:
+
+- Deployment state: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+- Cloud Run deployment: `CLOUD_RUN_DEPLOYED`
+- Service: `alte-ai-crm-backend`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Docker image: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run`
+- Cloud SQL: `CLOUD_SQL_ATTACHED`
+- Secret Manager: `SECRET_MANAGER_MAPPED`
+- Unauthenticated access: enabled for the public website widget API surface
+
+Read-only production checks:
+
+- `/health: 200`
+- `/version: 200`
+- `/diagnostics/ai: 200`
+- `/diagnostics/local-demo: 200`
+- `/dashboard/overview: 401` without bearer token, expected because `AUTH_REQUIRED=true`
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_cloud_run_deployment_docs
+```
+
+Full public launch is still pending website admin/developer access, privacy/data approval, actual website widget embed, and production widget smoke from `alte.edu.ge` / `join.alte.edu.ge`.

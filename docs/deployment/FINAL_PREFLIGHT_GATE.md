@@ -1,8 +1,8 @@
 # Final Preflight Gate
 
-Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
+Current decision: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
 
-Keep `NO-GO` until every required item below is checked.
+Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -22,6 +22,13 @@ Keep `NO-GO` until every required item below is checked.
 | Google Cloud | Secret Manager containers created | Done: four `alte-*` secret containers created |
 | Google Cloud | Secret Manager DB/JWT/Anthropic values created | Done: versions added without printing payloads |
 | Google Cloud | Secret Manager DATABASE_URL value created | Done: `VERSION_ADDED` without printing value |
+| Google Cloud | Artifact Registry repository | Done: `alte-ai-crm` |
+| Google Cloud | Docker image pushed | Done: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run` |
+| Google Cloud | Cloud Run deployment | Done: `CLOUD_RUN_DEPLOYED` |
+| Google Cloud | Cloud Run service URL | Done: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app` |
+| Google Cloud | Cloud SQL attached to Cloud Run | Done: `CLOUD_SQL_ATTACHED` |
+| Google Cloud | Secret Manager mapped to Cloud Run | Done: `SECRET_MANAGER_MAPPED` |
+| Google Cloud | Unauthenticated access for widget API | Done: enabled for public widget API |
 | Google Cloud | Secret Manager creation approval | Done for next execution phase: `APPROVED_FOR_NEXT_EXECUTION` |
 | Google Cloud | Secret Manager execution | Container creation completed; DB/JWT/Anthropic versions added |
 | Google Cloud | Secret values runbook | Done: `SECRET_VALUES_RUNBOOK.md`; statuses `NOT_CREATED / PENDING` |
@@ -47,18 +54,25 @@ Keep `NO-GO` until every required item below is checked.
 | Application | Production-safe core bootstrap | Done: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`; no fake customers/leads/messages |
 | Application | Knowledge seed against Cloud SQL | Done: `KNOWLEDGE_SEED_COMPLETED` |
 | Application | Production DB seed verification | Done: `PRODUCTION_DB_SEED_VERIFIED` |
+| Application | `/health` check | Done: `/health: 200` |
+| Application | `/version` check | Done: `/version: 200` |
+| Application | `/diagnostics/ai` check | Done: `/diagnostics/ai: 200` |
+| Application | `/diagnostics/local-demo` check | Done: `/diagnostics/local-demo: 200` |
+| Application | `/dashboard/overview` read-only check | Done: `/dashboard/overview: 401` without bearer token, expected with `AUTH_REQUIRED=true` |
 | Application | `AI_PROVIDER=mock` for tests | Required |
 | Application | `AI_PROVIDER=claude` for production | Planned |
 | Website | `alte.edu.ge` CORS confirmed | Done |
 | Website | `join.alte.edu.ge` CORS confirmed | Done |
-| Website | Website developer/admin access | Pending |
-| Website | Privacy/consent text approval | Pending |
+| Website | Website developer/admin access | Pending: Website admin/developer access pending |
+| Website | Privacy/consent text approval | Pending: Privacy/data approval pending |
+| Website | Actual website widget embed | Pending: Actual website widget embed pending |
+| Website | Production widget smoke | Pending |
 | Website | Website/privacy checklist | Done: `WEBSITE_AND_PRIVACY_APPROVAL.md`; statuses pending |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 
 ## Decision
 
-Do not proceed to actual Cloud Run deployment until:
+Do not proceed to full public launch until:
 
 - GitHub backup is pushed and tagged.
 - Cloud SQL tier/cost is accepted.

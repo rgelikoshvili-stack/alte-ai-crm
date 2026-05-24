@@ -24,12 +24,22 @@ Do not use wildcard `*` in production.
 
 The widget `apiBaseUrl` must point to the public Cloud Run backend URL.
 
+Phase 8I backend URL:
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+Cloud Run backend status: `CLOUD_RUN_DEPLOYED`
+
+Website launch status: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+
 Future production snippet:
 
 ```html
 <script>
   window.AlteChatWidgetConfig = {
-    apiBaseUrl: "https://YOUR_CLOUD_RUN_SERVICE_URL",
+    apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
     sourceDomain: "alte.edu.ge",
     defaultLanguage: "ka",
     proactiveEnabled: true,

@@ -87,3 +87,35 @@ Expected:
 - Roll back to the previous Cloud Run revision if the new revision fails.
 - Do not delete the database as a rollback method.
 - Keep database migrations forward-compatible and separately approved.
+
+## Phase 8I Execution Status
+
+Deployment status: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+
+- Cloud Run service: `alte-ai-crm-backend`
+- Cloud Run deployment: `CLOUD_RUN_DEPLOYED`
+- Region: `europe-west1`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Docker image: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run`
+- Image tag: `v0.8-cloud-run`
+- Artifact Registry repository: `alte-ai-crm`
+- Cloud SQL attachment: `CLOUD_SQL_ATTACHED`
+- Cloud SQL connection: `project-1e145fd0-c30e-4aac-a34:europe-west1:alte-ai-crm-db`
+- Secret Manager mapping: `SECRET_MANAGER_MAPPED`
+- `DATABASE_URL`, `JWT_SECRET`, and `ANTHROPIC_API_KEY` are mapped from Secret Manager and are not documented as values.
+- Unauthenticated access: enabled for the public website widget API surface.
+
+Verification:
+
+- `/health: 200`
+- `/version: 200`
+- `/diagnostics/ai: 200`
+- `/diagnostics/local-demo: 200`
+- `/dashboard/overview: 401` because `AUTH_REQUIRED=true` and no bearer token was supplied.
+
+Launch blockers:
+
+- Website admin/developer access pending.
+- Privacy/data approval pending.
+- Actual website widget embed pending.
+- Production widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.

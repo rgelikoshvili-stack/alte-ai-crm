@@ -198,6 +198,37 @@ Next recommended phase:
 - Phase 8I: Cloud Run deployment preparation/execution gate after explicit approval.
 - Keep `NO-GO_FOR_ACTUAL_DEPLOYMENT` until Cloud Run deployment approval, website access, and privacy/data approval are complete.
 
+## Phase 8I-Execution: Backend Deployed To Cloud Run
+
+- Artifact Registry repository: `alte-ai-crm`
+- Docker image: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run`
+- Cloud Run deployment: `CLOUD_RUN_DEPLOYED`
+- Service: `alte-ai-crm-backend`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Cloud SQL attached: `CLOUD_SQL_ATTACHED`
+- Secret Manager mapped: `SECRET_MANAGER_MAPPED`
+- Deployment state: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
+- Unauthenticated access enabled for public website widget API.
+
+Read-only verification:
+
+- `/health: 200`
+- `/version: 200`
+- `/diagnostics/ai: 200`
+- `/diagnostics/local-demo: 200`
+- `/dashboard/overview: 401` without bearer token, expected with `AUTH_REQUIRED=true`
+
+Remaining blockers:
+
+- Website admin/developer access pending.
+- Privacy/data approval pending.
+- Actual website widget embed pending.
+- Production widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
+
+Next recommended phase:
+
+- Phase 8J: website widget production embed preparation and privacy approval gate.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

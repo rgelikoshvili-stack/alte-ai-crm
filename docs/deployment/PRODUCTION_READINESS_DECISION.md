@@ -1,15 +1,17 @@
 # Production Readiness Decision
 
-Current decision: `NO-GO_FOR_ACTUAL_DEPLOYMENT`
+Current decision: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, and production migrations/seed have completed. Actual deployment remains blocked until Cloud Run is deployed, website access, privacy approval, and explicit deployment approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, and the backend is deployed to Cloud Run. Full production launch remains blocked until website access, privacy approval, actual widget embed, widget smoke, and explicit launch approval are completed.
+
+Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 
 ## Go Only If
 
 - [x] GitHub remote exists. Current remote: `https://github.com/rgelikoshvili-stack/alte-ai-crm`.
 - [x] Release tag exists. `v0.8-deployment-ready` was pushed.
 - [x] Tests pass. Latest Phase 8D-GitHub check: `110 passed` with `AI_PROVIDER=mock`.
-- [ ] Docker build passes. Not run in this prep step.
+- [x] Docker build passes. Cloud Build image build completed for `v0.8-cloud-run`.
 - [ ] `startup_check` passes with production-like env. Local/dev check passed; production-like Secret Manager values are not configured yet.
 - [x] Google Cloud project selected. `PROJECT_ID=project-1e145fd0-c30e-4aac-a34`.
 - [x] Billing understood. User confirmed billing is enabled.
@@ -88,9 +90,29 @@ Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud
 - Production-safe bootstrap completed: `PRODUCTION_SAFE_BOOTSTRAP_COMPLETED`.
 - Production knowledge seed completed: `KNOWLEDGE_SEED_COMPLETED`.
 - Production DB seed verification completed: `PRODUCTION_DB_SEED_VERIFIED`.
+- Artifact Registry repository created: `alte-ai-crm`.
+- Docker image built and pushed: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run`.
+- Cloud Run deployment completed: `CLOUD_RUN_DEPLOYED`.
+- Cloud Run service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`.
+- Cloud SQL attached: `CLOUD_SQL_ATTACHED`.
+- Secret Manager mapped: `SECRET_MANAGER_MAPPED`.
+- Unauthenticated access enabled for public website widget API.
+- Endpoint verification completed:
+  - `/health: 200`
+  - `/version: 200`
+  - `/diagnostics/ai: 200`
+  - `/diagnostics/local-demo: 200`
+  - `/dashboard/overview: 401` without bearer token, expected with `AUTH_REQUIRED=true`.
 - Website/privacy approval checklist prepared.
 - Phase 8F execution plan prepared for later explicit approval.
-- Cloud Run is not deployed.
+
+## Remaining Full Launch Blockers
+
+- Website admin/developer access pending.
+- Privacy/data approval pending.
+- Actual website widget embed pending.
+- Production widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
+- Full public launch approval pending.
 
 ## No-Go If
 
