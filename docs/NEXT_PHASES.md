@@ -369,6 +369,29 @@ Next recommended phase:
 
 - Redeploy Cloud Run with the no-contact guard, then rerun the safe standalone API smoke without the contact-flow flag.
 
+## Phase 8P-Redeploy: No-Contact Guard Cloud Run Verification
+
+- Cloud Run redeployed with image tag: `v0.8-no-contact-guard`
+- Cloud Run service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Endpoint checks passed:
+  - `/health`: 200
+  - `/version`: 200
+  - `/diagnostics/ai`: 200, Claude enabled, no secrets exposed
+- Safe standalone API smoke rerun without contact-flow.
+- No phone/email/contact details were sent.
+- No leads/tasks were intentionally created.
+- Medicine/international no-contact behavior verified:
+  - `should_create_lead=false`
+  - `created_lead_id=null`
+  - `created_task_id=null`
+  - missing fields include `phone_or_email`
+- Decision state: `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL`
+
+Next recommended phase:
+
+- Phase 8Q-Execution: production test knowledge seed only after the user explicitly says:
+  `Approve Phase 8Q-Execution for production test knowledge seed`
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -52,8 +52,29 @@
 - Phase 8P-Fix status: no-contact lead/task guard applied locally.
 - Expected behavior after fix: admission, international, and medicine interest without phone or email asks for contact details and does not create a lead/task.
 - Expected behavior with contact after fix: admission, international, and medicine interest with phone or email creates/updates customer, lead, and follow-up task.
-- Redeploy required: YES. Cloud Run must be redeployed before this fix reaches the production backend.
-- Next recommendation: treat future production medicine/admission smoke as potentially mutating until the no-contact guard is redeployed and verified.
+- Redeploy required: completed in Phase 8P-Redeploy.
+- Next recommendation: continue using the safe standalone smoke without contact-flow before any public website embed.
+
+## Phase 8P-Redeploy Verification
+
+- Image tag deployed: `v0.8-no-contact-guard`
+- Cloud Run service: `alte-ai-crm-backend`
+- Cloud Run revision: `alte-ai-crm-backend-00003-x84`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- `/health`: PASS, HTTP 200
+- `/version`: PASS, HTTP 200
+- `/diagnostics/ai`: PASS, HTTP 200; Claude enabled; no secrets exposed.
+- Safe standalone API smoke rerun: PASS
+- Contact-flow flag used: NO
+- Phone/email/contact details sent: NO
+- Any leads/tasks intentionally created: NO
+- Medicine/international no-contact behavior after redeploy:
+  - intent: `international_admission`
+  - `should_create_lead=false`
+  - `created_lead_id=null`
+  - `created_task_id=null`
+  - missing fields include `phone_or_email`
+- Lead/task side effect fixed: YES
 
 ## Known Limitations
 

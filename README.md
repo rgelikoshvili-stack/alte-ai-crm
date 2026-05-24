@@ -1136,4 +1136,28 @@ Decision:
 BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD
 ```
 
-Cloud Run redeploy is required before production receives this fix.
+Cloud Run redeploy was required before production received this fix.
+
+## Phase 8P-Redeploy No-Contact Guard Verification
+
+The no-contact lead guard was deployed to Cloud Run with image tag:
+
+```text
+v0.8-no-contact-guard
+```
+
+Production checks:
+
+- `/health`: 200
+- `/version`: 200
+- `/diagnostics/ai`: 200, Claude enabled, no secrets exposed
+- Safe standalone API smoke: PASS
+- Contact-flow test: not run
+- Contact details submitted: no
+- Medicine/international no-contact result: no lead, no task, `should_create_lead=false`, `phone_or_email` requested
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL
+```

@@ -1,12 +1,13 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD`
+Current decision: `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
 Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL` remains true.
 Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED` remains true.
 Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL` remains true for endpoint availability; no-contact lead/task creation now requires redeploy.
+Previous no-contact guard redeploy state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD` is resolved.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -30,6 +31,7 @@ Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_
 | Google Cloud | Docker image pushed | Done: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.8-cloud-run` |
 | Google Cloud | Cloud Run deployment | Done: `CLOUD_RUN_DEPLOYED` |
 | Google Cloud | Cloud Run service URL | Done: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app` |
+| Google Cloud | No-contact guard image deployed | Done: `v0.8-no-contact-guard`, revision `alte-ai-crm-backend-00003-x84` |
 | Google Cloud | Cloud SQL attached to Cloud Run | Done: `CLOUD_SQL_ATTACHED` |
 | Google Cloud | Secret Manager mapped to Cloud Run | Done: `SECRET_MANAGER_MAPPED` |
 | Google Cloud | Unauthenticated access for widget API | Done: enabled for public widget API |
@@ -100,7 +102,8 @@ Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_
 | Website | Safe standalone API smoke | Done: `/health`, `/version`, `/diagnostics/ai`, KA greeting, KA finance, EN medicine/international PASS |
 | Website | Contact-flow smoke | Not run |
 | Website | Intentional lead/task creation | No; observed backend side effect for medicine/international admission message |
-| Website | No-contact lead/task guard | Fixed locally: admissions/international/medicine require phone or email before lead/task creation; Cloud Run redeploy required |
+| Website | No-contact lead/task guard | Deployed and verified: admissions/international/medicine require phone or email before lead/task creation |
+| Website | Safe smoke after no-contact redeploy | Done: contact-flow not run; no contact details sent; medicine/international no-contact returned no lead/task |
 | Website | Production test knowledge seed approval | Pending: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`, status `PENDING_APPROVAL` |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
