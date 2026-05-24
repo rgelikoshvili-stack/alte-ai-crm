@@ -1,5 +1,33 @@
 # Alte Public Chat Widget
 
+## Safe Pro Candidate
+
+Phase 9B added a safe backend-connected widget candidate based on the uploaded design concepts:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+Preview page:
+
+```text
+widget/standalone-safe-pro-demo.html
+```
+
+The Safe Pro candidate keeps the compact floating widget direction and adds polished department chips, source cards, handover display, KA/EN language switch, and localStorage session handling.
+
+It calls only the production FastAPI backend:
+
+- `POST /chat/session/start`
+- `POST /chat/message`
+
+It must not call Anthropic directly from the browser, expose API keys, own the system prompt, or create leads in frontend code.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
 Lightweight static website chat widget for Alte AI CRM. It can be embedded with one JavaScript file and calls the existing backend chat endpoints.
 
 ## What It Does

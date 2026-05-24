@@ -1,0 +1,70 @@
+# Safe Pro Widget Embed Snippet
+
+Status: prepared for later site integration only.
+
+Do not embed this widget on `alte.edu.ge` or `join.alte.edu.ge` until official content review, privacy/data approval, final asset hosting URL, actual site embed approval, and real-domain browser smoke are complete.
+
+## Backend
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+The widget must call only the FastAPI backend:
+
+- `POST /chat/session/start`
+- `POST /chat/message`
+
+Direct browser calls to Anthropic are forbidden.
+
+## Candidate Asset
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+The current candidate is a standalone HTML widget. For production, host it as a reviewed static asset on an approved Alte-controlled domain or approved static asset location.
+
+## Example Iframe Embed
+
+Replace `https://assets.example.alte.edu.ge/widget/alte-university-ai-chatbot-safe-pro.html` with the final approved asset URL.
+
+```html
+<iframe
+  src="https://assets.example.alte.edu.ge/widget/alte-university-ai-chatbot-safe-pro.html"
+  title="Alte AI Chatbot"
+  style="position:fixed;right:0;bottom:0;width:430px;height:720px;border:0;z-index:9999;background:transparent;"
+  loading="lazy"
+></iframe>
+```
+
+## Source Domain Examples
+
+For the main Alte site:
+
+```js
+window.AlteChatWidgetConfig = {
+  apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  sourceDomain: "alte.edu.ge",
+  defaultLanguage: "ka"
+};
+```
+
+For the admissions site:
+
+```js
+window.AlteChatWidgetConfig = {
+  apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  sourceDomain: "join.alte.edu.ge",
+  defaultLanguage: "en"
+};
+```
+
+## Pending Before Embed
+
+- Human reviewer decisions.
+- Official content approval.
+- Privacy/data approval.
+- Final widget asset URL.
+- Actual website embed approval.
+- Real-domain browser smoke from `alte.edu.ge` and `join.alte.edu.ge`.

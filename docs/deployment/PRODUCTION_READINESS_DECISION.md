@@ -293,3 +293,25 @@ BACKEND_DEPLOYED_REVIEWER_PACKAGE_READY_PENDING_HUMAN_DECISIONS
 ```
 
 Public launch remains blocked until reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
+
+## Phase 9B Widget Design Concepts
+
+Uploaded widget design concepts were imported and reviewed as UI evidence.
+
+- Evidence folder: `docs/knowledge_evidence/uploaded_widget_design_concepts/`
+- Concept review: `docs/deployment/WIDGET_DESIGN_CONCEPTS_REVIEW.md`
+- Safe Pro candidate: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Standalone preview: `widget/standalone-safe-pro-demo.html`
+- Embed snippet draft: `docs/deployment/WIDGET_SAFE_PRO_EMBED_SNIPPET.md`
+- Recommended candidate: compact PIP-style widget with selected Pro-style polish.
+- Direct browser Anthropic calls are forbidden.
+- The browser widget must call the FastAPI backend only.
+- The frontend must not own the system prompt, Knowledge Base truth, or CRM lead creation.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
+
+Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.

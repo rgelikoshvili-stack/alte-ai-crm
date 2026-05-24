@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8"/>
+<title>ალტე AI ჩათბოტი — დიზაინის ვარიანტები</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#0c1416; font-family:'Noto Sans Georgian','Inter',system-ui,sans-serif; }
+  *, *::before, *::after { box-sizing: border-box; }
+  /* shared chat tokens for variants */
+  :root{
+    --alte-teal: #074045;
+    --alte-teal-deep: #052e32;
+    --alte-teal-soft: #e8f4f2;
+  }
+  /* Hide tabler icon if font fails - use ::before glyphs */
+</style>
+</head>
+<body style="font-family: Inter">
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="variants/pip.jsx"></script>
+<script type="text/babel" src="variants/bento.jsx"></script>
+<script type="text/babel" src="variants/bigtalk.jsx"></script>
+<script type="text/babel" src="variants/pro.jsx"></script>
+
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+const { PipScreen } = window;
+const { BentoScreen } = window;
+const { BigTalkScreen } = window;
+const { ProScreen } = window;
+
+function Page(){
+  return (
+    <DesignCanvas title="ალტე AI ჩათბოტი — დიზაინის ვარიანტები" subtitle="4 მიმართულება · alte.edu.ge ბრენდის გარშემო · ყველა ეკრანი">
+
+      <DCSection id="pip" title={'ვარიანტი 1 — „პიპი" (Pip the Helper)'} subtitle="თბილი, illustrative, character-led. რბილი ფერები, მეგობრული მასკოტი.">
+        <DCArtboard id="pip-launcher" label="დახურული · Launcher on alte.edu.ge" width={520} height={680}>
+          <PipScreen screen="launcher"/>
+        </DCArtboard>
+        <DCArtboard id="pip-greeting" label="გახსნა · გახსნილი / Empty state" width={420} height={680}>
+          <PipScreen screen="greeting"/>
+        </DCArtboard>
+        <DCArtboard id="pip-chat" label="საუბარი · Typing + Sources" width={420} height={680}>
+          <PipScreen screen="chat"/>
+        </DCArtboard>
+        <DCArtboard id="pip-handover" label="გადართვა ოპერატორზე" width={420} height={680}>
+          <PipScreen screen="handover"/>
+        </DCArtboard>
+        <DCArtboard id="pip-file" label="ფაილის ატვირთვა · PDF ანალიზი" width={420} height={680}>
+          <PipScreen screen="file"/>
+        </DCArtboard>
+        <DCArtboard id="pip-lead" label="Lead capture modal" width={420} height={680}>
+          <PipScreen screen="lead"/>
+        </DCArtboard>
+        <DCArtboard id="pip-settings" label="პარამეტრები · KA/EN" width={420} height={680}>
+          <PipScreen screen="settings"/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="bento" title={'ვარიანტი 2 — „ბენტო" (Department Blocks)'} subtitle="ფერით კოდირებული დეპარტამენტები. სტრუქტურა + სიკაშკაშე. ბრენდთან ახლოს, თანამედროვე.">
+        <DCArtboard id="bento-launcher" label="დახურული · Launcher" width={520} height={680}>
+          <BentoScreen screen="launcher"/>
+        </DCArtboard>
+        <DCArtboard id="bento-greeting" label="გახსნა · Topic cards" width={420} height={680}>
+          <BentoScreen screen="greeting"/>
+        </DCArtboard>
+        <DCArtboard id="bento-chat" label="საუბარი · Dept color + sources" width={420} height={680}>
+          <BentoScreen screen="chat"/>
+        </DCArtboard>
+        <DCArtboard id="bento-handover" label="გადართვა ოპერატორზე" width={420} height={680}>
+          <BentoScreen screen="handover"/>
+        </DCArtboard>
+        <DCArtboard id="bento-file" label="ფაილის ატვირთვა · აპლიკაციის ჩეცკა" width={420} height={680}>
+          <BentoScreen screen="file"/>
+        </DCArtboard>
+        <DCArtboard id="bento-lead" label="Lead capture modal" width={420} height={680}>
+          <BentoScreen screen="lead"/>
+        </DCArtboard>
+        <DCArtboard id="bento-settings" label="პარამეტრები · KA/EN" width={420} height={680}>
+          <BentoScreen screen="settings"/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="bigtalk" title={'ვარიანტი 3 — „დიდი ალაპარაკი" (Big Talk)'} subtitle="Duolingo-ენერგია: უზარმაზარი launcher, მსხვილი ტიპოგრაფია, კონფეტი, სტიკერი-ვაიბი. ყველაზე გაბედული.">
+        <DCArtboard id="bt-launcher" label="დახურული · უზარმაზარი launcher" width={520} height={680}>
+          <BigTalkScreen screen="launcher"/>
+        </DCArtboard>
+        <DCArtboard id="bt-greeting" label="გახსნა · Big welcome" width={420} height={680}>
+          <BigTalkScreen screen="greeting"/>
+        </DCArtboard>
+        <DCArtboard id="bt-chat" label="საუბარი · Bold bubbles + sources" width={420} height={680}>
+          <BigTalkScreen screen="chat"/>
+        </DCArtboard>
+        <DCArtboard id="bt-handover" label="გადართვა ოპერატორზე" width={420} height={680}>
+          <BigTalkScreen screen="handover"/>
+        </DCArtboard>
+        <DCArtboard id="bt-file" label="ფაილის ატვირთვა · განწყობა" width={420} height={680}>
+          <BigTalkScreen screen="file"/>
+        </DCArtboard>
+        <DCArtboard id="bt-lead" label="Lead capture modal" width={420} height={680}>
+          <BigTalkScreen screen="lead"/>
+        </DCArtboard>
+        <DCArtboard id="bt-settings" label="პარამეტრები · KA/EN" width={420} height={680}>
+          <BigTalkScreen screen="settings"/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="pro" title={'ვარიანტი 4 — „Pro" (Sidebar + დეპარტამენტები)'} subtitle="შენი ორიგინალური მიმართულება, გაპოლირებული. აგენცია-grade, სტრუქტურირებული, sidebar-ში დეპარტამენტები.">
+        <DCArtboard id="pro-launcher" label="დახურული · Launcher pill" width={680} height={680}>
+          <ProScreen screen="launcher"/>
+        </DCArtboard>
+        <DCArtboard id="pro-greeting" label="გახსნა · Sidebar + greeting" width={620} height={680}>
+          <ProScreen screen="greeting"/>
+        </DCArtboard>
+        <DCArtboard id="pro-chat" label="საუბარი · MD answer + typing" width={620} height={680}>
+          <ProScreen screen="chat"/>
+        </DCArtboard>
+        <DCArtboard id="pro-handover" label="გადართვა ოპერატორზე" width={620} height={680}>
+          <ProScreen screen="handover"/>
+        </DCArtboard>
+        <DCArtboard id="pro-file" label="ფაილის ატვირთვა · დოკუმენტის ანალიზი" width={620} height={680}>
+          <ProScreen screen="file"/>
+        </DCArtboard>
+        <DCArtboard id="pro-lead" label="Lead capture modal" width={620} height={680}>
+          <ProScreen screen="lead"/>
+        </DCArtboard>
+        <DCArtboard id="pro-settings" label="პარამეტრები · KA/EN" width={620} height={680}>
+          <ProScreen screen="settings"/>
+        </DCArtboard>
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page/>);
+</script>
+</body>
+</html>

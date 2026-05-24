@@ -1,5 +1,25 @@
 # Standalone Widget Smoke Checklist
 
+## Phase 9B Safe Pro Preview
+
+Safe Pro standalone preview:
+
+```text
+widget/standalone-safe-pro-demo.html
+```
+
+Notes:
+
+- Localhost browser requests may be blocked by production CORS.
+- API smoke should continue to use backend scripts.
+- Real-domain browser smoke remains pending.
+- The safe Pro widget must not call Anthropic directly from the browser.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
 Use this checklist with:
 
 ```text

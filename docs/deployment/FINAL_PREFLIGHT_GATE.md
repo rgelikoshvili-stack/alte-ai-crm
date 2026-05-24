@@ -137,3 +137,20 @@ Do not proceed to full public launch until:
 - Production seed is run against Cloud SQL. Done in Phase 8H-Correction.
 - Alte website access is confirmed.
 - Data privacy approval is confirmed.
+
+## Phase 9B Safe Pro Widget Candidate
+
+- Uploaded widget design concepts imported to `docs/knowledge_evidence/uploaded_widget_design_concepts/`.
+- Safe Pro candidate created at `widget/alte-university-ai-chatbot-safe-pro.html`.
+- Standalone preview created at `widget/standalone-safe-pro-demo.html`.
+- Embed snippet draft created at `docs/deployment/WIDGET_SAFE_PRO_EMBED_SNIPPET.md`.
+- Recommended design direction: compact PIP-style public widget with selected Pro-style polish.
+- Direct browser Anthropic calls are forbidden.
+- Backend remains the only AI/CRM integration point.
+- Public launch is not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```

@@ -630,3 +630,16 @@ No omnichannel implementation before the website chat flow is stable.
 - Calendar integration.
 - SLA automation.
 - Advanced analytics.
+
+## Phase 9B: Widget Design Concepts Imported
+
+- Uploaded design concepts extracted to `docs/knowledge_evidence/uploaded_widget_design_concepts/`.
+- Variants reviewed: PIP, Bento, BigTalk, Pro.
+- Recommendation: compact PIP-style widget for public `alte.edu.ge` embed, with selected Pro-style polish for department chips, source cards, and handover UX.
+- Safe Pro candidate created: `widget/alte-university-ai-chatbot-safe-pro.html`.
+- Standalone preview created: `widget/standalone-safe-pro-demo.html`.
+- Embed snippet draft created: `docs/deployment/WIDGET_SAFE_PRO_EMBED_SNIPPET.md`.
+- Direct browser Anthropic calls and frontend prompt ownership remain forbidden.
+- Backend remains the source of truth for AI, Knowledge Base, and CRM actions.
+- Public launch remains blocked pending reviewer decisions, official content approval, privacy/data approval, final asset URL, actual site embed, and real-domain browser smoke.
+- Decision state: `BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED`

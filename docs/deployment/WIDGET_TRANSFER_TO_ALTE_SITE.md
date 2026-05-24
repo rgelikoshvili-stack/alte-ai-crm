@@ -1,5 +1,27 @@
 # Widget Transfer To Alte Site
 
+## Phase 9B Safe Pro Candidate
+
+Uploaded widget design concepts were imported and reviewed. The safe production candidate is:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+Use it only after final asset hosting, privacy/data approval, official content approval, actual site embed approval, and real-domain browser smoke.
+
+The candidate uses only the production FastAPI backend:
+
+- `POST /chat/session/start`
+- `POST /chat/message`
+
+Direct browser Anthropic calls are forbidden. The frontend must not create leads or own chatbot business rules.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
 Current state:
 
 ```text

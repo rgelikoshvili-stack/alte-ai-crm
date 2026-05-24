@@ -1,5 +1,29 @@
 # Website Widget Production Embed
 
+## Phase 9B Safe Pro Widget Candidate
+
+The uploaded widget design concepts have been converted into a safe backend-connected candidate:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+The candidate is not yet approved for public launch. It may be used for review and later embedding only after:
+
+- human reviewer decisions;
+- official content approval;
+- privacy/data approval;
+- final widget asset URL;
+- actual site embed approval;
+- real-domain browser smoke.
+
+The browser widget must call only the FastAPI backend and must not call Anthropic directly.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
+```
 ## A. Purpose
 
 Prepare script snippets for adding the Alte AI CRM Chat Widget to:
