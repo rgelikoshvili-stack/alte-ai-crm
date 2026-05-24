@@ -300,6 +300,22 @@ Next recommended phase:
 
 - Phase 8N: real-domain staging/hidden-page widget smoke after website admin/developer access and privacy/data approval.
 
+## Phase 8N: Website/Privacy Approval And Final Embed Gate
+
+- Website embed approval gate created: `docs/deployment/WEBSITE_EMBED_APPROVAL_GATE.md`
+- Privacy consent approval doc created: `docs/deployment/PRIVACY_CONSENT_APPROVAL.md`
+- Final widget embed go/no-go checklist created: `docs/deployment/FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- Final asset URL decision doc created: `docs/deployment/WIDGET_FINAL_ASSET_URL_DECISION.md`
+- Standalone demo remains available.
+- Actual Alte site embed remains blocked.
+- Real-domain smoke remains pending.
+- Decision state: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
+
+Next recommended phase:
+
+- Phase 8O-Execution: actual website widget embed only after the required phrase is provided:
+  `Approve Phase 8O-Execution for actual website widget embed`
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

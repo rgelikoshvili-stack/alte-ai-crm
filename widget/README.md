@@ -118,3 +118,19 @@ Open:
 ```text
 http://127.0.0.1:5500/standalone-production-demo.html
 ```
+
+## Website/Privacy Approval Gate
+
+Phase 8N records that the widget is technically ready but still blocked for real site embed:
+
+```text
+BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL
+```
+
+The next actual website embed phase requires:
+
+- website admin/developer access
+- privacy/data approval
+- final widget asset URL
+- hidden/staging page smoke plan
+- explicit approval phrase for Phase 8O execution

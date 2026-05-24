@@ -97,3 +97,18 @@ Current standalone status: `BACKEND_DEPLOYED_STANDALONE_WIDGET_READY_PENDING_SIT
 - Website developer/admin owner: `PENDING`
 - Privacy/data owner: `PENDING`
 - Rollback owner: `PENDING`
+
+## Phase 8N Approval Gate
+
+Before real website changes, complete:
+
+- `WEBSITE_EMBED_APPROVAL_GATE.md`
+- `PRIVACY_CONSENT_APPROVAL.md`
+- `FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- `WIDGET_FINAL_ASSET_URL_DECISION.md`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL
+```

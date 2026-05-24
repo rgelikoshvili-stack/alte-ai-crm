@@ -102,3 +102,18 @@ The final website should include the approved Alte privacy policy link when avai
 - Final widget asset URL pending.
 - Actual website embed pending.
 - Production website smoke pending.
+
+## Phase 8N Approval Gate
+
+The transfer package is ready, but the real embed remains blocked until these documents are approved:
+
+- `WEBSITE_EMBED_APPROVAL_GATE.md`
+- `PRIVACY_CONSENT_APPROVAL.md`
+- `FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- `WIDGET_FINAL_ASSET_URL_DECISION.md`
+
+Current decision:
+
+```text
+BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL
+```

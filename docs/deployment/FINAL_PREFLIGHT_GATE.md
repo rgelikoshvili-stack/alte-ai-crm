@@ -1,8 +1,9 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`
+Current decision: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
+Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
 
 | Area | Check | Status |
 | --- | --- | --- |
@@ -85,6 +86,10 @@ Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` rem
 | Website | Production domain CORS preflight | Done: `https://alte.edu.ge` PASS, `https://join.alte.edu.ge` PASS |
 | Website | Localhost browser CORS | Blocked as expected: `http://127.0.0.1:5500` FAIL `400`; `LOCALHOST_CORS_NOT_APPROVED_FOR_PRODUCTION` |
 | Website | Real-domain browser widget smoke | Pending |
+| Website | Website embed approval gate | Done: `WEBSITE_EMBED_APPROVAL_GATE.md`; statuses pending |
+| Website | Privacy consent approval doc | Done: `PRIVACY_CONSENT_APPROVAL.md`; status pending |
+| Website | Final widget embed go/no-go | Done: `FINAL_WIDGET_EMBED_GO_NO_GO.md`; `NO-GO_FOR_ACTUAL_SITE_EMBED` |
+| Website | Final widget asset URL decision | Done: `WIDGET_FINAL_ASSET_URL_DECISION.md`; `FINAL_WIDGET_ASSET_URL=PENDING` |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

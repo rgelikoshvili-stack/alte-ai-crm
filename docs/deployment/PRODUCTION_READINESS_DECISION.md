@@ -1,10 +1,11 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`
+Current decision: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, and production-domain CORS preflight passed. Full production launch remains blocked until website access, privacy approval, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, and the website/privacy approval gate is prepared. Full production launch remains blocked until website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
+Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
 
 ## Go Only If
 
@@ -128,6 +129,12 @@ Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` rem
 - Production CORS preflight passed for `https://join.alte.edu.ge`.
 - Localhost browser CORS blocked as expected: `http://127.0.0.1:5500` returned `400`.
 - CORS localhost decision recorded: `LOCALHOST_CORS_NOT_APPROVED_FOR_PRODUCTION`.
+- Phase 8N website/privacy approval gate created:
+  - `WEBSITE_EMBED_APPROVAL_GATE.md`
+  - `PRIVACY_CONSENT_APPROVAL.md`
+  - `FINAL_WIDGET_EMBED_GO_NO_GO.md`
+  - `WIDGET_FINAL_ASSET_URL_DECISION.md`
+- Final widget embed decision: `NO-GO_FOR_ACTUAL_SITE_EMBED`.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers
@@ -135,6 +142,7 @@ Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` rem
 - Website admin/developer access pending.
 - Privacy/data approval pending.
 - Actual website widget embed pending.
+- Final widget asset URL pending.
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Full public launch approval pending.
 

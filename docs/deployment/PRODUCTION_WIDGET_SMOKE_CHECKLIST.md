@@ -96,3 +96,13 @@ Only after website/privacy approval.
 - Localhost browser CORS: `BLOCKED_AS_EXPECTED`
 - Real-domain browser widget smoke: `PENDING`
 - Decision state: `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE`
+
+## Phase 8N Gate
+
+- Website/privacy approval gate created: `WEBSITE_EMBED_APPROVAL_GATE.md`
+- Privacy consent approval doc created: `PRIVACY_CONSENT_APPROVAL.md`
+- Final embed go/no-go checklist created: `FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- Final asset URL decision doc created: `WIDGET_FINAL_ASSET_URL_DECISION.md`
+- Actual site embed remains blocked.
+- Real-domain smoke remains pending.
+- Decision state: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`

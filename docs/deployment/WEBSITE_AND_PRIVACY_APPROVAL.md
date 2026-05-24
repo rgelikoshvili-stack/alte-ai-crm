@@ -49,3 +49,13 @@
 - Staging/test page: `widget/production-embed-test.html`
 - Actual website widget embed pending.
 - Production widget smoke pending.
+
+## Phase 8N Approval Gate
+
+- Website embed approval gate: `WEBSITE_EMBED_APPROVAL_GATE.md`
+- Privacy consent approval: `PRIVACY_CONSENT_APPROVAL.md`
+- Final widget embed go/no-go checklist: `FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- Final asset URL decision: `WIDGET_FINAL_ASSET_URL_DECISION.md`
+- Current decision state: `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL`
+- Actual site embed remains blocked.
+- Real-domain smoke remains pending.

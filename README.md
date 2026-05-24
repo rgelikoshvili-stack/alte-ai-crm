@@ -1006,4 +1006,31 @@ cd C:\tmp\alte-ai-crm\backend
 python -m app.scripts.verify_phase_8m_cors_decision
 ```
 
+## Phase 8N Website Privacy Approval Gate
+
+Phase 8N prepares the final gate for the actual Alte website widget embed. It does not modify `alte.edu.ge` or `join.alte.edu.ge`.
+
+Files:
+
+- `docs/deployment/WEBSITE_EMBED_APPROVAL_GATE.md`
+- `docs/deployment/PRIVACY_CONSENT_APPROVAL.md`
+- `docs/deployment/FINAL_WIDGET_EMBED_GO_NO_GO.md`
+- `docs/deployment/WIDGET_FINAL_ASSET_URL_DECISION.md`
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL
+```
+
+Actual site embed remains blocked until website access, privacy approval, final asset URL, and real-domain smoke ownership are approved.
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8n_website_privacy_gate
+```
+
 The page uses the production backend. Do not enter real student data unless production test records are approved.
