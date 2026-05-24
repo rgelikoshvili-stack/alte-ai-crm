@@ -35,6 +35,39 @@ def test_phase_8s_missing_decision_normalizes_to_none():
     assert apply_official_content_review.normalize_decision(None) is None
 
 
+def test_phase_8s_reviewer_decision_column_is_required_for_apply(tmp_path: Path):
+    sample = tmp_path / "queue.csv"
+    sample.write_text(
+        "source_key,title,category,status,review_required,recommended_action\n"
+        "source-1,Title,finance,review_required,true,APPROVE\n",
+        encoding="utf-8",
+    )
+
+    rows = apply_official_content_review.load_review_rows(sample)
+    summary = apply_official_content_review.summarize_rows(
+        rows,
+        decision_column_present=apply_official_content_review.reviewer_decision_column_present(sample),
+    )
+
+    assert summary["decision_column_present"] is False
+    assert summary["valid_decisions"] == 0
+    assert summary["missing_decisions"] == 1
+
+
+def test_phase_8s_recommended_action_alone_is_not_decision(tmp_path: Path):
+    sample = tmp_path / "queue.csv"
+    sample.write_text(
+        "source_key,title,category,status,review_required,recommended_action\n"
+        "source-1,Title,admissions,review_required,true,APPROVE\n",
+        encoding="utf-8",
+    )
+
+    rows = apply_official_content_review.load_review_rows(sample)
+
+    assert rows[0].recommended_action == "APPROVE"
+    assert rows[0].decision is None
+
+
 def test_phase_8s_apply_result_records_dry_run():
     assert verify_phase_8s_content_review_apply_docs.apply_result_records_dry_run().passed is True
 

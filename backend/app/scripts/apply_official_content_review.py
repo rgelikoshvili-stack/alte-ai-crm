@@ -53,6 +53,12 @@ def normalize_decision(value: str | None) -> str | None:
     return decision
 
 
+def reviewer_decision_column_present(csv_path: Path = CSV_PATH) -> bool:
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        return "decision" in (reader.fieldnames or [])
+
+
 def load_review_rows(csv_path: Path = CSV_PATH) -> list[ReviewRow]:
     rows: list[ReviewRow] = []
     with csv_path.open(newline="", encoding="utf-8") as handle:
@@ -73,14 +79,21 @@ def load_review_rows(csv_path: Path = CSV_PATH) -> list[ReviewRow]:
     return rows
 
 
-def summarize_rows(rows: list[ReviewRow]) -> dict[str, int | str | list[str]]:
+def summarize_rows(
+    rows: list[ReviewRow], *, decision_column_present: bool | None = None
+) -> dict[str, int | str | bool | list[str]]:
     warnings: list[str] = []
+    if decision_column_present is None:
+        decision_column_present = reviewer_decision_column_present()
     missing_decisions = sum(1 for row in rows if row.decision is None)
     valid_decisions = len(rows) - missing_decisions
+    if not decision_column_present:
+        warnings.append("Reviewer decision column missing; recommended_action is not treated as a reviewer decision.")
     if missing_decisions:
         warnings.append("Reviewer decisions missing; --apply should not be run automatically.")
     return {
         "total_rows": len(rows),
+        "decision_column_present": decision_column_present,
         "valid_decisions": valid_decisions,
         "missing_decisions": missing_decisions,
         "approve_count": sum(1 for row in rows if row.decision == "APPROVE"),
@@ -98,7 +111,7 @@ def summarize_rows(rows: list[ReviewRow]) -> dict[str, int | str | list[str]]:
     }
 
 
-async def apply_decisions(rows: list[ReviewRow], *, apply: bool) -> dict[str, int | str | list[str]]:
+async def apply_decisions(rows: list[ReviewRow], *, apply: bool) -> dict[str, int | str | bool | list[str]]:
     summary = summarize_rows(rows)
     summary["mode"] = "apply" if apply else "dry-run"
     summary["applied_count"] = 0

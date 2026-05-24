@@ -20,4 +20,4 @@ Current status: `PENDING`
 
 Phase 8S apply status: `DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
 
-No checklist item has been marked complete by automation. Reviewer decisions are still required.
+Phase 8S-Apply re-check confirmed the review queue still has no reviewer-owned `decision` column. Generated `recommended_action` values were not treated as reviewer decisions. No checklist item has been marked complete by automation. Reviewer decisions are still required.

@@ -2,15 +2,18 @@
 
 ## Run Metadata
 
-- Date/time: `2026-05-24 14:46:45 +04:00`
+- Date/time: `2026-05-24 15:23:15 +04:00`
 - CSV used: `backend/reports/knowledge_review_queue.csv`
 - Dry-run command: `python -m app.scripts.apply_official_content_review --dry-run`
 - Apply command: not run
+- Reviewer decision column present: NO
+- Reviewer decisions found: NO
 
 ## Dry-Run Summary
 
 - `mode`: `dry-run`
 - `total_rows`: 26
+- `decision_column_present`: false
 - `valid_decisions`: 0
 - `missing_decisions`: 26
 - `approve_count`: 0
@@ -19,12 +22,14 @@
 - `handover_only_count`: 3
 - `needs_official_source_count`: 6
 - `applied_count`: 0
-- `warnings`: Reviewer decisions missing; `--apply` should not be run automatically.
+- `warnings`:
+  - Reviewer decision column missing; `recommended_action` is not treated as a reviewer decision.
+  - Reviewer decisions missing; `--apply` should not be run automatically.
 
 ## Apply Status
 
 - `--apply` was run: NO
-- Reason: no explicit reviewer decisions were present in the review queue.
+- Reason: the review queue does not contain a reviewer-owned `decision` column; generated `recommended_action` values are not reviewer decisions.
 - Current official review status: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING`
 - Public launch status: BLOCKED
 

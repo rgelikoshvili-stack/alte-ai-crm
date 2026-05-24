@@ -66,6 +66,7 @@ def apply_result_records_dry_run() -> Phase8SCheck:
     required = [
         "Dry-Run Summary",
         "`total_rows`: 26",
+        "`decision_column_present`: false",
         "`valid_decisions`: 0",
         "`missing_decisions`: 26",
         "OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS",
@@ -78,7 +79,7 @@ def apply_result_records_apply_status() -> Phase8SCheck:
     text = (DEPLOYMENT_DOCS / "OFFICIAL_CONTENT_REVIEW_APPLY_RESULT.md").read_text(encoding="utf-8")
     required = [
         "`--apply` was run: NO",
-        "Reason: no explicit reviewer decisions were present",
+        "reviewer-owned `decision` column",
         "`applied_count`: 0",
     ]
     missing = [item for item in required if item not in text]

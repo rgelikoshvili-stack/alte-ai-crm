@@ -1222,6 +1222,8 @@ Phase 8S inspected the exported review queue and ran the content review apply wo
 Result:
 
 - Explicit reviewer decisions found: 0
+- Reviewer `decision` column present: no
+- `recommended_action` values treated as reviewer decisions: no
 - Dry-run rows: 26
 - Apply run: no
 - Applied count: 0

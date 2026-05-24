@@ -187,6 +187,8 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
   - public launch remains blocked until official review is approved
 - Phase 8S official content review apply dry-run completed:
   - explicit reviewer decisions found: 0
+  - reviewer `decision` column present: NO
+  - `recommended_action` values treated as reviewer decisions: NO
   - `--apply` run: NO
   - applied count: 0
   - sensitive fully approved count: 0

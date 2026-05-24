@@ -56,8 +56,10 @@ OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
 
 - Review apply dry-run completed.
 - Explicit reviewer decisions present: NO
+- Reviewer `decision` column present: NO
+- Generated `recommended_action` values were not treated as reviewer decisions.
 - `--apply` run: NO
-- Reason: no explicit reviewer decisions were present in the review queue.
+- Reason: the review queue does not contain a reviewer-owned `decision` column.
 - Apply status: `OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
 - Official approval is still pending.
 

@@ -443,7 +443,9 @@ Next recommended phase:
 ## Phase 8S: Official Content Review Apply
 
 - Review queue inspected: `backend/reports/knowledge_review_queue.csv`
+- Reviewer `decision` column present: NO
 - Explicit reviewer decisions found: 0
+- `recommended_action` values are not reviewer decisions and were not applied.
 - Apply dry-run completed.
 - Apply command was not run.
 - Sensitive content remains pending/review-required.

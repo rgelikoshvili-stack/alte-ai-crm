@@ -113,7 +113,7 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
 | Website | Safe smoke after test knowledge seed | Done: contact-flow not run; no intentional lead/task creation |
 | Website | Official content review gate | Done: report, checklist, public-answer policy, review queue template |
 | Website | Official content review status | Pending: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING` |
-| Website | Official content review apply dry-run | Done: no explicit reviewer decisions, no apply run, no content auto-approved |
+| Website | Official content review apply dry-run | Done: reviewer `decision` column missing, no explicit reviewer decisions, no apply run, no content auto-approved |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

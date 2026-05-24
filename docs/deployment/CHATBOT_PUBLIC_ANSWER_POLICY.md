@@ -18,4 +18,4 @@ Operational guardrails:
 - Finance, deadline, Medicine/MD, international admissions, visa, relocation, and legal topics remain conservative until official sources are approved.
 - Review-required content may support controlled testing, but it must not be treated as final public official wording.
 - Public launch remains blocked until official content review and privacy approval are complete.
-- Phase 8S dry-run found no explicit reviewer decisions, so conservative policy remains active and no official content was automatically approved.
+- Phase 8S-Apply re-check found no reviewer-owned `decision` column. Generated `recommended_action` values are not reviewer decisions, so conservative policy remains active and no official content was automatically approved.
