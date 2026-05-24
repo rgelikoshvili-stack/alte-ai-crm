@@ -105,3 +105,25 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
 ```
+
+## Phase 9D-UI-Final Exact Pro Sidebar Update
+
+Selected widget:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+The final preferred UI is now the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.
+
+- Left sidebar department navigation is required.
+- Right chat area includes header, KA/EN switch, reset control, trust/source bar, messages, quick chips, source cards, handover/operator card, contact request UI, and composer.
+- The widget sends `selected_department`, `selected_topic`, `source_domain`, `language`, `page_url`, and `widget_variant=safe_pro_sidebar` to the backend.
+- The frontend does not call Anthropic directly, expose keys, own the system prompt, create CRM records, or hardcode official sensitive facts.
+- Actual embed remains blocked until approvals, final asset URL, backend redeploy for department routing, and real-domain smoke are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```

@@ -22,6 +22,16 @@ def test_sidebar_widget_sends_selected_department_context():
     assert "selected_department" in text
     assert "selected_topic" in text
     assert "safe_pro_sidebar" in text
+    assert "metadata_json" in text
+
+
+def test_sidebar_widget_contains_quick_chips_and_handover_logic():
+    text = verify_phase_9d_sidebar_widget_ui.SAFE_PRO_WIDGET.read_text(encoding="utf-8")
+    assert "quickChips" in text
+    assert "quick-row" in text
+    assert "handover-card" in text
+    assert "Human Operator" in text
+    assert "ოპერატორი" in text
 
 
 def test_sidebar_widget_has_no_direct_anthropic_endpoint():
@@ -30,6 +40,10 @@ def test_sidebar_widget_has_no_direct_anthropic_endpoint():
 
 def test_sidebar_widget_contains_backend_chat_endpoints():
     assert verify_phase_9d_sidebar_widget_ui.backend_wiring_present().passed is True
+
+
+def test_standalone_demo_references_exact_pro_sidebar_layout():
+    assert verify_phase_9d_sidebar_widget_ui.standalone_demo_references_sidebar().passed is True
 
 
 def test_decision_doc_exists():

@@ -21,7 +21,7 @@ REAL_DOMAIN_SMOKE = PROJECT_ROOT / "docs" / "deployment" / "REAL_DOMAIN_WIDGET_S
 FINAL_GATE = PROJECT_ROOT / "docs" / "deployment" / "FINAL_PRE_EMBED_APPROVAL_GATE.md"
 
 PRODUCTION_BACKEND_URL = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
-DECISION_STATE = "BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED"
+DECISION_STATE = "BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED"
 DOCS = [DECISION_DOC, README, NEXT_PHASES, DESIGN_REVIEW, SNIPPET_DOC, REAL_DOMAIN_SMOKE, FINAL_GATE]
 
 SECRET_PATTERNS = [
@@ -55,6 +55,8 @@ def required_files_exist() -> list[Check]:
 def sidebar_structure_present() -> Check:
     text = SAFE_PRO_WIDGET.read_text(encoding="utf-8") if SAFE_PRO_WIDGET.exists() else ""
     required = [
+        "sidebar",
+        "department",
         "alte-sidebar",
         "dept-list",
         "selected_department",
@@ -66,6 +68,9 @@ def sidebar_structure_present() -> Check:
         "medicine",
         "student_services",
         "it_support",
+        "handover",
+        "operator",
+        "quick",
     ]
     missing = [item for item in required if item not in text]
     return Check("Safe Pro widget contains sidebar department structure", not missing, ", ".join(missing))
@@ -86,9 +91,9 @@ def safe_widget_has_no_forbidden_frontend_ai() -> Check:
 
 def standalone_demo_references_sidebar() -> Check:
     text = STANDALONE_DEMO.read_text(encoding="utf-8") if STANDALONE_DEMO.exists() else ""
-    required = ["sidebar Pro layout", "browser -> FastAPI backend", "alte-university-ai-chatbot-safe-pro.html"]
+    required = ["Exact Pro Sidebar Layout", "Browser calls only FastAPI backend", "alte-university-ai-chatbot-safe-pro.html"]
     missing = [item for item in required if item not in text]
-    return Check("Standalone demo references sidebar Pro layout", not missing, ", ".join(missing))
+    return Check("Standalone demo references Exact Pro Sidebar Layout", not missing, ", ".join(missing))
 
 
 def decision_state_documented() -> Check:

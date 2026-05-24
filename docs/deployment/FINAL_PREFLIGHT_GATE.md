@@ -185,3 +185,20 @@ Decision state:
 ```text
 BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
 ```
+
+## Phase 9D-UI-Final Exact Pro Sidebar Widget
+
+- Final widget rebuilt as exact functional Pro Sidebar layout: `widget/alte-university-ai-chatbot-safe-pro.html`.
+- Compact/PIP alternate archived: `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`.
+- Standalone demo updated: `widget/standalone-safe-pro-demo.html`.
+- Sidebar departments and quick chips send `selected_department` and `selected_topic` context to backend.
+- Handover/operator UI, contact request UI, source cards, trust bar, KA/EN switch, reset, and composer are present.
+- Browser calls only FastAPI backend endpoints.
+- Frontend does not call Anthropic, expose secrets, create CRM records, or hardcode sensitive official facts.
+- Public launch and actual embed are not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```

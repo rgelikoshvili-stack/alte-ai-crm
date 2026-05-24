@@ -272,6 +272,24 @@ BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 
 Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
 
+## Phase 9D-UI-Final Exact Pro Sidebar Widget
+
+The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.
+
+- Final widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Archived compact/PIP alternate: `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`
+- Standalone demo: `widget/standalone-safe-pro-demo.html`
+- Sidebar departments and quick chips send `selected_department` and `selected_topic` context to the backend.
+- The browser calls only the FastAPI backend endpoints: `/chat/session/start` and `/chat/message`.
+- The frontend does not call Anthropic directly, expose secrets, own the system prompt, create CRM records, or hardcode sensitive official facts.
+- Actual site embed and public launch remain blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```
+
 ## Phase 9C Final Pre-Embed Gate
 
 The final pre-embed approval gate has been created.

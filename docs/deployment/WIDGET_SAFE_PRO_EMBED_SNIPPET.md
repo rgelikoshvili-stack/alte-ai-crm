@@ -25,6 +25,26 @@ widget/alte-university-ai-chatbot-safe-pro.html
 
 The current candidate is a standalone HTML widget. For production, host it as a reviewed static asset on an approved Alte-controlled domain or approved static asset location.
 
+## Exact Pro Sidebar Candidate
+
+The final preferred widget is now the exact Safe Pro Sidebar layout:
+
+```text
+widget/alte-university-ai-chatbot-safe-pro.html
+```
+
+This widget is larger than the compact PIP alternate and needs an approved placement. Recommended placements:
+
+- dedicated admissions/help page;
+- embedded support section;
+- bottom-right fixed panel only if resized and approved by the website owner.
+
+The compact PIP version remains archived as an alternate:
+
+```text
+widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html
+```
+
 ## Example Iframe Embed
 
 Replace `https://assets.example.alte.edu.ge/widget/alte-university-ai-chatbot-safe-pro.html` with the final approved asset URL.
@@ -33,7 +53,7 @@ Replace `https://assets.example.alte.edu.ge/widget/alte-university-ai-chatbot-sa
 <iframe
   src="https://assets.example.alte.edu.ge/widget/alte-university-ai-chatbot-safe-pro.html"
   title="Alte AI Chatbot"
-  style="position:fixed;right:0;bottom:0;width:430px;height:720px;border:0;z-index:9999;background:transparent;"
+  style="width:min(1080px,100%);height:760px;border:0;background:transparent;"
   loading="lazy"
 ></iframe>
 ```
@@ -69,9 +89,9 @@ window.AlteChatWidgetConfig = {
 - Actual website embed approval.
 - Real-domain browser smoke from `alte.edu.ge` and `join.alte.edu.ge`.
 
-## Phase 9D-UI Sidebar Decision
+## Phase 9D-UI-Final Sidebar Decision
 
-The preferred widget UI is now the Safe Pro Sidebar Layout:
+The preferred widget UI is now the exact functional Safe Pro Sidebar Layout:
 
 ```text
 widget/alte-university-ai-chatbot-safe-pro.html
@@ -83,12 +103,12 @@ The compact PIP version is archived as an alternate:
 widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html
 ```
 
-The sidebar widget sends `selected_department`, `selected_topic`, and `widget_variant=safe_pro_sidebar` to the backend.
+The sidebar widget sends `selected_department`, `selected_topic`, `metadata`, `metadata_json`, and `widget_variant=safe_pro_sidebar` to the backend. It renders backend replies, sources, contact requests, and handover/operator cards, but it never creates CRM records in the frontend.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
 ```
 
 ## Phase 9C Gate

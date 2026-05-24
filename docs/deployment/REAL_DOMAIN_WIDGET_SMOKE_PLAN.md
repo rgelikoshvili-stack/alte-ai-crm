@@ -57,3 +57,25 @@ REAL_DOMAIN_WIDGET_SMOKE_STATUS=PENDING_ACTUAL_EMBED
 ```
 
 Phase 9D routing code requires redeploy before this plan can verify production behavior.
+
+## Phase 9D-UI-Final Exact Pro Sidebar Addendum
+
+Real-domain smoke must verify the exact functional Pro Sidebar layout:
+
+- Left sidebar remains visible on desktop and does not break page layout.
+- Active department highlighting works.
+- Department clicks update the selected department label.
+- Quick chips send messages to the backend with `selected_department` and `selected_topic`.
+- Human Operator sends a human request with the active department context.
+- Handover/operator card shows the correct department when backend returns handover/routing fields.
+- Source cards render only backend-returned sources.
+- Contact request UI appears only when backend asks for phone/email.
+- Browser network calls go only to the production FastAPI backend, not Anthropic.
+- No contact details are sent during safe smoke.
+- No intentional production lead/task/customer is created during safe smoke.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```

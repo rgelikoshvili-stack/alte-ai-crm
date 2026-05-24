@@ -680,3 +680,17 @@ Next recommended phase:
 - Frontend remains backend-connected only.
 - Actual embed remains pending.
 - Decision state: `BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED`
+
+## Phase 9D-UI-Final: Exact Pro Sidebar Widget Functionality
+
+- Safe Pro widget rebuilt as the exact functional Pro Sidebar layout selected from the uploaded design ZIP/screenshots.
+- Compact/PIP remains archived as an alternate at `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`.
+- Final widget: `widget/alte-university-ai-chatbot-safe-pro.html`.
+- Demo: `widget/standalone-safe-pro-demo.html`.
+- Left sidebar department clicks set `selected_department` and `selected_topic`.
+- Department quick chips send the selected context to the backend.
+- Human Operator sends a human request with the active department context.
+- Widget renders backend replies, source cards, contact requests, and handover/operator cards.
+- Frontend remains safe: no direct Anthropic call, no API key, no frontend system prompt ownership, no frontend CRM record creation, and no frontend hardcoded tuition/deadline facts.
+- Actual embed and public launch remain pending.
+- Decision state: `BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED`

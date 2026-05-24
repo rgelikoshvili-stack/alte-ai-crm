@@ -72,6 +72,23 @@ Decision state:
 BACKEND_DEPLOYED_SAFE_PRO_SIDEBAR_WIDGET_READY_PENDING_REDEPLOY_AND_SITE_EMBED
 ```
 
+## Phase 9D-UI-Final Update
+
+The selected widget has been rebuilt as the exact functional Pro Sidebar layout from the uploaded ZIP/screenshots.
+
+- Final candidate: `widget/alte-university-ai-chatbot-safe-pro.html`
+- Archived compact alternate: `widget/archive/alte-university-ai-chatbot-safe-pro-pip-archive.html`
+- Required Pro design elements are present: left department sidebar, right chat area, top header, KA/EN switch, reset control, trust/source bar, message bubbles, source cards, handover/operator card, contact request UI, quick chips, and bottom composer.
+- Sidebar selection sends `selected_department` and `selected_topic` context to the backend.
+- The frontend uses only the FastAPI backend and does not call Anthropic directly.
+- The frontend does not create CRM records and does not hardcode sensitive official facts as final truth.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+```
+
 ## Phase 9B Status
 
 The uploaded design concepts have been imported as evidence, and a safe production candidate has been created at `widget/alte-university-ai-chatbot-safe-pro.html`.
