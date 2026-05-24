@@ -117,8 +117,9 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
 | Website | Reviewer decision CSV | Done: `backend/reports/knowledge_review_queue_for_review.csv` prepared with blank `decision` column |
 | Website | Alte study docs Knowledge Base import | Done: copied local study docs, normalized 11 records, imported 11 sources / 11 snippets into Knowledge Base; sensitive records remain review-required |
 | Website | Full local Alte KB import | Done: copied local full KB/prototype evidence, normalized 647 records, imported 240 sources and 645 snippets into Knowledge Base; 379 sensitive records remain review-required |
-| Website | Production knowledge smoke after study docs | Needs review: `22 passed`, `1 failed`; tuition no-contact response returned `should_create_lead=true` with no lead/task IDs |
-| Website | Finance no-contact lead guard | Code fixed locally: finance/tuition/scholarship/deadline info questions without phone/email force `should_create_lead=false`; production redeploy required |
+| Website | Production knowledge smoke after study docs | Original Phase 8W review item resolved by Phase 8Y-Redeploy; latest broader knowledge smoke `25 passed`, `0 failed` |
+| Website | Finance no-contact lead guard | Deployed and verified: finance/tuition/scholarship/deadline info questions without phone/email force `should_create_lead=false`; finance smoke `24 passed`, `0 failed` |
+| Website | Phase 8Y-Redeploy finance no-contact guard | Done: deployed image `v0.8-finance-no-contact-guard` to `alte-ai-crm-backend-00004-gsn`; finance smoke `24 passed`, broader knowledge smoke `25 passed`; no contact-flow/contact details/intentional lead-task-customer creation |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

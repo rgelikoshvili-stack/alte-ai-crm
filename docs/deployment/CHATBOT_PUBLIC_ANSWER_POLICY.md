@@ -37,4 +37,6 @@ Operational guardrails:
 - Phase 8S-Apply re-check found no reviewer-owned `decision` column. Generated `recommended_action` values are not reviewer decisions, so conservative policy remains active and no official content was automatically approved.
 - Phase 8W smoke found a tuition/finance no-contact lead bug: one tuition no-contact response returned `should_create_lead=true` despite no lead/task IDs.
 - Phase 8Y service-layer guard fixed locally: finance, tuition, scholarship, grant, and deadline information questions without phone/email force `should_create_lead=false`, do not create customer/lead/task, and do not force phone/email unless the user asks for consultation or human follow-up.
-- Production redeploy required before this Phase 8Y behavior reaches Cloud Run.
+- Phase 8Y-Redeploy deployed this behavior to Cloud Run with image tag `v0.8-finance-no-contact-guard`.
+- Production finance no-contact smoke passed: `24 passed`, `0 failed`; broader knowledge smoke passed: `25 passed`, `0 failed`.
+- Contact-flow test was not run, no contact details were sent, and no intentional production lead/task/customer creation occurred.

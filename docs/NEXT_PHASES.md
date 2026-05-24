@@ -496,18 +496,19 @@ Next recommended phase:
 
 - Production backend endpoints: `/health`, `/version`, `/diagnostics/ai` all returned `200`.
 - Knowledge smoke after study-docs import completed.
-- Status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`
+- Original status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`, resolved by Phase 8Y-Redeploy
 - Assertions: `22 passed`, `1 failed`
 - Contact-flow test run: no
 - Contact details sent: no
 - Intentional lead/task/customer creation: no
 - Sensitive exact tuition/deadline behavior stayed conservative.
 - Failure to review: one tuition no-contact response returned `should_create_lead=true`, with `created_lead_id=null` and `created_task_id=null`.
-- Decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW`
+- Original decision state: `BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW`
+- Current resolved decision state: `BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
 
-Next recommended phase:
+Resolution:
 
-- Fix or adjust the finance/tuition no-contact `should_create_lead` behavior, then redeploy and rerun Phase 8W smoke.
+- Phase 8Y-Redeploy deployed `v0.8-finance-no-contact-guard`; finance smoke passed `24/24` and broader knowledge smoke passed `25/25`.
 
 ## Full Local Alte KB Import
 
@@ -537,12 +538,12 @@ Next recommended phase:
   - finance/tuition/scholarship/deadline information questions without phone/email return `should_create_lead=false`
   - no customer/lead/task is created
   - sensitive finance content remains review-required
-- Production redeploy required before Cloud Run behavior changes.
-- Decision state: `BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY`
+- Production redeploy completed in Phase 8Y-Redeploy.
+- Decision state: `BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
 
-Next recommended phase:
+Resolution:
 
-- Build and deploy a new Cloud Run revision with the finance no-contact guard, then rerun safe production knowledge smoke.
+- New Cloud Run revision `alte-ai-crm-backend-00004-gsn` is serving image `v0.8-finance-no-contact-guard`.
 
 ## Phase 8Z: Safe Uploaded Chatbot UI
 
@@ -558,6 +559,25 @@ Next recommended phase:
 Next recommended phase:
 
 - Redeploy Phase 8Y backend fix to Cloud Run, then run safe production smoke again.
+
+## Phase 8Y-Redeploy: Finance No-Contact Guard Verified
+
+- Deployed image tag: `v0.8-finance-no-contact-guard`
+- Cloud Run service: `alte-ai-crm-backend`
+- Previous revision: `alte-ai-crm-backend-00003-x84`
+- New revision: `alte-ai-crm-backend-00004-gsn`
+- Endpoint checks: `/health=200`, `/version=200`, `/diagnostics/ai=200`
+- Finance no-contact smoke: `24 passed`, `0 failed`
+- Broader production knowledge smoke: `25 passed`, `0 failed`
+- No contact-flow test run.
+- No contact details sent.
+- No intentional production lead/task/customer creation.
+- Finance/tuition/scholarship/deadline no-contact behavior now returns `should_create_lead=false` with no created IDs.
+- Decision state: `BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
+
+Next recommended phase:
+
+- Have a human reviewer fill `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`, then apply official decisions only through the content review flow.
 
 Only after:
 

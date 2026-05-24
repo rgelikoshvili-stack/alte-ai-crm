@@ -1287,9 +1287,9 @@ Production endpoint checks passed after the study-docs Knowledge Base import:
 - `/version`: `200`
 - `/diagnostics/ai`: `200`, Claude enabled, no secrets exposed
 
-Safe no-contact knowledge smoke status:
+Original Phase 8W safe no-contact knowledge smoke status:
 
-- Status: `FAILED_NEEDS_REVIEW`
+- Original status: `FAILED_NEEDS_REVIEW`, resolved by Phase 8Y-Redeploy
 - Assertions: `22 passed`, `1 failed`
 - Contact-flow test run: no
 - Contact details sent: no
@@ -1297,10 +1297,16 @@ Safe no-contact knowledge smoke status:
 - Sensitive answers stayed conservative for exact tuition/deadline checks
 - Failure: one tuition question returned `should_create_lead=true` without contact details, although `created_lead_id=null` and `created_task_id=null`
 
-Decision:
+Original decision, now superseded by Phase 8Y-Redeploy:
 
 ```text
 BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
+```
+
+Current resolved decision:
+
+```text
+BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
 Public launch remains blocked.
@@ -1333,18 +1339,19 @@ Public launch remains blocked pending reviewer decisions, privacy approval, fina
 
 The Phase 8W smoke found a tuition/finance no-contact lead bug: a tuition question without phone/email returned `should_create_lead=true` even though no lead/task IDs were created.
 
-The service-layer guard is fixed locally:
+The service-layer guard is deployed and verified in production:
 
 - finance/tuition/scholarship/deadline questions without phone/email force `should_create_lead=false`
 - no customer, lead, or task is created for no-contact finance information requests
 - phone/email is not forced for pure information finance questions
 - sensitive finance content remains `review_required=true`
-- production redeploy required before this behavior reaches Cloud Run
+- deployed to Cloud Run as `v0.8-finance-no-contact-guard`
+- finance no-contact smoke passed `24/24`; broader knowledge smoke passed `25/25`
 
 Decision:
 
 ```text
-BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY
+BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
 ## Phase 8Z Safe Uploaded Widget UI
@@ -1366,3 +1373,34 @@ Decision:
 ```text
 BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_SAFE_WIDGET_UI_READY_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 8Y-Redeploy Finance No-Contact Guard
+
+The Phase 8Y finance/tuition no-contact guard has been deployed to Cloud Run.
+
+- Cloud Run service: `alte-ai-crm-backend`
+- Image tag: `v0.8-finance-no-contact-guard`
+- Previous revision: `alte-ai-crm-backend-00003-x84`
+- New revision: `alte-ai-crm-backend-00004-gsn`
+- `/health`: 200
+- `/version`: 200
+- `/diagnostics/ai`: 200, Claude enabled, no secrets exposed
+- Finance no-contact smoke: `24 passed`, `0 failed`
+- Broader knowledge smoke: `25 passed`, `0 failed`
+- Contact-flow test: not run
+- Contact details sent: no
+- Intentional production lead/task/customer creation: no
+
+Verified production behavior:
+
+- finance/tuition/scholarship/deadline no-contact questions return `should_create_lead=false`
+- `created_customer_id=null`, `created_lead_id=null`, and `created_task_id=null`
+- sensitive tuition/deadline answers remain conservative and review-governed
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```
+
+Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, and real-domain browser smoke are completed.

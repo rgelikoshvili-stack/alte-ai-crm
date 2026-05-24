@@ -1,8 +1,8 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW`
+Current decision: `BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, the reviewer decision CSV is prepared, and local Alte study/planning documents have been imported into the Knowledge Base for controlled chatbot testing. Phase 8W production knowledge smoke found one review item: a tuition no-contact response returned `should_create_lead=true` while no lead/task IDs were created. No reviewer decisions are filled yet, so no content was automatically approved for full public launch. Full production launch remains blocked until the Phase 8W review item, reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, the reviewer decision CSV is prepared, and local Alte study/planning documents have been imported into the Knowledge Base for controlled chatbot testing. Phase 8Y-Redeploy resolved the Phase 8W finance/tuition no-contact review item by deploying image `v0.8-finance-no-contact-guard`; finance no-contact smoke passed `24/24` and broader knowledge smoke passed `25/25`. No reviewer decisions are filled yet, so no content was automatically approved for full public launch. Full production launch remains blocked until reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -219,12 +219,13 @@ Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED
   - review-required records: 379
   - sensitive official facts remain review-required and are not public-approved automatically
   - decision state: `BACKEND_DEPLOYED_FULL_LOCAL_KB_IMPORTED_PENDING_HUMAN_REVIEW`
-- Phase 8Y finance no-contact lead guard fixed locally:
+- Phase 8Y finance no-contact lead guard deployed and verified:
   - tuition/finance no-contact lead bug found in Phase 8W
   - finance/tuition/scholarship/deadline information questions without phone/email now force `should_create_lead=false`
   - no customer/lead/task is created for no-contact finance information requests
-  - production redeploy required before Cloud Run behavior changes
-  - decision state: `BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY`
+  - deployed to Cloud Run with image tag `v0.8-finance-no-contact-guard`
+  - finance no-contact smoke passed `24/24`; broader knowledge smoke passed `25/25`
+  - decision state: `BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers
@@ -236,7 +237,7 @@ Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Official content/privacy review pending before public launch.
 - Official content review pending before public launch.
-- Phase 8W tuition no-contact `should_create_lead=true` behavior needs review.
+- Phase 8W tuition no-contact `should_create_lead=true` behavior resolved by Phase 8Y-Redeploy.
 - Full public launch approval pending.
 
 ## No-Go If
@@ -248,3 +249,25 @@ Previous study-docs import state `BACKEND_DEPLOYED_STUDY_DOCS_KNOWLEDGE_IMPORTED
 - [ ] Cloud SQL is not planned.
 - [ ] CORS uses wildcard.
 - [ ] No rollback plan exists.
+## Phase 8Y-Redeploy Update
+
+The finance/tuition no-contact guard has been deployed to Cloud Run and verified in production.
+
+- Image tag: `v0.8-finance-no-contact-guard`
+- Previous revision: `alte-ai-crm-backend-00003-x84`
+- New revision: `alte-ai-crm-backend-00004-gsn`
+- Endpoint checks: `/health=200`, `/version=200`, `/diagnostics/ai=200`
+- Finance no-contact smoke: `24 passed`, `0 failed`
+- Broader knowledge smoke: `25 passed`, `0 failed`
+- Contact-flow test: not run
+- Contact details sent: no
+- Intentional production lead/task/customer creation: no
+- Finance/tuition/scholarship/deadline no-contact responses now keep `should_create_lead=false` and no created IDs.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```
+
+Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.

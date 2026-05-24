@@ -46,13 +46,13 @@ EN / `join.alte.edu.ge`:
 - Total assertions: `23`
 - Passed: `22`
 - Failed: `1`
-- Status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`
+- Original status: `PRODUCTION_KNOWLEDGE_SMOKE_AFTER_STUDY_DOCS_STATUS=FAILED_NEEDS_REVIEW`, resolved by Phase 8Y-Redeploy
 
 Failure:
 
 - Test: `no lead/task side effect: tuition`
 - Response summary: `intent=finance_question`, `confidence=0.95`, `answer_source_status=answered_from_approved_source`, `should_handover=true`, `should_create_lead=true`, `created_lead_id=null`, `created_task_id=null`, `missing_fields=["first_name","phone","email","specific_program"]`
-- Interpretation: the backend did not create lead/task IDs, but it still returned `should_create_lead=true` without contact details. This needs review before public launch because no-contact smoke expects `should_create_lead=false`.
+- Interpretation: the backend did not create lead/task IDs, but it still returned `should_create_lead=true` without contact details. This was fixed and verified in Phase 8Y-Redeploy.
 
 ## Behavior Notes
 
@@ -88,9 +88,9 @@ The smoke test used production chat endpoints, so normal conversation/message pe
 - Final widget asset URL pending
 - Actual site embed pending
 - Real-domain browser smoke pending
-- Tuition no-contact `should_create_lead=true` behavior needs review
+- Tuition no-contact `should_create_lead=true` behavior resolved by Phase 8Y-Redeploy
 
-Decision state:
+Original decision state, now superseded:
 
 ```text
 BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
@@ -98,15 +98,34 @@ BACKEND_DEPLOYED_STUDY_DOCS_KB_SMOKE_FAILED_NEEDS_REVIEW
 
 ## Phase 8Y Follow-Up
 
-The tuition/finance no-contact lead bug from this smoke result has been fixed locally in the service layer.
+The tuition/finance no-contact lead bug from this smoke result has been fixed in the service layer and deployed to Cloud Run.
 
 - finance/tuition/scholarship/deadline questions without phone/email now force `should_create_lead=false`
 - no customer/lead/task is created for no-contact finance information requests
 - sensitive finance content remains review-required and conservative
-- production redeploy required before Cloud Run behavior changes
+- production redeploy completed with image tag `v0.8-finance-no-contact-guard`
 
-Decision state:
+Superseded decision state:
 
 ```text
 BACKEND_CODE_FIXED_FINANCE_NO_CONTACT_GUARD_PENDING_REDEPLOY
+```
+
+## Phase 8Y-Redeploy Resolution
+
+The finance no-contact guard fix has now been deployed to Cloud Run.
+
+- Image tag: `v0.8-finance-no-contact-guard`
+- New revision: `alte-ai-crm-backend-00004-gsn`
+- Finance no-contact smoke after redeploy: `24 passed`, `0 failed`
+- Broader production knowledge smoke after redeploy: `25 passed`, `0 failed`
+- Contact-flow test: not run
+- Contact details sent: no
+- Intentional production lead/task/customer creation: no
+- Finance/tuition/scholarship/deadline no-contact responses now return `should_create_lead=false` with no created IDs.
+
+Updated decision state:
+
+```text
+BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
