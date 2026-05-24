@@ -171,3 +171,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
 ```
+
+## Phase 9D Department Routing Gate
+
+- Department-aware fallback/handover routing is implemented in backend code.
+- Safe Pro widget sends `selected_department` and `selected_topic`.
+- Backend response includes `route_department`, `department_key`, and `routing_reason`.
+- Production redeploy is required.
+- Public launch is not complete.
+
+Decision state:
+
+```text
+BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
+```

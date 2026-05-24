@@ -16,6 +16,7 @@ from app.schemas.crm import CustomerCreate, LeadCreate, TaskCreate
 from app.services.audit_service import audit_event
 from app.services.ai_service import analyze_with_ai
 from app.services.customer_service import create_or_update_customer
+from app.services.department_routing_service import DepartmentRoutingResult, resolve_department
 from app.services.lead_service import create_lead
 from app.services.lead_service import update_lead
 from app.services.qualification_service import apply_qualification_to_lead_create, build_qualification
@@ -58,7 +59,14 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         conversation_id=conversation.id,
         sender_type="user",
         text=payload.message,
-        metadata_json={"session_id": payload.session_id, "source_domain": payload.source_domain},
+        metadata_json={
+            "session_id": payload.session_id,
+            "source_domain": payload.source_domain,
+            "selected_department": payload.selected_department,
+            "selected_topic": payload.selected_topic,
+            "page_url": payload.page_url,
+            "widget_variant": payload.widget_variant,
+        },
     )
     db.add(user_message)
     await db.flush()
@@ -107,6 +115,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         analysis.reply = build_no_source_reply(analysis)
     apply_no_contact_lead_guard(analysis)
     apply_info_only_no_contact_guard(analysis)
+    routing = apply_department_routing(analysis, payload, knowledge)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -124,6 +133,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "intent": analysis.intent,
             "confidence": analysis.confidence,
             "risk_flags": analysis.risk_flags,
+            "route_department": routing.department,
+            "department_key": routing.department_key,
         },
     )
     await db.commit()
@@ -162,6 +173,10 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "qualification": analysis.qualification.model_dump(),
             "answer_source_status": knowledge["answer_source_status"],
             "used_sources": knowledge["used_sources"],
+            "route_department": routing.department,
+            "department_key": routing.department_key,
+            "routing_reason": routing.reason,
+            "handover_reason": routing.confidence_reason if analysis.should_handover else None,
         },
     )
     db.add(ai_reply)
@@ -188,10 +203,13 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         missing_fields=analysis.missing_fields,
         lead_score=analysis.qualification.lead_score,
         qualification_status=analysis.qualification.qualification_status,
-        handover_reason=analysis.qualification.handover_reason,
+        handover_reason=analysis.qualification.handover_reason or (routing.confidence_reason if analysis.should_handover else None),
         recommended_next_action=analysis.qualification.recommended_next_action,
         answer_source_status=knowledge["answer_source_status"],
         used_sources=knowledge["used_sources"],
+        route_department=routing.department,
+        department_key=routing.department_key,
+        routing_reason=routing.reason,
     )
 
 
@@ -393,6 +411,50 @@ def apply_info_only_no_contact_guard(analysis: AIAnalysisResult) -> None:
     analysis.missing_fields = [field for field in analysis.missing_fields if field != CONTACT_FIELD]
     if analysis.qualification.recommended_next_action in {"ask_phone_or_email", "create_follow_up_task"}:
         analysis.qualification.recommended_next_action = "answer_or_handover_without_lead"
+
+
+def apply_department_routing(
+    analysis: AIAnalysisResult,
+    payload: ChatMessageRequest,
+    knowledge: dict,
+) -> DepartmentRoutingResult:
+    routing = resolve_department(
+        message_text=payload.message,
+        ai_intent=analysis.intent,
+        ai_confidence=analysis.confidence,
+        source_domain=payload.source_domain or analysis.source_domain,
+        selected_department=payload.selected_department,
+        selected_topic=payload.selected_topic,
+        risk_flags=analysis.risk_flags,
+        used_sources=knowledge.get("used_sources") or analysis.used_sources,
+        language=payload.language or analysis.language,
+        ai_department=analysis.department,
+    )
+    analysis.department = routing.department
+    if routing.handover_required:
+        analysis.should_handover = True
+        if not has_contact(analysis):
+            analysis.should_create_lead = False
+        analysis.reply = ensure_handover_routing_reply(analysis, routing)
+    return routing
+
+
+def ensure_handover_routing_reply(analysis: AIAnalysisResult, routing: DepartmentRoutingResult) -> str:
+    if reply_mentions_department(analysis.reply, routing):
+        return analysis.reply
+    if analysis.language == "en":
+        return (
+            f"{analysis.reply} I can route this to {routing.department} so the correct advisor can confirm it."
+        )
+    return (
+        f"{analysis.reply} ამ საკითხს გადავამისამართებ შესაბამის გუნდთან: {routing.department}, "
+        "რათა დეტალები ოფიციალურად დაგიდასტურონ."
+    )
+
+
+def reply_mentions_department(reply: str, routing: DepartmentRoutingResult) -> bool:
+    lowered = reply.lower()
+    return routing.department.lower() in lowered or routing.department_key.replace("_", " ") in lowered
 
 
 def is_info_only_no_contact_question(analysis: AIAnalysisResult) -> bool:

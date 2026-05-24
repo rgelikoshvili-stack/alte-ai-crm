@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ka">
 <head>
   <meta charset="utf-8" />
@@ -150,6 +150,19 @@
       cursor: pointer;
     }
     .alte-chip:hover { border-color: var(--alte-teal); }
+    .alte-chip.active {
+      background: var(--alte-teal);
+      color: #fff;
+      border-color: var(--alte-teal);
+    }
+    .alte-context {
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--alte-line);
+      background: #fff;
+      color: var(--alte-muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
     .alte-messages {
       padding: 14px;
       overflow: auto;
@@ -264,6 +277,7 @@
       </header>
       <div class="alte-notice">საკონტაქტო მონაცემებს ვიყენებთ მხოლოდ კონსულტაციისთვის. No secrets run in this browser.</div>
       <div class="alte-chips" id="alteChips"></div>
+      <div class="alte-context" id="alteContext"></div>
       <div class="alte-messages" id="alteMessages"></div>
       <form class="alte-composer" id="alteForm">
         <input class="alte-input" id="alteInput" autocomplete="off" placeholder="დაწერეთ კითხვა..." />
@@ -286,48 +300,58 @@
       language: localStorage.getItem("alteSafeProLanguage") || cfg.defaultLanguage || "ka",
       sessionId: localStorage.getItem("alteSafeProSessionId"),
       conversationId: localStorage.getItem("alteSafeProConversationId"),
+      selectedDepartment: localStorage.getItem("alteSafeProSelectedDepartment") || "",
+      selectedTopic: localStorage.getItem("alteSafeProSelectedTopic") || "",
       busy: false
     };
 
     const labels = {
       ka: {
         placeholder: "დაწერეთ კითხვა...",
-        greeting: "გამარჯობა, მე ვარ Alte AI Assistant. შემიძლია დაგეხმაროთ პროგრამებზე, მიღებაზე, საფასურზე, საერთაშორისო მიღებაზე და ოპერატორთან გადამისამართებაზე.",
-        error: "კავშირი დროებით ვერ დამყარდა. სცადეთ მოგვიანებით ან დაუკავშირდით უნივერსიტეტს ოფიციალური არხით.",
+        greeting: "გამარჯობა, მე ვარ Alte AI Assistant. აირჩიეთ მიმართულება ან დამისვით კითხვა.",
+        error: "კავშირი დროებით მიუწვდომელია. სცადეთ მოგვიანებით ან დაუკავშირდით უნივერსიტეტს ოფიციალური არხით.",
         handover: "ადამიანთან გადამისამართება",
         contact: "საკონტაქტო ინფორმაცია საჭიროა",
+        context: "არჩეული მიმართულება",
+        noContext: "აირჩიეთ მიმართულება ან დასვით კითხვა",
         chips: [
-          ["პროგრამები", "რა პროგრამები აქვს ალტე უნივერსიტეტს?"],
-          ["მიღება", "როგორ ხდება ჩარიცხვა?"],
-          ["საფასური", "რა ღირს სწავლა?"],
-          ["საერთაშორისო", "მაინტერესებს საერთაშორისო მიღება"],
-          ["მედიცინა", "მაინტერესებს მედიცინის პროგრამა"],
-          ["ოპერატორი", "მინდა ადამიანთან საუბარი"]
+          { label: "პროგრამები", message: "რა პროგრამები აქვს ალტე უნივერსიტეტს?", department: "admissions", topic: "programs" },
+          { label: "მიღება", message: "როგორ ხდება ჩარიცხვა?", department: "admissions", topic: "admissions" },
+          { label: "საფასური", message: "რა ღირს სწავლა?", department: "finance", topic: "tuition" },
+          { label: "საერთაშორისო", message: "რა საბუთებია საჭირო საერთაშორისო სტუდენტებისთვის?", department: "international", topic: "international_admissions" },
+          { label: "მედიცინა", message: "მაინტერესებს მედიცინის პროგრამა", department: "medicine", topic: "medicine_md" },
+          { label: "სტუდ. სერვისები", message: "მაინტერესებს სტუდენტური სერვისები", department: "student_services", topic: "student_services" },
+          { label: "IT", message: "პორტალზე შესვლის ტექნიკური პრობლემა მაქვს", department: "it_support", topic: "technical_support" },
+          { label: "ოპერატორი", message: "მინდა ადამიანთან საუბარი", department: "general", topic: "human_request" }
         ]
       },
       en: {
         placeholder: "Type your question...",
-        greeting: "Hello, I am the Alte AI Assistant. I can help with programs, admissions, tuition, international admissions, and routing to a human advisor.",
+        greeting: "Hello, I am the Alte AI Assistant. Choose a department or ask a question.",
         error: "The connection is temporarily unavailable. Please try later or contact the university through an official channel.",
         handover: "Human handover",
         contact: "Contact details requested",
+        context: "Selected department",
+        noContext: "Choose a department or ask a question",
         chips: [
-          ["Programs", "What programs are available?"],
-          ["Admissions", "How can I apply?"],
-          ["Tuition", "How much is tuition?"],
-          ["International", "What documents do international students need?"],
-          ["Medicine", "I want to apply for medicine from India"],
-          ["Human", "I want to speak with a human"]
+          { label: "Programs", message: "What programs are available?", department: "admissions", topic: "programs" },
+          { label: "Admissions", message: "How can I apply?", department: "admissions", topic: "admissions" },
+          { label: "Tuition", message: "How much is tuition?", department: "finance", topic: "tuition" },
+          { label: "International", message: "What documents do international students need?", department: "international", topic: "international_admissions" },
+          { label: "Medicine", message: "I want to apply for medicine from India", department: "medicine", topic: "medicine_md" },
+          { label: "Student Services", message: "I have a student services question", department: "student_services", topic: "student_services" },
+          { label: "IT", message: "I have a portal login problem", department: "it_support", topic: "technical_support" },
+          { label: "Human", message: "I want to speak with a human", department: "general", topic: "human_request" }
         ]
       }
     };
-
     const widget = document.getElementById("alteChatWidget");
     const launcher = document.getElementById("alteLauncher");
     const closeBtn = document.getElementById("alteClose");
     const clearBtn = document.getElementById("alteClear");
     const messages = document.getElementById("alteMessages");
     const chips = document.getElementById("alteChips");
+    const contextEl = document.getElementById("alteContext");
     const form = document.getElementById("alteForm");
     const input = document.getElementById("alteInput");
     const sendBtn = document.getElementById("alteSend");
@@ -343,9 +367,14 @@
     clearBtn.addEventListener("click", () => {
       localStorage.removeItem("alteSafeProSessionId");
       localStorage.removeItem("alteSafeProConversationId");
+      localStorage.removeItem("alteSafeProSelectedDepartment");
+      localStorage.removeItem("alteSafeProSelectedTopic");
       state.sessionId = null;
       state.conversationId = null;
+      state.selectedDepartment = "";
+      state.selectedTopic = "";
       messages.innerHTML = "";
+      renderContext();
       renderGreeting();
       ensureSession();
     });
@@ -364,19 +393,40 @@
       langButtons.forEach((button) => button.classList.toggle("active", button.dataset.lang === language));
       input.placeholder = labels[language].placeholder;
       renderChips();
+      renderContext();
       if (!messages.children.length) renderGreeting();
     }
 
     function renderChips() {
       chips.innerHTML = "";
-      labels[state.language].chips.forEach(([label, message]) => {
+      labels[state.language].chips.forEach((chip) => {
         const button = document.createElement("button");
-        button.className = "alte-chip";
+        button.className = `alte-chip${state.selectedDepartment === chip.department ? " active" : ""}`;
         button.type = "button";
-        button.textContent = label;
-        button.addEventListener("click", () => sendMessage(message));
+        button.textContent = chip.label;
+        button.dataset.department = chip.department;
+        button.dataset.topic = chip.topic;
+        button.addEventListener("click", () => {
+          setSelectedContext(chip.department, chip.topic);
+          sendMessage(chip.message);
+        });
         chips.appendChild(button);
       });
+    }
+
+    function setSelectedContext(department, topic) {
+      state.selectedDepartment = department || "";
+      state.selectedTopic = topic || "";
+      localStorage.setItem("alteSafeProSelectedDepartment", state.selectedDepartment);
+      localStorage.setItem("alteSafeProSelectedTopic", state.selectedTopic);
+      renderChips();
+      renderContext();
+    }
+
+    function renderContext() {
+      contextEl.textContent = state.selectedDepartment
+        ? `${labels[state.language].context}: ${state.selectedDepartment.replaceAll("_", " ")}`
+        : labels[state.language].noContext;
     }
 
     function renderGreeting() {
@@ -410,7 +460,8 @@
       if (payload.should_handover) {
         const card = document.createElement("div");
         card.className = "alte-handover";
-        card.innerHTML = `<strong>${labels[state.language].handover}</strong>${state.language === "ka" ? "თქვენი კითხვა შეიძლება ოპერატორმა უკეთ დააზუსტოს." : "A human advisor may be best suited to confirm this."}`;
+        const department = payload.route_department || payload.department || state.selectedDepartment || "";
+        card.innerHTML = `<strong>${labels[state.language].handover}</strong>${state.language === "ka" ? "თქვენი კითხვა შეიძლება ოპერატორმა უკეთ დააზუსტოს." : "A human advisor may be best suited to confirm this."}${department ? `<br><span>${department}</span>` : ""}`;
         parent.appendChild(card);
       }
       const sources = payload.used_sources || payload.sources || [];
@@ -474,7 +525,11 @@
             session_id: state.sessionId,
             message: text,
             language: state.language,
-            source_domain: state.sourceDomain
+            source_domain: state.sourceDomain,
+            selected_department: state.selectedDepartment,
+            selected_topic: state.selectedTopic,
+            page_url: window.location.href,
+            widget_variant: "safe_pro"
           })
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -494,7 +549,9 @@
     }
 
     setLanguage(state.language);
+    renderContext();
     renderGreeting();
   </script>
 </body>
 </html>
+

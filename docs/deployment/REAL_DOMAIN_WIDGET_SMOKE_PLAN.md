@@ -39,9 +39,17 @@ Run this only after the widget is embedded on an approved real-domain page.
 - No-contact guard works.
 - Handover card appears when needed.
 - Widget does not harm page layout or performance.
+- Department-aware routing is visible when handover occurs:
+  - tuition -> Finance
+  - international documents -> International Admissions
+  - medicine/MD -> Medicine / MD
+  - portal/login -> IT Support
+  - student services -> Student Services
 
 ## Status
 
 ```text
 REAL_DOMAIN_WIDGET_SMOKE_STATUS=PENDING_ACTUAL_EMBED
 ```
+
+Phase 9D routing code requires redeploy before this plan can verify production behavior.

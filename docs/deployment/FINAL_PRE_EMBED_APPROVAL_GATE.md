@@ -72,3 +72,20 @@ FINAL_PRE_EMBED_STATUS=NO_GO_PENDING_APPROVALS
 ```
 
 Do not mark GO. Do not embed on the real Alte website until all required approvals and the final asset URL are confirmed.
+
+## Phase 9D Routing Requirement
+
+Department-aware handover routing is implemented in code and must be redeployed before actual website embed.
+
+The widget sends sidebar context only. The backend decides:
+
+- route department;
+- handover;
+- task/lead/customer creation;
+- no-contact lead guard.
+
+Decision state:
+
+```text
+BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
+```

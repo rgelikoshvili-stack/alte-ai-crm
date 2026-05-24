@@ -660,3 +660,13 @@ No omnichannel implementation before the website chat flow is stable.
 Next recommended phase:
 
 - Get human reviewer decisions, official content approval, privacy/data approval, final asset URL, and website admin/developer confirmation before actual embed.
+
+## Phase 9D: Department-Aware Handover Routing
+
+- Backend routing helper added: `backend/app/services/department_routing_service.py`
+- Safe Pro widget now sends selected department/topic context.
+- Chat response includes route department fields.
+- Low-confidence, source-missing, sensitive, unknown, and human-request cases route to the best department/operator.
+- No-contact lead guard remains backend-enforced.
+- Production redeploy is required before Cloud Run reflects the code change.
+- Decision state: `BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY`

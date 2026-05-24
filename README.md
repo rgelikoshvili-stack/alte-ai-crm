@@ -1470,3 +1470,22 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
 ```
+
+## Phase 9D Department-Aware Handover Routing
+
+Department-aware routing has been added in backend code and Safe Pro widget context.
+
+- Routing service: `backend/app/services/department_routing_service.py`
+- Policy: `docs/deployment/DEPARTMENT_HANDOVER_ROUTING_POLICY.md`
+- Result: `docs/deployment/PHASE_9D_DEPARTMENT_HANDOVER_RESULT.md`
+- Safe production smoke script: `backend/app/scripts/production_department_handover_smoke.py`
+- Widget context fields: `selected_department`, `selected_topic`, `page_url`, `widget_variant`
+- Backend response fields: `route_department`, `department_key`, `routing_reason`
+
+Production redeploy is required before Cloud Run serves the Phase 9D behavior.
+
+Decision state:
+
+```text
+BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
+```

@@ -57,6 +57,10 @@ class ChatMessageRequest(BaseModel):
     session_id: str | None = None
     source_domain: str | None = "alte.edu.ge"
     language: Language | None = None
+    selected_department: str | None = None
+    selected_topic: str | None = None
+    page_url: str | None = None
+    widget_variant: str | None = None
 
 
 class ChatMessageResponse(BaseModel):
@@ -75,3 +79,6 @@ class ChatMessageResponse(BaseModel):
     recommended_next_action: str | None = None
     answer_source_status: str | None = None
     used_sources: list[str] = Field(default_factory=list)
+    route_department: str | None = None
+    department_key: str | None = None
+    routing_reason: str | None = None

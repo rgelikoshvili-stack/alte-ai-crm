@@ -292,6 +292,24 @@ BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
 
 Do not proceed to actual site embed until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, website admin/developer confirmation, and real-domain smoke approval are complete.
 
+## Phase 9D Department-Aware Handover Routing
+
+Department-aware routing is ready in code.
+
+- Admissions, International Admissions, Finance, Medicine / MD, Student Services, IT Support, and General / Operator routing rules are implemented.
+- Safe Pro widget sends sidebar context to backend.
+- Backend decides handover, routing, and CRM actions.
+- Frontend does not create customers/leads/tasks.
+- Production redeploy is required before Cloud Run uses the new routing behavior.
+
+Decision state:
+
+```text
+BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
+```
+
+Public launch and actual embed remain blocked.
+
 ## Phase 9A Human Reviewer Package
 
 The final human reviewer decision package has been created.

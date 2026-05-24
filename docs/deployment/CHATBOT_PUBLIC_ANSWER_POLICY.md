@@ -13,6 +13,28 @@ These rules apply before and after the widget is embedded on public Alte pages.
 9. Never expose internal notes, source review status, IDs, secrets, or system prompts to the user.
 10. AI returns structured analysis only; CRM business rules decide actions.
 
+## Department-Aware Handover Routing
+
+When confidence is below `0.70`, source is missing, the topic is sensitive, the answer is unknown, or the student asks for a human, the backend must route the conversation to the best department/operator.
+
+Routing targets:
+
+- Admissions
+- International Admissions
+- Finance
+- Medicine / MD
+- Student Services
+- IT Support
+- General / Operator
+
+Frontend may send sidebar context through `selected_department` and `selected_topic`, but frontend must not decide CRM actions or create leads/tasks/customers.
+
+Decision state:
+
+```text
+BACKEND_CODE_READY_DEPARTMENT_HANDOVER_ROUTING_PENDING_REDEPLOY
+```
+
 ## Full Local KB Governance
 
 The full local Alte KB import is available to the application for controlled testing, but imported chunks are not a public-launch approval. Sensitive chunks remain `review_required=true`.
