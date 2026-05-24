@@ -104,6 +104,9 @@ Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backe
   - `/diagnostics/local-demo: 200`
   - `/dashboard/overview: 401` without bearer token, expected with `AUTH_REQUIRED=true`.
 - Website/privacy approval checklist prepared.
+- Production widget embed guide prepared.
+- Production widget smoke checklist prepared.
+- Production widget config examples prepared for `alte.edu.ge` and `join.alte.edu.ge`.
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

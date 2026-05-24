@@ -866,3 +866,30 @@ python -m app.scripts.verify_cloud_run_deployment_docs
 ```
 
 Full public launch is still pending website admin/developer access, privacy/data approval, actual website widget embed, and production widget smoke from `alte.edu.ge` / `join.alte.edu.ge`.
+
+## Phase 8J Website Widget Production Embed Preparation
+
+Phase 8J prepares production website embed snippets and smoke/rollback checklists for the deployed backend.
+
+Docs and examples:
+
+- `docs/deployment/WEBSITE_WIDGET_PRODUCTION_EMBED.md`
+- `docs/deployment/PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- `widget/production-config.alte.example.js`
+- `widget/production-config.join.example.js`
+
+Backend URL:
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+Verifier:
+
+```powershell
+cd C:\tmp\alte-ai-crm\backend
+.\.venv\Scripts\Activate.ps1
+python -m app.scripts.verify_phase_8j_widget_embed_docs
+```
+
+Actual website changes were not made. Website admin/developer access, privacy/data approval, actual widget embed, and production widget smoke remain pending.

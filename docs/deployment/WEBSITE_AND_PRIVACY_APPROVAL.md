@@ -6,7 +6,7 @@
 - [ ] `join.alte.edu.ge` developer/admin access confirmed if needed.
 - [ ] Script injection location identified.
 - [ ] Staging page or test page identified.
-- [ ] Rollback/removal plan for widget snippet documented.
+- [x] Rollback/removal plan for widget snippet documented in `WEBSITE_WIDGET_PRODUCTION_EMBED.md`.
 
 ## B. Widget Production Config
 
@@ -30,3 +30,12 @@
 
 - Website access status: `PENDING`
 - Privacy approval status: `PENDING`
+
+## Phase 8J Preparation Status
+
+- Production embed guide: `WEBSITE_WIDGET_PRODUCTION_EMBED.md`
+- Production smoke checklist: `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- Alte config example: `widget/production-config.alte.example.js`
+- Join config example: `widget/production-config.join.example.js`
+- Actual website widget embed pending.
+- Production widget smoke pending.

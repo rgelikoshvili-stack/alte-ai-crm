@@ -68,6 +68,10 @@ Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployme
 | Website | Actual website widget embed | Pending: Actual website widget embed pending |
 | Website | Production widget smoke | Pending |
 | Website | Website/privacy checklist | Done: `WEBSITE_AND_PRIVACY_APPROVAL.md`; statuses pending |
+| Website | Production embed guide | Done: `WEBSITE_WIDGET_PRODUCTION_EMBED.md` |
+| Website | Production widget smoke checklist | Done: `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md` |
+| Website | Alte config example | Done: `widget/production-config.alte.example.js` |
+| Website | Join config example | Done: `widget/production-config.join.example.js` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 
 ## Decision

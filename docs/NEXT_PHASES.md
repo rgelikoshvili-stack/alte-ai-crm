@@ -229,6 +229,27 @@ Next recommended phase:
 
 - Phase 8J: website widget production embed preparation and privacy approval gate.
 
+## Phase 8J: Website Widget Production Embed Preparation
+
+- Production embed guide: `docs/deployment/WEBSITE_WIDGET_PRODUCTION_EMBED.md`
+- Production widget smoke checklist: `docs/deployment/PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- Alte config example: `widget/production-config.alte.example.js`
+- Join config example: `widget/production-config.join.example.js`
+- Backend URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Actual website changes were not performed.
+- Google Cloud resources were not changed.
+
+Remaining blockers:
+
+- Website admin/developer access pending.
+- Privacy/data approval pending.
+- Actual website widget embed pending.
+- Production widget smoke pending.
+
+Next recommended phase:
+
+- Phase 8K: website access/privacy approval record, then production widget embed execution only after explicit approval.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

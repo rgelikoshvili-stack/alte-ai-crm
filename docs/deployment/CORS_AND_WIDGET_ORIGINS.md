@@ -34,6 +34,13 @@ Cloud Run backend status: `CLOUD_RUN_DEPLOYED`
 
 Website launch status: `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY`
 
+Production embed preparation:
+
+- `WEBSITE_WIDGET_PRODUCTION_EMBED.md`
+- `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- `widget/production-config.alte.example.js`
+- `widget/production-config.join.example.js`
+
 Future production snippet:
 
 ```html

@@ -40,6 +40,11 @@ Before using this checklist, fill/review:
 - [x] Check `/diagnostics/local-demo`. Phase 8I result: `/diagnostics/local-demo: 200`.
 - [x] Check `/dashboard/overview`. Phase 8I result: `/dashboard/overview: 401` without bearer token, expected with `AUTH_REQUIRED=true`.
 - [ ] Test widget against Cloud Run URL.
+- [ ] Review `WEBSITE_WIDGET_PRODUCTION_EMBED.md`.
+- [ ] Review `PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`.
+- [ ] Confirm final widget asset URL.
+- [ ] Confirm website admin/developer access.
+- [ ] Confirm privacy/data approval.
 - [ ] Verify no secrets in logs.
 - [ ] Verify AI interactions are logged.
 - [ ] Verify lead/task creation from website chat flow.
@@ -54,6 +59,7 @@ Before using this checklist, fill/review:
 - Website admin/developer access pending.
 - Privacy/data approval pending.
 - Actual website widget embed pending.
+- Production widget smoke pending.
 
 ## Rollback
 

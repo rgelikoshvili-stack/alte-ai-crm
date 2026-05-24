@@ -81,3 +81,20 @@ International admissions demo:
 - No WhatsApp, Messenger, Instagram, or Email integration
 - No scraping or live site ingestion
 - No full privacy policy page in this phase
+
+## Production Preparation
+
+Production embed preparation is documented in:
+
+- `../docs/deployment/WEBSITE_WIDGET_PRODUCTION_EMBED.md`
+- `../docs/deployment/PRODUCTION_WIDGET_SMOKE_CHECKLIST.md`
+- `production-config.alte.example.js`
+- `production-config.join.example.js`
+
+Current production backend:
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+Do not embed on the real websites until website admin/developer access and privacy/data approval are complete.
