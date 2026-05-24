@@ -1214,3 +1214,23 @@ BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW
 ```
 
 Public launch remains blocked until official content review, privacy approval, website access, final widget asset hosting, real-site embed, and real-domain browser smoke are complete.
+
+## Phase 8S Official Content Review Apply
+
+Phase 8S inspected the exported review queue and ran the content review apply workflow in dry-run mode.
+
+Result:
+
+- Explicit reviewer decisions found: 0
+- Dry-run rows: 26
+- Apply run: no
+- Applied count: 0
+- Sensitive fully approved count: 0
+- Sensitive pending review count: 7
+- Public launch: still blocked
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_CONTENT_REVIEW_DRY_RUN_PENDING_REVIEWER_DECISIONS
+```

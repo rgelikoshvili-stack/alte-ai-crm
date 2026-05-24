@@ -103,6 +103,14 @@ After official review:
 - archive unsafe snippets through the knowledge review workflow
 - do not edit production rows directly outside an approved maintenance process
 
+## Phase 8S Apply Dry-Run
+
+- Dry-run command: `python -m app.scripts.apply_official_content_review --dry-run`
+- Explicit reviewer decisions found: 0
+- Apply command run: NO
+- Current status: `DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
+- Official content review remains pending.
+
 ## Archive Or Update
 
 If a snippet is wrong or outdated:

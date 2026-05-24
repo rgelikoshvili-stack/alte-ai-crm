@@ -1,8 +1,8 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW`
+Current decision: `BACKEND_DEPLOYED_CONTENT_REVIEW_DRY_RUN_PENDING_REVIEWER_DECISIONS`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, and production test knowledge has been seeded with idempotency verified. Phase 8R created the official content review gate. Full production launch remains blocked until official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, the no-contact lead/task guard has been deployed and verified, production test knowledge has been seeded with idempotency verified, and the official content review apply dry-run completed. No explicit reviewer decisions were present, so no content was automatically approved. Full production launch remains blocked until reviewer decisions, official content review, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -12,6 +12,7 @@ Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_
 Previous no-contact guard state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD` is resolved by Phase 8P-Redeploy.
 Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
 Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED` remains true and now advances to the official content review gate.
+Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW` remains true and now advances to dry-run-pending-reviewer-decisions.
 
 ## Go Only If
 
@@ -184,6 +185,13 @@ Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_
   - `KNOWLEDGE_REVIEW_QUEUE_TEMPLATE.csv`
   - content review status: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING`
   - public launch remains blocked until official review is approved
+- Phase 8S official content review apply dry-run completed:
+  - explicit reviewer decisions found: 0
+  - `--apply` run: NO
+  - applied count: 0
+  - sensitive fully approved count: 0
+  - sensitive pending review count: 7
+  - apply status: `OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
 - Phase 8F execution plan prepared for later explicit approval.
 
 ## Remaining Full Launch Blockers

@@ -17,3 +17,7 @@
 - [ ] All uncertain answers route to human handover
 
 Current status: `PENDING`
+
+Phase 8S apply status: `DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
+
+No checklist item has been marked complete by automation. Reviewer decisions are still required.

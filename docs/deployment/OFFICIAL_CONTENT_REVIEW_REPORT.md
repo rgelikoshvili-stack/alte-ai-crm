@@ -52,6 +52,15 @@ OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
 - Export type: read-only knowledge review queue
 - The export contains truncated content previews for reviewer workflow and no secrets.
 
+## Phase 8S Apply Status
+
+- Review apply dry-run completed.
+- Explicit reviewer decisions present: NO
+- `--apply` run: NO
+- Reason: no explicit reviewer decisions were present in the review queue.
+- Apply status: `OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
+- Official approval is still pending.
+
 ## Required Approval Phrase
 
 Public content may be marked approved only after the user says:

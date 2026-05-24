@@ -440,6 +440,22 @@ Next recommended phase:
 
 - Have the official reviewer approve or rewrite seeded knowledge before public launch.
 
+## Phase 8S: Official Content Review Apply
+
+- Review queue inspected: `backend/reports/knowledge_review_queue.csv`
+- Explicit reviewer decisions found: 0
+- Apply dry-run completed.
+- Apply command was not run.
+- Sensitive content remains pending/review-required.
+- Public launch remains blocked.
+- Real-site embed remains pending.
+- Real-domain browser smoke remains pending.
+- Decision state: `BACKEND_DEPLOYED_CONTENT_REVIEW_DRY_RUN_PENDING_REVIEWER_DECISIONS`
+
+Next recommended phase:
+
+- Add explicit reviewer decisions to the review queue or approve official content review before applying governance changes.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.
