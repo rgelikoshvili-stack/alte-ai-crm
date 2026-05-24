@@ -1,13 +1,14 @@
 # Production Readiness Decision
 
-Current decision: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD`
 
-Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, and safe standalone API smoke has passed. Full production launch remains blocked until test knowledge seed approval, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
+Reason: GitHub backup/tag, deployment docs, Claude live validation, Docker/Cloud Run docs, project/region/CORS and billing are recorded. Cloud SQL pilot instance/database/user are created, Secret Manager containers are created, required secret versions including DATABASE_URL are added, production migrations/seed have completed, the backend is deployed to Cloud Run, a standalone production widget demo is prepared, backend/API smoke passed, production-domain CORS preflight passed, the website/privacy approval gate is prepared, the full standalone chatbot test site plus required test knowledge package are prepared, and safe standalone API smoke has passed with a no-contact lead/task side effect discovered. The local code now guards admissions/international/medicine lead creation until phone or email exists, but Cloud Run must be redeployed before production has this fix. Full production launch remains blocked until redeploy, test knowledge seed approval, website access, privacy approval, final widget asset URL, actual widget embed, real-domain browser widget smoke, official content review, and explicit launch approval are completed.
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical deployment gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Full public launch remains blocked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
 Previous website/privacy gate state `BACKEND_DEPLOYED_WIDGET_READY_PENDING_WEBSITE_PRIVACY_APPROVAL` remains true.
 Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_READY_PENDING_REAL_SITE_EMBED` remains true.
+Previous safe smoke state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_PASSED_PENDING_TEST_KNOWLEDGE_APPROVAL` remains true for the endpoint checks, with the no-contact lead/task side effect now tracked separately.
 
 ## Go Only If
 
@@ -153,6 +154,11 @@ Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_RE
   - no phone/email/contact details were submitted
   - no lead/task was intentionally created
   - observed side effect: medicine/international admission message triggered existing backend business rules to create a lead/task
+- Phase 8P-Fix no-contact guard applied locally:
+  - no contact -> no lead/task for admissions, consultation, international, or medicine admission intent
+  - contact present -> create/update customer, lead, and follow-up task
+  - human request chat behavior remains contact-gated for task creation; the explicit handover endpoint still creates a handover task
+  - Cloud Run redeploy required before the production backend receives this fix
 - Production test knowledge seed approval gate created: `TEST_KNOWLEDGE_SEED_APPROVAL_GATE.md`; status `PENDING_APPROVAL`.
 - Phase 8F execution plan prepared for later explicit approval.
 
@@ -165,6 +171,7 @@ Previous full standalone site state `BACKEND_DEPLOYED_FULL_STANDALONE_CHATBOT_RE
 - Real-domain browser widget smoke from `alte.edu.ge` / `join.alte.edu.ge` pending.
 - Official content/privacy review pending before public launch.
 - Production test knowledge seed pending approval.
+- Cloud Run redeploy pending for no-contact lead/task creation guard.
 - Full public launch approval pending.
 
 ## No-Go If

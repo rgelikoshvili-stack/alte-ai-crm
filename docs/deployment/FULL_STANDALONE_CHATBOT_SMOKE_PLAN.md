@@ -35,6 +35,10 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 - No phone/email/contact details were submitted.
 - No lead/task was intentionally created.
 - Observed side effect: the medicine/international admission message triggered existing backend business rules to create a lead/task.
+- Phase 8P-Fix applied locally: admissions, international admissions, and medicine admissions require phone or email before lead/task creation.
+- Expected post-fix behavior: no contact -> ask for contact details and save conversation/AI summary only; contact present -> create/update customer, lead, and task.
+- Human request chat behavior remains contact-gated for task creation; the explicit handover endpoint remains the exception path.
+- Cloud Run redeploy is required before production has the no-contact guard.
 - Production test knowledge seed was not run.
 
 ## CORS Caveat

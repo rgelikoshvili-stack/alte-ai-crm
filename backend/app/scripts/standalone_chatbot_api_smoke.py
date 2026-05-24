@@ -34,8 +34,10 @@ def preview_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "intent": payload.get("intent"),
         "confidence": payload.get("confidence"),
         "should_handover": payload.get("should_handover"),
+        "should_create_lead": payload.get("should_create_lead"),
         "created_lead_id": payload.get("created_lead_id"),
         "created_task_id": payload.get("created_task_id"),
+        "missing_fields": payload.get("missing_fields"),
     }
 
 
@@ -127,14 +129,38 @@ def run_smoke(
                     ),
                 )
                 if response:
+                    payload = response.json()
+                    preview = preview_payload(payload)
                     message_results.append(
                         {
                             "source_domain": case["source_domain"],
                             "language": case["language"],
                             "message": message,
-                            **preview_payload(response.json()),
+                            **preview,
                         }
                     )
+                    if not include_contact_flow and (
+                        preview["created_lead_id"] is not None or preview["created_task_id"] is not None
+                    ):
+                        steps.append(
+                            SmokeStep(
+                                name=f"Assert no lead/task side effect for {case['source_domain']} {message}",
+                                passed=False,
+                                detail="Default safe smoke must not create leads or tasks.",
+                            )
+                        )
+                    if (
+                        not include_contact_flow
+                        and preview["intent"] in {"admission_interest", "international_admission", "medicine_admission"}
+                        and preview["should_create_lead"] is True
+                    ):
+                        steps.append(
+                            SmokeStep(
+                                name=f"Assert no-contact lead guard for {case['source_domain']} {message}",
+                                passed=False,
+                                detail="No-contact admissions smoke should ask for contact before lead creation.",
+                            )
+                        )
 
         if include_contact_flow:
             session = start_session(client, "alte.edu.ge", "ka")

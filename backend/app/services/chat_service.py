@@ -23,6 +23,10 @@ from app.services.task_service import create_task
 from app.services.knowledge_service import search_knowledge_snippets
 
 
+CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "international_admission", "medicine_admission"}
+CONTACT_FIELD = "phone_or_email"
+
+
 async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> ChatSessionStartResponse:
     conversation = Conversation(channel="website_chat", language=payload.language, ai_handled=True)
     db.add(conversation)
@@ -99,6 +103,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
+    apply_no_contact_lead_guard(analysis)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -126,10 +131,10 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     if analysis.intent == "general_info":
         pass
     elif analysis.intent in {"admission_interest", "consultation_request"}:
-        if analysis.should_create_lead or conversation.lead_id:
+        if has_contact(analysis) and (analysis.should_create_lead or conversation.lead_id):
             created_lead_id, created_task_id = await create_admissions_flow(db, conversation, analysis)
     elif analysis.intent == "international_admission":
-        if analysis.should_create_lead or conversation.lead_id:
+        if has_contact(analysis) and (analysis.should_create_lead or conversation.lead_id):
             created_lead_id, created_task_id = await create_international_flow(db, conversation, analysis)
     elif analysis.intent == "human_request":
         conversation.human_handover = True
@@ -218,6 +223,8 @@ async def create_admissions_flow(
     conversation: Conversation,
     analysis: AIAnalysisResult,
 ) -> tuple[str | None, str | None]:
+    if not has_contact(analysis):
+        return None, None
     customer = await get_or_create_customer_for_conversation(db, conversation, analysis)
     lead_data = apply_qualification_to_lead_create(
         {
@@ -255,6 +262,8 @@ async def create_international_flow(
     conversation: Conversation,
     analysis: AIAnalysisResult,
 ) -> tuple[str | None, str | None]:
+    if not has_contact(analysis):
+        return None, None
     customer = await get_or_create_customer_for_conversation(db, conversation, analysis)
     department = await find_department(db, "International Admissions")
     lead_data = apply_qualification_to_lead_create(
@@ -359,6 +368,45 @@ async def find_department(db: AsyncSession, name: str) -> Department | None:
 def has_contact(analysis: AIAnalysisResult) -> bool:
     contact = analysis.extracted_contact
     return bool(contact.phone or contact.email)
+
+
+def apply_no_contact_lead_guard(analysis: AIAnalysisResult) -> None:
+    if analysis.intent not in CONTACT_GATED_LEAD_INTENTS or has_contact(analysis):
+        return
+    analysis.should_create_lead = False
+    if CONTACT_FIELD not in analysis.missing_fields:
+        analysis.missing_fields.append(CONTACT_FIELD)
+    if not analysis.extracted_contact.first_name and "first_name" not in analysis.missing_fields:
+        analysis.missing_fields.append("first_name")
+    analysis.qualification.recommended_next_action = "ask_contact_details"
+    analysis.reply = ensure_contact_request_reply(analysis)
+
+
+def ensure_contact_request_reply(analysis: AIAnalysisResult) -> str:
+    if reply_requests_contact(analysis.reply):
+        return analysis.reply
+    if analysis.language == "en":
+        return (
+            f"{analysis.reply} Please share your name and phone number or email so an admissions consultant can follow up."
+        )
+    return f"{analysis.reply} გთხოვთ მოგვწეროთ სახელი და ტელეფონი ან ელფოსტა, რომ კონსულტანტი დაგიკავშირდეთ."
+
+
+def reply_requests_contact(reply: str) -> bool:
+    lowered = reply.lower()
+    return any(
+        token in lowered
+        for token in [
+            "phone",
+            "email",
+            "contact",
+            "name",
+            "ტელეფ",
+            "ელფოსტ",
+            "საკონტაქტ",
+            "სახელი",
+        ]
+    )
 
 
 def is_medical(analysis: AIAnalysisResult) -> bool:

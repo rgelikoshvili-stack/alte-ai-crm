@@ -49,7 +49,11 @@
 - Contact-flow test run: NO
 - Contact details submitted: NO
 - Observed side effect: the safe medicine/international admissions message triggered existing production business rules and created a lead/task without contact details.
-- Next recommendation: treat future medicine/admission smoke as potentially mutating unless a read-only smoke mode is added or an isolated staging backend is used.
+- Phase 8P-Fix status: no-contact lead/task guard applied locally.
+- Expected behavior after fix: admission, international, and medicine interest without phone or email asks for contact details and does not create a lead/task.
+- Expected behavior with contact after fix: admission, international, and medicine interest with phone or email creates/updates customer, lead, and follow-up task.
+- Redeploy required: YES. Cloud Run must be redeployed before this fix reaches the production backend.
+- Next recommendation: treat future production medicine/admission smoke as potentially mutating until the no-contact guard is redeployed and verified.
 
 ## Known Limitations
 

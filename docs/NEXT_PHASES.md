@@ -354,6 +354,21 @@ Next recommended phase:
 - Phase 8Q-Execution: production test knowledge seed only after the user explicitly says:
   `Approve Phase 8Q-Execution for production test knowledge seed`
 
+## Phase 8P-Fix: No-Contact Lead/Task Creation Guard
+
+- Phase 8P safe smoke discovered an unintended side effect: a medicine/international admissions message without phone or email created a lead/task.
+- Fix applied locally:
+  - admission, consultation, international, and medicine admission intent requires phone or email before lead/task creation
+  - no contact -> ask for name and phone/email, save conversation and AI analysis only
+  - contact present -> create/update customer, lead, and task
+  - human request chat behavior remains contact-gated for task creation; the explicit handover endpoint remains the exception path
+- Production backend does not have this fix until Cloud Run is redeployed.
+- Decision state: `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD`
+
+Next recommended phase:
+
+- Redeploy Cloud Run with the no-contact guard, then rerun the safe standalone API smoke without the contact-flow flag.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

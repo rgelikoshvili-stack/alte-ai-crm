@@ -1118,3 +1118,22 @@ python -m app.scripts.verify_phase_8p_api_smoke_docs
 ```
 
 The page uses the production backend. Do not enter real student data unless production test records are approved.
+
+## Phase 8P-Fix No-Contact Lead Guard
+
+Phase 8P revealed an unintended production side effect: a medicine/international admissions message without phone, email, or contact-flow approval created a lead/task.
+
+Fix applied locally:
+
+- Admission, consultation, international, and medicine admission intent now requires phone or email before lead/task creation.
+- No contact -> ask for name and phone/email, save conversation and AI analysis only.
+- Contact present -> create/update customer, lead, and follow-up task.
+- Human request chat behavior remains contact-gated for task creation; the explicit handover endpoint remains the exception path.
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_STANDALONE_API_SMOKE_NEEDS_REDEPLOY_FOR_NO_CONTACT_GUARD
+```
+
+Cloud Run redeploy is required before production receives this fix.
