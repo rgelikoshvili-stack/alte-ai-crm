@@ -120,6 +120,7 @@ Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PEN
 | Website | Production knowledge smoke after study docs | Original Phase 8W review item resolved by Phase 8Y-Redeploy; latest broader knowledge smoke `25 passed`, `0 failed` |
 | Website | Finance no-contact lead guard | Deployed and verified: finance/tuition/scholarship/deadline info questions without phone/email force `should_create_lead=false`; finance smoke `24 passed`, `0 failed` |
 | Website | Phase 8Y-Redeploy finance no-contact guard | Done: deployed image `v0.8-finance-no-contact-guard` to `alte-ai-crm-backend-00004-gsn`; finance smoke `24 passed`, broader knowledge smoke `25 passed`; no contact-flow/contact details/intentional lead-task-customer creation |
+| Website | Phase 9A human reviewer package | Done: `docs/reviewer_package/` created with 647 rows, 379 high-sensitivity rows, 379 review-required rows; human decisions still pending |
 | Website | Actual website embed status | Blocked: `ACTUAL_EMBED_BLOCKED_PENDING_WEBSITE_PRIVACY_APPROVAL` |
 | Execution | Phase 8F execution plan | Done: `PHASE_8F_EXECUTION_PLAN.md`; do not run until approved |
 

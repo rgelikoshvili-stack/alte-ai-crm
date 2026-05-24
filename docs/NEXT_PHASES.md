@@ -531,6 +531,25 @@ Next recommended phase:
 
 - Have a human reviewer fill `backend/reports/full_alte_local_kb_reviewer_decision_queue.csv`, then apply official decisions only through the content review flow.
 
+## Phase 9A: Human Reviewer Decisions Package
+
+- Reviewer package created in `docs/reviewer_package/`.
+- Full reviewer CSV: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Compact management CSV: `docs/reviewer_package/alte_kb_human_review_compact.csv`
+- Georgian reviewer instructions: `docs/reviewer_package/REVIEWER_INSTRUCTIONS_GEO.md`
+- Georgian reviewer summary: `docs/reviewer_package/REVIEWER_SUMMARY_GEO.md`
+- Rows: 647
+- High-sensitivity rows: 379
+- Review-required rows: 379
+- Decisions filled: 0
+- Validation status: `PENDING_HUMAN_DECISIONS`
+- Public launch remains blocked.
+- Decision state: `BACKEND_DEPLOYED_REVIEWER_PACKAGE_READY_PENDING_HUMAN_DECISIONS`
+
+Next recommended phase:
+
+- Human reviewer fills `docs/reviewer_package/alte_kb_human_review_decisions.csv`; then run Apply Reviewer Decisions only after explicit approval.
+
 ## Phase 8Y: Finance No-Contact Guard
 
 - Tuition/finance no-contact lead bug found in Phase 8W.

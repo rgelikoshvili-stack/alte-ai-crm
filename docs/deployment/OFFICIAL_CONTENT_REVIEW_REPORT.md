@@ -43,6 +43,21 @@ The chatbot must not invent tuition prices, admission deadlines, official docume
 ```text
 OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
 
+## Phase 9A Reviewer Package
+
+The final human reviewer package has been created from the full imported Alte KB.
+
+- Package folder: `docs/reviewer_package/`
+- Full decision CSV: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Compact CSV: `docs/reviewer_package/alte_kb_human_review_compact.csv`
+- Rows: 647
+- High sensitivity: 379
+- Review-required: 379
+- Human decisions filled: 0
+- Status: `PENDING_HUMAN_DECISIONS`
+
+Official content review remains pending until a reviewer fills decisions and a later apply phase is explicitly approved.
+
 ## Full Local KB Import Evidence
 
 The full local Alte KB package was imported into the application Knowledge Base for controlled testing and review:

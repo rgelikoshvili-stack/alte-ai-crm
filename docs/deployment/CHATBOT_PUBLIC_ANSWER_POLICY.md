@@ -40,3 +40,4 @@ Operational guardrails:
 - Phase 8Y-Redeploy deployed this behavior to Cloud Run with image tag `v0.8-finance-no-contact-guard`.
 - Production finance no-contact smoke passed: `24 passed`, `0 failed`; broader knowledge smoke passed: `25 passed`, `0 failed`.
 - Contact-flow test was not run, no contact details were sent, and no intentional production lead/task/customer creation occurred.
+- Phase 9A created the human reviewer decision package in `docs/reviewer_package/`; until reviewer decisions are filled and applied in a later approved phase, sensitive public-answer policy remains conservative.

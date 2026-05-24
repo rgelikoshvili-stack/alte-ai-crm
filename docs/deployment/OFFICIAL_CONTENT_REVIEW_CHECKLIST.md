@@ -15,6 +15,8 @@
 - [ ] Stale/review_required snippets reviewed
 - [ ] All exact values have official source
 - [ ] All uncertain answers route to human handover
+- [x] Phase 9A reviewer package created in `docs/reviewer_package/`
+- [ ] Human reviewer decisions filled in `alte_kb_human_review_decisions.csv`
 
 Current status: `PENDING`
 

@@ -1404,3 +1404,25 @@ BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
 Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, and real-domain browser smoke are completed.
+
+## Phase 9A Human Reviewer Decisions Package
+
+The final human reviewer package has been prepared from the full imported Alte KB.
+
+- Full reviewer CSV: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Compact management CSV: `docs/reviewer_package/alte_kb_human_review_compact.csv`
+- Georgian instructions: `docs/reviewer_package/REVIEWER_INSTRUCTIONS_GEO.md`
+- Georgian summary: `docs/reviewer_package/REVIEWER_SUMMARY_GEO.md`
+- Source rows: 647
+- High-sensitivity rows: 379
+- Review-required rows: 379
+- Human decisions filled: 0
+- Validation status: `PENDING_HUMAN_DECISIONS`
+
+The backend is deployed and smoke verified, and the safe widget is ready. Public launch remains blocked until reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, and real-domain browser smoke are completed.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_REVIEWER_PACKAGE_READY_PENDING_HUMAN_DECISIONS
+```

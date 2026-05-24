@@ -271,3 +271,25 @@ BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
 Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
+
+## Phase 9A Human Reviewer Package
+
+The final human reviewer decision package has been created.
+
+- Reviewer package folder: `docs/reviewer_package/`
+- Full reviewer CSV: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Compact reviewer CSV: `docs/reviewer_package/alte_kb_human_review_compact.csv`
+- Georgian instructions and summary are included.
+- Rows: 647
+- High-sensitivity rows: 379
+- Review-required rows: 379
+- Human decisions filled: 0
+- Validation status: `PENDING_HUMAN_DECISIONS`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_REVIEWER_PACKAGE_READY_PENDING_HUMAN_DECISIONS
+```
+
+Public launch remains blocked until reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
