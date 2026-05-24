@@ -63,6 +63,17 @@ OFFICIAL_CONTENT_REVIEW_STATUS=PENDING
 - Apply status: `OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
 - Official approval is still pending.
 
+## Phase 8T Reviewer CSV Status
+
+- Reviewer decision CSV prepared: `backend/reports/knowledge_review_queue_for_review.csv`
+- Rows prepared: 26
+- Reviewer `decision` column added: YES
+- Decision cells prefilled: NO
+- Generated `recommended_action` values copied into `decision`: NO
+- `--apply` run: NO
+- Official approval remains pending human review.
+- Decision state: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
+
 ## Required Approval Phrase
 
 Public content may be marked approved only after the user says:

@@ -2,18 +2,21 @@
 
 ## Run Metadata
 
-- Date/time: `2026-05-24 15:23:15 +04:00`
-- CSV used: `backend/reports/knowledge_review_queue.csv`
+- Date/time: `2026-05-24 17:57:10 +04:00`
+- CSV used: `backend/reports/knowledge_review_queue_for_review.csv`
+- Source CSV: `backend/reports/knowledge_review_queue.csv`
 - Dry-run command: `python -m app.scripts.apply_official_content_review --dry-run`
 - Apply command: not run
-- Reviewer decision column present: NO
+- Reviewer decision CSV prepared: YES
+- Reviewer decision column present: YES
 - Reviewer decisions found: NO
 
 ## Dry-Run Summary
 
 - `mode`: `dry-run`
 - `total_rows`: 26
-- `decision_column_present`: false
+- `csv_path`: `backend/reports/knowledge_review_queue_for_review.csv`
+- `decision_column_present`: true
 - `valid_decisions`: 0
 - `missing_decisions`: 26
 - `approve_count`: 0
@@ -23,13 +26,12 @@
 - `needs_official_source_count`: 6
 - `applied_count`: 0
 - `warnings`:
-  - Reviewer decision column missing; `recommended_action` is not treated as a reviewer decision.
   - Reviewer decisions missing; `--apply` should not be run automatically.
 
 ## Apply Status
 
 - `--apply` was run: NO
-- Reason: the review queue does not contain a reviewer-owned `decision` column; generated `recommended_action` values are not reviewer decisions.
+- Reason: the reviewer CSV has a reviewer-owned `decision` column, but all decision cells remain empty.
 - Current official review status: `OFFICIAL_CONTENT_REVIEW_STATUS=PENDING`
 - Public launch status: BLOCKED
 
@@ -57,6 +59,15 @@ OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS
 - Relocation/visa wording
 - Privacy/consent wording
 - Handover wording
+
+## Phase 8T Reviewer CSV
+
+- Reviewer CSV path: `backend/reports/knowledge_review_queue_for_review.csv`
+- Rows written: 26
+- Reviewer columns added: `decision`, `reviewer`, `review_date`, `reviewer_notes`
+- Decision column state: EMPTY
+- `recommended_action` preserved as guidance only and not copied into `decision`.
+- Next step: human reviewer fills decisions, then Phase 8S-Apply may be rerun.
 
 ## Safety Confirmation
 

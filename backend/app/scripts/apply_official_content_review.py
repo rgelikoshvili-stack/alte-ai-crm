@@ -17,6 +17,7 @@ from app.models import KnowledgeSnippet, KnowledgeSource
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_ROOT = BACKEND_ROOT.parent
 CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue.csv"
+REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue_for_review.csv"
 
 ALLOWED_DECISIONS = {"APPROVE", "REWRITE", "ARCHIVE", "HANDOVER_ONLY", "NEEDS_OFFICIAL_SOURCE"}
 SENSITIVE_CATEGORIES = {
@@ -59,7 +60,14 @@ def reviewer_decision_column_present(csv_path: Path = CSV_PATH) -> bool:
         return "decision" in (reader.fieldnames or [])
 
 
-def load_review_rows(csv_path: Path = CSV_PATH) -> list[ReviewRow]:
+def select_review_csv_path(
+    reviewer_csv_path: Path = REVIEWER_CSV_PATH, fallback_csv_path: Path = CSV_PATH
+) -> Path:
+    return reviewer_csv_path if reviewer_csv_path.exists() else fallback_csv_path
+
+
+def load_review_rows(csv_path: Path | None = None) -> list[ReviewRow]:
+    csv_path = csv_path or select_review_csv_path()
     rows: list[ReviewRow] = []
     with csv_path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
@@ -84,7 +92,7 @@ def summarize_rows(
 ) -> dict[str, int | str | bool | list[str]]:
     warnings: list[str] = []
     if decision_column_present is None:
-        decision_column_present = reviewer_decision_column_present()
+        decision_column_present = reviewer_decision_column_present(select_review_csv_path())
     missing_decisions = sum(1 for row in rows if row.decision is None)
     valid_decisions = len(rows) - missing_decisions
     if not decision_column_present:
@@ -92,6 +100,7 @@ def summarize_rows(
     if missing_decisions:
         warnings.append("Reviewer decisions missing; --apply should not be run automatically.")
     return {
+        "csv_path": str(select_review_csv_path()),
         "total_rows": len(rows),
         "decision_column_present": decision_column_present,
         "valid_decisions": valid_decisions,
@@ -170,8 +179,10 @@ async def _amain() -> int:
         print("FAIL choose only one mode: --dry-run or --apply")
         return 1
 
-    rows = load_review_rows()
+    csv_path = select_review_csv_path()
+    rows = load_review_rows(csv_path)
     summary = await apply_decisions(rows, apply=args.apply)
+    summary["csv_path"] = str(csv_path)
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0
 

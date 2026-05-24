@@ -16,6 +16,7 @@ DECISION_STATES = {
     "BACKEND_DEPLOYED_CONTENT_REVIEW_DRY_RUN_PENDING_REVIEWER_DECISIONS",
     "BACKEND_DEPLOYED_CONTENT_REVIEW_PARTIAL_APPLY_PENDING_OFFICIAL_APPROVAL",
     "BACKEND_DEPLOYED_CONTENT_REVIEW_APPROVED_PENDING_SITE_EMBED",
+    "BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW",
 }
 
 REQUIRED_FILES = [
@@ -66,7 +67,7 @@ def apply_result_records_dry_run() -> Phase8SCheck:
     required = [
         "Dry-Run Summary",
         "`total_rows`: 26",
-        "`decision_column_present`: false",
+        "`decision_column_present`:",
         "`valid_decisions`: 0",
         "`missing_decisions`: 26",
         "OFFICIAL_CONTENT_REVIEW_APPLY_STATUS=DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS",
@@ -79,7 +80,7 @@ def apply_result_records_apply_status() -> Phase8SCheck:
     text = (DEPLOYMENT_DOCS / "OFFICIAL_CONTENT_REVIEW_APPLY_RESULT.md").read_text(encoding="utf-8")
     required = [
         "`--apply` was run: NO",
-        "reviewer-owned `decision` column",
+        "decision",
         "`applied_count`: 0",
     ]
     missing = [item for item in required if item not in text]

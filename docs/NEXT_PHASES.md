@@ -458,6 +458,22 @@ Next recommended phase:
 
 - Add explicit reviewer decisions to the review queue or approve official content review before applying governance changes.
 
+## Phase 8T: Reviewer Decision CSV
+
+- Source review queue: `backend/reports/knowledge_review_queue.csv`
+- Reviewer CSV prepared: `backend/reports/knowledge_review_queue_for_review.csv`
+- Rows prepared: 26
+- Reviewer-owned columns added: `decision`, `reviewer`, `review_date`, `reviewer_notes`
+- Decision column state: empty, pending human reviewer
+- `recommended_action` values preserved as guidance only and not copied into `decision`
+- Apply command was not run.
+- Official content review remains pending.
+- Decision state: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
+
+Next recommended phase:
+
+- Human reviewer fills `knowledge_review_queue_for_review.csv`, then rerun Phase 8S-Apply.
+
 Only after:
 
 - Secret Manager creation is explicitly approved.

@@ -1236,3 +1236,24 @@ Decision:
 ```text
 BACKEND_DEPLOYED_CONTENT_REVIEW_DRY_RUN_PENDING_REVIEWER_DECISIONS
 ```
+
+## Phase 8T Reviewer Decision CSV
+
+Phase 8T prepared a human-reviewable CSV so official content decisions can be entered explicitly.
+
+Result:
+
+- Source CSV: `backend/reports/knowledge_review_queue.csv`
+- Reviewer CSV: `backend/reports/knowledge_review_queue_for_review.csv`
+- Rows prepared: 26
+- Reviewer-owned columns added: `decision`, `reviewer`, `review_date`, `reviewer_notes`
+- Decision column prefilled: no
+- `recommended_action` copied into `decision`: no
+- Apply run: no
+- Official content review: still pending human review
+
+Decision:
+
+```text
+BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW
+```

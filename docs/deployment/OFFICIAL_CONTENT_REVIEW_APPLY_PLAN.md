@@ -67,3 +67,16 @@ Conservative defaults:
 - `handover_only_count`: generated or reviewer handover-only rows.
 - `archived_count`: explicit reviewer archive decisions only.
 - `needs_official_source_count`: generated or reviewer official-source-needed rows.
+
+## Phase 8T Reviewer CSV Preparation
+
+- Reviewer CSV prepared: `backend/reports/knowledge_review_queue_for_review.csv`
+- Source CSV preserved: `backend/reports/knowledge_review_queue.csv`
+- Reviewer-owned columns added:
+  - `decision`
+  - `reviewer`
+  - `review_date`
+  - `reviewer_notes`
+- The `decision` column is intentionally empty for human review.
+- Generated `recommended_action` values remain guidance only and are not copied into `decision`.
+- `--apply` must not be run until a reviewer fills valid `decision` values.

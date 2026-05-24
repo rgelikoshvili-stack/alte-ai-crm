@@ -111,6 +111,14 @@ After official review:
 - Current status: `DRY_RUN_ONLY_PENDING_REVIEWER_DECISIONS`
 - Official content review remains pending.
 
+Phase 8T reviewer decision CSV:
+
+- Reviewer CSV prepared: `backend/reports/knowledge_review_queue_for_review.csv`
+- Reviewer-owned `decision` column added and left empty.
+- `recommended_action` remains guidance only.
+- Apply command was not run.
+- Official content review remains pending human review.
+
 ## Archive Or Update
 
 If a snippet is wrong or outdated:
