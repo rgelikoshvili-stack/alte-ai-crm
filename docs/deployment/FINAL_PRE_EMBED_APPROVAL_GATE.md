@@ -73,6 +73,21 @@ FINAL_PRE_EMBED_STATUS=NO_GO_PENDING_APPROVALS
 
 Do not mark GO. Do not embed on the real Alte website until all required approvals and the final asset URL are confirmed.
 
+## Phase 9L-M-N Final Handoff Update
+
+- Final approval intake prepared: `docs/deployment/PHASE_9L_FINAL_APPROVAL_INTAKE.md`
+- Final website handoff package prepared: `docs/final_handoff/FINAL_WEBSITE_HANDOFF_PACKAGE_GEO.md`
+- Asset manifest prepared: `docs/final_handoff/WIDGET_ASSET_MANIFEST.md`
+- Actual site embed execution status: `NOT_EXECUTED_MISSING_APPROVALS`
+- Real-domain smoke status: `NOT_EXECUTED_SITE_NOT_EMBEDDED`
+- Public launch decision: `NO_GO_PENDING_APPROVALS_OR_SITE_EMBED`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
+```
+
 ## Phase 9D Routing Requirement
 
 Department-aware handover routing is implemented in code and must be redeployed before actual website embed.

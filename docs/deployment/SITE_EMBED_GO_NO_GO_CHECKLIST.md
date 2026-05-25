@@ -4,6 +4,14 @@ SITE_EMBED_GO_NO_GO_STATUS=NO_GO_PENDING_APPROVALS
 
 Phase 9K update: security/reliability fixes are code-complete locally and pending redeploy. The widget privacy URL placeholder `#privacy-policy-pending` remains a GO blocker until the official URL is approved.
 
+Phase 9L-M-N update: final approval intake, website handoff package, asset manifest, actual-embed execution record, real-domain smoke plan/result, and public launch decision are prepared. Site embed remains NO-GO until approvals and execution are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
+```
+
 ## Technical
 
 - [x] Backend health verified

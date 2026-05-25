@@ -1,8 +1,17 @@
-# Website Developer Handoff — Alte AI Chatbot
+# Website Developer Handoff - Alte AI Chatbot
+
+## Phase 9L-M-N Final Package
+
+- Final handoff package: `docs/final_handoff/FINAL_WEBSITE_HANDOFF_PACKAGE_GEO.md`
+- Asset manifest: `docs/final_handoff/WIDGET_ASSET_MANIFEST.md`
+- Actual upload: not executed.
+- Actual embed: not executed.
+- Final asset URL: pending website approval unless explicitly replaced by the approved live URL.
+- Public launch: blocked until content/privacy approvals, official privacy URL, asset upload, actual embed, real-domain smoke, and explicit launch approval are recorded.
 
 ## არჩეული hosting ვარიანტი
 
-არჩეულია Option A — Alte-controlled hosting.
+არჩეულია Option A - Alte-controlled hosting.
 
 რეკომენდებული final URL:
 
@@ -15,7 +24,7 @@ https://alte.edu.ge/assets/alte-ai-chat-widget.js
 - `dist/widget/alte-ai-chat-widget.html`
 - `dist/widget/alte-ai-chat-widget.js`
 
-თუ website team გადაწყვეტს სხვა static path-ს, embed snippet-ში უნდა შეიცვალოს asset URL.
+თუ website team გადაწყვეტს სხვა static path-ს, embed snippet-ში უნდა შეიცვალოს asset URL მხოლოდ დამტკიცებულ live URL-ზე.
 
 ## Backend URL
 
@@ -61,24 +70,27 @@ Join Alte site:
 ## აუცილებელი პირობები public launch-მდე
 
 - Privacy/content approval დასრულებული უნდა იყოს.
+- Official privacy policy URL უნდა იყოს დამტკიცებული.
 - Final asset URL უნდა დადასტურდეს.
 - Real-domain smoke უნდა ჩატარდეს embed-ის შემდეგ.
 - Public launch უნდა დამტკიცდეს ცალკე.
 
-## Phase 9J Final Pre-Embed Status
+## Phase 9J/9L Status
 
 - Option A selected: Alte-controlled hosting.
 - Final URL placeholder: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`
 - Actual upload: not done.
 - Actual embed: not done.
+- Real-domain smoke: not executed.
+- Public launch: NO-GO.
 
 ატვირთვამდე/ჩასმამდე website developer-მა უნდა დაადასტუროს:
 
-- საბოლოო asset path
-- გვერდები, სადაც snippet ჩაიდება
-- rollback მეთოდი
-- პასუხისმგებელი contact person
-- real-domain smoke schedule
+- საბოლოო asset path.
+- გვერდები, სადაც snippet ჩაიდება.
+- rollback მეთოდი.
+- rollback owner.
+- real-domain smoke owner and schedule.
 
 ## Rollback
 
@@ -88,7 +100,7 @@ Join Alte site:
 
 ## Security
 
-- frontend-ში API key არ არის.
-- browser Anthropic/Claude-ს პირდაპირ არ იძახებს.
-- browser მხოლოდ FastAPI backend-ს ეძახის.
-- frontend CRM lead/task/customer-ს არ ქმნის.
+- Frontend-ში API key არ არის.
+- Browser Anthropic/Claude-ს პირდაპირ არ იძახებს.
+- Browser მხოლოდ FastAPI backend-ს ეძახის.
+- Frontend CRM lead/task/customer-ს არ ქმნის.

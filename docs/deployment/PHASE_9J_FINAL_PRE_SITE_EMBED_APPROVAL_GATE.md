@@ -103,3 +103,21 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
 ```
+
+## Phase 9L-M-N Final Approval Handoff Update
+
+Final approval intake, website handoff package, asset manifest, actual-site-embed execution result, real-domain smoke plan/result, and public launch NO-GO decision are prepared.
+
+- Content approval: PENDING
+- Privacy/data approval: PENDING
+- Official privacy URL: PENDING
+- Asset upload: NOT EXECUTED
+- Actual site embed: NOT EXECUTED
+- Real-domain smoke: NOT_EXECUTED_SITE_NOT_EMBEDDED
+- Public launch: NOT_COMPLETE
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
+```

@@ -21,3 +21,18 @@ SITE_EMBED_FINAL_APPROVAL_STATUS=PENDING
 - notes:
 
 Do not proceed to actual upload/embed until this record is completed and explicitly approved.
+
+## Phase 9L-M-N Final Approval Intake
+
+- final approval intake: `docs/deployment/PHASE_9L_FINAL_APPROVAL_INTAKE.md`
+- final website handoff package: `docs/final_handoff/FINAL_WEBSITE_HANDOFF_PACKAGE_GEO.md`
+- asset upload status: PENDING
+- actual site embed status: PENDING
+- real-domain smoke status: NOT_EXECUTED_SITE_NOT_EMBEDDED
+- public launch status: PENDING
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
+```
