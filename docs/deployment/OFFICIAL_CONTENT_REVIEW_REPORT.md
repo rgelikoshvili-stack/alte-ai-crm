@@ -122,3 +122,29 @@ Public content may be marked approved only after the user says:
 ```text
 Approve official content review for public chatbot launch
 ```
+
+## Phase 9F Conservative Decision Draft
+
+Phase 9F prepared a conservative official-content decision draft:
+
+- Source reviewer file: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Conservative decision file: `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`
+- Total rows: 647
+- `APPROVE`: 67
+- `HANDOVER_ONLY`: 10
+- `NEEDS_OFFICIAL_SOURCE`: 570
+- High sensitivity rows: 379
+- Sensitive blocked count: 580
+- Public launch allowed count: 67
+
+Official human approval exists: NO.
+
+Production DB modified: NO.
+
+Public launch approved: NO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```

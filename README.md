@@ -1619,3 +1619,27 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9F Conservative Content Approval Decisions
+
+Prepared a conservative official-content decision draft for the full imported Alte KB.
+
+- Source reviewer file: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Conservative decision file: `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`
+- Total rows: 647
+- `APPROVE`: 67
+- `HANDOVER_ONLY`: 10
+- `NEEDS_OFFICIAL_SOURCE`: 570
+- High sensitivity rows: 379
+- Sensitive blocked count: 580
+- Public launch allowed by conservative draft: 67
+- `apply_official_content_review --apply` run: NO
+- Production DB modified: NO
+
+This is not official human approval. Sensitive official facts remain blocked or require official source review. Public launch remains blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```

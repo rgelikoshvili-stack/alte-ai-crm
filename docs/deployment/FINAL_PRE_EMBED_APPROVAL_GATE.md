@@ -172,4 +172,25 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9F Content Approval Gate Update
+
+Conservative content decisions have been prepared, but official human approval remains pending.
+
+- Conservative CSV: `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`
+- `APPROVE`: 67
+- `HANDOVER_ONLY`: 10
+- `NEEDS_OFFICIAL_SOURCE`: 570
+- High sensitivity rows: 379
+- Production DB modified: NO
+- `apply --apply` run: NO
+- Public launch approved: NO
+
+Pre-embed status remains NO-GO until human/official approval, privacy approval, final asset URL, actual site embed, and real-domain browser smoke are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```
 ```

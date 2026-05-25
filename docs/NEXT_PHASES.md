@@ -801,3 +801,28 @@ Next:
 - Real-domain browser smoke.
 
 Decision state: `BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`
+
+## Phase 9F: Conservative Content Approval Decisions
+
+Status: conservative decisions prepared, pending human approval.
+
+Completed:
+
+- Created `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`.
+- Source reviewer file: `docs/reviewer_package/alte_kb_human_review_decisions.csv`.
+- Total rows: 647.
+- `APPROVE`: 67.
+- `HANDOVER_ONLY`: 10.
+- `NEEDS_OFFICIAL_SOURCE`: 570.
+- High sensitivity rows: 379.
+- Sensitive blocked count: 580.
+- Public launch allowed by conservative draft: 67.
+- Dry-run completed with `applied_count=0`.
+- `--apply` was not run and production DB was not modified.
+
+Next:
+
+- Alte/user reviewer edits or approves the conservative CSV.
+- Run a separate Phase 9F-Apply only after explicit approval.
+
+Decision state: `BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL`

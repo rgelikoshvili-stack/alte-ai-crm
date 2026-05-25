@@ -81,3 +81,23 @@ BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 - Production finance no-contact smoke passed: `24 passed`, `0 failed`; broader knowledge smoke passed: `25 passed`, `0 failed`.
 - Contact-flow test was not run, no contact details were sent, and no intentional production lead/task/customer creation occurred.
 - Phase 9A created the human reviewer decision package in `docs/reviewer_package/`; until reviewer decisions are filled and applied in a later approved phase, sensitive public-answer policy remains conservative.
+
+## Phase 9F Conservative Content Decision Policy
+
+Phase 9F prepared a conservative system draft at:
+
+- `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`
+
+Policy impact:
+
+- LOW, non-sensitive, official-source-backed general content may be marked `APPROVE` in the draft.
+- HIGH sensitivity rows are not public-approved by the system draft.
+- Tuition, deadlines, documents, Medicine/MD, international admissions, scholarships/grants/payments, visa, relocation, and legal content remain `NEEDS_OFFICIAL_SOURCE` or `HANDOVER_ONLY` unless an explicit human reviewer approves them later.
+- The frontend and backend must continue routing uncertain or sensitive questions to the correct department/operator.
+- Production DB was not modified in Phase 9F.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```

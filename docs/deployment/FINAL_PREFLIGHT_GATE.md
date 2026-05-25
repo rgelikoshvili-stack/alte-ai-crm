@@ -284,3 +284,30 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9F Content Approval Preflight Gate
+
+Status: NO-GO remains in effect.
+
+Verified:
+
+- Conservative decision draft created.
+- Validation passed.
+- Dry-run completed with no DB writes.
+- `apply --apply` was not run.
+- Sensitive official facts remain blocked or pending official source approval.
+
+Still blocked:
+
+- Human reviewer approval.
+- Official content approval.
+- Privacy/data approval.
+- Final widget asset URL.
+- Actual site embed.
+- Real-domain browser smoke.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```

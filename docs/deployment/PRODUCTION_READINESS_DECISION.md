@@ -298,6 +298,31 @@ Decision state:
 BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
+## Phase 9F Human Reviewer Decisions / Official Content Approval
+
+Conservative content decisions were prepared for human review.
+
+- Source reviewer file: `docs/reviewer_package/alte_kb_human_review_decisions.csv`
+- Conservative decision file: `docs/reviewer_package/alte_kb_conservative_decisions_for_approval.csv`
+- Total rows: 647
+- `APPROVE`: 67
+- `HANDOVER_ONLY`: 10
+- `NEEDS_OFFICIAL_SOURCE`: 570
+- High sensitivity rows: 379
+- Sensitive blocked count: 580
+- Public launch allowed count in conservative draft: 67
+- Official human approval exists: NO
+- Production DB modified: NO
+- `apply --apply` run: NO
+
+Production readiness remains blocked until official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
+```
+
 ## Phase 9D-UI-Final Exact Pro Sidebar Widget
 
 The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.

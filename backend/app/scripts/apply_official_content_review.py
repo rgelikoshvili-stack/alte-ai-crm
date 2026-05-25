@@ -20,6 +20,9 @@ CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue.csv"
 REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue_for_review.csv"
 EVIDENCE_REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "knowledge_review_queue_for_review_with_evidence.csv"
 FULL_LOCAL_KB_REVIEWER_CSV_PATH = BACKEND_ROOT / "reports" / "full_alte_local_kb_reviewer_decision_queue.csv"
+CONSERVATIVE_DECISIONS_CSV_PATH = (
+    PROJECT_ROOT / "docs" / "reviewer_package" / "alte_kb_conservative_decisions_for_approval.csv"
+)
 
 ALLOWED_DECISIONS = {"APPROVE", "REWRITE", "ARCHIVE", "HANDOVER_ONLY", "NEEDS_OFFICIAL_SOURCE"}
 SENSITIVE_CATEGORIES = {
@@ -90,7 +93,9 @@ def load_review_rows(csv_path: Path | None = None) -> list[ReviewRow]:
                     category=(raw.get("category") or "").lower(),
                     status=raw.get("status", ""),
                     review_required=(raw.get("review_required") or "").lower() == "true",
-                    recommended_action=(raw.get("recommended_action") or "").upper(),
+                    recommended_action=(
+                        raw.get("recommended_action") or raw.get("recommended_review_action") or ""
+                    ).upper(),
                     decision=decision,
                 )
             )
@@ -183,13 +188,19 @@ async def _amain() -> int:
     parser = argparse.ArgumentParser(description="Apply official content review decisions safely.")
     parser.add_argument("--dry-run", action="store_true", help="Preview decisions without writing changes. Default mode.")
     parser.add_argument("--apply", action="store_true", help="Apply explicit reviewer decisions.")
+    parser.add_argument(
+        "--csv-path",
+        type=Path,
+        default=None,
+        help="Optional reviewer decision CSV path. Use for dry-runs of prepared review packages.",
+    )
     args = parser.parse_args()
 
     if args.dry_run and args.apply:
         print("FAIL choose only one mode: --dry-run or --apply")
         return 1
 
-    csv_path = select_review_csv_path()
+    csv_path = args.csv_path or select_review_csv_path()
     rows = load_review_rows(csv_path)
     summary = await apply_decisions(rows, apply=args.apply)
     summary["csv_path"] = str(csv_path)
