@@ -6,6 +6,14 @@ Phase 9K update: security/reliability fixes are code-complete locally and pendin
 
 Phase 9L-M-N update: final approval intake, website handoff package, asset manifest, actual-embed execution record, real-domain smoke plan/result, and public launch decision are prepared. Site embed remains NO-GO until approvals and execution are complete.
 
+Phase 9L-P update: website access is approved for preparation only. Actual asset upload and actual embed require the future exact confirmation `Confirm Phase 9N-Execution: upload asset and embed widget on Alte site`. Public launch remains NO-GO until real-domain smoke passes.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE
+```
+
 Decision state:
 
 ```text

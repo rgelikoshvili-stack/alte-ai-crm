@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED`
+Current decision: `BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -13,6 +13,7 @@ Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_
 Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW` remains true and now advances to reviewer-decision-CSV-ready-pending-human-review.
 Phase 9K security/reliability fixes are deployed to Cloud Run as image `v0.9-security-reliability-fixes`, revision `alte-ai-crm-backend-00007-xmp`. Production behavior was verified by safe no-contact smokes. Public launch remains `NOT_COMPLETE`; actual site embed remains blocked.
 Phase 9L-M-N final approval intake, website handoff package, asset manifest, actual-embed result placeholder, real-domain smoke plan/result, and public launch NO-GO decision are prepared. Content approval, privacy approval, official privacy URL, asset upload, actual site embed, real-domain smoke, and explicit public launch approval remain pending.
+Phase 9L-P final handoff is ready. Conservative content policy is prepared, privacy/data is approved in principle pending official privacy URL, and website access is approved for preparation only. Actual upload/embed is not executed, real-domain smoke is not executed, and public launch remains NO-GO.
 
 | Area | Check | Status |
 | --- | --- | --- |

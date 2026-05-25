@@ -1,6 +1,6 @@
 # Widget Asset Manifest
 
-Generated: `2026-05-25 15:53:36 UTC`
+Generated: `2026-05-25 16:03:56 UTC`
 
 ## Assets
 
@@ -15,6 +15,8 @@ Generated: `2026-05-25 15:53:36 UTC`
 - api.anthropic.com absent: PASS
 - ANTHROPIC_API_KEY absent: PASS
 - sk-ant- absent: PASS
+- DATABASE_URL absent: PASS
+- DB password patterns absent: PASS
 - /chat/session/start present: PASS
 - /chat/message present: PASS
 

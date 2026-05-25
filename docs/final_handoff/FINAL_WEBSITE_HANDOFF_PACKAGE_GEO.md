@@ -2,7 +2,14 @@
 
 ეს პაკეტი განკუთვნილია Alte-ს ვებ-დეველოპერისთვის. ამ ფაზაში ფაილები მხოლოდ მომზადებულია; რეალურ `alte.edu.ge` ან `join.alte.edu.ge` საიტზე ატვირთვა და embed არ შესრულებულა.
 
-## ასატვირთი ფაილი
+## A. რა არის მზად
+
+- Backend Cloud Run URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Final widget asset: `dist/widget/alte-ai-chat-widget.js`
+- HTML fallback/preview: `dist/widget/alte-ai-chat-widget.html`
+- Safe Pro Sidebar widget: `widget/alte-university-ai-chatbot-safe-pro.html`
+
+## B. სად უნდა აიტვირთოს asset
 
 ზუსტად ასატვირთი production asset:
 
@@ -10,10 +17,16 @@
 dist/widget/alte-ai-chat-widget.js
 ```
 
-რეკომენდებული საბოლოო URL:
+Recommended final asset URL:
 
 ```text
 https://alte.edu.ge/assets/alte-ai-chat-widget.js
+```
+
+Status:
+
+```text
+PENDING_UPLOAD_BY_ALTE_WEBSITE_TEAM
 ```
 
 თუ ვებგუნდი სხვა Alte-controlled path-ს დაამტკიცებს, `script src` უნდა შეიცვალოს მხოლოდ დამტკიცებულ საბოლოო URL-ზე.
@@ -24,7 +37,7 @@ https://alte.edu.ge/assets/alte-ai-chat-widget.js
 https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 ```
 
-## Embed Snippet: alte.edu.ge
+## C. alte.edu.ge snippet
 
 ```html
 <!--
@@ -44,7 +57,7 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 <script src="https://alte.edu.ge/assets/alte-ai-chat-widget.js" defer></script>
 ```
 
-## Embed Snippet: join.alte.edu.ge
+## D. join.alte.edu.ge snippet
 
 ```html
 <!--
@@ -64,34 +77,34 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 <script src="https://alte.edu.ge/assets/alte-ai-chat-widget.js" defer></script>
 ```
 
-## უსაფრთხოება
+## E. Security rules
 
 - Frontend-ში Anthropic API key არ არის.
 - Frontend-ში direct `api.anthropic.com` call არ არის.
 - Browser უკავშირდება მხოლოდ FastAPI backend-ს.
 - CRM lead/task/customer creation logic backend-ში რჩება და frontend-დან პირდაპირ არ იქმნება.
 
-## Embed-მდე აუცილებელია
+## F. Before actual embed
 
-- official content approval.
-- privacy/data approval.
-- official privacy policy URL.
-- final asset URL approval.
-- rollback owner.
-- smoke test owner.
-- explicit website embed approval.
+- official privacy URL must be inserted.
+- content approval policy accepted.
+- asset URL confirmed.
+- rollback owner assigned.
+- smoke owner assigned.
 
-## Embed-ის შემდეგ შესამოწმებელია
+## G. After actual embed
 
 - Widget ჩანს რეალურ domain-ზე.
 - KA/EN მუშაობს.
 - Console-ში CORS error არ არის.
 - Browser network-ში direct `api.anthropic.com` call არ არის.
 - Backend calls მიდის Cloud Run service-ზე.
+- department routing მოწმდება.
+- no-contact guard მოწმდება.
 - Phone/email/contact details არ იგზავნება smoke test-ში.
 - Unexpected lead/task/customer creation არ ხდება no-contact smoke-ში.
 
-## Rollback
+## H. Rollback
 
 1. ამოიღეთ ჩასმული `script` snippet შესაბამისი გვერდის template-იდან ან CMS block-იდან.
 2. აღადგინეთ embed-მდე არსებული გვერდის ვერსია.

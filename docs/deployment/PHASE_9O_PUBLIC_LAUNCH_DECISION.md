@@ -44,3 +44,17 @@ PUBLIC_LAUNCH_DECISION=NO_GO_PENDING_APPROVALS_OR_SITE_EMBED
 ## Decision
 
 Public launch is not approved. The current safe state is NO-GO until every blocker above is completed and recorded.
+
+## Phase 9L-P Superseding Launch Gate
+
+The Phase 9P public launch decision supersedes this document for the final handoff package:
+
+```text
+PUBLIC_LAUNCH_DECISION=NO_GO_PENDING_SITE_EMBED_AND_REAL_DOMAIN_SMOKE
+```
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE
+```

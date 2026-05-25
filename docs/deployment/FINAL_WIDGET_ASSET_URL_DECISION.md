@@ -41,6 +41,15 @@ Actual upload/site modification was not executed in this phase.
 - Final URL remains pending until the website team confirms the approved live asset URL.
 - Public launch remains blocked.
 
+## Phase 9L-P Asset Handoff Update
+
+- Asset hosting status: `ALTE_CONTROLLED_HOSTING_SELECTED_PENDING_UPLOAD`
+- Asset handoff status: `READY_PENDING_ALTE_UPLOAD_AND_EMBED`
+- Final placeholder URL: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`
+- Actual upload: NOT EXECUTED
+- Actual embed: NOT EXECUTED
+- Use final handoff snippets from `docs/final_handoff/` only after official privacy URL and final execution confirmation are recorded.
+
 ## Phase 9J Gate
 
 Final site embed is blocked until the Phase 9J approval record and GO/NO-GO checklist are complete.

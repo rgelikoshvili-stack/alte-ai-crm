@@ -22,6 +22,23 @@ SITE_EMBED_FINAL_APPROVAL_STATUS=PENDING
 
 Do not proceed to actual upload/embed until this record is completed and explicitly approved.
 
+## Phase 9L-P Approval/Access Status
+
+- content policy status: `APPROVED_WITH_CONSERVATIVE_POLICY_PENDING_HUMAN_FINAL_REVIEW`
+- privacy/data status: `APPROVED_IN_PRINCIPLE_PENDING_OFFICIAL_PRIVACY_URL`
+- website access status: `APPROVED_FOR_PREPARATION_PENDING_ACTUAL_UPLOAD_AND_EMBED`
+- asset hosting status: `ALTE_CONTROLLED_HOSTING_SELECTED_PENDING_UPLOAD`
+- public launch status: `NO_GO_PENDING_SITE_EMBED_AND_REAL_DOMAIN_SMOKE`
+- actual upload: NOT EXECUTED
+- actual embed: NOT EXECUTED
+- real-domain smoke: NOT EXECUTED
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE
+```
+
 ## Phase 9L-M-N Final Approval Intake
 
 - final approval intake: `docs/deployment/PHASE_9L_FINAL_APPROVAL_INTAKE.md`

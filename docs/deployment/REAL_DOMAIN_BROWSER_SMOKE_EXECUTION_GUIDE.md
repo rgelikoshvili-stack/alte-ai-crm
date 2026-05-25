@@ -10,6 +10,8 @@ https://alte.edu.ge/assets/alte-ai-chat-widget.js
 
 Run this guide only after the website team uploads the asset and inserts the approved snippet.
 
+Phase 9L-P status: real-domain smoke is NOT executed because actual site embed is not executed. Do not mark smoke passed until the widget is live on the approved real domain and the checklist below is completed.
+
 ## Manual Browser Checklist
 
 - Open `https://alte.edu.ge` page containing widget.

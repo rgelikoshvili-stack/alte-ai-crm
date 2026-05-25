@@ -88,6 +88,22 @@ Decision state:
 BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
 ```
 
+## Phase 9L-P Final Handoff Update
+
+- Final approval/access record: `docs/deployment/PHASE_9L_FINAL_APPROVAL_AND_ACCESS_RECORD.md`
+- Conservative content policy: ready, final human review pending for sensitive exact facts.
+- Privacy/data: approved in principle, official privacy URL pending.
+- Website access: approved for preparation, actual upload/embed pending.
+- Actual site embed status: `NOT_EXECUTED_PENDING_FINAL_CONFIRMATION`
+- Real-domain smoke status: `NOT_EXECUTED_SITE_NOT_EMBEDDED`
+- Public launch decision: `NO_GO_PENDING_SITE_EMBED_AND_REAL_DOMAIN_SMOKE`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE
+```
+
 ## Phase 9D Routing Requirement
 
 Department-aware handover routing is implemented in code and must be redeployed before actual website embed.

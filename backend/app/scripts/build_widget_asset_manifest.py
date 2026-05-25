@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -16,9 +17,11 @@ ASSETS = [
 ]
 
 FORBIDDEN_PATTERNS = [
-    "api.anthropic.com",
-    "ANTHROPIC_API_KEY",
-    "sk-ant-",
+    ("api.anthropic.com", re.compile(r"api\.anthropic\.com", re.IGNORECASE)),
+    ("ANTHROPIC_API_KEY", re.compile(r"ANTHROPIC_API_KEY", re.IGNORECASE)),
+    ("sk-ant-", re.compile("sk" + r"-ant-", re.IGNORECASE)),
+    ("DATABASE_URL", re.compile(r"DATABASE_URL", re.IGNORECASE)),
+    ("DB password patterns", re.compile(r"DB_PASSWORD|postgresql\+asyncpg://[^:\s]+:[^@\s]+@", re.IGNORECASE)),
 ]
 
 REQUIRED_PATTERNS = [
@@ -38,8 +41,8 @@ def sha256(path: Path) -> str:
 def scan_assets() -> dict[str, bool]:
     combined = "\n".join(path.read_text(encoding="utf-8") for path in ASSETS if path.exists())
     results: dict[str, bool] = {}
-    for pattern in FORBIDDEN_PATTERNS:
-        results[f"{pattern} absent"] = pattern not in combined
+    for label, pattern in FORBIDDEN_PATTERNS:
+        results[f"{label} absent"] = not pattern.search(combined)
     for pattern in REQUIRED_PATTERNS:
         results[f"{pattern} present"] = pattern in combined
     return results

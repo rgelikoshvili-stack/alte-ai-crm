@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9L-M-N final approval handoff package.
+Current status: Phase 9L-P final handoff and launch NO-GO gate.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. The final approval intake, website handoff package, real-domain smoke plan, and public launch gate are prepared. Public launch remains NO-GO until final content approval, privacy approval, official privacy URL, asset upload, actual site embed, real-domain smoke, and explicit public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. The final approval/access record, website handoff package, asset manifest, embed decision, real-domain smoke placeholder, and public launch NO-GO gate are prepared. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_APPROVALS_AND_SITE_EMBED
+BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE
 ```
 
 Checkpoint docs:
@@ -29,6 +29,7 @@ cd C:\tmp\alte-ai-crm\backend
 .\.venv\Scripts\Activate.ps1
 python -m app.scripts.verify_phase_9j_final_pre_embed_gate
 python -m app.scripts.verify_phase_9l_m_n_final_launch_package
+python -m app.scripts.verify_phase_9l_p_final_handoff_launch_gate
 ```
 
 Local package:

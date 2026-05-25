@@ -98,6 +98,14 @@ Policy impact:
 - The frontend and backend must continue routing uncertain or sensitive questions to the correct department/operator.
 - Production DB was not modified in Phase 9F.
 
+## Phase 9L-P Launch Gate Content Status
+
+CONTENT_APPROVAL_STATUS=APPROVED_WITH_CONSERVATIVE_POLICY_PENDING_HUMAN_FINAL_REVIEW
+
+This status means the conservative answer policy is accepted for preparation and handoff. It does not approve public exact answers for sensitive facts. Tuition/fees, deadlines, required documents, Medicine/MD, International admissions, visa/relocation/legal, grants, scholarships, and payment topics remain conservative or handover-only until final human review approves exact public wording.
+
+Public launch remains NO-GO pending site embed and real-domain smoke.
+
 Decision state:
 
 ```text
