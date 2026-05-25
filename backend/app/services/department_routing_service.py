@@ -155,6 +155,17 @@ KEYWORDS = {
     ],
 }
 
+KEYWORDS["international"].extend(
+    ["საერთაშორისო", "უცხოელი", "ვიზა", "რელოკაცია", "ინდოეთი", "ნიგერია", "პაკისტანი", "ნეპალი", "ბანგლადეში"]
+)
+KEYWORDS["medicine"].extend(["მედიცინა", "სამედიცინო", "ექიმი", "სტომატოლოგია", "კლინიკური"])
+KEYWORDS["finance"].extend(["ფასი", "ღირს", "საფასური", "სწავლა", "გადახდა", "სტიპენდია", "გრანტი", "დაფინანსება", "სესხი"])
+KEYWORDS["admissions"].extend(
+    ["მიღება", "ჩარიცხვა", "აბიტურიენტი", "ბაკალავრი", "მაგისტრი", "პროგრამა", "ვადა", "კალენდარი", "რეგისტრაცია", "საბუთი", "საბუთები", "დოკუმენტი"]
+)
+KEYWORDS["student_services"].extend(["ბიბლიოთეკა", "კარიერა", "კლუბი", "ომბუდსმენი", "მენტორი", "სტუდენტური"])
+KEYWORDS["it_support"].extend(["პორტალი", "პორტალ", "ტექნიკური", "შესვლა", "შევდივარ", "პაროლი", "საიტი"])
+
 INTENT_TO_DEPARTMENT = {
     "admission_interest": "admissions",
     "consultation_request": "admissions",
@@ -195,6 +206,10 @@ SENSITIVE_TERMS = [
     "რელოკაცია",
 ]
 
+SENSITIVE_TERMS.extend(
+    ["საფასური", "ფასი", "სტიპენდია", "გრანტი", "ვადა", "საბუთ", "მოთხოვნ", "მედიცინ", "საერთაშორისო", "ვიზა", "რელოკაცია"]
+)
+
 UNKNOWN_TERMS = [
     "unknown",
     "do not know",
@@ -204,6 +219,27 @@ UNKNOWN_TERMS = [
     "არ ვიცი",
     "ვერ გიპასუხებთ",
     "ვერ დავადასტურებ",
+]
+
+AMBIGUOUS_MESSAGE_TERMS = [
+    "details please",
+    "i need details",
+    "tell me more",
+    "more information",
+    "i need information",
+    "how does it work",
+    "help please",
+    "i need help",
+    "interested",
+    "i am interested",
+    "მაინტერესებს დეტალები",
+    "დეტალები მაინტერესებს",
+    "მეტი ინფორმაცია მინდა",
+    "მომიყევით",
+    "რა პირობებია",
+    "როგორ ხდება",
+    "დახმარება მინდა",
+    "მინდა ინფორმაცია",
 ]
 
 
@@ -230,7 +266,7 @@ def resolve_department(
     language: str | None,
     ai_department: str | None = None,
 ) -> DepartmentRoutingResult:
-    text = " ".join(
+    routing_context = " ".join(
         item
         for item in [
             message_text or "",
@@ -242,20 +278,24 @@ def resolve_department(
         if item
     ).lower()
     selected_key = normalize_selected_department(selected_department)
-    message_context = " ".join(item for item in [message_text or "", selected_topic or "", source_domain or ""] if item).lower()
-    if selected_key == "international" and mentions_documents_or_admission(message_context):
+    message_only_context = " ".join(item for item in [message_text or "", source_domain or ""] if item).lower()
+    if selected_key == "international" and mentions_documents_or_admission(message_only_context):
         keyword_key = "international"
-    elif any(keyword.lower() in message_context for keyword in KEYWORDS["medicine"]) and has_international_context(
-        message_context, source_domain
+    elif any(keyword.lower() in message_only_context for keyword in KEYWORDS["medicine"]) and has_international_context(
+        message_only_context, source_domain
     ):
         keyword_key = "medicine"
     else:
-        keyword_key = keyword_department(text)
+        keyword_key = keyword_department(message_only_context)
     intent_key = INTENT_TO_DEPARTMENT.get((ai_intent or "").lower())
+    ambiguous_message = is_ambiguous_message(message_text, language) and keyword_key is None
 
-    if is_human_request(text, ai_intent):
+    if is_human_request(routing_context, ai_intent):
         department_key = selected_key or keyword_key or intent_key or "admissions"
         reason = "human_request_selected_or_inferred_department"
+    elif selected_key and ambiguous_message:
+        department_key = selected_key
+        reason = "sidebar_context_for_ambiguous_message"
     elif keyword_key:
         department_key = keyword_key
         reason = "strong_message_keyword"
@@ -272,18 +312,18 @@ def resolve_department(
         department_key = "admissions"
         reason = "default_admissions"
 
-    if department_key == "admissions" and source_domain == "join.alte.edu.ge" and mentions_documents_or_admission(text):
+    if department_key == "admissions" and source_domain == "join.alte.edu.ge" and mentions_documents_or_admission(routing_context):
         department_key = "international"
         reason = "join_domain_admissions_context"
-    if department_key == "medicine" and has_international_context(text, source_domain):
+    if department_key == "medicine" and has_international_context(routing_context, source_domain):
         reason = "medicine_with_international_priority"
 
-    sensitive_topic = has_sensitive_topic(text, risk_flags) or department_key in {"finance", "medicine", "international"}
+    sensitive_topic = has_sensitive_topic(routing_context, risk_flags) or department_key in {"finance", "medicine", "international"}
     confidence = ai_confidence if ai_confidence is not None else 0.0
     source_missing = not used_sources and sensitive_topic
     low_confidence = confidence < 0.70
-    unknown = is_unknown(text, risk_flags)
-    human_request = is_human_request(text, ai_intent)
+    unknown = is_unknown(routing_context, risk_flags)
+    human_request = is_human_request(routing_context, ai_intent)
     handover_required = low_confidence or source_missing or sensitive_topic or unknown or human_request
 
     confidence_reason = "ok"
@@ -325,6 +365,18 @@ def keyword_department(text: str) -> str | None:
         return None
     priority = ["finance", "medicine", "international", "it_support", "student_services", "admissions"]
     return sorted(matches, key=lambda key: (-matches[key], priority.index(key) if key in priority else 99))[0]
+
+
+def is_ambiguous_message(message_text: str | None, language: str | None = None) -> bool:
+    if not message_text:
+        return False
+    lowered = " ".join(message_text.lower().split())
+    if keyword_department(lowered):
+        return False
+    if any(term in lowered for term in AMBIGUOUS_MESSAGE_TERMS):
+        return True
+    tokens = [token for token in lowered.replace("?", " ").replace(".", " ").split() if token]
+    return 0 < len(tokens) <= 3 and not keyword_department(lowered)
 
 
 def has_sensitive_topic(text: str, risk_flags: list[str] | None) -> bool:

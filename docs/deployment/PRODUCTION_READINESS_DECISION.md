@@ -325,6 +325,29 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 9E Sidebar Ambiguous Routing Fix
+
+The sidebar ambiguous routing bug is fixed in code and tests, but not yet redeployed to Cloud Run.
+
+Local fix:
+
+- Ambiguous Finance sidebar messages route to Finance.
+- Ambiguous Medicine sidebar messages route to Medicine / MD.
+- Ambiguous International, IT Support, and Student Services contexts preserve the selected sidebar department.
+- Strong explicit keywords still override selected sidebar context.
+- No-contact guard remains unchanged.
+
+Production readiness:
+
+- Backend production still needs redeploy before Phase 9E behavior is active.
+- Actual site embed and public launch remain blocked.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
+```
 ```
 
 ## Phase 9C Final Pre-Embed Gate

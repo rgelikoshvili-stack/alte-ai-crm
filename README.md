@@ -1572,4 +1572,24 @@ Decision state:
 ```text
 BACKEND_KB_UPDATED_DESKTOP_STUDY_V3_IMPORTED_PENDING_REVIEW_AND_ROUTING_FIX
 ```
+
+## Phase 9E Sidebar Ambiguous Routing Fix
+
+The Phase 9D-Redeploy production smoke found that ambiguous sidebar messages could route to `Admissions` instead of the selected sidebar department.
+
+Fixed locally:
+
+- `selected_department=finance` + `მაინტერესებს დეტალები` now routes to `finance`
+- `selected_department=medicine` + `დეტალები მაინტერესებს` now routes to `medicine`
+- ambiguous `international`, `it_support`, and `student_services` sidebar contexts are preserved
+- strong explicit keywords still override sidebar context, for example portal/login -> IT Support and scholarship -> Finance
+- no-contact guard remains unchanged
+
+Production redeploy is required before this behavior changes on Cloud Run.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
+```
 ```

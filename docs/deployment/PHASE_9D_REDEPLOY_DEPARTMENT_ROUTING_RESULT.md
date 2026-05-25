@@ -92,6 +92,25 @@ Decision state:
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
 
+## Phase 9E Follow-Up
+
+The ambiguous sidebar routing bug has been fixed in backend code after this redeploy result.
+
+Fix summary:
+
+- `selected_department=finance` + `მაინტერესებს დეტალები` now routes to Finance in local tests.
+- `selected_department=medicine` + `დეტალები მაინტერესებს` now routes to Medicine / MD in local tests.
+- Strong explicit keywords still override sidebar context.
+- No-contact guard remains unchanged.
+
+Production redeploy is still required before this result changes in Cloud Run.
+
+Follow-up decision state:
+
+```text
+BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
+```
+
 ## Required Follow-Up
 
 - Fix routing priority so an explicit `selected_department` and `selected_topic` are preserved for ambiguous sidebar messages.

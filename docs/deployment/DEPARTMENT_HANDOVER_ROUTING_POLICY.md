@@ -98,3 +98,30 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 9E Sidebar Ambiguity Rule
+
+The routing implementation has been updated so ambiguous sidebar messages preserve `selected_department`.
+
+Rule:
+
+1. Strong explicit user-message keywords win.
+2. Explicit human/operator request uses `selected_department` when present.
+3. Ambiguous/generic/low-information messages use `selected_department`.
+4. AI intent is used after sidebar ambiguity handling.
+5. Domain defaults are used after that.
+
+Examples:
+
+- Finance sidebar + `მაინტერესებს დეტალები` -> Finance.
+- Medicine sidebar + `დეტალები მაინტერესებს` -> Medicine / MD.
+- Finance sidebar + `პორტალში ვერ შევდივარ` -> IT Support.
+- Medicine sidebar + `სტიპენდია მაინტერესებს` -> Finance.
+
+Redeploy is required before this fixed behavior is active in production.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
+```

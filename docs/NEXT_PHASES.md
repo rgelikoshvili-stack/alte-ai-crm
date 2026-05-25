@@ -750,3 +750,27 @@ Next:
 - Rerun production smoke after the routing fix.
 
 Decision state: `BACKEND_KB_UPDATED_DESKTOP_STUDY_V3_IMPORTED_PENDING_REVIEW_AND_ROUTING_FIX`
+
+## Phase 9E: Sidebar Ambiguous Routing Fix
+
+Status: code fixed locally, pending redeploy.
+
+Fixed:
+
+- Ambiguous sidebar Finance messages preserve `selected_department=finance`.
+- Ambiguous sidebar Medicine messages preserve `selected_department=medicine`.
+- Ambiguous International, IT Support, and Student Services sidebar messages preserve their selected department.
+- Strong explicit keywords still override sidebar context when the message clearly belongs elsewhere.
+- No-contact lead/customer/task guard remains unchanged.
+
+Verification:
+
+- Added `test_sidebar_ambiguous_department_priority.py`.
+- Added `verify_phase_9e_sidebar_ambiguous_routing_fix.py`.
+
+Next:
+
+- Redeploy Cloud Run with the Phase 9E code fix.
+- Rerun `python -m app.scripts.production_department_routing_sidebar_smoke`.
+
+Decision state: `BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY`

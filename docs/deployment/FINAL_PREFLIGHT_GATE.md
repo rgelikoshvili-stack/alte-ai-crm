@@ -228,4 +228,26 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 9E Sidebar Ambiguous Routing Fix Gate
+
+Status: NO-GO remains in effect until redeploy and production smoke pass.
+
+Code fix is complete locally:
+
+- selected sidebar department wins for ambiguous/generic messages;
+- strong explicit message keywords still override sidebar context;
+- no-contact guard remains unchanged.
+
+Production redeploy required:
+
+- Build and deploy the Phase 9E backend image.
+- Rerun department routing sidebar smoke.
+- Keep actual embed and public launch blocked until production smoke passes.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
+```
 ```
