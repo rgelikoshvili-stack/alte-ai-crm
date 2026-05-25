@@ -721,3 +721,32 @@ Next:
 - Rerun `python -m app.scripts.production_department_routing_sidebar_smoke`.
 
 Decision state: `BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW`
+
+## Desktop Alte Study KB v3 Import
+
+Status: imported to Knowledge Base, pending reviewer approval for sensitive exact facts and pending department routing fix.
+
+Source:
+
+- `C:\Users\Acer\Desktop\ალტე\სწავლა\alte_kb_complete_v3.py`
+
+Outputs:
+
+- Evidence: `docs/knowledge_evidence/alte_desktop_study_kb_v3/alte_kb_complete_v3.py`
+- Seed: `backend/app/knowledge_seed/alte_desktop_study_kb_v3/alte_kb_complete_v3_normalized.jsonl`
+- Result: `docs/deployment/ALTE_DESKTOP_STUDY_KB_V3_IMPORT_RESULT.md`
+
+Import result:
+
+- Normalized records: `27`
+- Production KB chunks created: `27`
+- High sensitivity: `18`
+- Review required: `18`
+
+Next:
+
+- Keep sensitive facts review-required.
+- Fix department routing ambiguity.
+- Rerun production smoke after the routing fix.
+
+Decision state: `BACKEND_KB_UPDATED_DESKTOP_STUDY_V3_IMPORTED_PENDING_REVIEW_AND_ROUTING_FIX`

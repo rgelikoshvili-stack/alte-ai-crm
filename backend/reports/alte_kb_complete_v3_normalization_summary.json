@@ -1,0 +1,34 @@
+{
+  "category_counts": {
+    "about": 5,
+    "admissions_general": 2,
+    "deadlines_calendar": 2,
+    "dentistry": 2,
+    "finance_tuition": 3,
+    "international_admissions": 2,
+    "medicine_md": 4,
+    "program_overview": 3,
+    "required_documents": 1,
+    "student_services": 1,
+    "visa_relocation": 2
+  },
+  "department_counts": {
+    "Academic Registry": 2,
+    "Admissions": 5,
+    "Finance": 3,
+    "General": 6,
+    "International Admissions": 2,
+    "Medicine": 7,
+    "Student Services": 2
+  },
+  "generated_at": "2026-05-25T07:04:11.239075+00:00",
+  "high_sensitivity_count": 18,
+  "normalized_records": 27,
+  "output_path": "backend\\app\\knowledge_seed\\alte_desktop_study_kb_v3\\alte_kb_complete_v3_normalized.jsonl",
+  "review_required_count": 18,
+  "source_file": "docs\\knowledge_evidence\\alte_desktop_study_kb_v3\\alte_kb_complete_v3.py",
+  "warnings": [
+    "Sensitive exact facts remain review_required and are not public-launch approval.",
+    "No live website crawling was run."
+  ]
+}

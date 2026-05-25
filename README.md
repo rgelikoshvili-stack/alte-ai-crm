@@ -1549,4 +1549,27 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Desktop Alte Study KB v3 Import
+
+Additional study material was found at `C:\Users\Acer\Desktop\ალტე\სწავლა\alte_kb_complete_v3.py` and imported into the Knowledge Base.
+
+Result:
+
+- Normalized records: `27`
+- Production KB sources created: `26`
+- Production KB sources updated: `1`
+- Production KB chunks created: `27`
+- High-sensitivity records: `18`
+- Review-required records: `18`
+
+Added coverage includes programs, admissions, required documents, tuition/finance, deadlines, international admissions, Medicine/MD, Dentistry, visa/relocation, student services, and contact/routing guidance.
+
+Sensitive exact facts remain `review_required=true`; this does not approve public launch.
+
+Decision state:
+
+```text
+BACKEND_KB_UPDATED_DESKTOP_STUDY_V3_IMPORTED_PENDING_REVIEW_AND_ROUTING_FIX
+```
 ```
