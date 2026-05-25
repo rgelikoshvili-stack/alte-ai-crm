@@ -851,3 +851,25 @@ Still pending:
 - Explicit public launch approval.
 
 Decision state: `BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS`
+
+## Phase 9I: Alte-Controlled Widget Asset Hosting
+
+Status: selected and packaged, pending upload/site embed.
+
+Completed:
+
+- Selected Option A: Alte-controlled hosting.
+- Set placeholder final URL: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`.
+- Prepared `dist/widget/alte-ai-chat-widget.html`.
+- Prepared `dist/widget/alte-ai-chat-widget.js`.
+- Updated embed snippets for `alte.edu.ge` and `join.alte.edu.ge`.
+- Created Georgian website developer handoff.
+
+Still pending:
+
+- Website team uploads final static asset.
+- Actual site embed.
+- Real-domain smoke.
+- Privacy/content approvals and explicit public launch approval.
+
+Decision state: `BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED`

@@ -2,6 +2,14 @@
 
 Do not execute before actual site embed.
 
+Phase 9I selected Alte-controlled hosting. The planned placeholder asset URL is:
+
+```text
+https://alte.edu.ge/assets/alte-ai-chat-widget.js
+```
+
+Run this guide only after the website team uploads the asset and inserts the approved snippet.
+
 ## Manual Browser Checklist
 
 - Open `https://alte.edu.ge` page containing widget.

@@ -2,6 +2,14 @@
 
 Do not execute these steps in Phase 9G-H.
 
+Phase 9I selected Alte-controlled hosting. Use this placeholder unless the website team chooses another approved path:
+
+```text
+https://alte.edu.ge/assets/alte-ai-chat-widget.js
+```
+
+Actual upload and embed are still not executed.
+
 ## Prerequisites
 
 - Privacy approved

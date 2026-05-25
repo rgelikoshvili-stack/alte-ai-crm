@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alte University AI Assistant - Safe Pro Sidebar</title>
+  <style>
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f6f2e8;
+      --color-background-tertiary: #e8f4f2;
+      --color-border-secondary: #d8e4e1;
+      --color-border-tertiary: #e8e2d4;
+      --color-text-primary: #122224;
+      --color-text-secondary: #5f7472;
+      --color-text-tertiary: #92a3a0;
+      --border-radius-lg: 12px;
+      --font-sans: Inter, "Noto Sans Georgian", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{min-height:100vh;display:grid;place-items:center;background:#eef5f4;font-family:var(--font-sans);color:var(--color-text-primary);padding:24px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .shell{display:flex;width:min(760px,calc(100vw - 32px));height:640px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;font-family:var(--font-sans);background:var(--color-background-primary);box-shadow:0 22px 60px rgba(7,64,69,.14)}
+    .side{width:210px;background:#e8f4f2;border-right:0.5px solid #c8e4e0;display:flex;flex-direction:column;flex-shrink:0}
+    .s-brand{padding:16px 14px 12px;border-bottom:0.5px solid #c8e4e0;display:flex;align-items:center;gap:9px}
+    .s-logo{width:32px;height:32px;border-radius:50%;background:#074045;color:#fff;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .s-title{font-size:13px;font-weight:500;color:#122224}
+    .s-sub{font-size:10px;color:#4a7a74;margin-top:1px}
+    .s-nav{flex:1;padding:8px 6px;overflow-y:auto}
+    .s-sec{font-size:10px;font-weight:500;color:#5a8a84;letter-spacing:.07em;text-transform:uppercase;padding:10px 8px 4px}
+    .s-btn{width:100%;display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:7px;border:none;background:none;color:#2a5a56;font-size:12px;cursor:pointer;text-align:left;transition:.12s;line-height:1.3}
+    .s-btn:hover{background:rgba(7,64,69,.1);color:#074045}
+    .s-btn.on{background:#074045;color:#fff}
+    .s-btn.on i{opacity:1}
+    .s-btn i{font-size:13px;opacity:.7;flex-shrink:0;width:16px;text-align:center;font-style:normal}
+    .s-foot{padding:10px 12px;border-top:0.5px solid #c8e4e0;display:flex;align-items:center;gap:8px}
+    .s-av{width:26px;height:26px;border-radius:50%;background:#c0deda;color:#074045;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .s-u{font-size:12px;font-weight:500;color:#122224}
+    .s-r{font-size:10px;color:#4a7a74}
+    .main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--color-background-primary)}
+    .c-hdr{padding:11px 14px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:9px}
+    .c-av{width:30px;height:30px;border-radius:50%;background:#074045;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .c-info{flex:1;min-width:0}
+    .c-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+    .c-stat{font-size:10px;color:var(--color-text-secondary);display:flex;align-items:center;gap:3px;margin-top:1px}
+    .ondot{width:6px;height:6px;border-radius:50%;background:#1ca672;display:inline-block}
+    .c-acts{display:flex;gap:5px}
+    .l-btn{height:26px;padding:0 9px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:11px;font-weight:500;cursor:pointer;transition:.1s}
+    .l-btn.on{background:#074045;color:#fff;border-color:#074045}
+    .l-btn:hover:not(.on){background:var(--color-background-secondary)}
+    .ic-btn{width:26px;height:26px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
+    .ic-btn:hover{background:var(--color-background-secondary)}
+    .trust{padding:5px 14px;background:#f0faf8;border-bottom:0.5px solid #c8e8e2;font-size:11px;color:#2d6b60;display:flex;align-items:center;gap:5px}
+    .trust i{font-size:12px;color:#1ca672;font-style:normal}
+    .msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+    .row{display:flex;gap:7px;align-items:flex-end}
+    .row.u{flex-direction:row-reverse}
+    .m-av{width:22px;height:22px;border-radius:50%;background:#e8f4f2;color:#074045;font-size:9px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .m-av.u{background:var(--color-background-tertiary);color:var(--color-text-secondary)}
+    .m-av.op{background:#fff3e0;color:#e65100}
+    .bub{padding:8px 11px;border-radius:11px;font-size:12.5px;line-height:1.55;max-width:80%;white-space:pre-wrap}
+    .bot .bub{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-bottom-left-radius:3px;color:var(--color-text-primary)}
+    .u .bub{background:#074045;color:#fff;border-bottom-right-radius:3px}
+    .op .bub{background:#fff8f0;border:0.5px solid #ffd0a0;border-bottom-left-radius:3px;color:#5a2e00}
+    .src{margin-top:4px;font-size:10px;display:flex;align-items:center;gap:3px;color:var(--color-text-secondary)}
+    .src a{color:#2a7a6e;text-decoration:none;overflow-wrap:anywhere}
+    .handover-card{margin-top:7px;padding:9px 11px;background:var(--color-background-primary);border:0.5px solid #ffd0a0;border-radius:8px;font-size:12px}
+    .hc-head{font-weight:500;font-size:12px;color:#e65100;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+    .hc-dept{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;background:#fff3e0;color:#e65100;margin:2px 0}
+    .hc-note{font-size:11px;color:var(--color-text-secondary);margin-top:4px}
+    .lcard{margin-top:7px;padding:8px 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;font-size:12px}
+    .lcard-h{font-weight:500;font-size:11px;color:var(--color-text-primary);margin-bottom:4px;display:flex;align-items:center;gap:3px}
+    .lcard-r{color:var(--color-text-secondary);padding:1px 0}
+    .lbadge{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;background:#e8f4f2;color:#074045;margin-top:3px}
+    .tdots{display:flex;gap:3px;padding:8px 11px;align-items:center}
+    .td{width:5px;height:5px;border-radius:50%;background:var(--color-text-tertiary);animation:bl 1.2s infinite}
+    .td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+    @keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+    .quick-wrap{padding:0 12px 8px;display:flex;flex-wrap:wrap;gap:5px}
+    .quick-btn{border:0.5px solid var(--color-border-tertiary);background:#fff;color:#074045;border-radius:20px;padding:5px 8px;font-size:10.5px;cursor:pointer}
+    .quick-btn:hover{background:#e8f4f2}
+    .composer{display:flex;gap:7px;padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
+    .composer input{flex:1;height:34px;border:0.5px solid var(--color-border-secondary);border-radius:7px;padding:0 10px;font-size:12.5px;background:var(--color-background-primary);color:var(--color-text-primary);outline:none}
+    .composer input:focus{border-color:#074045}
+    .composer input::placeholder{color:var(--color-text-tertiary)}
+    .sbtn{height:34px;padding:0 12px;border:none;border-radius:7px;background:#074045;color:#fff;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+    .sbtn:hover{background:#0a5258}
+    .sbtn:disabled{opacity:.55;cursor:not-allowed}
+    .dept-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:20px;background:#e8f4f2;color:#074045;margin-bottom:4px}
+    .privacy-note{padding:0 12px 9px;font-size:10px;line-height:1.4;color:var(--color-text-secondary)}
+    .privacy-note a{color:#2a7a6e;text-decoration:none}
+    .privacy-note a:hover{text-decoration:underline}
+    .consent-note{margin-top:6px;font-size:10.5px;line-height:1.45;color:var(--color-text-secondary)}
+    .consent-note a{color:#2a7a6e;text-decoration:none}
+    @media (max-width:720px){body{padding:10px}.shell{width:100%;height:auto;min-height:640px;flex-direction:column}.side{width:100%;max-height:220px;border-right:0;border-bottom:0.5px solid #c8e4e0}.main{min-height:520px}.bub{max-width:90%}}
+  </style>
+</head>
+<body>
+  <h2 class="sr-only">ალტე უნივერსიტეტის AI ასისტენტი — დეპარტამენტებით</h2>
+  <div class="shell">
+    <nav class="side alte-sidebar sidebar" aria-label="navigation">
+      <div class="s-brand">
+        <div class="s-logo">A</div>
+        <div>
+          <div class="s-title">Alte University</div>
+          <div class="s-sub">AI Assistant</div>
+        </div>
+      </div>
+      <div class="s-nav dept-list" id="sb-nav"></div>
+      <div class="s-foot">
+        <div class="s-av">R</div>
+        <div>
+          <div class="s-u" id="sb-user">სტუმარი</div>
+          <div class="s-r" id="sb-role">მომხმარებელი</div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="c-hdr">
+        <div class="c-av">A</div>
+        <div class="c-info">
+          <div class="c-name" id="hdr-name">Alte AI Assistant</div>
+          <div class="c-stat"><span class="ondot"></span><span id="hdr-stat">ონლაინ · Backend connected</span></div>
+        </div>
+        <div class="c-acts">
+          <button class="l-btn on" id="ka-btn" type="button">KA</button>
+          <button class="l-btn" id="en-btn" type="button">EN</button>
+          <button class="ic-btn" id="reset-btn" type="button" title="clear">↻</button>
+        </div>
+      </div>
+      <div class="trust">
+        <i aria-hidden="true">✓</i>
+        <span id="trust-txt">პასუხები alte.edu.ge-ს ოფიციალური წყაროებიდან</span>
+      </div>
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="quick-wrap quick-row" id="quick-row"></div>
+      <form class="composer" id="composer">
+        <input id="inp" autocomplete="off" aria-label="message"/>
+        <button type="submit" class="sbtn" id="send-btn"><span aria-hidden="true">↗</span><span id="send-lbl">გაგზავნა</span></button>
+      </form>
+      <div class="privacy-note" id="privacy-note"></div>
+    </div>
+  </div>
+
+  <script>
+    window.AlteChatWidgetConfig = window.AlteChatWidgetConfig || {
+      apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+      sourceDomain: "alte.edu.ge",
+      defaultLanguage: "ka"
+    };
+
+    const cfg = window.AlteChatWidgetConfig;
+    const DEPTS = {
+      ka: {
+        admissions: { name: "მიღება / Admissions", icon: "▦" },
+        international: { name: "საერთ. სტუდენტები", icon: "◎" },
+        finance: { name: "ფინანსები", icon: "₾" },
+        medicine: { name: "მედიცინა / MD", icon: "✚" },
+        student_services: { name: "სტუდ. სერვისები", icon: "♡" },
+        it_support: { name: "IT დახმარება", icon: "⌘" },
+        general: { name: "ოპერატორი", icon: "☎" }
+      },
+      en: {
+        admissions: { name: "Admissions", icon: "▦" },
+        international: { name: "International Students", icon: "◎" },
+        finance: { name: "Finance", icon: "₾" },
+        medicine: { name: "Medicine / MD", icon: "✚" },
+        student_services: { name: "Student Services", icon: "♡" },
+        it_support: { name: "IT Support", icon: "⌘" },
+        general: { name: "General Operator", icon: "☎" }
+      }
+    };
+
+    const NAV = {
+      ka: [
+        { i: "◫", l: "პროგრამები", dept: "admissions", topic: "programs" },
+        { i: "▦", l: "მიღება", dept: "admissions", topic: "admissions" },
+        { i: "₾", l: "დაფინანსება", dept: "finance", topic: "tuition" },
+        { i: "◎", l: "საერთ. სტუდ.", dept: "international", topic: "international" },
+        { i: "✚", l: "მედიცინა / MD", dept: "medicine", topic: "medicine" }
+      ],
+      en: [
+        { i: "◫", l: "Programs", dept: "admissions", topic: "programs" },
+        { i: "▦", l: "Admission", dept: "admissions", topic: "admissions" },
+        { i: "₾", l: "Funding", dept: "finance", topic: "tuition" },
+        { i: "◎", l: "International", dept: "international", topic: "international" },
+        { i: "✚", l: "Medicine / MD", dept: "medicine", topic: "medicine" }
+      ]
+    };
+
+    const NAV2 = {
+      ka: [
+        { i: "▤", l: "ბიბლიოთეკა", dept: "student_services", topic: "library" },
+        { i: "▣", l: "კარიერა", dept: "student_services", topic: "career" },
+        { i: "⌘", l: "IT დახმარება", dept: "it_support", topic: "it_support" },
+        { i: "☎", l: "კონტაქტი", dept: "admissions", topic: "contact" },
+        { i: "●", l: "ოპერატორი", dept: "_human", topic: "human_operator" }
+      ],
+      en: [
+        { i: "▤", l: "Library", dept: "student_services", topic: "library" },
+        { i: "▣", l: "Career", dept: "student_services", topic: "career" },
+        { i: "⌘", l: "IT Support", dept: "it_support", topic: "it_support" },
+        { i: "☎", l: "Contact", dept: "admissions", topic: "contact" },
+        { i: "●", l: "Human Operator", dept: "_human", topic: "human_operator" }
+      ]
+    };
+
+    const quickChips = {
+      admissions: { ka: ["პროგრამები", "მიღება", "საბუთები", "ვადები"], en: ["Programs", "Admission", "Documents", "Deadlines"] },
+      finance: { ka: ["სწავლის საფასური", "სტიპენდია", "გრანტი", "გადახდა"], en: ["Tuition", "Scholarship", "Grant", "Payment"] },
+      international: { ka: ["International admission", "Documents", "Visa / relocation", "English programs"], en: ["International admission", "Documents", "Visa / relocation", "English programs"] },
+      medicine: { ka: ["MD program", "Dentistry", "Clinical training", "Admission requirements"], en: ["MD program", "Dentistry", "Clinical training", "Admission requirements"] },
+      student_services: { ka: ["Library", "Career", "Student life", "Ombudsman"], en: ["Library", "Career", "Student life", "Ombudsman"] },
+      it_support: { ka: ["Portal login", "EMIS", "Technical issue", "Password problem"], en: ["Portal login", "EMIS", "Technical issue", "Password problem"] },
+      general: { ka: ["ოპერატორი", "კონტაქტი"], en: ["Human operator", "Contact"] }
+    };
+
+    const TXT = {
+      ka: {
+        s1: "მენიუ", s2: "სხვა", user: "სტუმარი", role: "მომხმარებელი",
+        placeholder: "მკითხე პროგრამაზე, მიღებაზე, დაფინანსებაზე...",
+        send: "გაგზავნა", trust: "პასუხები alte.edu.ge-ს ოფიციალური წყაროებიდან",
+        online: "ონლაინ · Backend connected", connecting: "ვუკავშირდები backend-ს...", thinking: "ვფიქრობ...",
+        greet: "გამარჯობა!  მე ვარ ალტე უნივერსიტეტის AI ასისტენტი.\n\nსიდბარდან აირჩიე თემა ან პირდაპირ მომწერე კითხვა.",
+        helper: "კარგი, ამ თემაზე დაგეხმარებით. შეგიძლიათ მომწეროთ კითხვა.",
+        human: "მინდა ოპერატორთან საუბარი",
+        handover: "ოპერატორი ჩაერთო",
+        handoverNote: (dept) => `ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან: ${dept}. შეგიძლიათ დატოვოთ ტელეფონი ან ელფოსტა, რომ ოპერატორი დაგიკავშირდეთ.`,
+        contactTitle: "საკონტაქტო ინფორმაცია",
+        contactBody: "თუ გსურთ, რომ ოპერატორი დაგიკავშირდეთ, შეგიძლიათ დატოვოთ ტელეფონი ან ელფოსტა.",
+        privacyNote: "ჩათში მოწოდებული თქვენი საკონტაქტო მონაცემები გამოიყენება მხოლოდ კონსულტაციისთვის და შესაბამის დეპარტამენტთან დასაკავშირებლად.",
+        privacyLink: "კონფიდენციალურობის პოლიტიკა",
+        sources: "წყაროები",
+        error: "კავშირი დროებით მიუწვდომელია. სცადეთ მოგვიანებით ან გამოიყენეთ ოფიციალური საკონტაქტო არხი."
+      },
+      en: {
+        s1: "Menu", s2: "Other", user: "Guest", role: "User",
+        placeholder: "Ask about programs, admissions, or funding...",
+        send: "Send", trust: "Answers sourced from alte.edu.ge official pages",
+        online: "Online · Backend connected", connecting: "Connecting to backend...", thinking: "Thinking...",
+        greet: "Hello!  I am Alte University's AI Assistant.\n\nChoose a topic from the sidebar or ask me anything.",
+        helper: "Sure, I can help with this topic. Please write your question.",
+        human: "I want to talk to an operator",
+        handover: "Operator connected",
+        handoverNote: (dept) => `I can connect you with the right department: ${dept}. You may leave your phone or email so an operator can contact you.`,
+        contactTitle: "Contact details",
+        contactBody: "If you want an operator to contact you, you may leave your phone or email.",
+        privacyNote: "Your contact details submitted in this chat will be used only for consultation and for connecting you with the relevant Alte University department.",
+        privacyLink: "Privacy Policy",
+        sources: "Sources",
+        error: "The connection is temporarily unavailable. Please try later or use an official contact channel."
+      }
+    };
+
+    const storage = {
+      lang: "alteSafeProExactLang",
+      sessionId: "alteSafeProExactSessionId",
+      conversationId: "alteSafeProExactConversationId",
+      dept: "alteSafeProExactDepartment",
+      topic: "alteSafeProExactTopic"
+    };
+
+    let lang = localStorage.getItem(storage.lang) || cfg.defaultLanguage || "ka";
+    let activeDept = localStorage.getItem(storage.dept) || "admissions";
+    let activeTopic = localStorage.getItem(storage.topic) || "programs";
+    let sessionId = localStorage.getItem(storage.sessionId);
+    let conversationId = localStorage.getItem(storage.conversationId);
+    let busy = false;
+
+    const navEl = document.getElementById("sb-nav");
+    const msgEl = document.getElementById("msgs");
+    const quickEl = document.getElementById("quick-row");
+    const inputEl = document.getElementById("inp");
+    const sendBtn = document.getElementById("send-btn");
+    const composer = document.getElementById("composer");
+    const kaBtn = document.getElementById("ka-btn");
+    const enBtn = document.getElementById("en-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const privacyNoteEl = document.getElementById("privacy-note");
+
+    function esc(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+
+    function deptName(key) {
+      const normalized = normalizeDept(key);
+      return (DEPTS[lang][normalized] || DEPTS[lang].general).name;
+    }
+
+    function normalizeDept(value) {
+      const raw = String(value || "").toLowerCase();
+      if (raw.includes("finance") || raw.includes("tuition") || raw.includes("საფას")) return "finance";
+      if (raw.includes("international") || raw.includes("join") || raw.includes("საერთ")) return "international";
+      if (raw.includes("medicine") || raw.includes("md") || raw.includes("მედიც")) return "medicine";
+      if (raw.includes("student")) return "student_services";
+      if (raw.includes("it") || raw.includes("technical")) return "it_support";
+      if (raw.includes("admission") || raw.includes("მიღ")) return "admissions";
+      return DEPTS[lang][raw] ? raw : activeDept || "admissions";
+    }
+
+    function renderNav() {
+      navEl.innerHTML = "";
+      const makeSection = (items, label) => {
+        const sec = document.createElement("div");
+        sec.className = "s-sec";
+        sec.textContent = label;
+        navEl.appendChild(sec);
+        items.forEach((item) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `s-btn${item.dept === activeDept && item.topic === activeTopic ? " on" : ""}`;
+          btn.dataset.dept = item.dept;
+          btn.dataset.topic = item.topic;
+          btn.innerHTML = `<i aria-hidden="true">${item.i}</i>${item.l}`;
+          btn.addEventListener("click", () => {
+            if (item.dept === "_human") {
+              activeTopic = "human_operator";
+              localStorage.setItem(storage.topic, activeTopic);
+              sendMessage(TXT[lang].human, { humanRequest: true });
+              return;
+            }
+            activeDept = item.dept;
+            activeTopic = item.topic;
+            localStorage.setItem(storage.dept, activeDept);
+            localStorage.setItem(storage.topic, activeTopic);
+            renderNav();
+            renderQuickChips();
+            addBotMsg(`${deptBadge(activeDept)}${esc(TXT[lang].helper)}`);
+          });
+          navEl.appendChild(btn);
+        });
+      };
+      makeSection(NAV[lang], TXT[lang].s1);
+      makeSection(NAV2[lang], TXT[lang].s2);
+    }
+
+    function renderQuickChips() {
+      quickEl.innerHTML = "";
+      const chips = (quickChips[activeDept] || quickChips.general)[lang] || [];
+      chips.forEach((chip) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quick-btn";
+        btn.textContent = chip;
+        btn.addEventListener("click", () => sendMessage(chip));
+        quickEl.appendChild(btn);
+      });
+    }
+
+    function setLang(next) {
+      lang = next;
+      localStorage.setItem(storage.lang, lang);
+      document.documentElement.lang = lang;
+      kaBtn.classList.toggle("on", lang === "ka");
+      enBtn.classList.toggle("on", lang === "en");
+      inputEl.placeholder = TXT[lang].placeholder;
+      document.getElementById("send-lbl").textContent = TXT[lang].send;
+      document.getElementById("trust-txt").textContent = TXT[lang].trust;
+      document.getElementById("hdr-stat").textContent = TXT[lang].online;
+      document.getElementById("sb-user").textContent = TXT[lang].user;
+      document.getElementById("sb-role").textContent = TXT[lang].role;
+      // Replace #privacy-policy-pending with official Alte Privacy Policy URL before public launch.
+      privacyNoteEl.innerHTML = `${esc(TXT[lang].privacyNote)} <a href="#privacy-policy-pending">${esc(TXT[lang].privacyLink)}</a>`;
+      renderNav();
+      renderQuickChips();
+      if (!msgEl.children.length) addBotMsg(esc(TXT[lang].greet));
+    }
+
+    function deptBadge(key) {
+      const d = DEPTS[lang][normalizeDept(key)] || DEPTS[lang].general;
+      return `<div class="dept-badge">${d.icon} ${esc(d.name)}</div>`;
+    }
+
+    function addBotMsg(html, payload) {
+      const row = document.createElement("div");
+      row.className = "row bot";
+      row.innerHTML = `<div class="m-av">A</div><div><div class="bub">${html}</div></div>`;
+      if (payload) renderExtras(row.querySelector(".bub"), payload);
+      msgEl.appendChild(row);
+      msgEl.scrollTop = msgEl.scrollHeight;
+    }
+
+    function addUserMsg(text) {
+      const row = document.createElement("div");
+      row.className = "row u";
+      row.innerHTML = `<div class="m-av u">U</div><div class="bub">${esc(text)}</div>`;
+      msgEl.appendChild(row);
+      msgEl.scrollTop = msgEl.scrollHeight;
+    }
+
+    function addOperatorCard(deptKey) {
+      const d = DEPTS[lang][normalizeDept(deptKey)] || DEPTS[lang].general;
+      const row = document.createElement("div");
+      row.className = "row op";
+      row.innerHTML = `
+        <div class="m-av op">OP</div>
+        <div class="bub">
+          <div class="handover-card">
+            <div class="hc-head">☏ ${TXT[lang].handover}</div>
+            <div class="hc-dept">${d.icon} ${esc(d.name)}</div>
+            <div class="hc-note">${esc(TXT[lang].handoverNote(d.name))}</div>
+          </div>
+        </div>`;
+      msgEl.appendChild(row);
+      msgEl.scrollTop = msgEl.scrollHeight;
+    }
+
+    function showTyping() {
+      const row = document.createElement("div");
+      row.className = "row bot";
+      row.id = "typing";
+      row.innerHTML = `<div class="m-av">A</div><div class="bub"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+      msgEl.appendChild(row);
+      msgEl.scrollTop = msgEl.scrollHeight;
+    }
+
+    function removeTyping() {
+      const node = document.getElementById("typing");
+      if (node) node.remove();
+    }
+
+    function renderExtras(parent, payload) {
+      const missing = Array.isArray(payload.missing_fields) ? payload.missing_fields : [];
+      const confidence = typeof payload.confidence === "number" ? payload.confidence : null;
+      const routeDept = normalizeDept(payload.department_key || payload.route_department || payload.department || activeDept);
+      const shouldHandover = Boolean(
+        payload.should_handover ||
+        payload.needs_handover ||
+        payload.force_handover ||
+        payload.route_department ||
+        payload.department_key ||
+        payload.source_missing ||
+        (confidence !== null && confidence < 0.70) ||
+        missing.includes("phone_or_email") ||
+        missing.includes("phone") ||
+        missing.includes("email")
+      );
+
+      const sources = Array.isArray(payload.used_sources) ? payload.used_sources : Array.isArray(payload.sources) ? payload.sources : [];
+      if (sources.length) {
+        const box = document.createElement("div");
+        box.className = "lcard";
+        box.innerHTML = `<div class="lcard-h">↗ ${TXT[lang].sources}</div>`;
+        sources.slice(0, 3).forEach((source) => {
+          const url = source.source_url || source.url || source.link;
+          const title = source.title || source.source_key || url || "Knowledge Base";
+          const line = document.createElement(url ? "a" : "div");
+          line.className = "lcard-r";
+          line.textContent = title;
+          if (url) {
+            line.href = url;
+            line.target = "_blank";
+            line.rel = "noreferrer";
+          }
+          box.appendChild(line);
+        });
+        parent.appendChild(box);
+      }
+
+      if (shouldHandover) addOperatorCard(routeDept);
+
+      if (missing.includes("phone_or_email") || missing.includes("phone") || missing.includes("email")) {
+        const card = document.createElement("div");
+        card.className = "lcard";
+        card.innerHTML = `<div class="lcard-h">${TXT[lang].contactTitle}</div><div class="lcard-r">${TXT[lang].contactBody}</div><div class="consent-note">${esc(TXT[lang].privacyNote)} <a href="#privacy-policy-pending">${esc(TXT[lang].privacyLink)}</a></div>`;
+        parent.appendChild(card);
+      }
+    }
+
+    async function ensureSession() {
+      if (sessionId || conversationId) return true;
+      setBusy(true, TXT[lang].connecting);
+      try {
+        const response = await fetch(`${cfg.apiBaseUrl}/chat/session/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source_domain: cfg.sourceDomain || "alte.edu.ge",
+            language: lang,
+            channel: "website",
+            widget_variant: "safe_pro_sidebar"
+          })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        sessionId = data.session_id || data.sessionId || sessionId;
+        conversationId = data.conversation_id || data.conversationId || conversationId;
+        if (sessionId) localStorage.setItem(storage.sessionId, sessionId);
+        if (conversationId) localStorage.setItem(storage.conversationId, conversationId);
+        setBusy(false, TXT[lang].online);
+        return true;
+      } catch (_) {
+        setBusy(false, "Backend unavailable");
+        addBotMsg(esc(TXT[lang].error));
+        return false;
+      }
+    }
+
+    async function sendMessage(text, options = {}) {
+      const value = String(text || "").trim();
+      if (!value || busy) return;
+      addUserMsg(value);
+      const connected = await ensureSession();
+      if (!connected) return;
+      showTyping();
+      setBusy(true, TXT[lang].thinking);
+      try {
+        const metadata = {
+          selected_department: activeDept,
+          selected_topic: activeTopic,
+          page_url: window.location.href,
+          widget_variant: "safe_pro_sidebar",
+          human_request: Boolean(options.humanRequest)
+        };
+        const response = await fetch(`${cfg.apiBaseUrl}/chat/message`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            conversation_id: conversationId,
+            message: value,
+            language: lang,
+            source_domain: cfg.sourceDomain || "alte.edu.ge",
+            selected_department: activeDept,
+            selected_topic: activeTopic,
+            widget_variant: "safe_pro_sidebar",
+            human_request: Boolean(options.humanRequest),
+            metadata,
+            metadata_json: metadata
+          })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        removeTyping();
+        const reply = data.reply || data.answer || data.message || TXT[lang].error;
+        addBotMsg(`${deptBadge(data.department_key || data.route_department || activeDept)}${esc(reply)}`, data);
+      } catch (_) {
+        removeTyping();
+        addBotMsg(esc(TXT[lang].error));
+      } finally {
+        setBusy(false, TXT[lang].online);
+      }
+    }
+
+    function clearChat() {
+      localStorage.removeItem(storage.sessionId);
+      localStorage.removeItem(storage.conversationId);
+      sessionId = null;
+      conversationId = null;
+      msgEl.innerHTML = "";
+      addBotMsg(esc(TXT[lang].greet));
+      ensureSession();
+    }
+
+    function setBusy(value, label) {
+      busy = value;
+      sendBtn.disabled = value;
+      document.getElementById("hdr-stat").textContent = label;
+    }
+
+    composer.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = inputEl.value;
+      inputEl.value = "";
+      sendMessage(value);
+    });
+    kaBtn.addEventListener("click", () => setLang("ka"));
+    enBtn.addEventListener("click", () => setLang("en"));
+    resetBtn.addEventListener("click", clearChat);
+
+    setLang(lang);
+    ensureSession();
+  </script>
+</body>
+</html>

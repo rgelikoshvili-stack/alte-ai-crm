@@ -1669,3 +1669,23 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
 ```
+
+## Phase 9I Asset Hosting Decision
+
+Option A was selected: Alte-controlled hosting.
+
+- Placeholder final asset URL: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`
+- Prepared asset files:
+  - `dist/widget/alte-ai-chat-widget.html`
+  - `dist/widget/alte-ai-chat-widget.js`
+- Website developer handoff: `docs/embed_package/WEBSITE_DEVELOPER_HANDOFF_GEO.md`
+- Embed snippets updated to use the Alte-controlled placeholder URL.
+- Actual upload/embed: not executed.
+- Real-domain smoke: not executed.
+- Public launch: not complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
+```

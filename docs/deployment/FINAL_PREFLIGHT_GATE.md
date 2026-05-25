@@ -340,3 +340,32 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
 ```
+
+## Phase 9I Asset Hosting Gate
+
+Status: NO-GO remains in effect.
+
+Selected:
+
+- Final asset hosting option: Alte-controlled hosting.
+- Placeholder asset URL: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`.
+
+Prepared:
+
+- `dist/widget/alte-ai-chat-widget.html`
+- `dist/widget/alte-ai-chat-widget.js`
+- Website developer handoff and embed snippets.
+
+Still blocked:
+
+- Actual asset upload.
+- Actual site embed.
+- Real-domain browser smoke.
+- Privacy/content approvals.
+- Public launch approval.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
+```

@@ -9,15 +9,17 @@
 
 ## როგორ გამოიყენოს website admin/developer-მა
 
-1. აირჩიოს საბოლოო static asset URL.
-2. შეცვალოს `SCRIPT_SRC_PLACEHOLDER_REPLACE_WITH_FINAL_ASSET_URL`.
-3. ჩასვას შესაბამისი snippet დამტკიცებულ test/staging გვერდზე.
-4. გაუშვას real-domain smoke.
-5. მხოლოდ approval-ის შემდეგ გადავიდეს public rollout-ზე.
+1. გამოიყენოს Alte-controlled hosting.
+2. ატვირთოს `dist/widget/alte-ai-chat-widget.html` და `dist/widget/alte-ai-chat-widget.js`.
+3. რეკომენდებული URL არის `https://alte.edu.ge/assets/alte-ai-chat-widget.js`.
+4. თუ სხვა approved path გამოიყენება, snippet-ში შეცვალოს asset URL.
+5. ჩასვას შესაბამისი snippet დამტკიცებულ test/staging გვერდზე.
+6. გაუშვას real-domain smoke.
+7. მხოლოდ approval-ის შემდეგ გადავიდეს public rollout-ზე.
 
 ## ჯერ არ არის დამტკიცებული
 
-- final asset URL pending
+- final asset upload pending
 - privacy/content approval pending
 - actual site embed pending
 - real-domain smoke required after embed

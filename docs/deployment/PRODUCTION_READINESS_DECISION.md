@@ -341,6 +341,25 @@ Decision state:
 BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
 ```
 
+## Phase 9I Asset Hosting Decision
+
+Option A — Alte-controlled hosting — has been selected for the final widget asset.
+
+- Placeholder URL: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`
+- Asset package prepared in `dist/widget/`.
+- Embed package updated in `docs/embed_package/`.
+- Actual upload was not executed.
+- Actual site embed was not executed.
+- Real-domain smoke was not executed.
+
+Readiness remains blocked until upload/embed, real-domain smoke, privacy/content approval, and explicit public launch approval are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
+```
+
 ## Phase 9D-UI-Final Exact Pro Sidebar Widget
 
 The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.
