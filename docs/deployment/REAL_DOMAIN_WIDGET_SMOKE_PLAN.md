@@ -78,4 +78,26 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+
+## Phase 9D-Redeploy Addendum
+
+The backend was redeployed with image `v0.9-department-routing-sidebar`, but production department routing smoke did not fully pass.
+
+Real-domain browser smoke must not proceed until:
+
+- Ambiguous sidebar Finance context routes to Finance.
+- Ambiguous sidebar Medicine context routes to Medicine / MD.
+- `python -m app.scripts.production_department_routing_sidebar_smoke` passes.
+
+Current production verification:
+
+- Department routing smoke: `26/28` passed, `2` failed
+- Finance no-contact smoke: `24/24` passed
+- Broader knowledge smoke: `25/25` passed
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```
 ```

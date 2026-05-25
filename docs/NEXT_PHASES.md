@@ -694,3 +694,30 @@ Next recommended phase:
 - Frontend remains safe: no direct Anthropic call, no API key, no frontend system prompt ownership, no frontend CRM record creation, and no frontend hardcoded tuition/deadline facts.
 - Actual embed and public launch remain pending.
 - Decision state: `BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED`
+
+## Phase 9D-Redeploy: Department Routing Production Verification
+
+Status: failed verification, needs routing review.
+
+Completed:
+
+- Built and deployed image `v0.9-department-routing-sidebar` to Cloud Run service `alte-ai-crm-backend`.
+- Verified production endpoints: `/health`, `/version`, `/diagnostics/ai`.
+- Confirmed finance no-contact smoke still passes `24/24`.
+- Confirmed broader knowledge smoke still passes `25/25`.
+- Confirmed no contact details were sent and no contact-flow test was run.
+
+Failed verification:
+
+- Department routing smoke passed `26/28`.
+- Ambiguous sidebar context did not fully hold:
+  - Finance sidebar + ambiguous message routed to `Admissions`.
+  - Medicine sidebar + ambiguous message routed to `Admissions`.
+
+Next:
+
+- Fix routing priority so `selected_department` and `selected_topic` are preserved for ambiguous sidebar messages.
+- Redeploy after fix.
+- Rerun `python -m app.scripts.production_department_routing_sidebar_smoke`.
+
+Decision state: `BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW`

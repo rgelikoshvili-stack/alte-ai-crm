@@ -1523,4 +1523,30 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+
+## Phase 9D-Redeploy Department Routing Verification
+
+Phase 9D backend code was deployed to Cloud Run as image `v0.9-department-routing-sidebar` on service `alte-ai-crm-backend`.
+
+Production verification found:
+
+- Endpoint checks passed: `/health`, `/version`, `/diagnostics/ai`
+- Finance no-contact smoke passed: `24/24`
+- Broader knowledge smoke passed: `25/25`
+- Department routing smoke partially failed: `26/28`
+- No contact details were sent
+- No contact-flow test was run
+- No intentional production customer/lead/task creation occurred
+
+Open issue:
+
+- Ambiguous sidebar messages with `selected_department=finance` or `selected_department=medicine` were routed to `Admissions` instead of preserving the selected sidebar department.
+
+Public launch and actual site embed remain blocked until this routing bug is fixed, redeployed, and the department routing smoke passes.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```
 ```

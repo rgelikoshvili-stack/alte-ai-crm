@@ -73,3 +73,28 @@ If exact approved source is missing, the chatbot must not invent facts. It shoul
 - EN: `I want to apply for medicine from India` -> Medicine / MD with international priority; ask for phone/email before lead.
 - EN: `I have a portal login problem` -> IT Support.
 - KA: selected Finance + `მაინტერესებს დეტალები` -> Finance handover/context.
+## Phase 9D-Redeploy Verification Note
+
+Image `v0.9-department-routing-sidebar` was deployed to Cloud Run and production endpoint checks passed.
+
+Production smoke result:
+
+- Department routing smoke: `26/28` passed
+- Finance no-contact smoke: `24/24` passed
+- Broader knowledge smoke: `25/25` passed
+
+Open routing issue:
+
+- Ambiguous sidebar messages must preserve explicit `selected_department` / `selected_topic` context.
+- Current production verification found Finance and Medicine ambiguous sidebar cases routing to `Admissions`.
+
+Policy clarification:
+
+- When the user selects a sidebar department and then sends an ambiguous message, selected sidebar context must outrank a generic AI department guess.
+- Strong message keywords can override sidebar context only when the message is clearly about another department.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```

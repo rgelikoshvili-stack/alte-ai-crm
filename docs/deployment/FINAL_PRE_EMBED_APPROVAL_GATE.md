@@ -126,4 +126,23 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+
+## Phase 9D-Redeploy Gate Update
+
+Status: NO-GO remains in effect.
+
+Phase 9D was redeployed with image `v0.9-department-routing-sidebar`, and endpoint health checks passed. However, department routing smoke failed two sidebar ambiguity cases:
+
+- Finance sidebar + ambiguous details message routed to Admissions.
+- Medicine sidebar + ambiguous details message routed to Admissions.
+
+Finance no-contact and broader knowledge smoke tests still passed, and no production contact details or intentional CRM records were created.
+
+Actual embed remains blocked until the ambiguous sidebar routing bug is fixed, redeployed, and smoke verified.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```
 ```

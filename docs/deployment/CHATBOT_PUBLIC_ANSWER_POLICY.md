@@ -56,6 +56,24 @@ Operational guardrails:
 - Finance, deadline, Medicine/MD, international admissions, visa, relocation, and legal topics remain conservative until official sources are approved.
 - Review-required content may support controlled testing, but it must not be treated as final public official wording.
 - Public launch remains blocked until official content review and privacy approval are complete.
+
+## Phase 9D-Redeploy Routing Status
+
+Image `v0.9-department-routing-sidebar` was deployed to Cloud Run. Finance no-contact and broader knowledge smoke tests passed after deployment, and sensitive-answer behavior remained conservative.
+
+Department routing smoke failed two ambiguous sidebar-context cases. Until this is fixed, unknown or ambiguous sidebar questions may route to `Admissions` instead of the explicitly selected Finance or Medicine department.
+
+Policy remains unchanged:
+
+- The bot must not invent tuition, deadlines, requirements, visa/legal claims, or other sensitive official facts.
+- If the answer is uncertain or source approval is missing, it must route to the correct department.
+- Sidebar department context must be preserved for ambiguous questions after the follow-up fix.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```
 - Phase 8S-Apply re-check found no reviewer-owned `decision` column. Generated `recommended_action` values are not reviewer decisions, so conservative policy remains active and no official content was automatically approved.
 - Phase 8W smoke found a tuition/finance no-contact lead bug: one tuition no-contact response returned `should_create_lead=true` despite no lead/task IDs.
 - Phase 8Y service-layer guard fixed locally: finance, tuition, scholarship, grant, and deadline information questions without phone/email force `should_create_lead=false`, do not create customer/lead/task, and do not force phone/email unless the user asks for consultation or human follow-up.

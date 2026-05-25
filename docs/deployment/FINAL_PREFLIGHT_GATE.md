@@ -201,4 +201,31 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_EXACT_PRO_SIDEBAR_WIDGET_FUNCTIONAL_READY_PENDING_REDEPLOY_AND_SITE_EMBED
+
+## Phase 9D-Redeploy Department Routing Gate
+
+Result: NO-GO for site embed.
+
+The backend was redeployed with image `v0.9-department-routing-sidebar`, and production endpoints remained healthy. Finance no-contact and broader knowledge smoke tests passed after deploy.
+
+Department routing smoke did not fully pass:
+
+- Total: `28`
+- Passed: `26`
+- Failed: `2`
+- Failed cases: ambiguous Finance sidebar context and ambiguous Medicine sidebar context routed to `Admissions`
+
+No contact details were sent, no contact-flow test was run, and no intentional production customer/lead/task creation occurred.
+
+Required before embed:
+
+- Fix ambiguous sidebar department priority.
+- Redeploy.
+- Pass department routing smoke.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
+```
 ```
