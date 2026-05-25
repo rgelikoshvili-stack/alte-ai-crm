@@ -125,3 +125,22 @@ Decision state:
 ```text
 BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
 ```
+
+## Phase 9E-Redeploy Production Verification
+
+The sidebar ambiguous routing priority is now deployed and verified in production.
+
+- `selected_department=finance` + `მაინტერესებს დეტალები` routes to Finance.
+- `selected_department=medicine` + `დეტალები მაინტერესებს` routes to Medicine / MD.
+- Strong explicit keywords still override sidebar context.
+- No-contact guard remains unchanged.
+- Department routing sidebar smoke passed: 28/28.
+- No contact-flow test run.
+- No contact details sent.
+- No intentional lead/task/customer creation.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```

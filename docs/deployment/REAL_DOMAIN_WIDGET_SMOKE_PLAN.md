@@ -100,4 +100,21 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 9E-Redeploy Update
+
+Production backend routing has been redeployed with the sidebar ambiguous routing fix.
+
+- Image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Department routing sidebar smoke: 28/28 passed
+- Previously failing Finance and Medicine ambiguous sidebar cases now pass
+
+Real-domain browser smoke remains pending because the actual site embed has not been completed.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```
 ```

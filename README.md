@@ -1593,3 +1593,29 @@ Decision state:
 BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
 ```
 ```
+
+## Phase 9E-Redeploy Sidebar Ambiguous Routing Verification
+
+The Phase 9E sidebar ambiguous routing fix has been deployed to Cloud Run.
+
+- Image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- Previous revision: `alte-ai-crm-backend-00005-px7`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Endpoint checks: `/health`, `/version`, and `/diagnostics/ai` returned 200.
+- Department routing smoke: 28/28 passed.
+- Previously failing Finance ambiguous sidebar case: PASS.
+- Previously failing Medicine ambiguous sidebar case: PASS.
+- Finance no-contact smoke: 24/24 passed.
+- Broader knowledge smoke final run: 25/25 passed.
+- No contact details sent.
+- Contact-flow test not run.
+- No intentional lead/task/customer creation.
+
+Public launch remains blocked. Human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, and real-domain browser smoke are still pending.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```

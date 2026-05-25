@@ -272,6 +272,32 @@ BACKEND_DEPLOYED_FINANCE_NO_CONTACT_GUARD_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 
 Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
 
+## Phase 9E-Redeploy Sidebar Ambiguous Routing Verification
+
+The sidebar ambiguous routing fix is now deployed to Cloud Run.
+
+- Image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- Previous revision: `alte-ai-crm-backend-00005-px7`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Endpoint checks: PASS (`/health`, `/version`, `/diagnostics/ai`)
+- Department routing sidebar smoke: 28/28 passed
+- Finance ambiguous sidebar case: PASS
+- Medicine ambiguous sidebar case: PASS
+- Finance no-contact smoke: 24/24 passed
+- Broader knowledge smoke final run: 25/25 passed
+- No contact-flow test run
+- No contact details sent
+- No intentional production lead/task/customer creation
+
+Readiness decision remains not ready for public launch because human review, official content approval, privacy/data approval, final asset URL, actual site embed, and real-domain browser smoke are still pending.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```
+
 ## Phase 9D-UI-Final Exact Pro Sidebar Widget
 
 The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.

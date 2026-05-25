@@ -148,3 +148,26 @@ BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
 - `.local-secrets` not committed
 - Bridge Hub not touched
 - Public launch not marked complete
+
+## Phase 9E-Redeploy Follow-Up Completed
+
+The ambiguous sidebar routing failures recorded in this Phase 9D result were fixed and redeployed in Phase 9E-Redeploy.
+
+- New image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Department routing sidebar smoke after fix: 28/28 passed
+- Finance ambiguous sidebar case: PASS
+- Medicine ambiguous sidebar case: PASS
+- No contact details sent
+- Contact-flow test not run
+- No intentional production lead/task/customer creation
+
+Follow-up result doc:
+
+- `docs/deployment/PHASE_9E_REDEPLOY_SIDEBAR_AMBIGUOUS_ROUTING_RESULT.md`
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```

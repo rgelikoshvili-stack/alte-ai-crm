@@ -774,3 +774,30 @@ Next:
 - Rerun `python -m app.scripts.production_department_routing_sidebar_smoke`.
 
 Decision state: `BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY`
+
+## Phase 9E-Redeploy: Sidebar Ambiguous Routing Verified
+
+Status: deployed and production smoke passed.
+
+Completed:
+
+- Built and deployed image `v0.9-sidebar-ambiguous-routing-fix`.
+- Cloud Run revision changed from `alte-ai-crm-backend-00005-px7` to `alte-ai-crm-backend-00006-vs5`.
+- Production endpoint checks passed for `/health`, `/version`, and `/diagnostics/ai`.
+- Department routing sidebar smoke passed: 28/28.
+- Previously failing Finance ambiguous sidebar case now routes to Finance.
+- Previously failing Medicine ambiguous sidebar case now routes to Medicine / MD.
+- Finance no-contact smoke passed: 24/24.
+- Broader knowledge smoke final run passed: 25/25.
+- No contact-flow test run, no contact details sent, and no intentional production lead/task/customer creation.
+
+Next:
+
+- Human reviewer decisions.
+- Official content approval.
+- Privacy/data approval.
+- Final widget asset URL decision.
+- Actual site embed.
+- Real-domain browser smoke.
+
+Decision state: `BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED`

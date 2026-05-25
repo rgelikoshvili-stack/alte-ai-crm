@@ -251,3 +251,36 @@ Decision state:
 BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
 ```
 ```
+
+## Phase 9E-Redeploy Sidebar Ambiguous Routing Gate
+
+Status: backend routing redeploy passed, but public launch remains NO-GO pending approvals and site embed.
+
+Verified in production:
+
+- Image tag `v0.9-sidebar-ambiguous-routing-fix` deployed to `alte-ai-crm-backend`.
+- New revision: `alte-ai-crm-backend-00006-vs5`.
+- Endpoint checks passed: `/health`, `/version`, `/diagnostics/ai`.
+- Department routing sidebar smoke passed: 28/28.
+- Previously failing Finance ambiguous sidebar case passed.
+- Previously failing Medicine ambiguous sidebar case passed.
+- Finance no-contact smoke passed: 24/24.
+- Broader knowledge smoke final run passed: 25/25.
+- No contact-flow test run.
+- No contact details sent.
+- No intentional lead/task/customer creation.
+
+Still blocked:
+
+- Human reviewer decisions.
+- Official content approval.
+- Privacy/data approval.
+- Final widget asset URL.
+- Actual site embed.
+- Real-domain browser smoke.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```

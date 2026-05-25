@@ -67,3 +67,24 @@ Decision state:
 ```text
 BACKEND_CODE_FIXED_SIDEBAR_AMBIGUOUS_ROUTING_PENDING_REDEPLOY
 ```
+
+## Phase 9E-Redeploy Result
+
+The fix has been deployed to Cloud Run and verified with production smoke tests.
+
+- Image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Department routing sidebar smoke: 28/28 passed
+- Previously failing Finance ambiguous sidebar case: PASS
+- Previously failing Medicine ambiguous sidebar case: PASS
+- Finance no-contact smoke: 24/24 passed
+- Broader knowledge smoke final run: 25/25 passed
+- No contact-flow test run
+- No contact details sent
+- No intentional production lead/task/customer creation
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```

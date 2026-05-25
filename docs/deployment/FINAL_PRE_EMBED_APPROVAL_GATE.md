@@ -145,4 +145,31 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_DEPARTMENT_ROUTING_FAILED_NEEDS_REVIEW
 ```
+
+## Phase 9E-Redeploy Routing Gate Update
+
+The backend department routing blocker from Phase 9D has been resolved in production.
+
+- Image tag: `v0.9-sidebar-ambiguous-routing-fix`
+- New revision: `alte-ai-crm-backend-00006-vs5`
+- Department routing sidebar smoke: 28/28 passed
+- Finance ambiguous sidebar case: PASS
+- Medicine ambiguous sidebar case: PASS
+- Finance no-contact smoke: 24/24 passed
+- Broader knowledge smoke final run: 25/25 passed
+
+Pre-embed status remains NO-GO because these items are still pending:
+
+- Human reviewer decisions
+- Official content approval
+- Privacy/data approval
+- Final widget asset URL
+- Actual site embed
+- Real-domain browser smoke
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
+```
 ```
