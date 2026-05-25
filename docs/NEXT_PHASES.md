@@ -1,5 +1,20 @@
 # Next Phases
 
+## Phase 9N-CORS: Temporary Hosted Test Origin
+
+Status: `BACKEND_DEPLOYED_TEST_ORIGIN_PLAN_READY_PENDING_TEST_URL_AND_CORS_APPROVAL`
+
+- User selected Option 2: temporary hosted test origin for full browser smoke before real Alte site embed.
+- Test origin URL status: `PENDING_TEST_ORIGIN_URL`.
+- Temporary CORS approval status: `PENDING`.
+- CORS update status: `NOT_EXECUTED_PENDING_TEST_ORIGIN`.
+- Hosted browser smoke status: `NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS`.
+- Real Alte site remains untouched.
+- Cloud Run redeploy was not run.
+- Public launch remains NO-GO.
+
+Next possible phase: user provides exact HTTPS test origin URL and explicitly approves temporary CORS update/redeploy, or uses the local test site for UI-only preview.
+
 ## Phase 9N-Test: Standalone Test Site Package
 
 Status: `BACKEND_DEPLOYED_TEST_SITE_PACKAGE_READY_PENDING_BROWSER_TEST_ORIGIN_AND_SITE_EMBED`

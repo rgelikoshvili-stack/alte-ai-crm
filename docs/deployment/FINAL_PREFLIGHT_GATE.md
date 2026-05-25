@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_TEST_SITE_PACKAGE_READY_PENDING_BROWSER_TEST_ORIGIN_AND_SITE_EMBED`
+Current decision: `BACKEND_DEPLOYED_TEST_ORIGIN_PLAN_READY_PENDING_TEST_URL_AND_CORS_APPROVAL`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -15,6 +15,7 @@ Phase 9K security/reliability fixes are deployed to Cloud Run as image `v0.9-sec
 Phase 9L-M-N final approval intake, website handoff package, asset manifest, actual-embed result placeholder, real-domain smoke plan/result, and public launch NO-GO decision are prepared. Content approval, privacy approval, official privacy URL, asset upload, actual site embed, real-domain smoke, and explicit public launch approval remain pending.
 Phase 9L-P final handoff is ready. Conservative content policy is prepared, privacy/data is approved in principle pending official privacy URL, and website access is approved for preparation only. Actual upload/embed is not executed, real-domain smoke is not executed, and public launch remains NO-GO.
 Phase 9N-Test standalone test site package is ready. Production backend API smoke passed from the test-site context. Browser smoke remains pending because a separate origin may need CORS approval. Actual Alte site embed is not executed.
+Phase 9N-CORS temporary hosted test-origin plan is ready. No test origin URL is recorded yet, no CORS update was executed, no Cloud Run redeploy was run, and hosted browser smoke remains pending.
 
 | Area | Check | Status |
 | --- | --- | --- |
