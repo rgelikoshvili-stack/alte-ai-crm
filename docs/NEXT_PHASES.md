@@ -2,7 +2,7 @@
 
 ## Phase 9K: Pre-Launch Security And Reliability Fixes
 
-Status: `BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY`
+Status: `BACKEND_DEPLOYED_SECURITY_RELIABILITY_VERIFIED_PENDING_FINAL_APPROVALS_AND_SITE_EMBED`
 
 - AI provider/network fallback fixed locally.
 - Public handover endpoint spam/idempotency guard fixed locally.
@@ -10,10 +10,12 @@ Status: `BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY`
 - Production auth validation requires `AUTH_REQUIRED=true`.
 - Archive security note added for uploaded widget UI evidence.
 - Privacy URL placeholder remains a launch blocker.
-- Redeploy required before production behavior changes.
+- Redeployed to Cloud Run revision `alte-ai-crm-backend-00007-xmp` with image `v0.9-security-reliability-fixes`.
+- Production security/reliability smoke passed `16/16`.
+- Department routing, finance no-contact, and broader knowledge smokes passed after redeploy.
 - Public launch remains `NOT_COMPLETE`; actual site embed remains blocked.
 
-Next possible phase after approval: redeploy backend security/reliability fixes, then run production smoke without contact-flow/contact details.
+Next possible phase after approval: final approval collection for content/privacy/website asset path, then actual site embed and real-domain smoke.
 
 ## Phase 8B: Real Claude Live Validation
 

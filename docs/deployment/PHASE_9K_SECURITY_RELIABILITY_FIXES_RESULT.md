@@ -1,11 +1,11 @@
 # Phase 9K Security Reliability Fixes Result
 
-PHASE_9K_SECURITY_RELIABILITY_STATUS=CODE_FIXED_PENDING_REDEPLOY
+PHASE_9K_SECURITY_RELIABILITY_STATUS=DEPLOYED_SECURITY_RELIABILITY_VERIFIED
 
 Decision state:
 
 ```text
-BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
+BACKEND_DEPLOYED_SECURITY_RELIABILITY_VERIFIED_PENDING_FINAL_APPROVALS_AND_SITE_EMBED
 ```
 
 ## Summary
@@ -81,5 +81,13 @@ Production auth:
 - Real-domain smoke remains pending.
 - Public launch remains `NOT_COMPLETE`.
 
-Deploy required: YES
+## Phase 9K-Redeploy Update
+
+Image `v0.9-security-reliability-fixes` was deployed to Cloud Run revision `alte-ai-crm-backend-00007-xmp`.
+
+Security/reliability smoke passed `16/16`, department routing smoke passed `28/28`, finance no-contact smoke passed `24/24`, and broader knowledge smoke passed `25/25`.
+
+AI provider failure fallback was code/test verified locally; production fault simulation was not executed.
+
+Deploy required: NO
 Public launch: NOT_COMPLETE

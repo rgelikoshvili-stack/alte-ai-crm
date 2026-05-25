@@ -4,7 +4,7 @@ from app.scripts import verify_phase_9k_security_reliability_fixes
 def test_phase_9k_verifier_importable():
     assert (
         verify_phase_9k_security_reliability_fixes.STATUS
-        == "PHASE_9K_SECURITY_RELIABILITY_STATUS=CODE_FIXED_PENDING_REDEPLOY"
+        == "PHASE_9K_SECURITY_RELIABILITY_STATUS=DEPLOYED_SECURITY_RELIABILITY_VERIFIED"
     )
 
 

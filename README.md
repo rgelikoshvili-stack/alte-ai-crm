@@ -1731,5 +1731,24 @@ Actual site embed: blocked.
 Decision state:
 
 ```text
-BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
+BACKEND_DEPLOYED_SECURITY_RELIABILITY_VERIFIED_PENDING_FINAL_APPROVALS_AND_SITE_EMBED
 ```
+
+## Phase 9K-Redeploy Security Reliability Verification
+
+Phase 9K fixes were deployed to Cloud Run.
+
+- Image tag: `v0.9-security-reliability-fixes`
+- Cloud Run revision: `alte-ai-crm-backend-00007-xmp`
+- Service URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- `/health`, `/version`, `/diagnostics/ai`: `200`
+- `/dashboard/overview` without auth: `401`
+- Security/reliability smoke: `16/16` passed
+- Department routing smoke: `28/28` passed
+- Finance no-contact smoke: `24/24` passed
+- Broader knowledge smoke: `25/25` passed
+- Contact-flow test was not run.
+- No contact details were sent.
+- No intentional production lead/task/customer creation was performed.
+
+Public launch remains `NOT_COMPLETE`; actual site embed remains blocked pending final approvals.

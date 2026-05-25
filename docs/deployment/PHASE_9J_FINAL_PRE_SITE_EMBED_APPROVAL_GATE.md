@@ -79,8 +79,14 @@ Phase 9K code/docs/tests/verifier fixes have been applied locally and require a 
 Decision state:
 
 ```text
-BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
+BACKEND_DEPLOYED_SECURITY_RELIABILITY_VERIFIED_PENDING_FINAL_APPROVALS_AND_SITE_EMBED
 ```
+
+## Phase 9K-Redeploy Update
+
+Phase 9K security/reliability fixes were deployed to Cloud Run revision `alte-ai-crm-backend-00007-xmp` using image `v0.9-security-reliability-fixes`.
+
+Production security/reliability smoke passed. Actual site embed, real-domain smoke, privacy approval, content approval, and public launch remain pending.
 
 ## H. Next Phase
 
