@@ -23,3 +23,18 @@ PUBLIC_LAUNCH_DECISION=NO_GO_PENDING_SITE_EMBED_AND_REAL_DOMAIN_SMOKE
 - public launch approved
 
 Public launch must remain NO-GO until all future GO criteria are completed and recorded.
+
+## Phase 9N-Test Update
+
+- Standalone test site package: READY
+- API smoke: PASSED `10/10`
+- Browser smoke: PENDING_MANUAL_OR_HOSTED_TEST
+- Optional test origin CORS: NOT_CONFIGURED_PENDING_APPROVAL
+- Real Alte site modified: NO
+- Actual Alte embed: NO
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_TEST_SITE_PACKAGE_READY_PENDING_BROWSER_TEST_ORIGIN_AND_SITE_EMBED
+```

@@ -12,6 +12,8 @@ Run this guide only after the website team uploads the asset and inserts the app
 
 Phase 9L-P status: real-domain smoke is NOT executed because actual site embed is not executed. Do not mark smoke passed until the widget is live on the approved real domain and the checklist below is completed.
 
+Phase 9N-Test status: standalone `test_site/` package API smoke passed, but this is not a real-domain browser smoke. Real-domain smoke remains pending until actual Alte site embed is complete.
+
 ## Manual Browser Checklist
 
 - Open `https://alte.edu.ge` page containing widget.

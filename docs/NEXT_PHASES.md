@@ -1,5 +1,22 @@
 # Next Phases
 
+## Phase 9N-Test: Standalone Test Site Package
+
+Status: `BACKEND_DEPLOYED_TEST_SITE_PACKAGE_READY_PENDING_BROWSER_TEST_ORIGIN_AND_SITE_EMBED`
+
+- Standalone test site package created in `test_site/`.
+- Local pages:
+  - `test_site/index.html`
+  - `test_site/join.html`
+- Test widget asset copied to `test_site/alte-ai-chat-widget.js`.
+- Production backend API smoke passed `10/10` with no contact details, no contact-flow test, and no intentional lead/task/customer creation.
+- Browser smoke remains pending because a separate local/hosted origin may need CORS approval.
+- Real Alte site remains unchanged.
+- Actual Alte embed remains pending.
+- Public launch remains NO-GO.
+
+Next possible phase: choose either local UI-only review, a temporary allowed test origin with approved CORS update, or the future actual Alte site embed after explicit confirmation.
+
 ## Phase 9L-P: Final Handoff And Launch NO-GO Gate
 
 Status: `BACKEND_DEPLOYED_FINAL_HANDOFF_READY_NO_GO_PENDING_SITE_EMBED_AND_SMOKE`

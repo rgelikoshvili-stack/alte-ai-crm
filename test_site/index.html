@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alte AI Chatbot - Test Site</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #162033;
+      background: #f6f8fb;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+    .notice {
+      border: 1px solid #d49d00;
+      background: #fff8df;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-weight: 700;
+    }
+    .panel {
+      background: #ffffff;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    code {
+      background: #eef2f7;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Alte AI Chatbot - Test Site</h1>
+    <div class="notice">TEST ONLY - this is not the official Alte website</div>
+
+    <section class="panel">
+      <h2>KA Testing</h2>
+      <p>Use this page to preview the Safe Pro Sidebar widget with the production backend and `sourceDomain=alte.edu.ge`.</p>
+      <ul>
+        <li>კითხეთ: რა პროგრამები აქვს ალტე უნივერსიტეტს?</li>
+        <li>კითხეთ: რა ღირს სწავლა?</li>
+        <li>კითხეთ: როდის არის მიღების ბოლო ვადა?</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>EN Testing</h2>
+      <p>For the Join/International test configuration, open <a href="./join.html">join.html</a>.</p>
+      <p>If browser API calls fail, production CORS may not allow this test origin yet.</p>
+    </section>
+  </main>
+
+  <script>
+    window.AlteChatWidgetConfig = {
+      apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+      sourceDomain: "alte.edu.ge",
+      defaultLanguage: "ka",
+      widgetVariant: "safe_pro_sidebar",
+      mode: "test_site"
+    };
+  </script>
+  <script src="./alte-ai-chat-widget.js" defer></script>
+</body>
+</html>

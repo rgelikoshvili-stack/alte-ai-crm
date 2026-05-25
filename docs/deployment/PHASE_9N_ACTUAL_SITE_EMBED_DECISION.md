@@ -30,3 +30,12 @@ Confirm Phase 9N-Execution: upload asset and embed widget on Alte site
 ```
 
 Do not proceed without that exact future confirmation.
+
+## Phase 9N-Test Update
+
+A separate `test_site/` package was created for local/hosted testing before actual Alte site embed. This does not change the actual site embed decision:
+
+- actual asset upload: NO
+- actual embed: NO
+- browser smoke on real Alte domain: NOT EXECUTED
+- public launch: NO-GO
