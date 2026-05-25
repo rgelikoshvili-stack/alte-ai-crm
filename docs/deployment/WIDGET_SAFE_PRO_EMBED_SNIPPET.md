@@ -124,3 +124,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SAFE_PRO_WIDGET_PRE_EMBED_GATE_READY_PENDING_APPROVALS
 ```
+
+## Phase 9G-H Final Embed Package
+
+Final embed snippets are now prepared as draft package files:
+
+- `docs/embed_package/alte_safe_pro_sidebar_embed_snippet.html`
+- `docs/embed_package/join_alte_safe_pro_sidebar_embed_snippet.html`
+- `docs/embed_package/EMBED_PACKAGE_README_GEO.md`
+
+The snippets use `SCRIPT_SRC_PLACEHOLDER_REPLACE_WITH_FINAL_ASSET_URL`. Do not embed until final asset URL, privacy approval, content approval, and real-domain smoke plan approval are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```

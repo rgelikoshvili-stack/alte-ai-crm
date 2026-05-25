@@ -148,3 +148,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
+
+## Phase 9G-H Embed Readiness Update
+
+Privacy/data approval package and embed package were prepared, but official content approval is still pending.
+
+- Privacy approval: pending
+- Official content approval: pending
+- Final asset URL: pending
+- Actual site embed: not executed
+- Real-domain browser smoke: not executed
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```

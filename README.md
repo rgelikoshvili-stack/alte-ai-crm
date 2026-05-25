@@ -1643,3 +1643,29 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
+
+## Phase 9G-H Privacy And Embed Preparation
+
+Prepared the privacy/data approval and website embed package.
+
+- Privacy package: `docs/privacy/CHATBOT_PRIVACY_DATA_APPROVAL_PACKAGE.md`
+- Consent text draft: `docs/privacy/CHATBOT_CONSENT_TEXT_GEO_EN.md`
+- Data retention/rights draft: `docs/privacy/CHATBOT_DATA_RETENTION_AND_RIGHTS_DRAFT.md`
+- Final asset URL decision: `docs/deployment/FINAL_WIDGET_ASSET_URL_DECISION.md`
+- Embed package: `docs/embed_package/`
+- Actual site embed runbook: `docs/deployment/ACTUAL_SITE_EMBED_RUNBOOK.md`
+- Real-domain smoke guide: `docs/deployment/REAL_DOMAIN_BROWSER_SMOKE_EXECUTION_GUIDE.md`
+
+Status:
+
+- Privacy approval: pending
+- Final widget asset URL: pending
+- Actual site embed: not executed
+- Real-domain browser smoke: not executed
+- Public launch: not complete
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```

@@ -193,4 +193,21 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
+
+## Phase 9G-H Pre-Embed Package Update
+
+The final pre-embed package now includes privacy/data approval material, consent wording, asset URL decision, embed snippets, rollback/runbook material, and real-domain smoke guidance.
+
+- Privacy/data approval: PENDING
+- Final asset URL: PENDING_FINAL_URL
+- Actual site embed: NOT_EXECUTED
+- Real-domain smoke: NOT_EXECUTED
+
+The selected widget remains the Safe Pro Sidebar. Do not embed until privacy/content approval and final asset URL are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```
 ```

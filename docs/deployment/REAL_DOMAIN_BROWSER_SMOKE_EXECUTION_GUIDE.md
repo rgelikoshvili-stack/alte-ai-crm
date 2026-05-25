@@ -1,0 +1,46 @@
+# Real-Domain Browser Smoke Execution Guide
+
+Do not execute before actual site embed.
+
+## Manual Browser Checklist
+
+- Open `https://alte.edu.ge` page containing widget.
+- Open `https://join.alte.edu.ge` page containing widget.
+- Verify widget loads without layout break.
+- Verify KA/EN UI text.
+- Verify source links and handover cards render correctly.
+
+## DevTools Network Checks
+
+- Browser should call the production FastAPI backend only:
+  `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
+- Browser should NOT call `api.anthropic.com`.
+- Browser should NOT expose API keys.
+
+## CORS Checks
+
+- `https://alte.edu.ge`
+- `https://join.alte.edu.ge`
+
+## KA Test Cases
+
+- `რა პროგრამები აქვს ალტე უნივერსიტეტს?`
+- `რა ღირს სწავლა?`
+- `როდის არის მიღების ბოლო ვადა?`
+- `მინდა ოპერატორთან საუბარი`
+
+## EN Test Cases
+
+- `I want to apply for medicine from India`
+- `How much is medicine tuition?`
+- `What documents do international students need?`
+- `Can you help with visa and relocation?`
+
+## Expected Results
+
+- Department routing correct
+- Sensitive answers conservative
+- Source links shown if available
+- No contact details in safe smoke
+- No intentional lead/task/customer creation
+- Handover card shown when needed

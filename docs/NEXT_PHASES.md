@@ -826,3 +826,28 @@ Next:
 - Run a separate Phase 9F-Apply only after explicit approval.
 
 Decision state: `BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL`
+
+## Phase 9G-H: Privacy/Data Approval And Embed Package
+
+Status: package ready, pending final approvals.
+
+Prepared:
+
+- Privacy/data approval package.
+- Georgian/English consent text draft.
+- Data retention and rights draft.
+- Final widget asset URL decision document.
+- Embed snippets for `alte.edu.ge` and `join.alte.edu.ge`.
+- Actual site embed runbook.
+- Real-domain browser smoke execution guide.
+
+Still pending:
+
+- Privacy approval.
+- Official content/human approval.
+- Final widget asset URL.
+- Actual site embed.
+- Real-domain browser smoke.
+- Explicit public launch approval.
+
+Decision state: `BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS`

@@ -101,3 +101,15 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
+
+## Phase 9G-H Privacy And Consent Policy Update
+
+The widget now includes a small privacy/consent note near the composer and in contact request UI. Normal Knowledge Base questions are not blocked by consent. If a user wants operator contact or backend asks for phone/email, the widget shows the contact/privacy wording and the user may type contact details naturally.
+
+Privacy/data approval remains pending. Official content approval remains pending. Public launch remains blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```

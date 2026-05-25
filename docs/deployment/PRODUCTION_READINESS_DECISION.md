@@ -323,6 +323,24 @@ Decision state:
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
 
+## Phase 9G-H Privacy/Data Approval And Embed Preparation
+
+The privacy/data and embed preparation package is ready.
+
+- Privacy package created in `docs/privacy/`.
+- Consent text draft created in Georgian and English.
+- Final widget asset URL decision remains pending.
+- Embed package created in `docs/embed_package/`.
+- Actual site embed was not executed.
+- Real-domain browser smoke was not executed.
+- Public launch remains blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```
+
 ## Phase 9D-UI-Final Exact Pro Sidebar Widget
 
 The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.

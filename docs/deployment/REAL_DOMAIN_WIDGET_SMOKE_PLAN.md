@@ -117,4 +117,18 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_SIDEBAR_AMBIGUOUS_ROUTING_VERIFIED_PENDING_REVIEW_AND_SITE_EMBED
 ```
+
+## Phase 9G-H Smoke Guide Update
+
+The real-domain browser smoke execution guide has been prepared:
+
+- `docs/deployment/REAL_DOMAIN_BROWSER_SMOKE_EXECUTION_GUIDE.md`
+
+Actual real-domain smoke has not been executed because actual site embed is still pending.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```
 ```

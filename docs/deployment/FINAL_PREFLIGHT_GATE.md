@@ -311,3 +311,32 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_CONTENT_DECISIONS_PREPARED_PENDING_HUMAN_APPROVAL
 ```
+
+## Phase 9G-H Privacy And Embed Preflight Gate
+
+Status: NO-GO remains in effect.
+
+Prepared:
+
+- Privacy/data approval package.
+- Consent text draft.
+- Data retention/rights draft.
+- Final asset URL decision.
+- Embed snippets.
+- Actual site embed runbook.
+- Real-domain smoke guide.
+
+Still blocked:
+
+- Privacy approval.
+- Official content/human approval.
+- Final widget asset URL.
+- Actual site embed.
+- Real-domain browser smoke.
+- Explicit public launch approval.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
+```
