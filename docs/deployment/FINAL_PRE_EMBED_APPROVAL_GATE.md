@@ -226,4 +226,20 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
 ```
+
+## Phase 9J Final Approval Gate
+
+The final GO/NO-GO approval gate has been created and remains NO-GO.
+
+- Final pre-site-embed status: `NO_GO_PENDING_FINAL_APPROVALS`
+- Site embed approval record: pending
+- Site embed GO/NO-GO checklist: pending approvals
+
+Actual site embed and public launch are still blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```
 ```

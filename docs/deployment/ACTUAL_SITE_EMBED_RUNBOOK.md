@@ -10,6 +10,12 @@ https://alte.edu.ge/assets/alte-ai-chat-widget.js
 
 Actual upload and embed are still not executed.
 
+Phase 9J status:
+
+- Final approval gate created.
+- Actual upload/embed remains blocked.
+- Use `SITE_EMBED_FINAL_APPROVAL_RECORD.md` and `SITE_EMBED_GO_NO_GO_CHECKLIST.md` before executing this runbook.
+
 ## Prerequisites
 
 - Privacy approved

@@ -873,3 +873,27 @@ Still pending:
 - Privacy/content approvals and explicit public launch approval.
 
 Decision state: `BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED`
+
+## Phase 9J: Final Pre-Site-Embed Approval Gate
+
+Status: final gate ready, NO-GO pending approvals.
+
+Prepared:
+
+- Final pre-site-embed approval gate.
+- Site embed final approval record template.
+- Site embed GO/NO-GO checklist.
+
+Still pending:
+
+- Human reviewer approval/edit of conservative CSV.
+- Official content approval.
+- Privacy/data final approval.
+- Website developer asset path and embed location confirmation.
+- Rollback owner.
+- Real-domain smoke owner.
+- Actual upload/embed.
+- Real-domain smoke.
+- Explicit public launch approval.
+
+Decision state: `BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS`

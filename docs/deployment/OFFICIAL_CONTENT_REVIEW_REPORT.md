@@ -164,3 +164,18 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRIVACY_AND_EMBED_PACKAGE_READY_PENDING_FINAL_APPROVALS
 ```
+
+## Phase 9J Content Approval Gate
+
+Official content approval remains pending at the final pre-site-embed gate.
+
+- Conservative CSV exists.
+- Human approval not recorded.
+- `apply --apply` not run.
+- Public launch not approved.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```

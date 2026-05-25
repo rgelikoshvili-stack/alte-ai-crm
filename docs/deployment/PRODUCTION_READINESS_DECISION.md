@@ -360,6 +360,22 @@ Decision state:
 BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
 ```
 
+## Phase 9J Final Pre-Site-Embed Gate
+
+The final approval gate before actual site embed is ready.
+
+- Gate status: `PHASE_9J_FINAL_PRE_SITE_EMBED_STATUS=NO_GO_PENDING_FINAL_APPROVALS`
+- Approval record status: `SITE_EMBED_FINAL_APPROVAL_STATUS=PENDING`
+- GO/NO-GO checklist status: `SITE_EMBED_GO_NO_GO_STATUS=NO_GO_PENDING_APPROVALS`
+
+Production readiness remains blocked until privacy/content approvals, website developer confirmation, actual embed, real-domain smoke, and explicit launch approval are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```
+
 ## Phase 9D-UI-Final Exact Pro Sidebar Widget
 
 The final preferred widget UI is the exact functional Pro Sidebar layout from the uploaded design ZIP/screenshots.

@@ -65,6 +65,21 @@ Join Alte site:
 - Real-domain smoke უნდა ჩატარდეს embed-ის შემდეგ.
 - Public launch უნდა დამტკიცდეს ცალკე.
 
+## Phase 9J Final Pre-Embed Status
+
+- Option A selected: Alte-controlled hosting.
+- Final URL placeholder: `https://alte.edu.ge/assets/alte-ai-chat-widget.js`
+- Actual upload: not done.
+- Actual embed: not done.
+
+ატვირთვამდე/ჩასმამდე website developer-მა უნდა დაადასტუროს:
+
+- საბოლოო asset path
+- გვერდები, სადაც snippet ჩაიდება
+- rollback მეთოდი
+- პასუხისმგებელი contact person
+- real-domain smoke schedule
+
 ## Rollback
 
 - წაშალეთ script snippet გვერდიდან, ან

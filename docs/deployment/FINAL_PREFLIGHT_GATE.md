@@ -369,3 +369,29 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_ASSET_HOSTING_SELECTED_ALTE_CONTROLLED_PENDING_UPLOAD_AND_SITE_EMBED
 ```
+
+## Phase 9J Final Pre-Embed Approval Gate
+
+Status: NO-GO pending final approvals.
+
+Created:
+
+- `docs/deployment/PHASE_9J_FINAL_PRE_SITE_EMBED_APPROVAL_GATE.md`
+- `docs/deployment/SITE_EMBED_FINAL_APPROVAL_RECORD.md`
+- `docs/deployment/SITE_EMBED_GO_NO_GO_CHECKLIST.md`
+
+Still blocked:
+
+- Privacy final approval.
+- Official content approval.
+- Website developer upload/embed confirmation.
+- Actual asset upload.
+- Actual site embed.
+- Real-domain smoke.
+- Public launch approval.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```

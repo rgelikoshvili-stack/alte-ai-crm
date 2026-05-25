@@ -52,3 +52,20 @@ Run this guide only after the website team uploads the asset and inserts the app
 - No contact details in safe smoke
 - No intentional lead/task/customer creation
 - Handover card shown when needed
+
+## PASS/FAIL Criteria
+
+PASS only if:
+
+- Widget loads on actual domain.
+- No browser console errors.
+- No CORS errors.
+- Backend calls work.
+- No `api.anthropic.com` calls.
+- No frontend API keys.
+- Sidebar department context works.
+- Sensitive topics are conservative.
+- No contact details are sent in safe smoke.
+- No lead/task/customer is intentionally created.
+
+FAIL if any item above fails.

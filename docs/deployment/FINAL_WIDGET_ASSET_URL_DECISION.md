@@ -33,6 +33,16 @@ Requirements:
 
 Actual upload/site modification was not executed in this phase.
 
+## Phase 9J Gate
+
+Final site embed is blocked until the Phase 9J approval record and GO/NO-GO checklist are complete.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```
+
 ## Option B — Google Cloud Storage/CDN Hosting
 
 Requires additional approved GCP static hosting setup.
