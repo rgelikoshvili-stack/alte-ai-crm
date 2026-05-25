@@ -20,6 +20,8 @@ Netlify-ზე site root-ში უნდა იყოს ეს ფაილე
 index.html
 join.html
 alte-ai-chat-widget.js
+alte-ai-chat-widget.html
+_redirects
 ```
 
 Source repo-ში ეს ფაილები მდებარეობს:
@@ -28,7 +30,17 @@ Source repo-ში ეს ფაილები მდებარეობს:
 test_site/index.html
 test_site/join.html
 test_site/alte-ai-chat-widget.js
+test_site/alte-ai-chat-widget.html
+test_site/_redirects
 ```
+
+Manual deploy-ისთვის მომზადებულია ZIP:
+
+```text
+dist/netlify_test_site_deploy.zip
+```
+
+ZIP root-ში ფაილები პირდაპირ დევს და არ არის nested `test_site/` საქაღალდეში.
 
 ## Drag-and-Drop Deploy
 

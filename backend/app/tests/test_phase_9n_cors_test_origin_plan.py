@@ -29,7 +29,7 @@ def test_test_origin_pending_status_exists():
 def test_browser_smoke_pending_status_exists():
     text = verify_phase_9n_cors_test_origin_plan.HOSTED_SMOKE_RESULT.read_text(encoding="utf-8")
 
-    assert "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED" in text
+    assert "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_PENDING_NETLIFY_REDEPLOY" in text
 
 
 def test_public_launch_not_complete():

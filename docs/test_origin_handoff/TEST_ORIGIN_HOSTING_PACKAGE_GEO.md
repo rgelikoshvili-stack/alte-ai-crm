@@ -7,6 +7,20 @@
 - `test_site/index.html`
 - `test_site/join.html`
 - `test_site/alte-ai-chat-widget.js`
+- `test_site/alte-ai-chat-widget.html`
+- `test_site/_redirects`
+
+Manual Netlify deploy-ისთვის მზად არის:
+
+```text
+dist/netlify_test_site_deploy.zip
+```
+
+Git deploy-ისთვის Netlify publish directory უნდა იყოს:
+
+```text
+test_site
+```
 
 ## Hosting მოთხოვნები
 

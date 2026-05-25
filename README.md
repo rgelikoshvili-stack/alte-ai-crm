@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9N-CORS temporary test origin enabled, pending hosted browser smoke.
+Current status: Phase 9N-Netlify test package fixed, pending Netlify redeploy and hosted browser smoke.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. A separate `test_site/` package is prepared for UI preview and production-backend API smoke before real Alte website embed. Temporary CORS is configured for `https://alte-ai-chat-test.netlify.app`; hosted browser smoke is still pending. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. A separate `test_site/` package is prepared for UI preview and production-backend API smoke before real Alte website embed. Temporary CORS is configured for `https://alte-ai-chat-test.netlify.app`; the Netlify deploy package has been corrected and must be redeployed before hosted browser smoke can run. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE
+BACKEND_DEPLOYED_NETLIFY_TEST_PACKAGE_READY_PENDING_REDEPLOY_AND_BROWSER_SMOKE
 ```
 
 Checkpoint docs:
@@ -33,6 +33,7 @@ python -m app.scripts.verify_phase_9l_p_final_handoff_launch_gate
 python -m app.scripts.verify_phase_9n_test_site_package
 python -m app.scripts.verify_phase_9n_cors_test_origin_plan
 python -m app.scripts.verify_phase_9n_cors_test_origin_execution
+python -m app.scripts.verify_phase_9n_netlify_test_site_fix
 ```
 
 Local package:

@@ -1,5 +1,22 @@
 # Next Phases
 
+## Phase 9N-Netlify-Fix: Test Site Deploy Package Ready
+
+Status: `BACKEND_DEPLOYED_NETLIFY_TEST_PACKAGE_READY_PENDING_REDEPLOY_AND_BROWSER_SMOKE`
+
+- Netlify URL currently showed `Site not found / not deployed`.
+- Backend/CORS remains ready for `https://alte-ai-chat-test.netlify.app`.
+- `netlify.toml` now sets publish directory to `test_site`.
+- `test_site/_redirects` is prepared.
+- Standalone widget HTML is included for Netlify hosting.
+- Deploy ZIP is ready: `dist/netlify_test_site_deploy.zip`.
+- Netlify CLI deploy was not executed because CLI/auth was unavailable locally.
+- Browser smoke remains blocked until Netlify redeploy is completed and the page loads.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: redeploy Netlify using Git publish directory `test_site`, or upload `dist/netlify_test_site_deploy.zip` as the manual deploy package.
+
 ## Phase 9N-CORS-Execution: Temporary Test Origin Enabled
 
 Status: `BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE`
@@ -14,7 +31,7 @@ Status: `BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE`
 - Department routing smoke passed `28/28`.
 - Finance no-contact smoke passed `24/24`.
 - Knowledge smoke passed `25/25` on rerun.
-- Hosted browser smoke: `CORS_READY_PENDING_MANUAL_BROWSER_TEST`.
+- Hosted browser smoke: blocked until Netlify test site redeploy is fixed.
 - Real Alte site remains untouched.
 - Public launch remains NO-GO.
 

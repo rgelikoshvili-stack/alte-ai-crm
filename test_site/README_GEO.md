@@ -27,6 +27,6 @@ http://127.0.0.1:5500/join.html
 ## უსაფრთხოება
 
 - Frontend-ში API key არ არის.
-- Browser direct `api.anthropic.com` call არ უნდა იყოს.
+- Browser direct AI provider call არ უნდა იყოს.
 - Contact-flow test არ უნდა გაეშვას.
 - Phone/email/contact details არ უნდა გაიგზავნოს smoke test-ში.

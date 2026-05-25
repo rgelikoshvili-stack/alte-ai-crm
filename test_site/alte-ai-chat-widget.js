@@ -5,6 +5,7 @@
   var assetBase = config.assetBaseUrl || "https://alte.edu.ge/assets";
   var widgetUrl = config.widgetHtmlUrl || assetBase.replace(/\/$/, "") + "/alte-ai-chat-widget.html";
   var containerId = config.containerId || "alte-ai-chat-widget-container";
+  var requiredBackendEndpoints = ["/chat/session/start", "/chat/message"];
 
   function publicConfigScript() {
     var publicConfig = {

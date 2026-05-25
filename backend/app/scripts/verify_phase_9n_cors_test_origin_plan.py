@@ -101,7 +101,8 @@ def status_markers_recorded() -> list[Check]:
             "Hosted smoke status recorded",
             "HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS" in smoke
             or "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in smoke
-            or "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED" in smoke,
+            or "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED" in smoke
+            or "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_PENDING_NETLIFY_REDEPLOY" in smoke,
         ),
     ]
 
@@ -110,7 +111,9 @@ def docs_record_decision_state() -> Check:
     text = "\n".join(read(path) for path in DOCS)
     return Check(
         "Docs record Phase 9N-CORS decision state",
-        DECISION_STATE in text or "BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE" in text,
+        DECISION_STATE in text
+        or "BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE" in text
+        or "BACKEND_DEPLOYED_NETLIFY_TEST_PACKAGE_READY_PENDING_REDEPLOY_AND_BROWSER_SMOKE" in text,
     )
 
 

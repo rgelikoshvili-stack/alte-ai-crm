@@ -1,6 +1,6 @@
 # Phase 9N Hosted Browser Smoke Result
 
-HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED
+HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_PENDING_NETLIFY_REDEPLOY
 
 ## Current State
 
@@ -12,6 +12,9 @@ HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED
 - public launch: NO
 - current blocker: Netlify returns `Site not found / not deployed`
 - deploy fix instructions: `docs/test_origin_handoff/NETLIFY_DEPLOY_FIX_GEO.md`
+- corrected deploy package: `dist/netlify_test_site_deploy.zip`
+- Netlify package manifest: `docs/test_origin_handoff/NETLIFY_TEST_SITE_PACKAGE_MANIFEST.md`
+- next required action: redeploy the Netlify test site with `test_site` as publish directory or upload the deploy ZIP.
 
 ## Manual Browser Smoke Instructions
 
