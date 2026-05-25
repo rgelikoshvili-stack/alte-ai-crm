@@ -5,10 +5,10 @@
 - Project: Alte AI CRM Chatbot
 - Repo path: `C:\tmp\alte-ai-crm`
 - Latest GitHub release tag: `v0.8-deployment-ready`
-- Latest deployment-ready commit: `162db35 phase 8d-final-preflight: github backup and deployment gate`
-- Current phase: Phase 8D-GitHub - GitHub Backup and Release Tag
-- Latest verified tests: 110 passed
-- Release checkpoint: `v0.7-local-mvp`
+- Latest commit: `1b36880 phase 9j-ui: polish safe pro widget from downloaded design`
+- Current phase: Phase 9J - Final Pre-Site-Embed Approval Gate
+- Latest verified tests/checks: Phase 9J verifier PASS; latest known local suite 478 passed from Phase 9I
+- Release checkpoint: `v0.8-deployment-ready`
 - GitHub remote: `https://github.com/rgelikoshvili-stack/alte-ai-crm`
 - GitHub backup: completed for `master`
 
@@ -30,19 +30,23 @@
 | Local E2E smoke | Complete | Setup script, HTTP smoke script, diagnostics endpoint |
 | External services docs | Complete | Account setup, environment variables, and next phase roadmap |
 | Deployment preparation | Complete | Dockerfile, Cloud Run/Cloud SQL/Secret Manager docs, preflight gates |
+| Production backend | Complete | Cloud Run backend deployed and smoke-tested |
+| Safe Pro widget package | Complete | Final widget asset/snippets prepared for Alte-controlled hosting |
+| Final embed gate | Ready / NO-GO | Phase 9J gate is ready but blocked on approvals |
 | GitHub backup/tag | Complete | `master` pushed and `v0.8-deployment-ready` tag created |
 
 ## Remaining Roadmap
 
-- Phase 8D-Execution Actual Cloud Run deployment after remaining blockers are cleared.
-- Cloud SQL tier/cost confirmation.
-- Secret Manager values creation without exposing secrets.
+- Human reviewer approval for public content / conservative KB decisions.
+- Official content owner approval for public-answer and handover policy.
+- Privacy/data approval and official Privacy Policy URL.
 - Alte website admin/developer access confirmation.
-- Data privacy approval.
+- Website developer confirmation for final asset upload path and embed pages.
+- Actual widget asset upload to Alte-controlled hosting.
+- Actual website embed and real-domain smoke.
 - CI workflow setup.
 - Operator UI polish for knowledge review, live inbox, and lead operations.
 - Controlled staging deployment plan.
 - Real Alte content approval workflow and source ownership.
 - Production-grade security policy, monitoring, backups, and runbooks.
-- Real website embed after staging/security approval.
 - Omnichannel integrations only after the website flow is stable.

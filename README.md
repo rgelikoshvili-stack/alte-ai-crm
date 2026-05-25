@@ -2,7 +2,9 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: `v0.7-local-mvp`
+Current status: `v0.8-deployment-ready` / Phase 9J final pre-site-embed gate.
+
+Production backend is deployed and the Safe Pro widget package is prepared, but the real Alte website embed remains blocked until final content, privacy, website access, asset upload, rollback-owner, and real-domain smoke approvals are recorded.
 
 Checkpoint docs:
 
@@ -19,7 +21,7 @@ Release verification:
 ```powershell
 cd C:\tmp\alte-ai-crm\backend
 .\.venv\Scripts\Activate.ps1
-python -m app.scripts.verify_release_checkpoint
+python -m app.scripts.verify_phase_9j_final_pre_embed_gate
 ```
 
 Local package:
@@ -122,6 +124,8 @@ Phase 6B adds an Analytics view to the static operator frontend using the Phase 
 Phase 6C adds a local/demo bootstrap script for development data: departments, an admissions pipeline, pipeline stages, approved demo knowledge snippets, and an optional admin user from environment variables.
 
 Phase 7A adds safe/staged Claude analysis support behind `AI_PROVIDER=claude` while keeping `AI_PROVIDER=mock` as the default for tests and local development. AI still returns structured analysis only; CRM changes remain controlled by services.
+
+Phase 8 and Phase 9 prepared and deployed the production backend, imported approved knowledge, verified department routing/no-contact guards, prepared privacy/content approval packages, selected Alte-controlled widget asset hosting, and produced the final Safe Pro sidebar widget/embed package. The project is currently at a NO-GO final pre-site-embed gate until required approvals are complete.
 
 Website widget UI, WhatsApp, Messenger, Instagram, Email, and advanced routing remain intentionally out of scope until later phases.
 
