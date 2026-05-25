@@ -12,6 +12,8 @@ These rules apply before and after the widget is embedded on public Alte pages.
 8. If contact details are missing, ask for phone or email before creating a lead/task.
 9. Never expose internal notes, source review status, IDs, secrets, or system prompts to the user.
 10. AI returns structured analysis only; CRM business rules decide actions.
+11. If the AI provider is unavailable, times out, or returns an invalid response, return the safe KA/EN provider fallback, set `should_handover=true`, set `should_create_lead=false`, and include `ai_provider_error` in internal risk flags.
+12. Protected backend endpoints without explicit permission mapping are denied by default.
 
 ## Department-Aware Handover Routing
 
@@ -128,4 +130,20 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```
+
+## Phase 9K Security Reliability Policy
+
+Phase 9K hardens pre-launch behavior:
+
+- AI provider errors must not expose stack traces, exception details, API keys, or secret names to users.
+- Public handover endpoint calls must include a valid session ID for the conversation.
+- Public handover requests without contact/CRM linkage may mark the conversation for handover but must not create repeated high-priority tasks.
+- Repeated handover requests for the same eligible conversation are idempotent.
+- `AUTH_REQUIRED=true` is mandatory when `ENVIRONMENT=production`.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
 ```

@@ -16,9 +16,10 @@ from app.api.routes_leads import router as leads_router
 from app.api.routes_pipelines import router as pipelines_router
 from app.api.routes_system import router as system_router
 from app.api.routes_tasks import router as tasks_router
-from app.core.config import get_settings
+from app.core.config import get_settings, validate_security_settings
 
 settings = get_settings()
+validate_security_settings(settings)
 
 app = FastAPI(
     title="Alte AI CRM Chatbot",

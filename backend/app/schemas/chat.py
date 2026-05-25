@@ -63,6 +63,10 @@ class ChatMessageRequest(BaseModel):
     widget_variant: str | None = None
 
 
+class ChatHandoverRequest(BaseModel):
+    session_id: str | None = None
+
+
 class ChatMessageResponse(BaseModel):
     conversation_id: str
     reply: str

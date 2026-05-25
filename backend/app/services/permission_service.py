@@ -124,7 +124,8 @@ def permission_for_request(request: Request) -> str | None:
 
 
 def role_has_permission(role: str, permission: str | None) -> bool:
+    # Protected endpoint without explicit permission mapping is denied by default.
     if permission is None:
-        return True
+        return False
     permissions = ROLE_PERMISSIONS.get(role, set())
     return "*" in permissions or permission in permissions

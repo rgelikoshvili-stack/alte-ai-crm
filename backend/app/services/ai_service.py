@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any
 
 from pydantic import ValidationError
@@ -10,6 +11,8 @@ from app.core.config import get_settings
 from app.engines.mock_ai_analyzer import analyze_message
 from app.schemas.chat import AIAnalysisResult
 from app.services.ai_prompts import ALTE_CLAUDE_SYSTEM_PROMPT
+
+logger = logging.getLogger(__name__)
 
 
 def analyze_with_ai(
@@ -49,12 +52,26 @@ def analyze_with_ai(
             "raw_response": raw_json,
             "fallback": False,
         }
-    except (ValueError, ValidationError, TypeError, RuntimeError):
-        return fallback_analysis(message, source_domain, "ai_parse_failed"), {
+    except (ValueError, ValidationError, TypeError, RuntimeError) as exc:
+        logger.warning("AI provider response fallback: %s", type(exc).__name__)
+        analysis = fallback_analysis(message, source_domain, "ai_provider_error", language_hint=language_hint)
+        if "ai_parse_failed" not in analysis.risk_flags:
+            analysis.risk_flags.append("ai_parse_failed")
+        return analysis, {
             "provider": "claude",
             "model": settings.AI_MODEL,
             "raw_response": None,
             "fallback": True,
+            "error_type": type(exc).__name__,
+        }
+    except Exception as exc:  # Provider SDK/network/timeouts must never surface to chat users.
+        logger.warning("AI provider unavailable fallback: %s", type(exc).__name__)
+        return fallback_analysis(message, source_domain, "ai_provider_error", language_hint=language_hint), {
+            "provider": "claude",
+            "model": settings.AI_MODEL,
+            "raw_response": None,
+            "fallback": True,
+            "error_type": type(exc).__name__,
         }
 
 
@@ -140,18 +157,19 @@ def parse_json_object(raw_text: str) -> dict[str, Any]:
     return parsed
 
 
-def fallback_analysis(message: str, source_domain: str | None, flag: str) -> AIAnalysisResult:
-    language = "ka" if any("\u10a0" <= char <= "\u10ff" for char in message) else "en"
-    if language == "ka":
-        reply = (
-            "ამ საკითხზე ზუსტი ინფორმაციისთვის შესაბამის კონსულტანტთან გადაგამისამართებთ. "
-            "გთხოვთ მომწეროთ სახელი და საკონტაქტო ნომერი ან ელ-ფოსტა."
-        )
-    else:
-        reply = (
-            "For accurate information, I can connect you with the relevant consultant. "
-            "Please share your name and phone number or email."
-        )
+def fallback_analysis(
+    message: str,
+    source_domain: str | None,
+    flag: str,
+    *,
+    language_hint: str | None = None,
+) -> AIAnalysisResult:
+    language = language_hint if language_hint in {"ka", "en"} else ("ka" if any("\u10a0" <= char <= "\u10ff" for char in message) else "en")
+    reply = (
+        "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+        if language == "ka"
+        else "The AI service is temporarily unavailable. I can connect you with the relevant department."
+    )
     return AIAnalysisResult(
         reply=reply,
         language=language,
@@ -159,12 +177,22 @@ def fallback_analysis(message: str, source_domain: str | None, flag: str) -> AIA
         confidence=0.0,
         should_create_lead=False,
         should_handover=True,
-        department=None,
+        department=infer_fallback_department(message),
         priority="normal",
-        missing_fields=["first_name", "phone_or_email"],
+        missing_fields=[],
         source_domain=source_domain,
         conversation_summary=f"Safe AI fallback for message: {message[:180]}",
         used_sources=[],
         risk_flags=[flag],
     )
 
+
+def infer_fallback_department(message: str) -> str:
+    lowered = message.lower()
+    if any(token in lowered for token in ("finance", "tuition", "fee", "payment", "საფას", "გადახდ")):
+        return "Finance"
+    if any(token in lowered for token in ("international", "visa", "join", "ინდო", "უცხო")):
+        return "International Admissions"
+    if any(token in lowered for token in ("student", "schedule", "სტუდენტ", "ცხრილ")):
+        return "Student Services"
+    return "Admissions"

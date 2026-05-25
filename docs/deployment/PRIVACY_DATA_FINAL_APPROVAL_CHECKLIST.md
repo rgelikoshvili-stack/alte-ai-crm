@@ -17,6 +17,12 @@ PRIVACY_DATA_FINAL_APPROVAL_STATUS=PENDING
 
 Do not mark privacy/data approved until explicit approval is recorded.
 
+## Phase 9K Privacy Placeholder Guard
+
+The Safe Pro widget still contains `#privacy-policy-pending` until Alte provides the official privacy policy URL. This placeholder is intentional in code/docs before approval and is a launch blocker.
+
+Public launch remains `NOT_COMPLETE` while this placeholder exists. Actual site embed remains blocked until the official URL is approved and recorded.
+
 ## Phase 9J Gate Update
 
 Privacy/data final approval is still pending. Actual site embed and public launch remain blocked until this checklist is completed and signed off.

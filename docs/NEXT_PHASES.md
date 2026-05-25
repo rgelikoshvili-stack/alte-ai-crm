@@ -1,5 +1,20 @@
 # Next Phases
 
+## Phase 9K: Pre-Launch Security And Reliability Fixes
+
+Status: `BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY`
+
+- AI provider/network fallback fixed locally.
+- Public handover endpoint spam/idempotency guard fixed locally.
+- RBAC protected routes now deny by default without explicit permission mapping.
+- Production auth validation requires `AUTH_REQUIRED=true`.
+- Archive security note added for uploaded widget UI evidence.
+- Privacy URL placeholder remains a launch blocker.
+- Redeploy required before production behavior changes.
+- Public launch remains `NOT_COMPLETE`; actual site embed remains blocked.
+
+Next possible phase after approval: redeploy backend security/reliability fixes, then run production smoke without contact-flow/contact details.
+
 ## Phase 8B: Real Claude Live Validation
 
 - Requires a real Anthropic API key configured locally.

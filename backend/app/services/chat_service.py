@@ -4,7 +4,7 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import AIInteraction, Conversation, Customer, Department, Lead, Message, Task
+from app.models import AIInteraction, AuditLog, Conversation, Customer, Department, Lead, Message, Task
 from app.schemas.chat import (
     AIAnalysisResult,
     ChatMessageRequest,
@@ -34,18 +34,19 @@ async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> C
     conversation = Conversation(channel="website_chat", language=payload.language, ai_handled=True)
     db.add(conversation)
     await db.flush()
+    session_id = str(uuid4())
     await audit_event(
         db,
         action="chat_session_started",
         entity_type="conversation",
         entity_id=conversation.id,
-        metadata_json={"source_domain": payload.source_domain},
+        metadata_json={"source_domain": payload.source_domain, "session_id": session_id},
     )
     await db.commit()
     await db.refresh(conversation)
     return ChatSessionStartResponse(
         conversation_id=conversation.id,
-        session_id=str(uuid4()),
+        session_id=session_id,
         source_domain=payload.source_domain,
     )
 
@@ -213,11 +214,35 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     )
 
 
-async def request_handover(db: AsyncSession, conversation_id: str) -> dict[str, str | None]:
+async def request_handover(db: AsyncSession, conversation_id: str, *, session_id: str | None = None) -> dict[str, str | None]:
     conversation = await db.get(Conversation, conversation_id)
     if conversation is None:
         raise ValueError("Conversation not found")
+    if not await handover_session_matches(db, conversation_id, session_id):
+        raise PermissionError("Valid conversation session required")
     conversation.human_handover = True
+    if not conversation.customer_id and not conversation.lead_id:
+        await audit_event(
+            db,
+            action="handover_contact_required",
+            entity_type="conversation",
+            entity_id=conversation.id,
+            metadata_json={"reason": "missing_customer_or_lead"},
+        )
+        await db.commit()
+        return {
+            "status": "contact_required",
+            "conversation_id": conversation.id,
+            "task_id": None,
+        }
+    existing_task = await find_existing_handover_task(db, conversation)
+    if existing_task:
+        await db.commit()
+        return {
+            "status": "handover_already_requested",
+            "conversation_id": conversation.id,
+            "task_id": existing_task.id,
+        }
     task = Task(
         lead_id=conversation.lead_id,
         customer_id=conversation.customer_id,
@@ -237,6 +262,42 @@ async def request_handover(db: AsyncSession, conversation_id: str) -> dict[str, 
     )
     await db.commit()
     return {"status": "handover_requested", "conversation_id": conversation.id, "task_id": task.id}
+
+
+async def handover_session_matches(db: AsyncSession, conversation_id: str, session_id: str | None) -> bool:
+    if not session_id:
+        return False
+    audit_rows = (
+        await db.scalars(
+            select(AuditLog).where(
+                AuditLog.action == "chat_session_started",
+                AuditLog.entity_type == "conversation",
+                AuditLog.entity_id == conversation_id,
+            )
+        )
+    ).all()
+    if any((row.metadata_json or {}).get("session_id") == session_id for row in audit_rows):
+        return True
+    message_rows = (
+        await db.scalars(
+            select(Message).where(
+                Message.conversation_id == conversation_id,
+                Message.sender_type == "user",
+            )
+        )
+    ).all()
+    return any((row.metadata_json or {}).get("session_id") == session_id for row in message_rows)
+
+
+async def find_existing_handover_task(db: AsyncSession, conversation: Conversation) -> Task | None:
+    query = select(Task).where(Task.title == "Human handover requested", Task.status == "open")
+    if conversation.lead_id:
+        query = query.where(Task.lead_id == conversation.lead_id)
+    elif conversation.customer_id:
+        query = query.where(Task.customer_id == conversation.customer_id)
+    else:
+        return None
+    return await db.scalar(query.order_by(Task.created_at.desc()))
 
 
 async def create_admissions_flow(
@@ -435,7 +496,8 @@ def apply_department_routing(
         analysis.should_handover = True
         if not has_contact(analysis):
             analysis.should_create_lead = False
-        analysis.reply = ensure_handover_routing_reply(analysis, routing)
+        if "ai_provider_error" not in analysis.risk_flags:
+            analysis.reply = ensure_handover_routing_reply(analysis, routing)
     return routing
 
 

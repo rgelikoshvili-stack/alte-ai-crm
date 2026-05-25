@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_REVIEWER_DECISION_CSV_READY_PENDING_HUMAN_REVIEW`
+Current decision: `BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -11,6 +11,7 @@ Previous no-contact guard redeploy state `BACKEND_DEPLOYED_STANDALONE_API_SMOKE_
 Previous no-contact verification state `BACKEND_DEPLOYED_NO_CONTACT_GUARD_VERIFIED_PENDING_TEST_KNOWLEDGE_APPROVAL` is resolved by Phase 8Q.
 Previous seeded state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_SAFE_SMOKE_PASSED_PENDING_OFFICIAL_REVIEW_AND_SITE_EMBED` remains true and now advances to the official content review gate.
 Previous official content gate state `BACKEND_DEPLOYED_TEST_KNOWLEDGE_SEEDED_PENDING_OFFICIAL_CONTENT_REVIEW` remains true and now advances to reviewer-decision-CSV-ready-pending-human-review.
+Phase 9K local fixes are applied for AI provider fallback, handover idempotency/spam guard, RBAC deny-by-default, and production auth validation. Redeploy is required before production uses these fixes. Public launch remains `NOT_COMPLETE`; actual site embed remains blocked.
 
 | Area | Check | Status |
 | --- | --- | --- |

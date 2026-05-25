@@ -3,7 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.models import Conversation, Lead
-from app.schemas.chat import ChatMessageRequest, ChatMessageResponse, ChatSessionStartRequest, ChatSessionStartResponse
+from app.schemas.chat import (
+    ChatHandoverRequest,
+    ChatMessageRequest,
+    ChatMessageResponse,
+    ChatSessionStartRequest,
+    ChatSessionStartResponse,
+)
 from app.schemas.qualification import LeadQualificationResult
 from app.services.chat_service import handle_message, request_handover, start_session
 
@@ -24,9 +30,15 @@ async def post_chat_message(payload: ChatMessageRequest, db: AsyncSession = Depe
 
 
 @router.post("/handover/{conversation_id}")
-async def request_chat_handover(conversation_id: str, db: AsyncSession = Depends(get_db)):
+async def request_chat_handover(
+    conversation_id: str,
+    payload: ChatHandoverRequest | None = None,
+    db: AsyncSession = Depends(get_db),
+):
     try:
-        return await request_handover(db, conversation_id)
+        return await request_handover(db, conversation_id, session_id=payload.session_id if payload else None)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

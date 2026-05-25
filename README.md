@@ -194,7 +194,9 @@ curl -X POST http://127.0.0.1:8000/chat/message `
 Request handover:
 
 ```powershell
-curl -X POST http://127.0.0.1:8000/chat/handover/<conversation_id>
+curl -X POST http://127.0.0.1:8000/chat/handover/<conversation_id> `
+  -H "Content-Type: application/json" `
+  -d "{\"session_id\":\"<session_id_from_start>\"}"
 ```
 
 Phase 2 AI is mocked and deterministic. Real Anthropic Claude integration is planned for Phase 3.
@@ -1709,4 +1711,25 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
+```
+
+## Phase 9K Pre-Launch Security And Reliability Fixes
+
+Phase 9K fixes the audit findings locally in code, tests, docs, and verifiers only.
+
+- AI provider/API/network failures now return a safe structured fallback instead of chat 500.
+- Public `/chat/handover/{conversation_id}` requires a valid conversation session and is guarded against duplicate task creation and no-contact task spam.
+- RBAC protected endpoints deny by default when permission mapping is missing.
+- Production settings fail validation if `ENVIRONMENT=production` and `AUTH_REQUIRED=false`.
+- Uploaded widget UI evidence is marked archive/reference only.
+- Widget privacy placeholder `#privacy-policy-pending` remains a launch blocker until the official URL is approved.
+
+Redeploy required: YES.
+Public launch: `NOT_COMPLETE`.
+Actual site embed: blocked.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
 ```

@@ -2,6 +2,8 @@
 
 SITE_EMBED_GO_NO_GO_STATUS=NO_GO_PENDING_APPROVALS
 
+Phase 9K update: security/reliability fixes are code-complete locally and pending redeploy. The widget privacy URL placeholder `#privacy-policy-pending` remains a GO blocker until the official URL is approved.
+
 ## Technical
 
 - [x] Backend health verified

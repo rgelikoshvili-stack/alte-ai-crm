@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     )
 
 
+def validate_security_settings(settings: Settings) -> None:
+    if settings.ENVIRONMENT.lower().strip() == "production" and not settings.AUTH_REQUIRED:
+        raise RuntimeError("AUTH_REQUIRED must be true when ENVIRONMENT=production")
+
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()

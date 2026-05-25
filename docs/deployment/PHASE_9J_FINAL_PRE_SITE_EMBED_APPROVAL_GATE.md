@@ -66,6 +66,22 @@ PHASE_9J_FINAL_PRE_SITE_EMBED_STATUS=NO_GO_PENDING_FINAL_APPROVALS
 
 Do not mark GO until every required approval is explicitly recorded.
 
+## Phase 9K Pre-Launch Security Reliability Update
+
+Phase 9K code/docs/tests/verifier fixes have been applied locally and require a later redeploy before production behavior changes.
+
+- AI provider outage fallback hardened.
+- Public handover endpoint guarded against duplicate task creation.
+- RBAC protected endpoints now deny by default when permission mapping is missing.
+- Production config validation requires `AUTH_REQUIRED=true`.
+- `#privacy-policy-pending` remains a launch blocker until the official privacy URL is approved.
+
+Decision state:
+
+```text
+BACKEND_CODE_FIXED_SECURITY_RELIABILITY_PENDING_REDEPLOY
+```
+
 ## H. Next Phase
 
 If approvals are obtained:
