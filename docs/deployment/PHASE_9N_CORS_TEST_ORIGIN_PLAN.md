@@ -1,6 +1,6 @@
 # Phase 9N-CORS Test Origin Plan
 
-PHASE_9N_CORS_TEST_ORIGIN_STATUS=PENDING_TEST_ORIGIN_URL
+PHASE_9N_CORS_TEST_ORIGIN_STATUS=APPROVED_PENDING_CORS_UPDATE
 
 ## Purpose
 
@@ -8,10 +8,11 @@ Test the Safe Pro Sidebar widget in a real browser from a non-Alte temporary hos
 
 ## Current Status
 
-- TEST_ORIGIN_URL=PENDING
-- TEST_ORIGIN_CORS_APPROVAL_STATUS=PENDING
-- TEST_ORIGIN_CORS_DEPLOY_STATUS=NOT_EXECUTED
+- TEST_ORIGIN_URL=https://alte-ai-chat-test.netlify.app
+- TEST_ORIGIN_CORS_APPROVAL_STATUS=APPROVED_FOR_TEMPORARY_BROWSER_SMOKE
+- TEST_ORIGIN_CORS_DEPLOY_STATUS=EXECUTED
 - HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED
+- TEMP_CORS_UPDATE_APPROVED_ORIGIN=https://alte-ai-chat-test.netlify.app
 
 ## Required Before CORS Update
 
@@ -53,6 +54,10 @@ Use a user-controlled temporary HTTPS origin.
 - Do not enable credentials unless explicitly required and approved.
 - Remove the temporary origin after test if it is not needed.
 
-## Current Decision
+## Execution Update
 
-No production CORS update is executed until a concrete test origin URL and explicit approval are recorded.
+- Temporary test origin URL recorded: `https://alte-ai-chat-test.netlify.app`
+- CORS update executed on Cloud Run.
+- Final serving revision: `alte-ai-crm-backend-00009-bhk`
+- Image unchanged: `v0.9-security-reliability-fixes`
+- Hosted browser smoke remains pending manual verification.

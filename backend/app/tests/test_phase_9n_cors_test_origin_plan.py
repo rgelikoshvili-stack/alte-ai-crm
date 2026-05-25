@@ -21,13 +21,14 @@ def test_cors_plan_docs_exist():
 def test_test_origin_pending_status_exists():
     text = verify_phase_9n_cors_test_origin_plan.PLAN_DOC.read_text(encoding="utf-8")
 
-    assert "PHASE_9N_CORS_TEST_ORIGIN_STATUS=PENDING_TEST_ORIGIN_URL" in text
+    assert "PHASE_9N_CORS_TEST_ORIGIN_STATUS=APPROVED_PENDING_CORS_UPDATE" in text
+    assert "https://alte-ai-chat-test.netlify.app" in text
 
 
 def test_browser_smoke_pending_status_exists():
     text = verify_phase_9n_cors_test_origin_plan.HOSTED_SMOKE_RESULT.read_text(encoding="utf-8")
 
-    assert "HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS" in text
+    assert "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in text
 
 
 def test_public_launch_not_complete():

@@ -1,6 +1,6 @@
 # Optional Test Origin CORS Plan
 
-OPTIONAL_TEST_ORIGIN_CORS_STATUS=NOT_CONFIGURED_PENDING_APPROVAL
+OPTIONAL_TEST_ORIGIN_CORS_STATUS=CONFIGURED_FOR_TEMPORARY_TEST_ORIGIN
 
 ## Current Production Allowed Origins
 
@@ -24,3 +24,10 @@ Localhost or a separate hosted test site may fail browser CORS because it is not
 ## Current Decision
 
 No origin is added in this phase. No Cloud Run redeploy is performed.
+
+## Phase 9N-CORS-Execution Update
+
+- Temporary origin added: `https://alte-ai-chat-test.netlify.app`
+- Wildcard CORS: not used
+- Cloud Run revision: `alte-ai-crm-backend-00009-bhk`
+- Hosted browser smoke: pending manual verification

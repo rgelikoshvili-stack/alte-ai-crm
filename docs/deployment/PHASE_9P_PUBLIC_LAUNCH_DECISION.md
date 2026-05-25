@@ -42,14 +42,14 @@ BACKEND_DEPLOYED_TEST_SITE_PACKAGE_READY_PENDING_BROWSER_TEST_ORIGIN_AND_SITE_EM
 ## Phase 9N-CORS Update
 
 - Temporary hosted test origin path selected.
-- Test origin URL: PENDING.
-- CORS update: NOT EXECUTED.
-- Cloud Run redeploy: NOT RUN.
-- Hosted browser smoke: NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS.
+- Test origin URL: `https://alte-ai-chat-test.netlify.app`.
+- CORS update: EXECUTED.
+- Cloud Run revision: `alte-ai-crm-backend-00009-bhk`.
+- Hosted browser smoke: CORS_READY_PENDING_MANUAL_BROWSER_TEST.
 - Real Alte site modified: NO.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_TEST_ORIGIN_PLAN_READY_PENDING_TEST_URL_AND_CORS_APPROVAL
+BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE
 ```

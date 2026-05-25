@@ -1,5 +1,25 @@
 # Next Phases
 
+## Phase 9N-CORS-Execution: Temporary Test Origin Enabled
+
+Status: `BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE`
+
+- Temporary hosted test origin: `https://alte-ai-chat-test.netlify.app`
+- CORS update: executed with exact origin only.
+- Serving revision: `alte-ai-crm-backend-00009-bhk`
+- Backend image unchanged: `v0.9-security-reliability-fixes`
+- CORS smoke passed `8/8`.
+- Test site API smoke passed `10/10`.
+- Security/reliability smoke passed `16/16`.
+- Department routing smoke passed `28/28`.
+- Finance no-contact smoke passed `24/24`.
+- Knowledge smoke passed `25/25` on rerun.
+- Hosted browser smoke: `CORS_READY_PENDING_MANUAL_BROWSER_TEST`.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next possible phase: manually open the hosted Netlify test URL, complete browser smoke, then record the result. Actual Alte site embed remains a separate future phase.
+
 ## Phase 9N-CORS: Temporary Hosted Test Origin
 
 Status: `BACKEND_DEPLOYED_TEST_ORIGIN_PLAN_READY_PENDING_TEST_URL_AND_CORS_APPROVAL`

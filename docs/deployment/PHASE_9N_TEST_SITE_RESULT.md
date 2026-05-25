@@ -34,7 +34,10 @@ Result:
 - browser smoke status: `PENDING_MANUAL_OR_HOSTED_TEST`
 - CORS status: `NOT_CONFIGURED_PENDING_APPROVAL`
 - local preview may be blocked by production CORS if the origin is not allowlisted.
-- Phase 9N-CORS selected the temporary hosted test-origin path, but the exact test origin URL is still pending and no CORS update has been executed.
+- Phase 9N-CORS selected the temporary hosted test-origin path.
+- Temporary test origin URL: `https://alte-ai-chat-test.netlify.app`
+- CORS update: EXECUTED
+- Hosted browser smoke: `CORS_READY_PENDING_MANUAL_BROWSER_TEST`
 
 ## Site Safety
 
@@ -47,5 +50,5 @@ Result:
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_TEST_ORIGIN_PLAN_READY_PENDING_TEST_URL_AND_CORS_APPROVAL
+BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE
 ```

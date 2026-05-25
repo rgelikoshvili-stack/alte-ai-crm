@@ -73,17 +73,34 @@ def required_files_exist() -> list[Check]:
 
 
 def status_markers_recorded() -> list[Check]:
-    expected = [
-        (PLAN_DOC, "PHASE_9N_CORS_TEST_ORIGIN_STATUS=PENDING_TEST_ORIGIN_URL"),
-        (CORS_UPDATE_PLAN, "TEMP_CORS_UPDATE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN"),
-        (HOSTED_SMOKE_RESULT, "HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS"),
+    plan = read(PLAN_DOC)
+    cors_plan = read(CORS_UPDATE_PLAN)
+    smoke = read(HOSTED_SMOKE_RESULT)
+    return [
+        Check(
+            "CORS test origin plan status recorded",
+            "PHASE_9N_CORS_TEST_ORIGIN_STATUS=PENDING_TEST_ORIGIN_URL" in plan
+            or "PHASE_9N_CORS_TEST_ORIGIN_STATUS=APPROVED_PENDING_CORS_UPDATE" in plan,
+        ),
+        Check(
+            "Temporary CORS update status recorded",
+            "TEMP_CORS_UPDATE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN" in cors_plan
+            or "TEMP_CORS_UPDATE_STATUS=EXECUTED_TEMP_TEST_ORIGIN_READY" in cors_plan,
+        ),
+        Check(
+            "Hosted smoke status recorded",
+            "HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS" in smoke
+            or "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in smoke,
+        ),
     ]
-    return [Check(f"{path.name} contains {needle}", needle in read(path)) for path, needle in expected]
 
 
 def docs_record_decision_state() -> Check:
     text = "\n".join(read(path) for path in DOCS)
-    return Check("Docs record Phase 9N-CORS decision state", DECISION_STATE in text)
+    return Check(
+        "Docs record Phase 9N-CORS decision state",
+        DECISION_STATE in text or "BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE" in text,
+    )
 
 
 def public_launch_not_complete() -> Check:
