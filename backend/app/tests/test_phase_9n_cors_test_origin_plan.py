@@ -10,6 +10,7 @@ def test_cors_plan_docs_exist():
         verify_phase_9n_cors_test_origin_plan.PLAN_DOC,
         verify_phase_9n_cors_test_origin_plan.HOSTING_PACKAGE,
         verify_phase_9n_cors_test_origin_plan.BROWSER_CHECKLIST_GEO,
+        verify_phase_9n_cors_test_origin_plan.NETLIFY_DEPLOY_FIX_GEO,
         verify_phase_9n_cors_test_origin_plan.CORS_UPDATE_PLAN,
         verify_phase_9n_cors_test_origin_plan.CORS_SCRIPT,
         verify_phase_9n_cors_test_origin_plan.HOSTED_SMOKE_RESULT,
@@ -28,7 +29,7 @@ def test_test_origin_pending_status_exists():
 def test_browser_smoke_pending_status_exists():
     text = verify_phase_9n_cors_test_origin_plan.HOSTED_SMOKE_RESULT.read_text(encoding="utf-8")
 
-    assert "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in text
+    assert "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED" in text
 
 
 def test_public_launch_not_complete():

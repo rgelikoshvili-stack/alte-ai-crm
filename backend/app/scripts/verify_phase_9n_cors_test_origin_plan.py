@@ -12,6 +12,7 @@ PROJECT_ROOT = BACKEND_ROOT.parent
 PLAN_DOC = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9N_CORS_TEST_ORIGIN_PLAN.md"
 HOSTING_PACKAGE = PROJECT_ROOT / "docs" / "test_origin_handoff" / "TEST_ORIGIN_HOSTING_PACKAGE_GEO.md"
 BROWSER_CHECKLIST_GEO = PROJECT_ROOT / "docs" / "test_origin_handoff" / "TEST_ORIGIN_BROWSER_SMOKE_CHECKLIST_GEO.md"
+NETLIFY_DEPLOY_FIX_GEO = PROJECT_ROOT / "docs" / "test_origin_handoff" / "NETLIFY_DEPLOY_FIX_GEO.md"
 CORS_UPDATE_PLAN = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9N_TEMP_CORS_UPDATE_PLAN.md"
 CORS_SCRIPT = PROJECT_ROOT / "scripts" / "phase_9n_update_cors_for_test_origin.ps1"
 HOSTED_SMOKE_RESULT = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9N_HOSTED_BROWSER_SMOKE_RESULT.md"
@@ -31,6 +32,7 @@ DOCS = [
     PLAN_DOC,
     HOSTING_PACKAGE,
     BROWSER_CHECKLIST_GEO,
+    NETLIFY_DEPLOY_FIX_GEO,
     CORS_UPDATE_PLAN,
     HOSTED_SMOKE_RESULT,
     README,
@@ -68,7 +70,15 @@ def read(path: Path) -> str:
 
 
 def required_files_exist() -> list[Check]:
-    files = [PLAN_DOC, HOSTING_PACKAGE, BROWSER_CHECKLIST_GEO, CORS_UPDATE_PLAN, CORS_SCRIPT, HOSTED_SMOKE_RESULT]
+    files = [
+        PLAN_DOC,
+        HOSTING_PACKAGE,
+        BROWSER_CHECKLIST_GEO,
+        NETLIFY_DEPLOY_FIX_GEO,
+        CORS_UPDATE_PLAN,
+        CORS_SCRIPT,
+        HOSTED_SMOKE_RESULT,
+    ]
     return [Check(f"Required file exists: {path.name}", path.exists(), str(path)) for path in files]
 
 
@@ -90,7 +100,8 @@ def status_markers_recorded() -> list[Check]:
         Check(
             "Hosted smoke status recorded",
             "HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED_PENDING_TEST_ORIGIN_AND_CORS" in smoke
-            or "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in smoke,
+            or "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST" in smoke
+            or "HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED" in smoke,
         ),
     ]
 
@@ -154,7 +165,16 @@ def test_site_js_is_safe() -> Check:
 
 def no_secret_patterns() -> Check:
     findings: list[str] = []
-    scan_paths = [PLAN_DOC, HOSTING_PACKAGE, BROWSER_CHECKLIST_GEO, CORS_UPDATE_PLAN, HOSTED_SMOKE_RESULT, CORS_SCRIPT, TEST_SITE_JS]
+    scan_paths = [
+        PLAN_DOC,
+        HOSTING_PACKAGE,
+        BROWSER_CHECKLIST_GEO,
+        NETLIFY_DEPLOY_FIX_GEO,
+        CORS_UPDATE_PLAN,
+        HOSTED_SMOKE_RESULT,
+        CORS_SCRIPT,
+        TEST_SITE_JS,
+    ]
     for path in scan_paths:
         text = read(path)
         for pattern in SECRET_PATTERNS:

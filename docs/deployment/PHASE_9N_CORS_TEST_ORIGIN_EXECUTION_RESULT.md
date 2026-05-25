@@ -60,7 +60,11 @@ Initial broader knowledge smoke attempt had one transient conservative-deadline 
 
 ## Hosted Browser Smoke
 
-- hosted browser smoke status: `CORS_READY_PENDING_MANUAL_BROWSER_TEST`
+- hosted browser smoke status: `BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED`
+- Backend CORS side is ready for `https://alte-ai-chat-test.netlify.app`.
+- Netlify currently returns a `Site not found / not deployed` page for the test origin.
+- Browser smoke is blocked until the Netlify deployment is fixed with `test_site` as the publish directory/site root.
+- Deploy fix instructions: `docs/test_origin_handoff/NETLIFY_DEPLOY_FIX_GEO.md`
 - Codex did not mark hosted browser smoke passed.
 - Real Alte domain smoke remains not executed.
 

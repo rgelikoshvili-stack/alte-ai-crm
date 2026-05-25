@@ -1,6 +1,6 @@
 # Phase 9N Hosted Browser Smoke Result
 
-HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST
+HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_TEST_SITE_NOT_DEPLOYED
 
 ## Current State
 
@@ -10,6 +10,8 @@ HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_TEST
 - browser smoke executed: NO
 - real Alte site modified: NO
 - public launch: NO
+- current blocker: Netlify returns `Site not found / not deployed`
+- deploy fix instructions: `docs/test_origin_handoff/NETLIFY_DEPLOY_FIX_GEO.md`
 
 ## Manual Browser Smoke Instructions
 
