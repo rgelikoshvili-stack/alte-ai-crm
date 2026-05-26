@@ -186,6 +186,18 @@ select {
   background: #f4eadc;
 }
 
+.compact-action {
+  min-height: 36px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.compact-action.active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+
 .primary-action:hover {
   background: var(--brand-dark);
 }

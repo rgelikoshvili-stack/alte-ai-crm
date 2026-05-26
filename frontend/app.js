@@ -1,5 +1,10 @@
+const API_PRESETS = {
+  local: "http://127.0.0.1:8000",
+  production: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+};
+
 const state = {
-  apiBase: localStorage.getItem("alte_api_base") || "http://127.0.0.1:8000",
+  apiBase: localStorage.getItem("alte_api_base") || API_PRESETS.local,
   token: localStorage.getItem("alte_access_token") || "",
   limit: Number(localStorage.getItem("alte_operator_limit") || 20),
   activeView: localStorage.getItem("alte_active_view") || "dashboard",
@@ -24,6 +29,32 @@ function setStatus(message, isError = false) {
   const bar = $("statusBar");
   bar.textContent = message || "";
   bar.classList.toggle("error", isError);
+}
+
+function currentApiMode() {
+  if (state.apiBase === API_PRESETS.production) return "production";
+  if (state.apiBase === API_PRESETS.local) return "local";
+  return "custom";
+}
+
+function syncApiControls() {
+  const apiInput = $("apiBase");
+  const settingsApiInput = $("settingsApiBase");
+  if (apiInput) apiInput.value = state.apiBase;
+  if (settingsApiInput) settingsApiInput.value = state.apiBase;
+
+  const mode = currentApiMode();
+  const localBtn = $("useLocalApiBtn");
+  const productionBtn = $("useProductionApiBtn");
+  if (localBtn) localBtn.classList.toggle("active", mode === "local");
+  if (productionBtn) productionBtn.classList.toggle("active", mode === "production");
+}
+
+function setApiBase(apiBase, message) {
+  state.apiBase = apiBase.trim().replace(/\/$/, "");
+  localStorage.setItem("alte_api_base", state.apiBase);
+  syncApiControls();
+  setStatus(message || `API set to ${state.apiBase}`);
 }
 
 function escapeHtml(value) {
@@ -893,7 +924,7 @@ function switchView(view) {
 }
 
 function syncSettings() {
-  $("settingsApiBase").value = state.apiBase;
+  syncApiControls();
   $("settingsLimit").value = state.limit;
   $("authStatus").textContent = state.token ? "Token stored for authenticated API calls." : "No token stored.";
 }
@@ -1037,8 +1068,7 @@ function bindFilters() {
 }
 
 function init() {
-  $("apiBase").value = state.apiBase;
-  $("settingsApiBase").value = state.apiBase;
+  syncApiControls();
   $("settingsLimit").value = state.limit;
 
   document.querySelectorAll(".nav-item").forEach((node) => {
@@ -1051,14 +1081,19 @@ function init() {
   const titleEntry = titles[state.activeView];
   if (titleEntry) { $("viewTitle").textContent = titleEntry[0]; $("viewSubtitle").textContent = titleEntry[1]; }
   $("refreshBtn").addEventListener("click", () => {
-    state.apiBase = $("apiBase").value.trim().replace(/\/$/, "");
-    localStorage.setItem("alte_api_base", state.apiBase);
+    setApiBase($("apiBase").value, "API updated. Loading data...");
+    loadActiveView();
+  });
+  $("useLocalApiBtn").addEventListener("click", () => {
+    setApiBase(API_PRESETS.local, "Local API selected. Loading local CRM data...");
+    loadActiveView();
+  });
+  $("useProductionApiBtn").addEventListener("click", () => {
+    setApiBase(API_PRESETS.production, "Production API selected for Netlify chatbot testing. Login may be required.");
     loadActiveView();
   });
   $("settingsApiBase").addEventListener("change", () => {
-    state.apiBase = $("settingsApiBase").value.trim().replace(/\/$/, "");
-    $("apiBase").value = state.apiBase;
-    localStorage.setItem("alte_api_base", state.apiBase);
+    setApiBase($("settingsApiBase").value, "API updated from settings.");
   });
   $("settingsLimit").addEventListener("change", () => {
     state.limit = Math.max(5, Math.min(100, Number($("settingsLimit").value || 20)));

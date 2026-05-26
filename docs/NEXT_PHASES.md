@@ -1157,3 +1157,18 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
 ```
+
+## Phase 9V Staging Operator CRM Test Workflow
+
+- Local operator CRM can switch between Local API and Production API.
+- Production API target: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`.
+- Hosted chatbot test URL: `https://nimble-croissant-2f66e8.netlify.app/`.
+- Intended staging flow: Netlify chatbot -> production backend -> local CRM on `http://127.0.0.1:5173` with Production API selected -> operator reply -> chatbot polling.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+PHASE_9V_STAGING_OPERATOR_CRM_STATUS=LOCAL_OPERATOR_CRM_CAN_TARGET_PRODUCTION_BACKEND_FOR_NETLIFY_TESTING
+```

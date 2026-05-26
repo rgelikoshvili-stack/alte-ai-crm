@@ -25,6 +25,20 @@ http://127.0.0.1:5173
 
 The UI expects the API at `http://127.0.0.1:8000` by default. Change the API field in the top bar if needed.
 
+For the hosted Netlify chatbot test, click `Production API` in the top bar so the local operator CRM reads the same backend as:
+
+```text
+https://nimble-croissant-2f66e8.netlify.app/
+```
+
+That sets the CRM API to:
+
+```text
+https://alte-ai-crm-backend-226875230147.europe-west1.run.app
+```
+
+Then use the Inbox view to see chatbot conversations and send operator replies.
+
 If backend `AUTH_REQUIRED=true`, use Settings to log in. The returned token is stored in localStorage and sent as a bearer token with API requests.
 
 Available views:
