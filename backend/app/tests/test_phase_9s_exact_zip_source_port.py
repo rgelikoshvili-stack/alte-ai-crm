@@ -64,8 +64,10 @@ def test_deploy_zip_contains_updated_widget_at_root() -> None:
         assert "alte-ai-chat-widget.html" in names
         assert "test_site/alte-ai-chat-widget.js" not in names
         html = archive.read("alte-ai-chat-widget.html").decode("utf-8")
-        assert "cw-win" in html
-        assert "cw-backdrop" in html
+        chat_source = archive.read("variants/pro-v2-chat.jsx").decode("utf-8")
+        zip_text = html + "\n" + chat_source
+        assert "cw-win" in zip_text
+        assert "cw-backdrop" in zip_text
         assert "pro_v2_safe" in html
 
 

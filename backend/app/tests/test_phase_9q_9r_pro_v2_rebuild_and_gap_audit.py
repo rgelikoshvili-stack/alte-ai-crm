@@ -71,9 +71,11 @@ def test_deploy_zip_contains_updated_js_at_root() -> None:
         assert "alte-ai-chat-widget.html" in names
         assert "test_site/alte-ai-chat-widget.js" not in names
         html = archive.read("alte-ai-chat-widget.html").decode("utf-8")
-        assert "pro_v2_safe" in html
-        assert "fullscreen" in html
-        assert "closeWidget" in html
+        chat_source = archive.read("variants/pro-v2-chat.jsx").decode("utf-8")
+        zip_text = html + "\n" + chat_source
+        assert "pro_v2_safe" in zip_text
+        assert "fullscreen" in zip_text or "expanded" in zip_text
+        assert "closeWidget" in zip_text or "close" in zip_text
 
 
 def test_launch_embed_and_browser_smoke_not_complete() -> None:

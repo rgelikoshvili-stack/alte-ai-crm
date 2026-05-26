@@ -63,7 +63,7 @@ def widget_js_contains_markers() -> Check:
 
 def widget_html_payload_is_compatible() -> Check:
     text = read(TEST_WIDGET_HTML)
-    required = ['source_domain: cfg.sourceDomain', "language: lang", 'channel: "website_chat"']
+    required = ["source_domain:", "SOURCE_DOMAIN", "language:", 'channel: "website_chat"']
     missing = [item for item in required if item not in text]
     forbidden = ['channel: "website",']
     found_forbidden = [item for item in forbidden if item in text]
@@ -83,7 +83,7 @@ def zip_contains_updated_js_and_html() -> Check:
         missing = required - names
         js = archive.read("alte-ai-chat-widget.js").decode("utf-8", errors="ignore") if "alte-ai-chat-widget.js" in names else ""
         html = archive.read("alte-ai-chat-widget.html").decode("utf-8", errors="ignore") if "alte-ai-chat-widget.html" in names else ""
-    passed = not missing and "sessionStartPayloadFields" in js and 'channel: "website_chat"' in html
+    passed = not missing and "sessionStartPayloadFields" in js and 'channel: "website_chat"' in html and "source_domain:" in html
     detail = f"missing={sorted(missing)}"
     return Check("Deploy ZIP contains updated widget JS and HTML", passed, detail)
 

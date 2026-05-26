@@ -5,6 +5,10 @@ PHASE_9U_OPERATOR_ANSWER_KNOWLEDGE_STATUS=OPERATOR_ANSWERS_TO_DRAFT_REVIEW_QUEUE
 ## Scope
 
 - Goal: allow useful operator replies to become reviewed knowledge candidates for future AI answers.
+- Netlify test package rebuilt with the local Pro v2 operator workflow HTML and required `variants/` source files.
+- Updated deploy package: `dist/netlify_test_site_deploy.zip`.
+- Manual Netlify redeploy required: YES.
+- Hosted browser smoke passed: NO.
 - Real Alte site modified: NO.
 - Cloud Run deploy: NO.
 - CORS change: NO.

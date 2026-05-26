@@ -11,12 +11,12 @@ HOSTED_BROWSER_SMOKE_STATUS=PENDING_REDEPLOY_AND_MANUAL_RETEST
 - browser smoke executed: NO
 - real Alte site modified: NO
 - public launch: NO
-- current blocker: Netlify returns `Site not found / not deployed`
+- current blocker: updated Pro v2 operator workflow package has not yet been redeployed to Netlify after the local rebuild.
 - deploy fix instructions: `docs/test_origin_handoff/NETLIFY_DEPLOY_FIX_GEO.md`
 - site-name/deploy troubleshooting: `docs/test_origin_handoff/NETLIFY_SITE_NAME_TROUBLESHOOTING_GEO.md`
 - corrected deploy package: `dist/netlify_test_site_deploy.zip`
 - Netlify package manifest: `docs/test_origin_handoff/NETLIFY_TEST_SITE_PACKAGE_MANIFEST.md`
-- next required action: confirm the actual Netlify dashboard URL/site name, ensure deploy status is `Published`, and upload `dist/netlify_test_site_deploy.zip` to the correct Netlify site or configure Git deploy with publish directory `test_site`.
+- next required action: redeploy the latest `dist/netlify_test_site_deploy.zip` to the actual Netlify site or trigger Git deploy from latest `master`.
 - actual Netlify origin CORS update: DONE
 - result doc: `docs/deployment/PHASE_9N_ACTUAL_NETLIFY_ORIGIN_CORS_RESULT.md`
 - session/start payload issue found: browser request reached backend but returned `422`.
@@ -101,4 +101,19 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_PRO_V2_EVENT_BINDING_FIXED_PENDING_NETLIFY_REDEPLOY
+```
+
+## Phase 9T/9U Operator Workflow Package Update
+
+- Netlify deploy package has been rebuilt from the local Pro v2 chatbot source.
+- Package now includes `alte-ai-chat-widget.html` and `variants/` at the ZIP root.
+- Chatbot package includes operator handover/contact support through `/chat/contact/{conversation_id}`.
+- Chatbot package includes operator reply polling through `/chat/messages/{conversation_id}` with session guard.
+- Operator-answer knowledge candidate creation remains CRM/backend-side only and is not exposed in the public widget.
+- Hosted browser smoke remains pending until the updated package is redeployed to Netlify and manually retested.
+
+Decision state:
+
+```text
+BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL
 ```

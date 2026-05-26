@@ -141,7 +141,13 @@ def zip_root() -> Check:
         missing = expected - names
         nested = [name for name in names if name.startswith("test_site/")]
         html = archive.read("alte-ai-chat-widget.html").decode("utf-8") if "alte-ai-chat-widget.html" in names else ""
-    marker_ok = "cw-win" in html and "cw-backdrop" in html and "pro_v2_safe" in html
+        chat_source = (
+            archive.read("variants/pro-v2-chat.jsx").decode("utf-8")
+            if "variants/pro-v2-chat.jsx" in names
+            else ""
+        )
+    zip_text = html + "\n" + chat_source
+    marker_ok = "cw-win" in zip_text and "cw-backdrop" in zip_text and "pro_v2_safe" in zip_text
     return Check("Netlify ZIP root contains updated exact widget", not missing and not nested and marker_ok, f"missing={sorted(missing)} nested={nested} marker_ok={marker_ok}")
 
 

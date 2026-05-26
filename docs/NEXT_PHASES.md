@@ -4,6 +4,10 @@
 
 Status: `BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL`
 
+- Netlify test package has been rebuilt with the local Pro v2 operator workflow HTML and required `variants/` source files.
+- Updated deploy package: `dist/netlify_test_site_deploy.zip`.
+- Manual Netlify redeploy required: YES.
+- Hosted browser smoke passed: NO.
 - Operator replies can now be converted into draft knowledge candidates.
 - Operator conversation UI includes a `Create knowledge candidate` action for operator replies.
 - Existing candidates are detected by `operator_reply:{message_id}` and shown beside the operator reply.

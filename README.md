@@ -2,9 +2,9 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9U local operator-answer knowledge candidate workflow ready, pending CRM UI review controls.
+Current status: Phase 9U local operator-answer knowledge candidate workflow ready, with Netlify test package rebuilt for the Pro v2 chatbot/operator workflow and pending manual Netlify redeploy.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP now includes the Pro v2 HTML and `variants/` source needed for the hosted test page. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 

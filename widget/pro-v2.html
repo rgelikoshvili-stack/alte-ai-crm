@@ -46,7 +46,7 @@
 
 <!--
   Alte AI CRM backend adapter.
-  Bridges window.claude.complete() (ZIP Pro v2 API) → FastAPI /chat/* endpoints.
+  Bridges the ZIP Pro v2 chat completion API → FastAPI /chat/* endpoints.
 
   LOCAL:      BACKEND = "http://127.0.0.1:8000"
   PRODUCTION: BACKEND = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
@@ -111,7 +111,7 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ conv: _convId, sess: _sessId })); } catch (e) {}
   }
 
-  window.claude = {
+  window.AlteChatBridge = {
     _reset: function () { _convId = null; _sessId = null; _lastResponse = null; try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} },
 
     complete: async function (opts) {
@@ -152,7 +152,7 @@
     get conversationId() { return _convId; },
     get sessionId() { return _sessId; },
     get lastResponse() { return _lastResponse; },
-    reset: window.claude._reset,
+    reset: window.AlteChatBridge._reset,
     requestHandover: async function (context) {
       await ensureSession(normalizeLang(context && context.language));
       var response = await fetch(BACKEND + "/chat/handover/" + encodeURIComponent(_convId), {
