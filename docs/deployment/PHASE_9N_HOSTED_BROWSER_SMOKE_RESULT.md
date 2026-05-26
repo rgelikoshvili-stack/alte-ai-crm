@@ -1,12 +1,13 @@
 # Phase 9N Hosted Browser Smoke Result
 
-HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_SITE_NAME_OR_DEPLOY_NOT_FOUND
+HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_RETEST
 
 ## Current State
 
 - test origin URL: `https://alte-ai-chat-test.netlify.app`
+- actual deployed Netlify URL: `https://nimble-croissant-2f66e8.netlify.app`
 - CORS configured: YES
-- hosted page deployed: NO
+- hosted page deployed: YES, at actual Netlify origin
 - browser smoke executed: NO
 - real Alte site modified: NO
 - public launch: NO
@@ -16,16 +17,19 @@ HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_SITE_NAME_OR_DEPLOY_NOT_FOUND
 - corrected deploy package: `dist/netlify_test_site_deploy.zip`
 - Netlify package manifest: `docs/test_origin_handoff/NETLIFY_TEST_SITE_PACKAGE_MANIFEST.md`
 - next required action: confirm the actual Netlify dashboard URL/site name, ensure deploy status is `Published`, and upload `dist/netlify_test_site_deploy.zip` to the correct Netlify site or configure Git deploy with publish directory `test_site`.
+- actual Netlify origin CORS update: DONE
+- result doc: `docs/deployment/PHASE_9N_ACTUAL_NETLIFY_ORIGIN_CORS_RESULT.md`
+- next required action: manually retest the browser page at `https://nimble-croissant-2f66e8.netlify.app`; do not enter phone/email/contact details.
 
 ## Manual Browser Smoke Instructions
 
-1. Open `https://alte-ai-chat-test.netlify.app`.
+1. Open `https://nimble-croissant-2f66e8.netlify.app`.
 2. Open DevTools Console and Network.
 3. Confirm widget loads.
 4. Confirm no CORS errors.
 5. Send safe messages only; do not enter phone/email/contact details.
 6. Confirm responses render.
-7. Confirm there are no `api.anthropic.com` requests.
+7. Confirm there are no direct AI provider requests.
 8. Confirm no frontend API keys are exposed.
 
 ## Expected Future PASS Criteria
@@ -34,7 +38,7 @@ HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_NETLIFY_SITE_NAME_OR_DEPLOY_NOT_FOUND
 - no console errors.
 - no CORS errors.
 - backend calls succeed.
-- no `api.anthropic.com` calls.
+- no direct AI provider calls.
 - no frontend keys.
 - department routing works.
 - sensitive answers conservative.

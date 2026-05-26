@@ -10,10 +10,12 @@ TEMP_CORS_UPDATE_STATUS=EXECUTED_TEMP_TEST_ORIGIN_READY
 ## New Temporary Origin
 
 ```text
-https://alte-ai-chat-test.netlify.app
+https://nimble-croissant-2f66e8.netlify.app
 ```
 
-TEMP_CORS_UPDATE_APPROVED_ORIGIN=https://alte-ai-chat-test.netlify.app
+TEMP_CORS_UPDATE_APPROVED_ORIGIN=https://nimble-croissant-2f66e8.netlify.app
+ACTUAL_NETLIFY_TEST_ORIGIN=https://nimble-croissant-2f66e8.netlify.app
+PREVIOUS_PLANNED_TEST_ORIGIN=https://alte-ai-chat-test.netlify.app
 
 ## Required Future Command Pattern
 
@@ -48,3 +50,9 @@ Remove the temporary origin from CORS and redeploy the existing backend service 
 - Wildcard CORS was not used.
 - New serving revision: `alte-ai-crm-backend-00009-bhk`
 - Backend image unchanged: `v0.9-security-reliability-fixes`
+
+## Actual Netlify Origin Update
+
+- The currently deployed Netlify site origin is `https://nimble-croissant-2f66e8.netlify.app`.
+- The previous planned origin `https://alte-ai-chat-test.netlify.app` remains allowed as an optional/alternate test origin.
+- The actual Netlify origin is approved for exact-origin CORS update.

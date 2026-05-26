@@ -1,5 +1,26 @@
 # Next Phases
 
+## Phase 9N-CORS-Actual-Netlify-Origin: CORS Ready
+
+Status: `BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST`
+
+- Actual Netlify test origin: `https://nimble-croissant-2f66e8.netlify.app`
+- Previous planned test origin remains allowed: `https://alte-ai-chat-test.netlify.app`
+- Cloud Run CORS update executed with exact origins only.
+- Serving revision: `alte-ai-crm-backend-00010-g47`
+- Backend image unchanged: `v0.9-security-reliability-fixes`
+- CORS smoke passed `10/10`.
+- Test site API smoke passed `10/10`.
+- Security/reliability smoke passed `16/16`.
+- Department routing smoke passed `28/28`.
+- Finance no-contact smoke passed `24/24`.
+- Knowledge smoke passed `25/25`.
+- Hosted browser smoke: `CORS_READY_PENDING_MANUAL_BROWSER_RETEST`.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: manually open `https://nimble-croissant-2f66e8.netlify.app`, run browser smoke with no contact details, and record the result.
+
 ## Phase 9N-Netlify-Fix: Test Site Deploy Package Ready
 
 Status: `BACKEND_DEPLOYED_NETLIFY_TEST_PACKAGE_READY_PENDING_REDEPLOY_AND_BROWSER_SMOKE`

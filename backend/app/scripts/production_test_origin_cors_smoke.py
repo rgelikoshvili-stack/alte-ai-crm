@@ -8,10 +8,12 @@ import httpx
 
 PRODUCTION_BACKEND_URL = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
 TEST_ORIGIN = "https://alte-ai-chat-test.netlify.app"
+ACTUAL_NETLIFY_ORIGIN = "https://nimble-croissant-2f66e8.netlify.app"
 EXPECTED_ALLOWED_ORIGINS = [
     "https://alte.edu.ge",
     "https://join.alte.edu.ge",
     TEST_ORIGIN,
+    ACTUAL_NETLIFY_ORIGIN,
 ]
 BLOCKED_ORIGIN = "https://evil.example.com"
 ENDPOINTS = ["/chat/session/start", "/chat/message"]
@@ -79,12 +81,16 @@ def run_smoke() -> dict[str, object]:
         "failed": len(failures),
         "failures": failures,
         "test_origin": TEST_ORIGIN,
+        "actual_netlify_origin": ACTUAL_NETLIFY_ORIGIN,
         "old_origins_still_allowed": all(
             check.passed
             for check in checks
             if check.name.startswith("https://alte.edu.ge") or check.name.startswith("https://join.alte.edu.ge")
         ),
         "test_origin_allowed": all(check.passed for check in checks if check.name.startswith(TEST_ORIGIN)),
+        "actual_netlify_origin_allowed": all(
+            check.passed for check in checks if check.name.startswith(ACTUAL_NETLIFY_ORIGIN)
+        ),
         "random_origin_blocked": all(check.passed for check in checks if check.name.startswith(BLOCKED_ORIGIN)),
     }
 

@@ -53,3 +53,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_TEST_ORIGIN_CORS_READY_PENDING_BROWSER_SMOKE
 ```
+
+## Phase 9N Actual Netlify Origin CORS Update
+
+- Actual Netlify origin: `https://nimble-croissant-2f66e8.netlify.app`.
+- Previous planned origin: `https://alte-ai-chat-test.netlify.app`.
+- CORS update: EXECUTED.
+- Cloud Run revision: `alte-ai-crm-backend-00010-g47`.
+- Hosted browser smoke: CORS_READY_PENDING_MANUAL_BROWSER_RETEST.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST
+```

@@ -11,8 +11,10 @@ Test the Safe Pro Sidebar widget in a real browser from a non-Alte temporary hos
 - TEST_ORIGIN_URL=https://alte-ai-chat-test.netlify.app
 - TEST_ORIGIN_CORS_APPROVAL_STATUS=APPROVED_FOR_TEMPORARY_BROWSER_SMOKE
 - TEST_ORIGIN_CORS_DEPLOY_STATUS=EXECUTED
-- HOSTED_BROWSER_SMOKE_STATUS=NOT_EXECUTED
-- TEMP_CORS_UPDATE_APPROVED_ORIGIN=https://alte-ai-chat-test.netlify.app
+- HOSTED_BROWSER_SMOKE_STATUS=BLOCKED_CORS_ACTUAL_NETLIFY_ORIGIN_PENDING_UPDATE
+- TEMP_CORS_UPDATE_APPROVED_ORIGIN=https://nimble-croissant-2f66e8.netlify.app
+- ACTUAL_NETLIFY_TEST_ORIGIN=https://nimble-croissant-2f66e8.netlify.app
+- PREVIOUS_PLANNED_TEST_ORIGIN=https://alte-ai-chat-test.netlify.app
 
 ## Required Before CORS Update
 
@@ -61,3 +63,4 @@ Use a user-controlled temporary HTTPS origin.
 - Final serving revision: `alte-ai-crm-backend-00009-bhk`
 - Image unchanged: `v0.9-security-reliability-fixes`
 - Hosted browser smoke remains pending manual verification.
+- Actual deployed Netlify origin is `https://nimble-croissant-2f66e8.netlify.app`; it needs to be added to production CORS before browser retest.

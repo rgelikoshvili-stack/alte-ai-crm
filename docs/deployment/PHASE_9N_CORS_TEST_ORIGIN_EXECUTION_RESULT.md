@@ -8,6 +8,12 @@ PHASE_9N_CORS_TEST_ORIGIN_EXECUTION_STATUS=TEMP_TEST_ORIGIN_CORS_READY_PENDING_B
 https://alte-ai-chat-test.netlify.app
 ```
 
+Actual deployed Netlify origin:
+
+```text
+https://nimble-croissant-2f66e8.netlify.app
+```
+
 ## CORS Approval
 
 TEST_ORIGIN_CORS_APPROVAL_STATUS=APPROVED_FOR_TEMPORARY_BROWSER_SMOKE
@@ -61,7 +67,9 @@ Initial broader knowledge smoke attempt had one transient conservative-deadline 
 ## Hosted Browser Smoke
 
 - hosted browser smoke status: `BLOCKED_PENDING_NETLIFY_REDEPLOY`
+- hosted browser smoke status after actual Netlify URL discovery: `BLOCKED_CORS_ACTUAL_NETLIFY_ORIGIN_PENDING_UPDATE`
 - Backend CORS side is ready for `https://alte-ai-chat-test.netlify.app`.
+- Actual Netlify page loads from `https://nimble-croissant-2f66e8.netlify.app`, which must be added to CORS before browser retest.
 - Netlify currently returns a `Site not found / not deployed` page for the test origin.
 - Browser smoke is blocked until the Netlify deployment is redeployed with `test_site` as the publish directory/site root.
 - Deploy fix instructions: `docs/test_origin_handoff/NETLIFY_DEPLOY_FIX_GEO.md`
