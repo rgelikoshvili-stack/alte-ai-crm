@@ -2,6 +2,27 @@
 
 PRO_V2_GAP_MATRIX_STATUS=COMPLETED
 
+## Phase 9S ZIP Source Gap Reconciliation
+
+| ZIP source function | Source file/component | Status after Phase 9S | Implementation / safety note |
+| --- | --- | --- | --- |
+| Floating `.cw-win` collapsed widget | `pro-v2-chat.jsx/proV2Css` | EXISTS_AND_WORKS | Ported to safe widget with `width:min(94vw,420px)`, `height:min(92vh,680px)`, `right:22px`, `bottom:22px`. |
+| Expanded centered modal and backdrop | `ChatWidget`, `proV2Css` | EXISTS_AND_WORKS | Ported as `.cw-win.expanded` and `.cw-backdrop`; no real site embed executed. |
+| Sidebar width/collapse | `Sidebar`, `proV2Css` | EXISTS_AND_WORKS | Ported as `.cw-side` `188px` and `.cw-side.collapsed` `54px`. |
+| Header controls | `Header` | EXISTS_AND_WORKS | KA/EN, reset/new, settings, expand, close implemented. |
+| Greeting and quick chips | `Greeting`, `STRINGS` | EXISTS_AND_WORKS | Quick chips send safe backend messages and pass `selected_topic`. |
+| Composer Enter/Shift+Enter | `Composer` | EXISTS_AND_WORKS | Enter sends; Shift+Enter allows newline. |
+| Source chips/cards | `Message`, `SourceChip` | EXISTS_AND_WORKS | Rendered from backend `used_sources`; frontend does not infer official facts. |
+| Handover/operator card | `HandoverCard` | EXISTS_AND_WORKS | Rendered safely; no contact details submitted in browser. |
+| Settings modal | `SettingsModal` | EXISTS_AND_WORKS | Language/source/local UI controls implemented; server persistence not claimed. |
+| `window.claude.complete` | `ChatWidget.send` | UNSAFE_IN_STANDALONE_REPLACE_WITH_BACKEND | Removed/replaced by `/chat/session/start` and `/chat/message`. |
+| `/api/chat` Vercel proxy | `deploy/index.html`, `deploy/api/chat.js` | UNSAFE_IN_STANDALONE_REPLACE_WITH_BACKEND | Not used in safe widget. |
+| Lead/contact modal CRM submission | `LeadModal` | NEEDS_APPROVAL / MISSING_BACKEND | Contact UI is safety-card only; no frontend CRM creation. |
+| Attachment/file analysis | `Composer`, drag/drop code | NEEDS_APPROVAL / MISSING_BACKEND | Plus/file action shows approval-required state only. |
+| Voice input | `Composer` | NEEDS_APPROVAL / MISSING_BACKEND | Mic action shows approval-required state only. |
+
+Phase 9S decision: all safe frontend Pro v2 functions are ported; backend/approval-required functions are documented separately and not faked.
+
 | Function | Pro v2 behavior | Current safe program behavior | Gap status | Required implementation | Files | Safety notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Large modal | Expanded centered modal around 980x720 | Previous safe widget was smaller | EXISTS_BUT_VISUAL_MISMATCH | Rebuild to large Pro v2 modal | `widget/`, `test_site/`, `dist/widget/` | Frontend-only |

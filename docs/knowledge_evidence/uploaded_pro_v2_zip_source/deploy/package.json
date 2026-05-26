@@ -1,0 +1,13 @@
+{
+  "name": "alte-ai-chat",
+  "version": "1.0.0",
+  "description": "ალტე უნივერსიტეტის AI ჩათბოტი — Pro v2",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -6,1183 +6,712 @@
   <title>Alte AI Chat - Pro v2 Safe</title>
   <style>
     :root {
-      --alte-teal: #074045;
-      --alte-teal-deep: #052e32;
-      --alte-teal-mid: #0a5258;
-      --alte-orange: #e8714e;
-      --alte-page: #f4f1ea;
-      --alte-paper: #faf8f1;
-      --alte-chip: #f6f2e8;
-      --alte-line: #e8e2d4;
-      --alte-ink: #0f1a1c;
-      --alte-muted: #5a6c6d;
-      --alte-soft: #eef7f5;
-      --font-sans: Inter, "Noto Sans Georgian", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --alte-teal:#074045;
+      --alte-teal-deep:#052e32;
+      --alte-teal-mid:#0a5258;
+      --alte-orange:#e8714e;
+      --alte-cream:#f6f2e8;
+      --alte-paper:#f4f1ea;
+      --alte-paper-2:#faf8f1;
+      --alte-panel:#ffffff;
+      --alte-chip:#f6f2e8;
+      --alte-ink:#0f1a1c;
+      --alte-mute:#5a6c6d;
+      --alte-line:#e8e2d4;
+      --alte-soft:#eef7f5;
+      --alte-soft-line:#d4e8e3;
+      --alte-success:#1ca672;
+      --gap:11px;
+      --bub:10px 13px;
+      --msg-font:13px;
+      --bub-r:13px;
       color-scheme: light;
     }
-
     * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 18px;
-      background:
-        radial-gradient(circle at 18% 12%, rgba(232, 113, 78, .12), transparent 30%),
-        linear-gradient(145deg, #f8f5ed 0%, #eef5f4 100%);
+      font-family: "Noto Sans Georgian", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--alte-ink);
-      font-family: var(--font-sans);
+      background: transparent;
+      overflow: hidden;
     }
-
-    button, input { font: inherit; }
+    button, textarea, input { font: inherit; }
     button { cursor: pointer; }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    .cw { font-family:"Noto Sans Georgian", Inter, sans-serif; color:var(--alte-ink); }
+    .cw, .cw * { box-sizing:border-box; }
+    .cw-hidden { display:none !important; }
+    .cw-backdrop { position:fixed; inset:0; background:rgba(15,26,28,.45); backdrop-filter:blur(3px); z-index:45; }
+    .cw-win {
+      position:fixed; right:22px; bottom:22px;
+      width:min(94vw,420px); height:min(92vh,680px);
+      background:var(--alte-panel); border-radius:18px;
+      box-shadow:0 24px 80px -10px rgba(7,32,36,.35), 0 8px 20px -8px rgba(7,32,36,.25);
+      display:flex; flex-direction:column; overflow:hidden;
+      transform-origin:bottom right; z-index:50;
+      border:1px solid rgba(15,26,28,.06);
     }
-
-    .pro-widget {
-      width: min(1080px, calc(100vw - 28px));
-      height: min(742px, calc(100vh - 28px));
-      min-height: 650px;
-      display: grid;
-      grid-template-columns: 244px minmax(0, 1fr);
-      overflow: hidden;
-      border: 1px solid rgba(232, 226, 212, .95);
-      border-radius: 22px;
-      background: rgba(250, 248, 241, .98);
-      box-shadow: 0 28px 90px rgba(7, 64, 69, .22);
+    .cw-win.expanded {
+      width:min(96vw,980px); height:min(92vh,720px);
+      right:auto; bottom:auto; left:50%; top:50%;
+      transform:translate(-50%,-50%);
     }
-    .pro-widget.closed { display: none; }
-    .pro-widget.fullscreen {
-      width: calc(100vw - 18px);
-      height: calc(100vh - 18px);
-      min-height: 0;
-      border-radius: 18px;
+    .cw-shell { display:flex; flex:1; min-height:0; }
+    .cw-side {
+      width:188px; background:var(--alte-paper); border-right:1px solid var(--alte-line);
+      display:flex; flex-direction:column; flex-shrink:0; transition:width .25s ease;
     }
-
-    .launcher {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      display: none;
-      grid-template-columns: 44px 1fr;
-      gap: 10px;
-      align-items: center;
-      width: min(320px, calc(100vw - 32px));
-      border: 1px solid rgba(232, 226, 212, .95);
-      border-radius: 18px;
-      padding: 10px 12px;
-      background: #fffdf8;
-      color: var(--alte-ink);
-      box-shadow: 0 18px 50px rgba(7, 64, 69, .22);
-      z-index: 5;
-      text-align: left;
-    }
-    .launcher.show { display: grid; }
-    .launcher-mark {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 15px;
-      background: var(--alte-teal);
-      color: #fff;
-      font-weight: 850;
-    }
-    .launcher-title { display: block; font-size: 13px; font-weight: 850; }
-    .launcher-sub { display: block; margin-top: 2px; color: var(--alte-muted); font-size: 11px; }
-
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      background: linear-gradient(180deg, #fbf8ef 0%, #eef7f5 100%);
-      border-right: 1px solid var(--alte-line);
-    }
-
-    .brand {
-      display: grid;
-      grid-template-columns: 38px 1fr;
-      gap: 10px;
-      align-items: center;
-      padding: 16px 14px 13px;
-      border-bottom: 1px solid rgba(232, 226, 212, .78);
-    }
-
-    .mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: var(--alte-teal);
-      color: #fff;
-      font-weight: 800;
-      letter-spacing: .02em;
-      box-shadow: 0 9px 18px rgba(7, 64, 69, .2);
-    }
-
-    .brand-title { font-size: 13px; font-weight: 800; line-height: 1.2; }
-    .brand-sub { margin-top: 2px; color: var(--alte-muted); font-size: 11px; line-height: 1.3; }
-
-    .nav {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      padding: 10px 8px;
-    }
-
-    .nav-label {
-      padding: 12px 8px 6px;
-      color: #678182;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .nav-btn {
-      width: 100%;
-      min-height: 38px;
-      display: grid;
-      grid-template-columns: 24px 1fr;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-      padding: 8px 10px;
-      border: 0;
-      border-radius: 12px;
-      background: transparent;
-      color: #345b5d;
-      text-align: left;
-      transition: background .16s ease, color .16s ease, transform .16s ease;
-    }
-
-    .nav-btn:hover { background: rgba(7, 64, 69, .08); transform: translateX(1px); }
-    .nav-btn.active {
-      background: var(--alte-teal);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(7, 64, 69, .22);
-    }
-
-    .nav-icon {
-      width: 24px;
-      height: 24px;
-      display: grid;
-      place-items: center;
-      border-radius: 9px;
-      background: rgba(7, 64, 69, .08);
-      color: inherit;
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .nav-btn.active .nav-icon { background: rgba(255, 255, 255, .16); }
-    .nav-text { min-width: 0; font-size: 12px; font-weight: 750; line-height: 1.25; }
-    .nav-topic { display: block; margin-top: 1px; font-size: 10px; font-weight: 600; opacity: .68; }
-
-    .sidebar-footer {
-      display: grid;
-      grid-template-columns: 30px 1fr;
-      gap: 9px;
-      align-items: center;
-      padding: 12px 14px;
-      border-top: 1px solid rgba(232, 226, 212, .82);
-      color: var(--alte-muted);
-      font-size: 11px;
-    }
-    .footer-avatar {
-      width: 30px;
-      height: 30px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: #dcefeb;
-      color: var(--alte-teal);
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .footer-name { color: var(--alte-ink); font-size: 12px; font-weight: 800; }
-
-    .sidebar-toggle {
-      margin: 0 10px 10px;
-      height: 28px;
-      border: 1px dashed #cbd9d6;
-      border-radius: 9px;
-      background: transparent;
-      color: var(--alte-muted);
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .sidebar.collapsed { width: 58px; }
-    .sidebar.collapsed .brand { grid-template-columns: 1fr; padding: 14px 9px; }
-    .sidebar.collapsed .brand > div:not(.mark),
-    .sidebar.collapsed .nav-label,
-    .sidebar.collapsed .nav-text,
-    .sidebar.collapsed .footer-name,
-    .sidebar.collapsed #footer-role { display: none; }
-    .sidebar.collapsed .nav-btn { grid-template-columns: 1fr; justify-items: center; padding: 9px; }
-    .pro-widget:has(.sidebar.collapsed) { grid-template-columns: 58px minmax(0, 1fr); }
-
-    .chat {
-      display: flex;
-      min-width: 0;
-      min-height: 0;
-      flex-direction: column;
-      background: #fffdf8;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--alte-line);
-      background: rgba(255, 253, 248, .94);
-      backdrop-filter: blur(8px);
-    }
-    .assistant-avatar {
-      position: relative;
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      border-radius: 14px;
-      background: var(--alte-teal);
-      color: #fff;
-      font-weight: 850;
-    }
-    .assistant-avatar::after {
-      content: "";
-      position: absolute;
-      right: -1px;
-      bottom: -1px;
-      width: 10px;
-      height: 10px;
-      border: 2px solid #fffdf8;
-      border-radius: 50%;
-      background: #18a86f;
-    }
-    .top-title { flex: 1; min-width: 0; }
-    .top-title strong { display: block; font-size: 14px; line-height: 1.2; }
-    .top-title span { display: block; margin-top: 2px; color: var(--alte-muted); font-size: 11px; line-height: 1.3; }
-    .top-actions { display: flex; align-items: center; gap: 6px; }
-    .lang-btn, .icon-btn {
-      height: 30px;
-      border: 1px solid var(--alte-line);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--alte-muted);
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .lang-btn { min-width: 36px; padding: 0 10px; }
-    .lang-btn.active { border-color: var(--alte-teal); background: var(--alte-teal); color: #fff; }
-    .icon-btn { min-width: 34px; padding: 0 9px; }
-    .icon-btn:hover, .lang-btn:hover { border-color: #bfd6d2; background: #f7fbfa; color: var(--alte-teal); }
-    .lang-btn.active:hover { background: var(--alte-teal-mid); color: #fff; }
-
-    .status-strip {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding: 8px 16px;
-      border-bottom: 1px solid #d9ebe7;
-      background: #effaf8;
-      color: #286d63;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #18a86f;
-      box-shadow: 0 0 0 4px rgba(24, 168, 111, .13);
-    }
-
-    .messages {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px;
-      background:
-        linear-gradient(180deg, rgba(244, 241, 234, .72), rgba(255, 253, 248, .94) 38%),
-        #fffdf8;
-    }
-
-    .message-row { display: flex; gap: 8px; align-items: flex-end; }
-    .message-row.user { flex-direction: row-reverse; }
-    .msg-avatar {
-      width: 24px;
-      height: 24px;
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: #dcefeb;
-      color: var(--alte-teal);
-      font-size: 10px;
-      font-weight: 850;
-    }
-    .message-row.user .msg-avatar { background: #e5ebe9; color: #627274; }
-    .bubble {
-      max-width: min(82%, 520px);
-      padding: 11px 13px;
-      border-radius: 16px;
-      font-size: 13px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-    .message-row.bot .bubble {
-      border: 1px solid var(--alte-line);
-      border-bottom-left-radius: 5px;
-      background: var(--alte-paper);
-      color: var(--alte-ink);
-      box-shadow: 0 4px 16px rgba(15, 26, 28, .04);
-    }
-    .message-row.user .bubble {
-      border-bottom-right-radius: 5px;
-      background: var(--alte-teal);
-      color: #fff;
-    }
-    .message-row.operator .bubble {
-      border: 1px solid #f5c39e;
-      border-left: 4px solid var(--alte-orange);
-      background: #fff7ef;
-      color: #57320d;
-    }
-
-    .dept-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 7px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: #e7f4f1;
-      color: var(--alte-teal);
-      font-size: 11px;
-      font-weight: 850;
-    }
-
-    .welcome {
-      display: grid;
-      gap: 10px;
-      min-width: min(100%, 320px);
-    }
-    .welcome-title { font-size: 15px; font-weight: 850; }
-    .welcome-copy { color: #3b4e50; font-size: 13px; line-height: 1.55; }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 2px;
-    }
-    .feature-card {
-      border: 1px solid var(--alte-line);
-      border-radius: 14px;
-      background: #fff;
-      padding: 10px;
-    }
-    .feature-card strong { display: block; font-size: 12px; }
-    .feature-card span { display: block; margin-top: 3px; color: var(--alte-muted); font-size: 11px; line-height: 1.35; }
-
-    .settings-panel {
-      position: absolute;
-      right: 14px;
-      top: 58px;
-      z-index: 8;
-      width: min(310px, calc(100vw - 44px));
-      display: none;
-      border: 1px solid var(--alte-line);
-      border-radius: 16px;
-      background: #fffdf8;
-      padding: 12px;
-      box-shadow: 0 18px 48px rgba(7, 64, 69, .18);
-    }
-    .settings-panel.open { display: grid; gap: 10px; }
-    .settings-panel h2 { margin: 0; font-size: 15px; }
-    .settings-panel p { margin: 0; color: var(--alte-muted); font-size: 11px; line-height: 1.45; }
-    .setting-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      border-top: 1px solid var(--alte-line);
-      padding-top: 9px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .switch {
-      width: 38px;
-      height: 22px;
-      border: 0;
-      border-radius: 999px;
-      background: var(--alte-teal);
-      position: relative;
-    }
-    .switch::after {
-      content: "";
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #fff;
-    }
-
-    .typing {
-      display: inline-flex;
-      gap: 4px;
-      align-items: center;
-      padding: 8px 11px;
-    }
-    .typing i {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #8fa3a2;
-      animation: blink 1.2s infinite;
-    }
-    .typing i:nth-child(2) { animation-delay: .16s; }
-    .typing i:nth-child(3) { animation-delay: .32s; }
-    @keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
-
-    .source-list, .handover-card, .contact-card {
-      display: grid;
-      gap: 6px;
-      margin-top: 9px;
-    }
-    .source-card, .contact-card, .handover-card {
-      border: 1px solid var(--alte-line);
-      border-radius: 13px;
-      background: #fff;
-      padding: 9px 10px;
-      font-size: 11px;
-      line-height: 1.45;
-    }
-    .source-card a { color: var(--alte-teal-mid); text-decoration: none; overflow-wrap: anywhere; }
-    .source-card a:hover { text-decoration: underline; }
-    .handover-card {
-      border-color: #f5c39e;
-      border-left: 4px solid var(--alte-orange);
-      background: #fff8f1;
-      color: #57320d;
-    }
-    .contact-card {
-      border-color: #cfe4e0;
-      background: #f8fcfb;
-      color: #345b5d;
-    }
-    .card-title { display: block; margin-bottom: 3px; font-weight: 850; }
-
-    .quick-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      padding: 0 16px 10px;
-      background: #fffdf8;
-    }
-    .quick-chip {
-      max-width: 100%;
-      border: 1px solid var(--alte-line);
-      border-radius: 999px;
-      background: #fff;
-      color: var(--alte-teal);
-      padding: 7px 10px;
-      font-size: 11px;
-      font-weight: 750;
-      box-shadow: 0 3px 10px rgba(7, 64, 69, .04);
-      white-space: normal;
-    }
-    .quick-chip:hover { border-color: #b9d7d3; background: var(--alte-soft); }
-
-    .composer {
-      display: grid;
-      grid-template-columns: auto auto minmax(0, 1fr) auto;
-      gap: 8px;
-      padding: 11px 16px 8px;
-      border-top: 1px solid var(--alte-line);
-      background: #fffdf8;
-    }
-    .composer input {
-      height: 40px;
-      min-width: 0;
-      border: 1px solid #d9e4e1;
-      border-radius: 13px;
-      background: #fff;
-      color: var(--alte-ink);
-      padding: 0 13px;
-      outline: none;
-      font-size: 13px;
-    }
-    .composer textarea {
-      height: 42px;
-      max-height: 120px;
-      min-width: 0;
-      resize: none;
-      border: 1px solid #d9e4e1;
-      border-radius: 13px;
-      background: #fff;
-      color: var(--alte-ink);
-      padding: 11px 13px;
-      outline: none;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .composer textarea:focus { border-color: var(--alte-teal); box-shadow: 0 0 0 3px rgba(7, 64, 69, .09); }
-    .tool-btn {
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--alte-line);
-      border-radius: 13px;
-      background: #fff;
-      color: var(--alte-muted);
-      font-size: 15px;
-      font-weight: 850;
-    }
-    .tool-btn:disabled { opacity: .48; cursor: not-allowed; }
-    .composer input:focus { border-color: var(--alte-teal); box-shadow: 0 0 0 3px rgba(7, 64, 69, .09); }
-    .send-btn {
-      height: 40px;
-      border: 0;
-      border-radius: 13px;
-      background: var(--alte-teal);
-      color: #fff;
-      padding: 0 15px;
-      font-size: 12px;
-      font-weight: 850;
-      white-space: nowrap;
-    }
-    .send-btn:hover { background: var(--alte-teal-mid); }
-    .send-btn:disabled { opacity: .56; cursor: not-allowed; }
-
-    .privacy {
-      padding: 0 16px 12px;
-      background: #fffdf8;
-      color: var(--alte-muted);
-      font-size: 10.5px;
-      line-height: 1.45;
-    }
-    .composer-hint {
-      padding: 0 16px 8px;
-      background: #fffdf8;
-      color: var(--alte-muted);
-      font-size: 10px;
-      line-height: 1.4;
-    }
-    .privacy a { color: var(--alte-teal-mid); text-decoration: none; }
-    .privacy a:hover { text-decoration: underline; }
-
-    @media (max-width: 760px) {
-      body { padding: 10px; }
-      .pro-widget {
-        width: calc(100vw - 20px);
-        height: calc(100vh - 20px);
-        min-height: 0;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto minmax(0, 1fr);
-        border-radius: 18px;
-      }
-      .sidebar {
-        border-right: 0;
-        border-bottom: 1px solid var(--alte-line);
-      }
-      .brand { display: none; }
-      .nav {
-        display: flex;
-        gap: 6px;
-        overflow-x: auto;
-        padding: 8px;
-      }
-      .nav-label, .sidebar-footer, .nav-topic { display: none; }
-      .nav-btn {
-        width: auto;
-        min-width: 94px;
-        grid-template-columns: 20px auto;
-        margin: 0;
-        padding: 8px;
-      }
-      .nav-text { font-size: 11px; white-space: nowrap; }
-      .topbar { padding: 11px 12px; }
-      .top-actions { gap: 4px; }
-      .lang-btn, .icon-btn { height: 28px; min-width: 30px; padding: 0 7px; }
-      .messages { padding: 12px; }
-      .bubble { max-width: 90%; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .quick-row { padding: 0 12px 8px; }
-      .composer { padding: 9px 12px 7px; }
-      .send-btn span { display: none; }
-      .composer { grid-template-columns: auto auto minmax(0, 1fr) auto; }
+    .cw-win:not(.expanded) .cw-side { display:none; }
+    .cw-side.collapsed { width:54px; }
+    .cw-side .brand { padding:14px 12px; border-bottom:1px solid var(--alte-line); display:flex; align-items:center; gap:9px; min-height:60px; }
+    .cw-mark { width:32px; height:32px; border-radius:11px; display:flex; align-items:center; justify-content:center; background:var(--alte-teal); color:#fff; font-weight:800; box-shadow:0 8px 18px rgba(7,64,69,.18); flex-shrink:0; }
+    .cw-side .brand .nm { font-family:Georgia, "Times New Roman", serif; font-size:13.5px; font-weight:700; color:var(--alte-ink); letter-spacing:-.01em; line-height:1.15; }
+    .cw-side .brand .sb { font-size:9.5px; color:var(--alte-mute); margin-top:1px; }
+    .cw-side.collapsed .brand-text { display:none; }
+    .cw-side.collapsed .brand { justify-content:center; padding:14px 8px; }
+    .cw-side .nav { flex:1; padding:8px 6px; overflow-y:auto; }
+    .cw-side .sec { font-size:9px; font-weight:700; color:var(--alte-mute); letter-spacing:.1em; text-transform:uppercase; padding:10px 9px 5px; opacity:.75; }
+    .cw-side.collapsed .sec { display:none; }
+    .cw-side .item { display:flex; align-items:center; gap:9px; padding:7px 9px; border:0; width:100%; border-radius:8px; font-size:11.5px; color:var(--alte-ink); background:transparent; font-weight:500; line-height:1.25; cursor:pointer; position:relative; user-select:none; text-align:left; }
+    .cw-side .item .ic { width:16px; height:16px; opacity:.62; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .cw-side .item:hover { background:rgba(7,64,69,.06); }
+    .cw-side .item.on { background:var(--alte-teal); color:#fff; }
+    .cw-side .item.on .ic { opacity:1; }
+    .cw-side .item .badge { margin-left:auto; font-size:9px; font-weight:700; padding:1px 6px; border-radius:9px; background:var(--alte-chip); color:var(--alte-mute); }
+    .cw-side .item.on .badge { background:rgba(255,255,255,.18); color:#fff; }
+    .cw-side .item.human { margin:6px 0 2px; background:var(--alte-panel); border:1px solid var(--alte-line); color:var(--alte-teal); font-weight:600; }
+    .cw-side .item.human:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); }
+    .cw-side.collapsed .item-text, .cw-side.collapsed .badge { display:none; }
+    .cw-side.collapsed .item { justify-content:center; padding:9px; }
+    .cw-side .foot { padding:10px; border-top:1px solid var(--alte-line); display:flex; align-items:center; gap:9px; }
+    .cw-side .foot .av { width:28px; height:28px; border-radius:50%; background:var(--alte-panel); border:1px solid var(--alte-line); color:var(--alte-teal); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+    .cw-side .foot .who { font-size:11.5px; font-weight:600; color:var(--alte-ink); line-height:1.15; }
+    .cw-side .foot .rl { font-size:9.5px; color:var(--alte-mute); margin-top:1px; }
+    .cw-side.collapsed .foot-text { display:none; }
+    .cw-side .toggler { padding:0 6px 8px; }
+    .cw-side .toggler button { width:100%; background:transparent; border:1px dashed var(--alte-line); border-radius:7px; height:24px; display:flex; align-items:center; justify-content:center; color:var(--alte-mute); cursor:pointer; }
+    .cw-main { flex:1; display:flex; flex-direction:column; min-width:0; background:var(--alte-panel); position:relative; }
+    .cw-hdr { padding:11px 14px; border-bottom:1px solid var(--alte-line); display:flex; align-items:center; gap:11px; flex-shrink:0; background:var(--alte-panel); position:relative; z-index:2; }
+    .cw-hdr .av { position:relative; }
+    .cw-hdr .av .stat-dot { position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; background:var(--alte-success); border:2px solid var(--alte-panel); z-index:2; }
+    .cw-hdr .nm { font-family:Georgia, "Times New Roman", serif; font-size:14px; font-weight:700; color:var(--alte-ink); letter-spacing:-.01em; }
+    .cw-hdr .stt { font-size:10.5px; color:var(--alte-mute); display:flex; align-items:center; gap:5px; margin-top:1px; }
+    .cw-hdr .stt::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--alte-success); animation:cwPulse 2.4s infinite; }
+    @keyframes cwPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .cw-hdr .acts { margin-left:auto; display:flex; gap:5px; align-items:center; }
+    .cw-hdr .lang { display:flex; height:26px; border:1px solid var(--alte-line); border-radius:7px; overflow:hidden; font-size:10.5px; font-weight:700; }
+    .cw-hdr .lang button { padding:0 9px; display:flex; align-items:center; color:var(--alte-mute); background:transparent; border:0; cursor:pointer; font-family:inherit; font-weight:700; }
+    .cw-hdr .lang button.on { background:var(--alte-teal); color:#fff; }
+    .cw-hdr .ic { width:28px; height:28px; border-radius:7px; border:1px solid var(--alte-line); background:var(--alte-panel); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s; }
+    .cw-hdr .ic:hover { background:var(--alte-soft); color:var(--alte-teal); border-color:var(--alte-soft-line); }
+    .cw-hdr .ic.danger:hover { background:#fdf0e8; color:#c2410c; border-color:#fadbc8; }
+    .cw-trust { padding:6px 14px; background:var(--alte-soft); font-size:10.5px; color:var(--alte-teal-mid); display:flex; align-items:center; gap:7px; border-bottom:1px solid var(--alte-soft-line); }
+    .cw-trust strong { color:var(--alte-teal); font-weight:700; }
+    .cw-msgs { flex:1; overflow-y:auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:var(--gap); background:var(--alte-panel); scroll-behavior:smooth; }
+    .cw-msgs.empty { padding-top:8px; }
+    .cw-row { display:flex; gap:8px; align-items:flex-end; animation:cwMsg .18s ease-out; }
+    @keyframes cwMsg { from{transform:translateY(6px); opacity:0} to{transform:translateY(0); opacity:1} }
+    .cw-row.u { flex-direction:row-reverse; }
+    .cw-av { width:26px; height:26px; border-radius:50%; background:var(--alte-soft); color:var(--alte-teal); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; overflow:hidden; }
+    .cw-av.u { background:var(--alte-chip); color:var(--alte-mute); }
+    .cw-bub-wrap { max-width:82%; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+    .cw-row.u .cw-bub-wrap { align-items:flex-end; }
+    .cw-bub { background:var(--alte-chip); border:1px solid var(--alte-line); border-radius:var(--bub-r) var(--bub-r) var(--bub-r) 3px; padding:var(--bub); font-size:var(--msg-font); line-height:1.55; color:var(--alte-ink); word-wrap:break-word; overflow-wrap:anywhere; }
+    .cw-row.u .cw-bub { background:var(--alte-teal); color:#fff; border-color:var(--alte-teal); border-radius:var(--bub-r) var(--bub-r) 3px var(--bub-r); }
+    .cw-bub strong { font-weight:700; color:var(--alte-teal); }
+    .cw-row.u .cw-bub strong { color:#bef264; }
+    .cw-bub p { margin:0; }
+    .cw-bub p + p { margin-top:6px; }
+    .cw-bub ul, .cw-bub ol { margin:6px 0; padding-left:18px; }
+    .cw-bub a { color:var(--alte-teal); text-decoration:underline; text-underline-offset:2px; }
+    .cw-dept { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:var(--alte-soft); color:var(--alte-teal); border-radius:20px; font-size:10px; font-weight:700; letter-spacing:.01em; }
+    .cw-dept .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .cw-srcs { display:flex; gap:5px; flex-wrap:wrap; }
+    .cw-src { display:inline-flex; align-items:center; gap:5px; padding:4px 9px 4px 6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:20px; font-size:10.5px; color:var(--alte-teal-mid); font-weight:500; cursor:pointer; transition:.15s; max-width:100%; text-decoration:none; }
+    .cw-src:hover { border-color:var(--alte-soft-line); background:var(--alte-soft); }
+    .cw-src .n { width:14px; height:14px; border-radius:50%; background:var(--alte-teal); color:#fff; font-size:8.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cw-src .u { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px; }
+    .cw-msg-acts { display:flex; gap:4px; margin-top:2px; opacity:0; transition:.15s; }
+    .cw-row:hover .cw-msg-acts { opacity:1; }
+    .cw-msg-acts button { width:22px; height:22px; border-radius:6px; background:transparent; border:0; color:var(--alte-mute); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.12s; }
+    .cw-msg-acts button:hover { background:var(--alte-chip); color:var(--alte-teal); }
+    .cw-typing { display:flex; gap:4px; padding:8px 12px; background:var(--alte-chip); border:1px solid var(--alte-line); border-radius:var(--bub-r) var(--bub-r) var(--bub-r) 3px; align-self:flex-start; }
+    .cw-typing span { width:6px; height:6px; border-radius:50%; background:var(--alte-mute); animation:cwBlink 1.3s infinite both; }
+    .cw-typing span:nth-child(2){ animation-delay:.15s; }
+    .cw-typing span:nth-child(3){ animation-delay:.3s; }
+    @keyframes cwBlink { 0%,80%,100%{opacity:.25; transform:translateY(0)} 40%{opacity:1; transform:translateY(-2px)} }
+    .cw-greet { padding:6px 0 4px; }
+    .cw-greet h2 { font-family:Georgia, "Times New Roman", serif; font-size:22px; font-weight:700; color:var(--alte-ink); letter-spacing:-.018em; margin:0 0 6px; }
+    .cw-greet p { font-size:12.5px; color:var(--alte-mute); line-height:1.55; margin:0; }
+    .cw-feat { margin-top:14px; padding:11px 12px; background:var(--alte-paper); border:1px solid var(--alte-line); border-radius:11px; display:flex; gap:11px; align-items:center; cursor:pointer; transition:.15s; }
+    .cw-feat:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); }
+    .cw-feat .ic { width:34px; height:34px; border-radius:9px; background:var(--alte-teal); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cw-feat .ttl { font-size:12.5px; font-weight:700; color:var(--alte-ink); }
+    .cw-feat .desc { font-size:10.5px; color:var(--alte-mute); line-height:1.4; margin-top:2px; }
+    .cw-feat .arrow { margin-left:auto; color:var(--alte-mute); }
+    .cw-hint { font-size:11px; color:var(--alte-mute); margin:14px 2px 8px; font-weight:500; }
+    .cw-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .cw-chip { background:var(--alte-paper); border:1px solid var(--alte-line); padding:8px 12px; border-radius:9px; font-size:11.5px; color:var(--alte-ink); font-weight:500; display:flex; gap:6px; align-items:center; cursor:pointer; transition:.15s; text-align:left; line-height:1.3; }
+    .cw-chip:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); color:var(--alte-teal); transform:translateY(-1px); }
+    .cw-handover { background:var(--alte-panel); border:1px solid #f5cab4; border-left:3px solid #e8714e; border-radius:10px; padding:10px 12px; }
+    .cw-handover .h { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; color:#c2410c; margin-bottom:7px; }
+    .cw-handover .h .ic { width:22px; height:22px; border-radius:7px; background:#fdf0e8; display:flex; align-items:center; justify-content:center; color:#c2410c; }
+    .cw-handover .dept-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:#fdf0e8; color:#c2410c; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:7px; }
+    .cw-handover .note { font-size:11.5px; color:var(--alte-ink); line-height:1.5; }
+    .cw-handover .acts { display:flex; gap:6px; margin-top:9px; padding-top:9px; border-top:1px dashed var(--alte-line); }
+    .cw-btn-p { background:var(--alte-teal); color:#fff; padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:0; cursor:pointer; font-family:inherit; }
+    .cw-btn-s { background:var(--alte-panel); color:var(--alte-teal); padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:1px solid var(--alte-teal); cursor:pointer; font-family:inherit; }
+    .cw-contact { border:1px solid var(--alte-soft-line); background:var(--alte-soft); color:var(--alte-teal); border-radius:10px; padding:9px 11px; font-size:11px; line-height:1.45; }
+    .cw-comp { border-top:1px solid var(--alte-line); padding:9px 11px 10px; flex-shrink:0; background:var(--alte-panel); position:relative; }
+    .cw-comp .box { display:flex; align-items:flex-end; gap:6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:13px; padding:5px 5px 5px 9px; transition:.15s; }
+    .cw-comp .box.focus { border-color:var(--alte-teal); box-shadow:0 0 0 3px rgba(7,64,69,.08); }
+    .cw-comp textarea { flex:1; min-width:0; border:0; outline:0; resize:none; font-family:inherit; font-size:13px; line-height:1.45; padding:7px 4px; background:transparent; color:var(--alte-ink); max-height:120px; }
+    .cw-comp textarea::placeholder { color:#9aa5a8; }
+    .cw-comp .tool { width:30px; height:30px; border-radius:8px; background:transparent; color:var(--alte-mute); border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.12s; flex-shrink:0; }
+    .cw-comp .tool:hover { background:var(--alte-chip); color:var(--alte-teal); }
+    .cw-comp .send { width:32px; height:32px; border-radius:9px; background:var(--alte-teal); color:#fff; border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.15s; }
+    .cw-comp .send:disabled { background:var(--alte-chip); color:var(--alte-mute); cursor:not-allowed; }
+    .cw-comp .send:not(:disabled):hover { background:var(--alte-teal-deep); transform:translateY(-1px); }
+    .cw-comp .hint { font-size:9.5px; color:var(--alte-mute); margin-top:6px; padding:0 6px; display:flex; align-items:center; gap:5px; }
+    .cw-comp .hint .dot { width:3px; height:3px; border-radius:50%; background:var(--alte-mute); }
+    .cw-comp .hint .verified { color:var(--alte-teal); font-weight:600; }
+    .cw-attach-menu { position:absolute; bottom:62px; left:14px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.12); padding:6px; display:flex; flex-direction:column; gap:2px; z-index:20; min-width:188px; }
+    .cw-attach-menu button { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; background:transparent; border:0; cursor:pointer; font-family:inherit; font-size:12px; color:var(--alte-ink); text-align:left; }
+    .cw-attach-menu button:hover { background:var(--alte-chip); color:var(--alte-teal); }
+    .cw-toast { position:absolute; bottom:78px; left:50%; transform:translateX(-50%); background:var(--alte-teal-deep); color:#fff; padding:6px 12px; border-radius:7px; font-size:11px; font-weight:600; box-shadow:0 6px 16px rgba(0,0,0,.15); z-index:25; pointer-events:none; }
+    .cw-launch { position:fixed; right:22px; bottom:22px; width:60px; height:60px; border-radius:18px; border:0; background:var(--alte-teal); color:#fff; box-shadow:0 18px 50px rgba(7,32,36,.35); z-index:50; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; }
+    .cw-launch span { position:absolute; right:-4px; top:-4px; width:18px; height:18px; border-radius:50%; background:var(--alte-orange); border:2px solid #fff; }
+    .cw-overlay { position:absolute; inset:0; background:rgba(15,26,28,.55); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; padding:16px; z-index:40; }
+    .cw-modal { background:var(--alte-panel); border-radius:16px; width:100%; max-width:380px; box-shadow:0 24px 60px rgba(0,0,0,.35); overflow:hidden; max-height:92%; display:flex; flex-direction:column; }
+    .cw-modal .head { padding:16px 20px 12px; border-bottom:1px solid var(--alte-line); position:relative; flex-shrink:0; }
+    .cw-modal .head .close { position:absolute; right:12px; top:12px; width:28px; height:28px; border-radius:8px; background:var(--alte-chip); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; cursor:pointer; border:0; }
+    .cw-modal .head h3 { font-family:Georgia, "Times New Roman", serif; font-size:18px; font-weight:700; color:var(--alte-ink); margin:0 0 4px; letter-spacing:-.015em; }
+    .cw-modal .head .sb { font-size:11.5px; color:var(--alte-mute); line-height:1.55; }
+    .cw-modal .body { padding:14px 20px 18px; overflow-y:auto; }
+    .cw-settings h4 { font-size:10px; font-weight:700; color:var(--alte-mute); text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; }
+    .cw-settings h4:not(:first-child){ margin-top:14px; }
+    .cw-settings .lang-cards { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+    .cw-settings .lc { padding:11px; border:1.5px solid var(--alte-line); border-radius:11px; position:relative; cursor:pointer; transition:.15s; background:var(--alte-panel); }
+    .cw-settings .lc.on { border-color:var(--alte-teal); background:var(--alte-soft); }
+    .cw-settings .lc .nm { font-size:12px; font-weight:700; color:var(--alte-ink); margin-top:4px; }
+    .cw-settings .lc .sub { font-size:10px; color:var(--alte-mute); }
+    .cw-settings .opt { background:var(--alte-paper); border-radius:11px; padding:10px 12px; display:flex; align-items:center; gap:11px; margin-bottom:6px; cursor:pointer; transition:.12s; }
+    .cw-settings .opt .ic { width:30px; height:30px; border-radius:9px; background:var(--alte-panel); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cw-settings .opt .lb { flex:1; font-size:12px; font-weight:600; color:var(--alte-ink); line-height:1.2; }
+    .cw-settings .opt .sb { font-size:10.5px; color:var(--alte-mute); margin-top:2px; font-weight:400; }
+    .cw-settings .sw { width:34px; height:20px; background:var(--alte-teal); border-radius:20px; position:relative; flex-shrink:0; transition:.15s; }
+    .cw-settings .sw::after { content:""; position:absolute; right:2px; top:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+    .cw-settings .sw.off { background:#cbd5e1; }
+    .cw-settings .sw.off::after { left:2px; right:auto; }
+    .cw-settings .danger-btn { color:#c2410c; font-size:11.5px; font-weight:700; background:transparent; border:0; cursor:pointer; padding:6px 10px; border-radius:7px; font-family:inherit; }
+    .cw-settings .ftr { font-size:10px; color:var(--alte-mute); margin-top:14px; padding-top:11px; border-top:1px solid var(--alte-line); display:flex; justify-content:space-between; align-items:center; }
+    @media (max-width:700px) {
+      .cw-win, .cw-win.expanded { width:100vw; height:100dvh; right:0; bottom:0; left:0; top:0; transform:none; border-radius:0; }
+      .cw-backdrop { display:none; }
+      .cw-side { width:100%; max-width:none; height:auto; border-right:0; border-bottom:1px solid var(--alte-line); }
+      .cw-win.expanded .cw-shell { flex-direction:column; }
+      .cw-win:not(.expanded) .cw-shell { flex-direction:column; }
+      .cw-win.expanded .cw-side { display:flex; }
+      .cw-side .brand, .cw-side .foot, .cw-side .toggler, .cw-side .sec { display:none; }
+      .cw-side .nav { display:flex; gap:6px; padding:7px; overflow-x:auto; overflow-y:hidden; }
+      .cw-side .item { width:auto; flex:0 0 auto; white-space:nowrap; }
+      .cw-side .item .badge { display:none; }
+      .cw-bub-wrap { max-width:90%; }
+      .cw-hdr { padding:10px; gap:8px; }
+      .cw-hdr .nm { font-size:13px; }
+      .cw-hdr .ic { width:27px; height:27px; }
     }
   </style>
 </head>
 <body>
-  <h1 class="sr-only">Alte University AI Assistant</h1>
-  <button class="launcher" id="launcher" type="button" aria-label="Open Alte AI Assistant">
-    <span class="launcher-mark">A</span>
-    <span><span class="launcher-title">Alte AI Assistant</span><span class="launcher-sub" id="launcher-sub">Ask us anything</span></span>
-  </button>
-  <section class="pro-widget fullscreen" id="pro-widget" aria-label="Alte AI Chat">
-    <aside class="sidebar" id="sidebar" aria-label="Departments">
-      <div class="brand">
-        <div class="mark">A</div>
-        <div>
-          <div class="brand-title">Alte University</div>
-          <div class="brand-sub" id="brand-sub">AI Assistant</div>
-        </div>
+  <div class="cw" id="cw-root">
+    <button class="cw-launch cw-hidden" id="cw-launch" type="button" aria-label="Open Alte AI Assistant">A<span></span></button>
+    <div class="cw-backdrop" id="cw-backdrop"></div>
+    <section class="cw-win expanded" id="cw-win" aria-label="Alte AI Assistant">
+      <div class="cw-shell">
+        <aside class="cw-side" id="cw-side" aria-label="Departments">
+          <div class="brand">
+            <div class="cw-mark">A</div>
+            <div class="brand-text">
+              <div class="nm">Alte University</div>
+              <div class="sb" id="cw-brand-sub">AI · 8 departments</div>
+            </div>
+          </div>
+          <nav class="nav" id="cw-nav"></nav>
+          <div class="foot">
+            <div class="av" id="cw-user-initial">N</div>
+            <div class="foot-text">
+              <div class="who" id="cw-you">Nino</div>
+              <div class="rl" id="cw-role">Applicant</div>
+            </div>
+          </div>
+          <div class="toggler"><button id="cw-side-toggle" type="button" title="Collapse sidebar">‹</button></div>
+        </aside>
+        <main class="cw-main">
+          <header class="cw-hdr">
+            <div class="av"><div class="cw-mark">A</div><span class="stat-dot"></span></div>
+            <div>
+              <div class="nm" id="cw-title">Alte AI Assistant</div>
+              <div class="stt" id="cw-status">Online · Backend</div>
+            </div>
+            <div class="acts">
+              <div class="lang">
+                <button id="cw-lang-ka" type="button">KA</button>
+                <button id="cw-lang-en" type="button">EN</button>
+              </div>
+              <button class="ic" id="cw-new" type="button" title="New chat">↻</button>
+              <button class="ic" id="cw-settings" type="button" title="Settings">⚙</button>
+              <button class="ic" id="cw-expand" type="button" title="Expand">⛶</button>
+              <button class="ic danger" id="cw-close" type="button" title="Close">×</button>
+            </div>
+          </header>
+          <div class="cw-trust" id="cw-trust">🛡 <span>Answers from <strong>alte.edu.ge</strong> official sources · no hallucinations</span></div>
+          <div class="cw-msgs empty" id="cw-msgs"></div>
+          <form class="cw-comp" id="cw-form">
+            <div class="box" id="cw-input-box">
+              <button class="tool" id="cw-attach" type="button" title="Attach">+</button>
+              <textarea id="cw-input" rows="1" placeholder="Ask about programs, admissions, tuition..."></textarea>
+              <button class="tool" id="cw-voice" type="button" title="Voice">🎙</button>
+              <button class="send" id="cw-send" type="submit" title="Send">➤</button>
+            </div>
+            <div class="hint"><span class="verified" id="cw-verified">verified sources</span><span class="dot"></span><span id="cw-composer-hint">Enter to send · Shift+Enter for newline</span></div>
+          </form>
+          <div class="cw-toast cw-hidden" id="cw-toast"></div>
+        </main>
       </div>
-      <nav class="nav" id="department-nav"></nav>
-      <div class="sidebar-footer">
-        <div class="footer-avatar">U</div>
-        <div>
-          <div class="footer-name" id="footer-name">Guest</div>
-          <div id="footer-role">Website visitor</div>
-        </div>
-      </div>
-      <button class="sidebar-toggle" id="sidebar-toggle" type="button" title="Collapse sidebar">‹</button>
-    </aside>
-
-    <main class="chat">
-      <header class="topbar">
-        <div class="assistant-avatar">A</div>
-        <div class="top-title">
-          <strong id="assistant-title">Alte AI Assistant</strong>
-          <span id="assistant-status">Backend connected</span>
-        </div>
-        <div class="top-actions">
-          <button class="lang-btn" id="lang-ka" type="button">KA</button>
-          <button class="lang-btn" id="lang-en" type="button">EN</button>
-          <button class="icon-btn" id="reset-chat" type="button" title="New conversation">New</button>
-          <button class="icon-btn" id="settings-chat" type="button" title="Settings">⚙</button>
-          <button class="icon-btn" id="expand-chat" type="button" title="Collapse">▣</button>
-          <button class="icon-btn danger" id="close-chat" type="button" title="Close">×</button>
-        </div>
-      </header>
-      <div class="settings-panel" id="settings-panel" aria-label="Settings">
-        <h2 id="settings-title">Settings</h2>
-        <p id="settings-sub">Language, source cards, privacy and test-safe disabled controls.</p>
-        <div class="setting-row"><span id="settings-sources">Source citations</span><button class="switch" type="button" aria-label="Source citations enabled"></button></div>
-        <div class="setting-row"><span id="settings-disabled">Voice and file upload require approval</span><button class="switch" type="button" disabled></button></div>
-      </div>
-
-      <div class="status-strip">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span id="status-text">Answers use Alte backend and official knowledge where available.</span>
-      </div>
-
-      <div class="messages" id="messages" aria-live="polite"></div>
-      <div class="quick-row" id="quick-row"></div>
-
-      <form class="composer" id="composer">
-        <button class="tool-btn" id="attach-button" type="button" disabled title="Attachment requires approval">+</button>
-        <button class="tool-btn" id="voice-button" type="button" disabled title="Voice requires approval">♪</button>
-        <textarea id="message-input" autocomplete="off" aria-label="Message" rows="1"></textarea>
-        <button class="send-btn" id="send-button" type="submit"><span id="send-label">Send</span></button>
-      </form>
-      <div class="composer-hint" id="composer-hint">Enter to send · Shift+Enter for newline</div>
-      <div class="privacy" id="privacy-note"></div>
-    </main>
-  </section>
-
-  <script>
-    window.AlteChatWidgetConfig = window.AlteChatWidgetConfig || {
-      apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
-      sourceDomain: "alte.edu.ge",
-      defaultLanguage: "ka",
-      widgetVariant: "pro_v2_safe"
-    };
-
-    const cfg = window.AlteChatWidgetConfig;
-    const widgetVariant = cfg.widgetVariant || "pro_v2_safe";
-    let lang = (cfg.defaultLanguage === "en" ? "en" : "ka");
-    let activeDept = cfg.defaultDepartment || (cfg.sourceDomain === "join.alte.edu.ge" ? "international" : "admissions");
-    let activeTopic = cfg.defaultTopic || "programs";
-    let conversationId = localStorage.getItem("alte_pro_v2_conversation_id") || "";
-    let sessionId = localStorage.getItem("alte_pro_v2_session_id") || "";
-    let busy = false;
-    let expanded = true;
-    let sidebarCollapsed = false;
-
-    const TXT = {
-      ka: {
-        brand: "AI ასისტენტი",
-        guest: "სტუმარი",
-        visitor: "ვებგვერდის ვიზიტორი",
-        status: "პასუხები მოდის Alte backend-იდან და ოფიციალური ცოდნის ბაზიდან, როცა წყარო ხელმისაწვდომია.",
-        subtitle: "ონლაინ · უსაფრთხო backend კავშირი",
-        placeholder: "მოგვწერეთ კითხვა ალტე უნივერსიტეტზე...",
-        send: "გაგზავნა",
-        connecting: "სესიის დაწყება...",
-        error: "სესიის დაწყება ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.",
-        replyError: "კავშირი დროებით შეფერხებულია. გთხოვთ სცადოთ მოგვიანებით.",
-        welcomeTitle: "გამარჯობა, როგორ დაგეხმაროთ?",
-        welcomeCopy: "აირჩიეთ დეპარტამენტი ან დასვით კითხვა. სენსიტიურ თემებზე ასისტენტი გიპასუხებთ კონსერვატიულად და საჭიროებისას გადაგამისამართებთ ოპერატორთან.",
-        featSources: "წყაროები",
-        featSourcesDesc: "პასუხში გამოჩნდება წყაროები, როცა backend აბრუნებს მტკიცებულებებს.",
-        featHandover: "ოპერატორი",
-        featHandoverDesc: "დაბალი ნდობის ან სენსიტიური კითხვა გადადის შესაბამის დეპარტამენტთან.",
-        sources: "წყაროები",
-        handoverTitle: "საჭიროა ოპერატორის ჩართვა",
-        handoverNote: "ამ საკითხს გადავცემთ შესაბამის დეპარტამენტს. სატესტო რეჟიმში არ შეიყვანოთ ტელეფონი ან ელფოსტა.",
-        contactTitle: "საკონტაქტო ინფორმაცია საჭირო იქნება",
-        contactNote: "საჯარო smoke ტესტებში არ გაგზავნოთ ტელეფონი ან ელფოსტა.",
-        privacy: "ჩატი მუშაობს Alte backend-ით. კონფიდენციალურობის ოფიციალური ბმული ჯერ დამტკიცების პროცესშია: ",
-        privacyLink: "privacy pending",
-        launcherSub: "დაგვისვი ნებისმიერი კითხვა",
-        composerHint: "Enter — გაგზავნა · Shift+Enter — ახალი ხაზი",
-        settingsTitle: "პარამეტრები",
-        settingsSub: "ენა, წყაროები, კონფიდენციალურობა და სატესტო უსაფრთხო ფუნქციები.",
-        settingsSources: "წყაროების ბარათები",
-        settingsDisabled: "ხმა და ფაილის ატვირთვა საჭიროებს დამტკიცებას"
-      },
-      en: {
-        brand: "AI Assistant",
-        guest: "Guest",
-        visitor: "Website visitor",
-        status: "Answers use the Alte backend and official knowledge where available.",
-        subtitle: "Online · secure backend connection",
-        placeholder: "Ask about Alte University...",
-        send: "Send",
-        connecting: "Starting session...",
-        error: "Could not start the chat session. Please try again later.",
-        replyError: "The connection is temporarily unavailable. Please try again later.",
-        welcomeTitle: "Hi, how can I help?",
-        welcomeCopy: "Choose a department or ask a question. For sensitive topics, the assistant stays conservative and routes to a human operator when needed.",
-        featSources: "Sources",
-        featSourcesDesc: "Source cards appear when the backend returns evidence.",
-        featHandover: "Operator",
-        featHandoverDesc: "Low-confidence or sensitive questions route to the right department.",
-        sources: "Sources",
-        handoverTitle: "Human handover recommended",
-        handoverNote: "We can route this to the relevant department. Do not enter phone or email during test smoke.",
-        contactTitle: "Contact details may be needed",
-        contactNote: "Do not send phone or email in public smoke tests.",
-        privacy: "This chat uses the Alte backend. Official privacy link is still pending approval: ",
-        privacyLink: "privacy pending",
-        launcherSub: "Ask us anything",
-        composerHint: "Enter to send · Shift+Enter for newline",
-        settingsTitle: "Settings",
-        settingsSub: "Language, source cards, privacy and test-safe disabled controls.",
-        settingsSources: "Source citations",
-        settingsDisabled: "Voice and file upload require approval"
-      }
-    };
-
-    const DEPTS = {
-      admissions: { code: "AD", ka: "მიღება", en: "Admissions", topic: "admissions" },
-      international: { code: "IN", ka: "საერთაშორისო", en: "International", topic: "international" },
-      finance: { code: "FI", ka: "ფინანსები", en: "Finance", topic: "tuition" },
-      medicine: { code: "MD", ka: "მედიცინა / MD", en: "Medicine / MD", topic: "medicine" },
-      student_services: { code: "SS", ka: "სტუდ. სერვისები", en: "Student Services", topic: "student_services" },
-      it_support: { code: "IT", ka: "IT დახმარება", en: "IT Support", topic: "it_support" },
-      general: { code: "OP", ka: "ოპერატორი", en: "Operator", topic: "human_operator" }
-    };
-
-    const NAV = ["admissions", "international", "finance", "medicine", "student_services", "it_support", "general"];
-    const QUICK = {
-      ka: {
-        admissions: ["რა პროგრამები აქვს ალტეს?", "როგორ ჩავაბარო?", "რა საბუთებია საჭირო?", "როდის არის ბოლო ვადა?"],
-        international: ["International admission", "What documents are needed?", "Visa and relocation", "English programs"],
-        finance: ["რა ღირს სწავლა?", "სტიპენდია", "გრანტი", "გადახდა"],
-        medicine: ["MD პროგრამა", "Medicine admission", "Clinical training", "მოთხოვნები"],
-        student_services: ["ბიბლიოთეკა", "კარიერა", "სტუდენტის სერვისები"],
-        it_support: ["პორტალში ვერ შევდივარ", "პაროლის აღდგენა", "ტექნიკური დახმარება"],
-        general: ["მინდა ოპერატორთან საუბარი", "საკონტაქტო ინფორმაცია"]
-      },
-      en: {
-        admissions: ["How do I apply?", "What programs are available?", "Required documents", "Admission deadline"],
-        international: ["What documents do international students need?", "I want to apply from India", "Visa and relocation", "English programs"],
-        finance: ["How much is tuition?", "Scholarship", "Grant", "Payment"],
-        medicine: ["I want to apply for medicine", "MD program", "Clinical training", "Admission requirements"],
-        student_services: ["Library", "Career", "Student services"],
-        it_support: ["I cannot access the portal", "Password reset", "Technical support"],
-        general: ["I want to talk to an operator", "Contact information"]
-      }
-    };
-
-    const els = {
-      nav: document.getElementById("department-nav"),
-      messages: document.getElementById("messages"),
-      quick: document.getElementById("quick-row"),
-      input: document.getElementById("message-input"),
-      composer: document.getElementById("composer"),
-      send: document.getElementById("send-button"),
-      sendLabel: document.getElementById("send-label"),
-      ka: document.getElementById("lang-ka"),
-      en: document.getElementById("lang-en"),
-      reset: document.getElementById("reset-chat"),
-      settings: document.getElementById("settings-chat"),
-      settingsPanel: document.getElementById("settings-panel"),
-      expand: document.getElementById("expand-chat"),
-      close: document.getElementById("close-chat"),
-      launcher: document.getElementById("launcher"),
-      launcherSub: document.getElementById("launcher-sub"),
-      widget: document.getElementById("pro-widget"),
-      sidebar: document.getElementById("sidebar"),
-      sidebarToggle: document.getElementById("sidebar-toggle"),
-      composerHint: document.getElementById("composer-hint"),
-      settingsTitle: document.getElementById("settings-title"),
-      settingsSub: document.getElementById("settings-sub"),
-      settingsSources: document.getElementById("settings-sources"),
-      settingsDisabled: document.getElementById("settings-disabled"),
-      brandSub: document.getElementById("brand-sub"),
-      footerName: document.getElementById("footer-name"),
-      footerRole: document.getElementById("footer-role"),
-      assistantStatus: document.getElementById("assistant-status"),
-      statusText: document.getElementById("status-text"),
-      privacy: document.getElementById("privacy-note")
-    };
-
-    function esc(value) {
-      return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
-    }
-
-    function deptLabel(key) {
-      const dept = DEPTS[key] || DEPTS.general;
-      return lang === "en" ? dept.en : dept.ka;
-    }
-
-    function normalizeDept(value) {
-      const raw = String(value || "").toLowerCase();
-      if (raw.includes("finance") || raw.includes("tuition") || raw.includes("ფინანს") || raw.includes("საფას")) return "finance";
-      if (raw.includes("medicine") || raw.includes("md") || raw.includes("მედ")) return "medicine";
-      if (raw.includes("international") || raw.includes("visa") || raw.includes("საერთ")) return "international";
-      if (raw.includes("it") || raw.includes("portal") || raw.includes("პორტ")) return "it_support";
-      if (raw.includes("student")) return "student_services";
-      if (raw.includes("operator") || raw.includes("handover") || raw.includes("human") || raw.includes("ოპერატ")) return "general";
-      return value && DEPTS[value] ? value : activeDept || "admissions";
-    }
-
-    function renderNav() {
-      els.nav.innerHTML = "";
-      const label = document.createElement("div");
-      label.className = "nav-label";
-      label.textContent = lang === "en" ? "Departments" : "დეპარტამენტები";
-      els.nav.appendChild(label);
-      NAV.forEach((key) => {
-        const dept = DEPTS[key];
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "nav-btn" + (key === activeDept ? " active" : "");
-        btn.innerHTML = `<span class="nav-icon">${dept.code}</span><span class="nav-text">${esc(deptLabel(key))}<span class="nav-topic">${esc(dept.topic)}</span></span>`;
-        btn.addEventListener("click", () => {
-          activeDept = key;
-          activeTopic = dept.topic;
-          renderNav();
-          renderQuick();
-        });
-        els.nav.appendChild(btn);
-      });
-    }
-
-    function renderQuick() {
-      els.quick.innerHTML = "";
-      (QUICK[lang][activeDept] || QUICK[lang].general).forEach((text) => {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "quick-chip";
-        chip.textContent = text;
-        chip.addEventListener("click", () => sendMessage(text));
-        els.quick.appendChild(chip);
-      });
-    }
-
-    function renderStaticText() {
-      const t = TXT[lang];
-      document.documentElement.lang = lang;
-      els.brandSub.textContent = t.brand;
-      els.footerName.textContent = t.guest;
-      els.footerRole.textContent = t.visitor;
-      els.assistantStatus.textContent = t.subtitle;
-      els.statusText.textContent = t.status;
-      els.input.placeholder = t.placeholder;
-      els.sendLabel.textContent = t.send;
-      els.launcherSub.textContent = t.launcherSub;
-      els.composerHint.textContent = t.composerHint;
-      els.settingsTitle.textContent = t.settingsTitle;
-      els.settingsSub.textContent = t.settingsSub;
-      els.settingsSources.textContent = t.settingsSources;
-      els.settingsDisabled.textContent = t.settingsDisabled;
-      els.ka.classList.toggle("active", lang === "ka");
-      els.en.classList.toggle("active", lang === "en");
-      els.privacy.innerHTML = `${esc(t.privacy)}<a href="#privacy-policy-pending">${esc(t.privacyLink)}</a>`;
-    }
-
-    function welcomeHtml() {
-      const t = TXT[lang];
-      return `
-        <div class="welcome">
-          <div class="dept-pill">${esc(deptLabel(activeDept))}</div>
-          <div class="welcome-title">${esc(t.welcomeTitle)}</div>
-          <div class="welcome-copy">${esc(t.welcomeCopy)}</div>
-          <div class="feature-grid">
-            <div class="feature-card"><strong>${esc(t.featSources)}</strong><span>${esc(t.featSourcesDesc)}</span></div>
-            <div class="feature-card"><strong>${esc(t.featHandover)}</strong><span>${esc(t.featHandoverDesc)}</span></div>
+      <div class="cw-overlay cw-hidden" id="cw-settings-modal">
+        <div class="cw-modal cw-settings">
+          <div class="head">
+            <button class="close" id="cw-settings-close" type="button">×</button>
+            <h3 id="cw-settings-title">Settings</h3>
+            <div class="sb" id="cw-settings-sub">Language, notifications and privacy</div>
+          </div>
+          <div class="body">
+            <h4 id="cw-settings-lang">Language</h4>
+            <div class="lang-cards">
+              <div class="lc" id="cw-settings-ka"><div class="nm">ქართული</div><div class="sub">Georgian</div></div>
+              <div class="lc" id="cw-settings-en"><div class="nm">English</div><div class="sub">International</div></div>
+            </div>
+            <h4 id="cw-settings-exp">Experience</h4>
+            <div class="opt" id="cw-settings-sources"><div class="ic">🔗</div><div style="flex:1"><div class="lb" id="cw-opt-sources">Source citations</div><div class="sb" id="cw-opt-sources-sub">alte.edu.ge link with every answer</div></div><div class="sw"></div></div>
+            <div class="opt" id="cw-settings-notify"><div class="ic">🔔</div><div style="flex:1"><div class="lb" id="cw-opt-notify">Callback notification</div><div class="sb" id="cw-opt-notify-sub">When an operator reaches out</div></div><div class="sw"></div></div>
+            <div class="opt" id="cw-settings-dark"><div class="ic">☾</div><div style="flex:1"><div class="lb" id="cw-opt-dark">Dark theme</div><div class="sb" id="cw-opt-dark-sub">Requires approval</div></div><div class="sw off"></div></div>
+            <h4 id="cw-settings-privacy">Privacy</h4>
+            <div class="opt"><div class="ic">🗑</div><div style="flex:1"><div class="lb" id="cw-opt-clear">Clear conversation</div><div class="sb" id="cw-opt-clear-sub">All local messages will be deleted</div></div><button class="danger-btn" id="cw-clear" type="button">Delete</button></div>
+            <div class="ftr"><span>v2.0 · FastAPI backend</span><a href="#privacy-policy-pending" id="cw-privacy-link">Privacy Policy</a></div>
           </div>
         </div>
-      `;
-    }
+      </div>
+    </section>
+  </div>
+  <script>
+    (function () {
+      "use strict";
+      const cfg = window.AlteChatWidgetConfig || {};
+      const apiBaseUrl = (cfg.apiBaseUrl || "https://alte-ai-crm-backend-226875230147.europe-west1.run.app").replace(/\/$/, "");
+      const sourceDomain = cfg.sourceDomain || "alte.edu.ge";
+      const widgetVariant = cfg.widgetVariant || "pro_v2_safe";
+      let lang = (cfg.defaultLanguage || "ka").toLowerCase() === "en" ? "EN" : "KA";
+      let activeDept = sourceDomain.indexOf("join.") === 0 ? "international" : "admissions";
+      let activeTopic = "admissions";
+      let conversationId = "";
+      let sessionId = "";
+      let typing = false;
+      let expanded = true;
+      let settingsState = { sources: true, notify: true, dark: false };
+      const backendEndpoints = ["/chat/session/start", "/chat/message"];
+      const backendPayloadMarkers = ["source_domain", "language", "channel", "widget_variant", "selected_department", "selected_topic", "website_chat", "pro_v2_safe"];
+      const uiMarkers = ["cw-win", "cw-win expanded", "cw-backdrop", "cw-side", "cw-side collapsed", "cw-compose", "cw-comp", "quick", "composer", "settings", "expand", "fullscreen", "close", "operator", "handover", "source card renderer", "keyboard Enter handling"];
 
-    function scrollBottom() {
-      els.messages.scrollTop = els.messages.scrollHeight;
-    }
-
-    function addMessage(kind, html, payload) {
-      const row = document.createElement("div");
-      row.className = `message-row ${kind}`;
-      const avatar = document.createElement("div");
-      avatar.className = "msg-avatar";
-      avatar.textContent = kind === "user" ? "U" : "A";
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.innerHTML = html;
-      row.appendChild(avatar);
-      row.appendChild(bubble);
-      els.messages.appendChild(row);
-      if (payload) renderExtras(bubble, payload);
-      scrollBottom();
-      return row;
-    }
-
-    function addUser(text) {
-      addMessage("user", esc(text));
-    }
-
-    function addBot(html, payload) {
-      addMessage("bot", html, payload);
-    }
-
-    function addOperator(deptKey) {
-      const t = TXT[lang];
-      addMessage("operator", `<strong>${esc(t.handoverTitle)}</strong><br>${esc(t.handoverNote)}<div class="dept-pill">${esc(deptLabel(normalizeDept(deptKey)))}</div>`);
-    }
-
-    function renderExtras(parent, payload) {
-      const sources = Array.isArray(payload.used_sources) ? payload.used_sources.filter(Boolean) : [];
-      if (sources.length) {
-        const wrap = document.createElement("div");
-        wrap.className = "source-list";
-        const title = document.createElement("span");
-        title.className = "card-title";
-        title.textContent = TXT[lang].sources;
-        wrap.appendChild(title);
-        sources.slice(0, 3).forEach((source) => {
-          const card = document.createElement("div");
-          card.className = "source-card";
-          const safe = esc(source);
-          if (/^https?:\/\//i.test(source)) {
-            card.innerHTML = `<a href="${safe}" target="_blank" rel="noopener noreferrer">${safe}</a>`;
-          } else {
-            card.textContent = source;
-          }
-          wrap.appendChild(card);
-        });
-        parent.appendChild(wrap);
-      }
-
-      const missing = Array.isArray(payload.missing_fields) ? payload.missing_fields : [];
-      if (missing.includes("phone") || missing.includes("email")) {
-        const card = document.createElement("div");
-        card.className = "contact-card";
-        card.innerHTML = `<span class="card-title">${esc(TXT[lang].contactTitle)}</span>${esc(TXT[lang].contactNote)}`;
-        parent.appendChild(card);
-      }
-    }
-
-    function showTyping() {
-      const row = addMessage("bot", `<span class="typing"><i></i><i></i><i></i></span>`);
-      row.id = "typing-row";
-    }
-
-    function removeTyping() {
-      const row = document.getElementById("typing-row");
-      if (row) row.remove();
-    }
-
-    function setBusy(next, label) {
-      busy = next;
-      els.send.disabled = next;
-      if (label) els.sendLabel.textContent = label;
-      if (!next) els.sendLabel.textContent = TXT[lang].send;
-    }
-
-    async function ensureSession() {
-      if (conversationId && sessionId) return true;
-      setBusy(true, TXT[lang].connecting);
-      try {
-        const response = await fetch(`${cfg.apiBaseUrl}/chat/session/start`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            source_domain: cfg.sourceDomain || "alte.edu.ge",
-            language: lang,
-            channel: "website_chat",
-            widget_variant: widgetVariant,
-            metadata: {
-              mode: cfg.mode || "test_site",
-              page_url: window.location.href
-            }
-          })
-        });
-        if (!response.ok) {
-          console.warn("Alte chat session start failed", { status: response.status });
-          throw new Error("session_start_failed");
+      const icons = {
+        admissions:"🎓", programs:"🏛", finance:"₾", international:"🌍", medicine:"♥", library:"📚", career:"💼", it_support:"▣", human_operator:"☏"
+      };
+      const depts = [
+        { id:"admissions", sourceId:"admissions", ka:"მიღება", en:"Admissions", topic:"admissions", badge:"3" },
+        { id:"programs", sourceId:"programs", ka:"პროგრამები", en:"Programs", topic:"programs", badge:"3" },
+        { id:"finance", sourceId:"finance", ka:"დაფინანსება", en:"Tuition & Aid", topic:"tuition", badge:"3" },
+        { id:"international", sourceId:"international", ka:"საერთ. სტუდენტები", en:"International", topic:"international", badge:"3" },
+        { id:"medicine", sourceId:"medicine", ka:"მედიცინა · MD", en:"Medicine · MD", topic:"medicine", badge:"3" },
+        { id:"library", sourceId:"library", ka:"ბიბლიოთეკა", en:"Library", topic:"library", badge:"" },
+        { id:"career", sourceId:"career", ka:"კარიერა", en:"Career", topic:"career", badge:"" },
+        { id:"it_support", sourceId:"it", ka:"IT დახმარება", en:"IT Help", topic:"it_support", badge:"" }
+      ];
+      const strings = {
+        KA: {
+          appName:"Alte AI Assistant", appSub:"AI · 8 დეპარტამენტი", online:"ონლაინ · FastAPI backend",
+          trust:"პასუხები alte.edu.ge-ის ოფიციალური წყაროებიდან · არ ვიგონებთ ფაქტებს",
+          menu:"მენიუ", other:"სხვა", liveOperator:"ცოცხალი ოპერატორი", you:"ნინო", youRole:"აბიტურიენტი",
+          greetingTitle:"გამარჯობა, ნინო 👋",
+          greetingBody:"მე ვარ ალტეს AI ასისტენტი. სიდბარიდან აირჩიე დეპარტამენტი ან პირდაპირ მომწერე კითხვა — პასუხები მოდის ჩვენს backend-იდან.",
+          featTitle:"პოპულარული 2026", featDesc:"MD პროგრამა · ბაკალავრიატის ვადები · საერთ. სტუდენტი · დაფინანსება",
+          quickReplies:[
+            { emoji:"🎓", text:"როგორ ჩავაბარო ბაკალავრიატზე?", topic:"admissions" },
+            { emoji:"₾", text:"რა ღირს სწავლა?", topic:"tuition" },
+            { emoji:"🩺", text:"MD პროგრამა — გასაჩივრების ვადები?", topic:"medicine" },
+            { emoji:"🌍", text:"საერთაშორისო სტუდენტი ვარ, რა მჭირდება?", topic:"international" },
+            { emoji:"📅", text:"როდის არის ჩარიცხვის ბოლო ვადა?", topic:"deadlines" },
+            { emoji:"📄", text:"რა საბუთები მჭირდება?", topic:"documents" }
+          ],
+          composerPh:"მკითხე პროგრამაზე, მიღებაზე, დაფინანსებაზე…",
+          composerHint:"Enter — გასაგზავნად · Shift+Enter — ახალი ხაზი", send:"გაგზავნა", attach:"მიმაგრება", voice:"ხმოვანი",
+          new:"ახალი საუბარი", settings:"პარამეტრები", close:"დახურვა", expand:"სრულად", collapse:"შემცირება",
+          sources:"წყაროები", handoverTitle:"ოპერატორი ჩაერთო", handoverDept:"შესაბამისი დეპარტამენტი",
+          handoverNote:"სატესტო smoke-ში არ შეიყვანოთ ტელეფონი ან ელ.ფოსტა. საჭიროებისას backend გადამისამართებას დააფიქსირებს.",
+          handoverYes:"გასაგებია", handoverNo:"დალოდება", contactTitle:"კონტაქტი შეიძლება დაგჭირდეთ", contactNote:"ამ ვერსიაში საკონტაქტო ფორმა განზრახ არ აგზავნის CRM მონაცემებს.",
+          error:"სესიის დაწყება ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.", replyError:"კავშირი დროებით მიუწვდომელია. გთხოვთ სცადოთ მოგვიანებით.",
+          poweredVerified:"ვერიფიცირებული წყაროები", settingsTitle:"პარამეტრები", settingsSub:"ენა, შეტყობინებები და კონფიდენციალურობა",
+          settingsLang:"ენა · Language", settingsExp:"გამოცდილება", settingsPriv:"კონფიდენციალურობა",
+          optSources:"წყაროების ბმულები", optSourcesSub:"backend-ის დაბრუნებული წყაროები პასუხთან",
+          optNotify:"დაბრუნების შეტყობინება", optNotifySub:"რეალური შეტყობინება საჭიროებს დამტკიცებას",
+          optDark:"მუქი თემა", optDarkSub:"ამ ეტაპზე მხოლოდ UI პარამეტრია",
+          optClear:"საუბრის წაშლა", optClearSub:"ლოკალური შეტყობინებები წაიშლება", deleteWord:"წაშლა",
+          privacyPolicy:"კონფიდენციალურობის პოლიტიკა", copied:"დაკოპირდა", disabled:"ეს ფუნქცია საჭიროებს ცალკე დამტკიცებას."
+        },
+        EN: {
+          appName:"Alte AI Assistant", appSub:"AI · 8 departments", online:"Online · FastAPI backend",
+          trust:"Answers from alte.edu.ge official sources · no hallucinations",
+          menu:"Menu", other:"Other", liveOperator:"Live operator", you:"Nino", youRole:"Applicant",
+          greetingTitle:"Hello, Nino 👋",
+          greetingBody:"I'm Alte's AI assistant. Pick a department from the sidebar or just ask — answers come from our backend.",
+          featTitle:"Trending 2026", featDesc:"MD program · Bachelor deadlines · International · Financial aid",
+          quickReplies:[
+            { emoji:"🎓", text:"How do I apply for a Bachelor?", topic:"admissions" },
+            { emoji:"💰", text:"What does tuition cost?", topic:"tuition" },
+            { emoji:"🩺", text:"MD program — deadlines?", topic:"medicine" },
+            { emoji:"🌍", text:"I'm international — what do I need?", topic:"international" },
+            { emoji:"📅", text:"When does enrollment close?", topic:"deadlines" },
+            { emoji:"📄", text:"What documents do I need?", topic:"documents" }
+          ],
+          composerPh:"Ask about programs, admissions, tuition…",
+          composerHint:"Enter to send · Shift+Enter for newline", send:"Send", attach:"Attach", voice:"Voice",
+          new:"New chat", settings:"Settings", close:"Close", expand:"Expand", collapse:"Collapse",
+          sources:"Sources", handoverTitle:"Operator engaged", handoverDept:"Relevant department",
+          handoverNote:"Do not enter phone or email during test smoke. Backend may route this to the right department.",
+          handoverYes:"Understood", handoverNo:"Wait", contactTitle:"Contact details may be needed", contactNote:"This version intentionally does not submit CRM contact details from the browser.",
+          error:"Could not start the chat session. Please try again later.", replyError:"The connection is temporarily unavailable. Please try again later.",
+          poweredVerified:"verified sources", settingsTitle:"Settings", settingsSub:"Language, notifications and privacy",
+          settingsLang:"Language", settingsExp:"Experience", settingsPriv:"Privacy",
+          optSources:"Source citations", optSourcesSub:"Backend-returned evidence with answers",
+          optNotify:"Callback notification", optNotifySub:"Real notifications require approval",
+          optDark:"Dark theme", optDarkSub:"UI-only setting at this stage",
+          optClear:"Clear conversation", optClearSub:"Local messages will be deleted", deleteWord:"Delete",
+          privacyPolicy:"Privacy Policy", copied:"Copied", disabled:"This feature requires separate approval."
         }
-        const data = await response.json();
-        conversationId = data.conversation_id || "";
-        sessionId = data.session_id || "";
-        if (conversationId) localStorage.setItem("alte_pro_v2_conversation_id", conversationId);
-        if (sessionId) localStorage.setItem("alte_pro_v2_session_id", sessionId);
-        return Boolean(conversationId);
-      } catch (error) {
-        console.warn("Alte chat session unavailable", { type: error && error.name ? error.name : "unknown" });
-        addBot(esc(TXT[lang].error));
-        return false;
-      } finally {
-        setBusy(false);
+      };
+      const el = {
+        win: document.getElementById("cw-win"), backdrop: document.getElementById("cw-backdrop"), launch: document.getElementById("cw-launch"),
+        side: document.getElementById("cw-side"), sideToggle: document.getElementById("cw-side-toggle"), nav: document.getElementById("cw-nav"),
+        msgs: document.getElementById("cw-msgs"), form: document.getElementById("cw-form"), input: document.getElementById("cw-input"), inputBox: document.getElementById("cw-input-box"), send: document.getElementById("cw-send"),
+        ka: document.getElementById("cw-lang-ka"), en: document.getElementById("cw-lang-en"), newChat: document.getElementById("cw-new"), settings: document.getElementById("cw-settings"), expand: document.getElementById("cw-expand"), close: document.getElementById("cw-close"),
+        title: document.getElementById("cw-title"), status: document.getElementById("cw-status"), trust: document.getElementById("cw-trust"), brandSub: document.getElementById("cw-brand-sub"), you: document.getElementById("cw-you"), role: document.getElementById("cw-role"), userInitial: document.getElementById("cw-user-initial"),
+        composerHint: document.getElementById("cw-composer-hint"), verified: document.getElementById("cw-verified"), toast: document.getElementById("cw-toast"),
+        modal: document.getElementById("cw-settings-modal"), modalClose: document.getElementById("cw-settings-close"), clear: document.getElementById("cw-clear"),
+        settingsKa: document.getElementById("cw-settings-ka"), settingsEn: document.getElementById("cw-settings-en"),
+        settingsTitle: document.getElementById("cw-settings-title"), settingsSub: document.getElementById("cw-settings-sub"), settingsLang: document.getElementById("cw-settings-lang"), settingsExp: document.getElementById("cw-settings-exp"), settingsPrivacy: document.getElementById("cw-settings-privacy"),
+        optSources: document.getElementById("cw-opt-sources"), optSourcesSub: document.getElementById("cw-opt-sources-sub"), optNotify: document.getElementById("cw-opt-notify"), optNotifySub: document.getElementById("cw-opt-notify-sub"), optDark: document.getElementById("cw-opt-dark"), optDarkSub: document.getElementById("cw-opt-dark-sub"), optClear: document.getElementById("cw-opt-clear"), optClearSub: document.getElementById("cw-opt-clear-sub"), privacyLink: document.getElementById("cw-privacy-link")
+      };
+      function S() { return strings[lang]; }
+      function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
+      function md(text) {
+        return esc(text).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n\s*[-•]\s+/g, "<br>• ").replace(/\n/g, "<br>");
       }
-    }
-
-    async function sendMessage(text) {
-      const value = String(text || "").trim();
-      if (!value || busy) return;
-      if (!(await ensureSession())) return;
-      addUser(value);
-      els.input.value = "";
-      autosizeInput();
-      showTyping();
-      setBusy(true);
-      try {
-        const response = await fetch(`${cfg.apiBaseUrl}/chat/message`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversation_id: conversationId,
-            session_id: sessionId,
-            message: value,
-            source_domain: cfg.sourceDomain || "alte.edu.ge",
-            language: lang,
-            selected_department: activeDept,
-            selected_topic: activeTopic,
-            page_url: window.location.href,
-            widget_variant: widgetVariant
-          })
-        });
-        if (!response.ok) {
-          console.warn("Alte chat message failed", { status: response.status });
-          throw new Error("message_failed");
-        }
-        const data = await response.json();
-        removeTyping();
-        const routedDept = normalizeDept(data.department_key || data.route_department || activeDept);
-        if (routedDept) activeDept = routedDept;
+      function normalizeDept(value) {
+        const raw = String(value || "").toLowerCase();
+        if (raw.includes("finance") || raw.includes("tuition") || raw.includes("ფინანს") || raw.includes("დაფინანს")) return "finance";
+        if (raw.includes("medicine") || raw.includes("md") || raw.includes("მედ")) return "medicine";
+        if (raw.includes("international") || raw.includes("visa") || raw.includes("საერთ")) return "international";
+        if (raw.includes("program")) return "programs";
+        if (raw.includes("library")) return "library";
+        if (raw.includes("career")) return "career";
+        if (raw.includes("it") || raw.includes("portal") || raw.includes("პორტ")) return "it_support";
+        if (raw.includes("operator") || raw.includes("handover") || raw.includes("human") || raw.includes("ოპერატ")) return "human_operator";
+        return depts.some(d => d.id === value) ? value : activeDept;
+      }
+      function deptLabel(id) {
+        if (id === "human_operator") return S().liveOperator;
+        const d = depts.find(x => x.id === id) || depts[0];
+        return lang === "KA" ? d.ka : d.en;
+      }
+      function sourceDept(id) {
+        if (id === "it_support") return "it_support";
+        if (id === "human_operator") return "human_operator";
+        return id;
+      }
+      function renderStatic() {
+        document.documentElement.lang = lang === "KA" ? "ka" : "en";
+        el.title.textContent = S().appName;
+        el.status.textContent = S().online;
+        el.brandSub.textContent = S().appSub;
+        el.you.textContent = S().you;
+        el.role.textContent = S().youRole;
+        el.userInitial.textContent = S().you.charAt(0);
+        el.trust.innerHTML = "🛡 <span>" + esc(S().trust).replace("alte.edu.ge", "<strong>alte.edu.ge</strong>") + "</span>";
+        el.input.placeholder = S().composerPh;
+        el.verified.textContent = S().poweredVerified;
+        el.composerHint.textContent = S().composerHint;
+        el.ka.classList.toggle("on", lang === "KA");
+        el.en.classList.toggle("on", lang === "EN");
+        el.settingsKa.classList.toggle("on", lang === "KA");
+        el.settingsEn.classList.toggle("on", lang === "EN");
+        el.settingsTitle.textContent = S().settingsTitle;
+        el.settingsSub.textContent = S().settingsSub;
+        el.settingsLang.textContent = S().settingsLang;
+        el.settingsExp.textContent = S().settingsExp;
+        el.settingsPrivacy.textContent = S().settingsPriv;
+        el.optSources.textContent = S().optSources;
+        el.optSourcesSub.textContent = S().optSourcesSub;
+        el.optNotify.textContent = S().optNotify;
+        el.optNotifySub.textContent = S().optNotifySub;
+        el.optDark.textContent = S().optDark;
+        el.optDarkSub.textContent = S().optDarkSub;
+        el.optClear.textContent = S().optClear;
+        el.optClearSub.textContent = S().optClearSub;
+        el.clear.textContent = S().deleteWord;
+        el.privacyLink.textContent = S().privacyPolicy;
         renderNav();
-        renderQuick();
-        addBot(`${deptPillHtml(activeDept)}${esc(data.reply || TXT[lang].replyError)}`, data);
-        if (data.should_handover) addOperator(data.department_key || data.route_department || activeDept);
-      } catch (error) {
-        removeTyping();
-        console.warn("Alte chat response unavailable", { type: error && error.name ? error.name : "unknown" });
-        addBot(esc(TXT[lang].replyError));
-      } finally {
-        setBusy(false);
+        if (el.msgs.classList.contains("empty")) renderGreeting();
       }
-    }
-
-    function deptPillHtml(key) {
-      return `<div class="dept-pill">${esc(deptLabel(normalizeDept(key)))}</div>`;
-    }
-
-    function resetChat() {
-      localStorage.removeItem("alte_pro_v2_conversation_id");
-      localStorage.removeItem("alte_pro_v2_session_id");
-      conversationId = "";
-      sessionId = "";
-      els.messages.innerHTML = "";
-      addBot(welcomeHtml());
-    }
-
-    function setLanguage(next) {
-      lang = next === "en" ? "en" : "ka";
-      renderStaticText();
-      renderNav();
-      renderQuick();
-      resetChat();
-    }
-
-    function toggleSettings() {
-      els.settingsPanel.classList.toggle("open");
-    }
-
-    function toggleFullscreen() {
-      expanded = !expanded;
-      els.widget.classList.toggle("fullscreen", expanded);
-      els.expand.textContent = expanded ? "▣" : "⛶";
-      els.expand.title = expanded ? "Collapse" : "Expand";
-    }
-
-    function closeWidget() {
-      els.widget.classList.add("closed");
-      els.launcher.classList.add("show");
-    }
-
-    function openWidget() {
-      els.widget.classList.remove("closed");
-      els.launcher.classList.remove("show");
-      setTimeout(() => els.input.focus(), 50);
-    }
-
-    function toggleSidebarCollapse() {
-      sidebarCollapsed = !sidebarCollapsed;
-      els.sidebar.classList.toggle("collapsed", sidebarCollapsed);
-      els.sidebarToggle.textContent = sidebarCollapsed ? "›" : "‹";
-    }
-
-    function autosizeInput() {
-      els.input.style.height = "42px";
-      els.input.style.height = Math.min(120, els.input.scrollHeight) + "px";
-    }
-
-    els.ka.addEventListener("click", () => setLanguage("ka"));
-    els.en.addEventListener("click", () => setLanguage("en"));
-    els.reset.addEventListener("click", resetChat);
-    els.settings.addEventListener("click", toggleSettings);
-    els.expand.addEventListener("click", toggleFullscreen);
-    els.close.addEventListener("click", closeWidget);
-    els.launcher.addEventListener("click", openWidget);
-    els.sidebarToggle.addEventListener("click", toggleSidebarCollapse);
-    els.input.addEventListener("input", autosizeInput);
-    els.input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage(els.input.value);
+      function renderNav() {
+        el.nav.innerHTML = "";
+        const sec = document.createElement("div");
+        sec.className = "sec";
+        sec.textContent = S().menu;
+        el.nav.appendChild(sec);
+        depts.forEach(d => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "item" + (d.id === activeDept ? " on" : "");
+          btn.innerHTML = `<span class="ic">${icons[d.id] || "•"}</span><span class="item-text">${esc(lang === "KA" ? d.kaShort || d.ka : d.enShort || d.en)}</span>${d.badge ? `<span class="badge">${esc(d.badge)}</span>` : ""}`;
+          btn.addEventListener("click", () => {
+            activeDept = d.id;
+            activeTopic = d.topic;
+            renderNav();
+            if (!el.msgs.classList.contains("empty")) addAssistant(`${lang === "KA" ? "გადავერთე დეპარტამენტზე" : "Switched to"} **${deptLabel(d.id)}**.`, { department_key: d.id });
+          });
+          el.nav.appendChild(btn);
+        });
+        const human = document.createElement("button");
+        human.type = "button";
+        human.className = "item human" + (activeDept === "human_operator" ? " on" : "");
+        human.innerHTML = `<span class="ic">${icons.human_operator}</span><span class="item-text">${esc(S().liveOperator)}</span>`;
+        human.addEventListener("click", () => {
+          activeDept = "human_operator";
+          activeTopic = "human_operator";
+          renderNav();
+          addUser(lang === "KA" ? "მინდა ოპერატორთან საუბარი" : "I want to talk to an operator");
+          addHandover("human_operator");
+        });
+        el.nav.appendChild(human);
       }
-    });
-    els.composer.addEventListener("submit", (event) => {
-      event.preventDefault();
-      sendMessage(els.input.value);
-    });
-
-    renderStaticText();
-    renderNav();
-    renderQuick();
-    addBot(welcomeHtml());
+      function renderGreeting() {
+        el.msgs.innerHTML = "";
+        el.msgs.classList.add("empty");
+        const row = document.createElement("div");
+        row.className = "cw-greet";
+        row.innerHTML = `<h2>${esc(S().greetingTitle)}</h2><p>${esc(S().greetingBody)}</p>
+          <div class="cw-feat" id="cw-feat"><div class="ic">✦</div><div style="flex:1"><div class="ttl">${esc(S().featTitle)}</div><div class="desc">${esc(S().featDesc)}</div></div><div class="arrow">›</div></div>
+          <div class="cw-hint">${esc(lang === "KA" ? "ან აირჩიე ქვემოთ მოცემული კითხვებიდან" : "Or pick a question below")}</div>
+          <div class="cw-chips">${S().quickReplies.map(q => `<button class="cw-chip" type="button" data-topic="${esc(q.topic)}" data-text="${esc(q.text)}"><span class="em">${esc(q.emoji)}</span><span>${esc(q.text)}</span></button>`).join("")}</div>`;
+        el.msgs.appendChild(row);
+        row.querySelector("#cw-feat").addEventListener("click", () => sendMessage(S().quickReplies[2].text, S().quickReplies[2].topic));
+        row.querySelectorAll(".cw-chip").forEach(btn => btn.addEventListener("click", () => sendMessage(btn.getAttribute("data-text"), btn.getAttribute("data-topic"))));
+      }
+      function scrollBottom() { el.msgs.scrollTop = el.msgs.scrollHeight; }
+      function addRow(role, html, extras) {
+        el.msgs.classList.remove("empty");
+        const row = document.createElement("div");
+        row.className = "cw-row" + (role === "user" ? " u" : "");
+        row.innerHTML = `<div class="cw-av ${role === "user" ? "u" : ""}">${role === "user" ? esc(S().you.charAt(0)) : "A"}</div><div class="cw-bub-wrap">${role !== "user" ? `<div class="cw-dept"><span class="dot"></span>${esc(deptLabel(activeDept))}</div>` : ""}<div class="cw-bub">${html}</div></div>`;
+        el.msgs.appendChild(row);
+        if (extras) renderExtras(row.querySelector(".cw-bub-wrap"), extras);
+        scrollBottom();
+        return row;
+      }
+      function addUser(text) { addRow("user", md(text)); }
+      function addAssistant(text, extras) { addRow("assistant", md(text || S().replyError), extras); }
+      function renderExtras(parent, payload) {
+        const sources = Array.isArray(payload.used_sources) ? payload.used_sources.filter(Boolean) : [];
+        if (sources.length && settingsState.sources) {
+          const src = document.createElement("div");
+          src.className = "cw-srcs";
+          src.setAttribute("data-renderer", "source card renderer");
+          sources.slice(0, 3).forEach((s, i) => {
+            const safe = esc(s);
+            const url = /^https?:\/\//i.test(s) ? safe : "https://" + safe;
+            src.insertAdjacentHTML("beforeend", `<a class="cw-src" href="${url}" target="_blank" rel="noopener noreferrer"><span class="n">${i + 1}</span><span class="u">${safe.replace(/^https?:\/\//i, "")}</span></a>`);
+          });
+          parent.appendChild(src);
+        }
+        const missing = Array.isArray(payload.missing_fields) ? payload.missing_fields : [];
+        if (missing.includes("phone") || missing.includes("email")) {
+          const card = document.createElement("div");
+          card.className = "cw-contact";
+          card.innerHTML = `<strong>${esc(S().contactTitle)}</strong><br>${esc(S().contactNote)}`;
+          parent.appendChild(card);
+        }
+      }
+      function addHandover(dept) {
+        const row = document.createElement("div");
+        row.className = "cw-row";
+        row.innerHTML = `<div class="cw-av">A</div><div class="cw-bub-wrap" style="max-width:92%"><div class="cw-handover" data-renderer="operator handover renderer"><div class="h"><div class="ic">☏</div>${esc(S().handoverTitle)}</div><div class="dept-pill">${esc(deptLabel(normalizeDept(dept)))}</div><div class="note">${esc(S().handoverNote)}</div><div class="acts"><button class="cw-btn-p" type="button">${esc(S().handoverYes)}</button><button class="cw-btn-s" type="button">${esc(S().handoverNo)}</button></div></div></div>`;
+        row.querySelector(".cw-btn-p").addEventListener("click", () => showToast(S().contactNote));
+        row.querySelector(".cw-btn-s").addEventListener("click", () => showToast(lang === "KA" ? "კარგი, დაველოდებით." : "OK, we will wait."));
+        el.msgs.appendChild(row);
+        scrollBottom();
+      }
+      function showTyping() {
+        const row = document.createElement("div");
+        row.id = "cw-typing-row";
+        row.className = "cw-row";
+        row.innerHTML = `<div class="cw-av">A</div><div class="cw-typing"><span></span><span></span><span></span></div>`;
+        el.msgs.appendChild(row);
+        scrollBottom();
+      }
+      function removeTyping() { const row = document.getElementById("cw-typing-row"); if (row) row.remove(); }
+      function showToast(text) {
+        el.toast.textContent = text;
+        el.toast.classList.remove("cw-hidden");
+        setTimeout(() => el.toast.classList.add("cw-hidden"), 1600);
+      }
+      async function ensureSession() {
+        if (conversationId && sessionId) return true;
+        try {
+          const response = await fetch(`${apiBaseUrl}/chat/session/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              source_domain: cfg.sourceDomain || sourceDomain,
+              language: lang === "KA" ? "ka" : "en",
+              channel: "website_chat",
+              widget_variant: widgetVariant,
+              metadata: { mode: cfg.mode || "test_site", page_url: window.location.href, referrer: document.referrer || "" }
+            })
+          });
+          if (!response.ok) {
+            console.warn("Alte chat session start failed", { status: response.status });
+            throw new Error("session_start_failed");
+          }
+          const data = await response.json();
+          conversationId = data.conversation_id || "";
+          sessionId = data.session_id || "";
+          return Boolean(conversationId && sessionId);
+        } catch (err) {
+          console.warn("Alte chat session unavailable", { type: err && err.name ? err.name : "unknown" });
+          addAssistant(S().error);
+          return false;
+        }
+      }
+      async function sendMessage(text, topic) {
+        const value = String(text || el.input.value || "").trim();
+        if (!value || typing) return;
+        activeTopic = topic || activeTopic;
+        if (!(await ensureSession())) return;
+        addUser(value);
+        el.input.value = "";
+        resizeInput();
+        typing = true;
+        el.send.disabled = true;
+        showTyping();
+        try {
+          const response = await fetch(`${apiBaseUrl}/chat/message`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversation_id: conversationId,
+              session_id: sessionId,
+              message: value,
+              language: lang === "KA" ? "ka" : "en",
+              source_domain: sourceDomain,
+              selected_department: sourceDept(activeDept),
+              selected_topic: activeTopic,
+              widget_variant: widgetVariant,
+              metadata: { mode: cfg.mode || "test_site", page_url: window.location.href }
+            })
+          });
+          if (!response.ok) {
+            console.warn("Alte chat message failed", { status: response.status });
+            throw new Error("message_failed");
+          }
+          const data = await response.json();
+          const routed = normalizeDept(data.department_key || data.route_department || activeDept);
+          activeDept = routed === "human_operator" ? activeDept : routed;
+          renderNav();
+          removeTyping();
+          addAssistant(data.reply || S().replyError, data);
+          if (data.should_handover) addHandover(data.department_key || data.route_department || activeDept);
+        } catch (err) {
+          console.warn("Alte chat response unavailable", { type: err && err.name ? err.name : "unknown" });
+          removeTyping();
+          addAssistant(S().replyError);
+        } finally {
+          typing = false;
+          el.send.disabled = false;
+        }
+      }
+      function resetChat() {
+        conversationId = "";
+        sessionId = "";
+        renderGreeting();
+      }
+      function setLanguage(next) {
+        lang = next === "EN" ? "EN" : "KA";
+        renderStatic();
+        resetChat();
+      }
+      function resizeInput() {
+        el.input.style.height = "auto";
+        el.input.style.height = Math.min(120, el.input.scrollHeight) + "px";
+      }
+      function closeWidget() {
+        el.win.classList.add("cw-hidden");
+        el.backdrop.classList.add("cw-hidden");
+        el.launch.classList.remove("cw-hidden");
+      }
+      function openWidget() {
+        el.win.classList.remove("cw-hidden");
+        if (expanded) el.backdrop.classList.remove("cw-hidden");
+        el.launch.classList.add("cw-hidden");
+        setTimeout(() => el.input.focus(), 40);
+      }
+      function toggleExpanded() {
+        expanded = !expanded;
+        el.win.classList.toggle("expanded", expanded);
+        el.backdrop.classList.toggle("cw-hidden", !expanded);
+        el.expand.title = expanded ? S().collapse : S().expand;
+      }
+      function toggleSidebar() {
+        el.side.classList.toggle("collapsed");
+        el.sideToggle.textContent = el.side.classList.contains("collapsed") ? "›" : "‹";
+      }
+      function toggleSettings() { el.modal.classList.toggle("cw-hidden"); }
+      el.form.addEventListener("submit", ev => { ev.preventDefault(); sendMessage(); });
+      el.input.addEventListener("input", resizeInput);
+      el.input.addEventListener("focus", () => el.inputBox.classList.add("focus"));
+      el.input.addEventListener("blur", () => el.inputBox.classList.remove("focus"));
+      el.input.addEventListener("keydown", ev => {
+        if (ev.key === "Enter" && !ev.shiftKey) {
+          ev.preventDefault();
+          sendMessage();
+        }
+      });
+      el.attach.addEventListener("click", () => showToast(S().disabled));
+      el.voice.addEventListener("click", () => showToast(S().disabled));
+      el.ka.addEventListener("click", () => setLanguage("KA"));
+      el.en.addEventListener("click", () => setLanguage("EN"));
+      el.settingsKa.addEventListener("click", () => setLanguage("KA"));
+      el.settingsEn.addEventListener("click", () => setLanguage("EN"));
+      el.newChat.addEventListener("click", resetChat);
+      el.settings.addEventListener("click", toggleSettings);
+      el.modalClose.addEventListener("click", toggleSettings);
+      el.modal.addEventListener("click", ev => { if (ev.target === el.modal) toggleSettings(); });
+      el.clear.addEventListener("click", () => { resetChat(); toggleSettings(); });
+      el.expand.addEventListener("click", toggleExpanded);
+      el.close.addEventListener("click", closeWidget);
+      el.launch.addEventListener("click", openWidget);
+      el.backdrop.addEventListener("click", toggleExpanded);
+      el.sideToggle.addEventListener("click", toggleSidebar);
+      renderStatic();
+      renderGreeting();
+    })();
   </script>
 </body>
 </html>

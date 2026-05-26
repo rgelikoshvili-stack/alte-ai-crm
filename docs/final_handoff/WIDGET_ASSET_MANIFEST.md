@@ -6,11 +6,11 @@ Generated: `2026-05-26 Phase 9Q-9R`
 
 | File | Size Bytes | SHA256 |
 | --- | ---: | --- |
-| `widget/alte-ai-chatbot-pro-v2-safe.html` | 45166 | `383C59E1ADE072E7ABD4660CEB1900858EFE1719F789B12D93467E3B39728842` |
+| `widget/alte-ai-chatbot-pro-v2-safe.html` | 56766 | `654CAF34BFDA3DA43F040CE8836F39E582F53C3686E64395389F3DD5C1F8D6E7` |
 | `test_site/alte-ai-chat-widget.js` | 2611 | `A5083446ADE39513D77969115FE0CEF21A4BF8EF3F588551BC87EFDD4E2C2B73` |
-| `dist/widget/alte-ai-chat-widget.js` | 2612 | `8C0A92F8EBF608ED4C7F1764549643DAC58DDA28FFAA0C65009DB989F9EC0C33` |
-| `dist/widget/alte-ai-chat-widget.html` | 45166 | `383C59E1ADE072E7ABD4660CEB1900858EFE1719F789B12D93467E3B39728842` |
-| `dist/netlify_test_site_deploy.zip` | 15833 | `F67AE832741157D612FADDABA34579D58A0AE299C71D04FEC88D1B6203C3C30E` |
+| `dist/widget/alte-ai-chat-widget.js` | 2611 | `A5083446ADE39513D77969115FE0CEF21A4BF8EF3F588551BC87EFDD4E2C2B73` |
+| `dist/widget/alte-ai-chat-widget.html` | 56766 | `654CAF34BFDA3DA43F040CE8836F39E582F53C3686E64395389F3DD5C1F8D6E7` |
+| `dist/netlify_test_site_deploy.zip` | 18214 | `0EF9B3E2E281F06858C9A3C69B7C664C905A12F18C6A24BFEEF0BD1F78FC4D8F` |
 
 ## Safety Scan
 
@@ -30,6 +30,12 @@ Generated: `2026-05-26 Phase 9Q-9R`
 - operator/handover renderer present: PASS
 - source card renderer present: PASS
 - keyboard Enter handling present: PASS
+- exact ZIP `.cw-win` marker present: PASS
+- exact ZIP `.cw-win.expanded` marker present: PASS
+- exact ZIP `.cw-backdrop` marker present: PASS
+- exact ZIP `.cw-side` marker present: PASS
+- exact ZIP `.cw-side.collapsed` marker present: PASS
+- exact ZIP `.cw-comp` marker present: PASS
 
 ## Launch Note
 

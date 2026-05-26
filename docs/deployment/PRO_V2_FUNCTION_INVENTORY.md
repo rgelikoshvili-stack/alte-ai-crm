@@ -2,6 +2,28 @@
 
 PRO_V2_FUNCTION_INVENTORY_STATUS=COMPLETED
 
+## Phase 9S ZIP Source Inventory Update
+
+The inventory is now based on `docs/knowledge_evidence/uploaded_pro_v2_zip_source/deploy/variants/pro-v2-chat.jsx` and supporting source files, not only screenshots or the bundled standalone HTML.
+
+Source components/functions reviewed:
+
+- `proV2Css` in `pro-v2-chat.jsx`: `.cw-win`, `.cw-win.expanded`, `.cw-backdrop`, `.cw-side`, `.cw-side.collapsed`, `.cw-hdr`, `.cw-trust`, `.cw-msgs`, `.cw-greet`, `.cw-chips`, `.cw-handover`, `.cw-comp`, `.cw-attach-menu`, `.cw-toast`.
+- `Header`: language switch, new chat, settings, expand/collapse, close controls.
+- `Sidebar`: department list, active state, collapsed state, human/operator entry.
+- `Greeting`: welcome card, trending feature card, quick replies/chips.
+- `Message`: user/assistant bubbles, source chips, bubble actions.
+- `HandoverCard`: operator card and contact action UI.
+- `Composer`: plus/attachment, textarea, mic, send, Enter/Shift+Enter behavior.
+- `SettingsModal`: language cards, source toggle, notification toggle, dark toggle, clear conversation.
+- `LeadModal`: contact capture prototype; documented as approval/backend-needed and not enabled for frontend CRM submission.
+
+Port result:
+
+- Visual/window/sidebar/composer/settings/source/operator behavior is ported into `widget/alte-ai-chatbot-pro-v2-safe.html`.
+- Unsafe AI completion behavior from `window.claude.complete` is replaced by `/chat/session/start` and `/chat/message`.
+- File upload, voice transcription, live operator workflow, and real contact/CRM submission remain documented approval/backend gaps.
+
 ## Layout And Window
 
 - Launcher opens chat.

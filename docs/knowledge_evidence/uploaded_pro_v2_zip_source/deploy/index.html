@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8"/>
+<title>ალტე AI ჩათბოტი — Pro v2 (ცოცხალი)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin:0; padding:0; height:100%; }
+  body {
+    font-family:'Noto Sans Georgian','Inter',system-ui,sans-serif;
+    background:#0c1416;
+    color:#0f1a1c;
+    overflow:hidden;
+  }
+  :root{
+    --alte-teal:#074045;
+    --alte-teal-deep:#052e32;
+    --alte-teal-mid:#0a5258;
+    --alte-orange:#e8714e;
+    --alte-cream:#f6f2e8;
+    --alte-paper:#f4f1ea;
+    --alte-paper-2:#faf8f1;
+    --alte-ink:#0f1a1c;
+    --alte-mute:#5a6c6d;
+    --alte-line:#e8e2d4;
+    --alte-success:#1ca672;
+  }
+  /* scrollbars subtle */
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#d4ccba;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+  ::-webkit-scrollbar-thumb:hover{background:#a89e87;background-clip:padding-box;border:2px solid transparent}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* App container */
+  #app{ position:fixed; inset:0; }
+</style>
+</head>
+<body>
+
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#074045"/>
+  <rect x="30" y="40" width="38" height="120" rx="8" fill="#f6f2e8"/>
+  <rect x="78" y="40" width="92" height="120" rx="8" fill="#fffdf7"/>
+  <rect x="36" y="50" width="26" height="6" rx="2" fill="#074045" opacity="0.5"/>
+  <rect x="36" y="64" width="20" height="4" rx="1.5" fill="#074045" opacity="0.25"/>
+  <rect x="36" y="74" width="24" height="4" rx="1.5" fill="#074045" opacity="0.25"/>
+  <rect x="86" y="52" width="50" height="8" rx="2" fill="#074045"/>
+  <rect x="86" y="78" width="60" height="22" rx="6" fill="#f6f2e8"/>
+  <rect x="116" y="112" width="48" height="20" rx="6" fill="#074045"/>
+  <path d="M125 122 L131 116 L133 116 L139 122 L136 122 L132 118 L128 122 Z" fill="#e8714e"/>
+  <text x="100" y="184" text-anchor="middle" font-family="serif" font-size="13" font-weight="700" fill="#fffdf7">ალტე Pro v2</text>
+</svg>
+</template>
+
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- ============================================================
+     Claude API polyfill — proxies to /api/chat serverless function.
+     The frontend calls window.claude.complete({system, messages})
+     just like in the Claude environment; this version forwards to
+     our backend, which talks to api.anthropic.com.
+     ============================================================ -->
+<script>
+window.claude = {
+  complete: async (opts) => {
+    let system, messages;
+    if (typeof opts === 'string') {
+      system = '';
+      messages = [{ role:'user', content: opts }];
+    } else {
+      system = opts.system || '';
+      messages = opts.messages || [];
+    }
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ system, messages }),
+    });
+    if (!r.ok) {
+      let detail = '';
+      try { detail = (await r.json()).error || ''; } catch(e){}
+      throw new Error('AI API error (' + r.status + '): ' + detail);
+    }
+    const data = await r.json();
+    return data.text;
+  },
+};
+</script>
+
+<script type="text/babel" src="variants/tweaks-panel.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-icons.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-strings.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-chat.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-modals.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-page.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const { useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakColor, TweakToggle, TweakSelect, TweakButton } = window;
+const { Page, ChatWidget } = window;
+const { STRINGS } = window;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "teal",
+  "density": "cozy",
+  "surface": "cream",
+  "lang": "KA",
+  "showSidebar": true,
+  "openOnLoad": true
+}/*EDITMODE-END*/;
+
+const ACCENTS = {
+  teal:    { name:"ალტე Teal",   primary:"#074045", deep:"#052e32", mid:"#0a5258", soft:"#eef7f5", line:"#d4e8e3", accent:"#e8714e" },
+  forest:  { name:"Forest",      primary:"#1f4d3a", deep:"#143527", mid:"#2a6a4f", soft:"#eaf4ec", line:"#cfe5d3", accent:"#e8714e" },
+  ink:     { name:"Ink",         primary:"#1a1f2b", deep:"#0c0f17", mid:"#2a3346", soft:"#eef0f4", line:"#d4d8e0", accent:"#e8714e" },
+};
+const SURFACES = {
+  cream:  { page:"#f4f1ea", paper:"#faf8f1", panel:"#ffffff", chip:"#f6f2e8", line:"#e8e2d4", ink:"#0f1a1c", mute:"#5a6c6d" },
+  paper:  { page:"#ffffff", paper:"#fafaf9", panel:"#ffffff", chip:"#f4f4f1", line:"#e7e7e3", ink:"#0f1a1c", mute:"#5a6c6d" },
+};
+
+function applyTokens(t){
+  const a = ACCENTS[t.accent] || ACCENTS.teal;
+  const s = SURFACES[t.surface] || SURFACES.cream;
+  const r = document.documentElement.style;
+  r.setProperty('--alte-teal', a.primary);
+  r.setProperty('--alte-teal-deep', a.deep);
+  r.setProperty('--alte-teal-mid', a.mid);
+  r.setProperty('--alte-orange', a.accent);
+  r.setProperty('--alte-soft', a.soft);
+  r.setProperty('--alte-soft-line', a.line);
+  r.setProperty('--alte-page', s.page);
+  r.setProperty('--alte-paper', s.paper);
+  r.setProperty('--alte-panel', s.panel);
+  r.setProperty('--alte-chip', s.chip);
+  r.setProperty('--alte-line', s.line);
+  r.setProperty('--alte-ink', s.ink);
+  r.setProperty('--alte-mute', s.mute);
+  // density
+  const d = t.density==='compact' ? { gap:8, bub:'8px 12px', font:12.5, bubR:11 } : { gap:11, bub:'10px 13px', font:13, bubR:13 };
+  r.setProperty('--gap', d.gap+'px');
+  r.setProperty('--bub', d.bub);
+  r.setProperty('--msg-font', d.font+'px');
+  r.setProperty('--bub-r', d.bubR+'px');
+}
+
+function App(){
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  useEffect(()=>{ applyTokens(tweaks); },[tweaks]);
+  const lang = tweaks.lang || 'KA';
+  const S = STRINGS[lang];
+
+  return (
+    <>
+      <Page tweaks={tweaks} S={S} setTweak={setTweak}/>
+      <TweaksPanel title="Tweaks" defaultOpen={false}>
+        <TweakSection title="ბრენდი">
+          <TweakSelect
+            label="Accent"
+            value={tweaks.accent}
+            onChange={(v)=>setTweak('accent', v)}
+            options={Object.keys(ACCENTS).map(k=>({value:k,label:ACCENTS[k].name}))}
+          />
+          <TweakRadio
+            label="Surface"
+            value={tweaks.surface}
+            onChange={(v)=>setTweak('surface', v)}
+            options={[{value:'cream',label:'Cream'},{value:'paper',label:'Paper'}]}
+          />
+        </TweakSection>
+        <TweakSection title="გამოცდილება">
+          <TweakRadio
+            label="ენა"
+            value={tweaks.lang}
+            onChange={(v)=>setTweak('lang', v)}
+            options={[{value:'KA',label:'KA'},{value:'EN',label:'EN'}]}
+          />
+          <TweakRadio
+            label="Density"
+            value={tweaks.density}
+            onChange={(v)=>setTweak('density', v)}
+            options={[{value:'cozy',label:'Cozy'},{value:'compact',label:'Compact'}]}
+          />
+          <TweakToggle
+            label="Sidebar"
+            value={tweaks.showSidebar}
+            onChange={(v)=>setTweak('showSidebar', v)}
+          />
+          <TweakToggle
+            label="გახსნილი"
+            value={tweaks.openOnLoad}
+            onChange={(v)=>setTweak('openOnLoad', v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
+</script>
+</body>
+</html>

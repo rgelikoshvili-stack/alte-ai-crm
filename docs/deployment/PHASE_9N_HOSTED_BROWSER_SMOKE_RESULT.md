@@ -73,3 +73,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+
+## Phase 9S Exact ZIP Source Port Update
+
+- Exact ZIP-source Pro v2 port is prepared.
+- The rebuilt widget uses the source `.cw-win`, `.cw-win.expanded`, `.cw-backdrop`, `.cw-side`, and `.cw-comp` visual model.
+- Backend calls remain limited to `/chat/session/start` and `/chat/message`.
+- Hosted browser smoke is still pending Netlify redeploy and manual retest.
+- Do not mark browser smoke passed until the updated Netlify page is opened and verified.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

@@ -122,3 +122,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+## Phase 9S განახლება - ზუსტი Pro v2 ZIP წყარო
+
+- საბოლოო widget ახლა აწყობილია `სრული ვერსია.zip` წყაროს მიხედვით.
+- გამოყენებულია ZIP-ის Pro v2 ვიზუალური მოდელი: floating launcher, centered expanded modal, `188px` sidebar, backdrop, settings, chips, source/operator cards.
+- Browser არ იძახებს Anthropic-ს პირდაპირ.
+- Browser იძახებს მხოლოდ Alte FastAPI backend-ს:
+  - `/chat/session/start`
+  - `/chat/message`
+- რეალურ Alte საიტზე ატვირთვა/ჩასმა ჯერ არ შესრულებულა.
+- საჭიროა Netlify redeploy და hosted browser smoke retest.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

@@ -2,6 +2,21 @@
 
 PRO_V2_BACKEND_GAPS_STATUS=DOCUMENTED_PENDING_APPROVAL
 
+## Phase 9S ZIP Source Backend/Approval Gaps
+
+These ZIP-source behaviors are intentionally not faked in the safe widget:
+
+- Real live operator workflow beyond backend handover recommendation.
+- Real contact/CRM submission from the browser.
+- File upload/document analysis.
+- Voice input/transcription.
+- Server-side settings persistence.
+- Notification/callback workflow.
+- Analytics and admin/operator dashboard integration.
+- Vercel `/api/chat` and `window.claude.complete` flow.
+
+The safe frontend can display disabled/approval-required states for these controls, but must not create production leads, tasks, customers, files, or operator tickets without a later approved backend phase.
+
 The following Pro v2 standalone functions are not faked in the safe widget:
 
 - Real live operator queue and operator dashboard integration.

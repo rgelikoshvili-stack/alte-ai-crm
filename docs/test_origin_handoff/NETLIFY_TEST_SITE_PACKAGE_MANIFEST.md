@@ -45,6 +45,17 @@ NETLIFY_DEPLOY_README_GEO.md
   `widget_variant` defaults to `pro_v2_safe` and the test package includes the updated Pro v2 safe HTML.
 - Phase 9Q-9R rebuild included:
   modal layout, reset/expand/close, sidebar collapse, settings panel, disabled attachment/voice controls, keyboard Enter handling, source card renderer, and handover/contact renderers.
+- Phase 9S exact ZIP source port included:
+  `.cw-win`, `.cw-win.expanded`, `.cw-backdrop`, `.cw-side`, `.cw-side.collapsed`, `.cw-comp`, quick replies/chips, settings, expand, and close markers are present in the deployed HTML.
+
+## Phase 9S SHA256
+
+| File | SHA256 |
+| --- | --- |
+| `widget/alte-ai-chatbot-pro-v2-safe.html` | `654CAF34BFDA3DA43F040CE8836F39E582F53C3686E64395389F3DD5C1F8D6E7` |
+| `test_site/alte-ai-chat-widget.js` | `A5083446ADE39513D77969115FE0CEF21A4BF8EF3F588551BC87EFDD4E2C2B73` |
+| `dist/widget/alte-ai-chat-widget.js` | `A5083446ADE39513D77969115FE0CEF21A4BF8EF3F588551BC87EFDD4E2C2B73` |
+| `dist/netlify_test_site_deploy.zip` | `0EF9B3E2E281F06858C9A3C69B7C664C905A12F18C6A24BFEEF0BD1F78FC4D8F` |
 
 ## Deployment Status
 

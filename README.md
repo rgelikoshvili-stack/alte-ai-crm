@@ -1795,3 +1795,18 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+
+## Phase 9S Exact ZIP Source Pro v2 Port
+
+- Uploaded ZIP source `სრული ვერსია.zip` was extracted into evidence.
+- Exact Pro v2 source files under `deploy/variants/` are now the implementation reference.
+- Safe widget was ported to the ZIP `.cw-win` floating/expanded modal model.
+- Unsafe Vercel/Claude browser logic was removed and replaced by FastAPI backend calls only.
+- Netlify package was rebuilt and requires redeploy.
+- Hosted browser smoke remains pending; real Alte site remains untouched; public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

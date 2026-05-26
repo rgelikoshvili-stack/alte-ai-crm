@@ -1082,3 +1082,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+
+## Phase 9S Next Step
+
+- Redeploy latest `dist/netlify_test_site_deploy.zip` or latest `master` on Netlify.
+- Open `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+- Confirm the exact ZIP-source Pro v2 floating launcher and centered expanded modal.
+- Confirm no browser requests to direct AI provider endpoints.
+- Confirm backend calls only `/chat/session/start` and `/chat/message`.
+- Do not enter phone/email/contact details during smoke.
+- Keep real Alte embed and public launch blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

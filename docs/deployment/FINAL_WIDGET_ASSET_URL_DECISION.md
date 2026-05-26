@@ -84,3 +84,15 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+## Phase 9S Exact ZIP Source Widget Asset Update
+
+- Final widget asset has been rebuilt from the uploaded ZIP source.
+- Asset upload to Alte-controlled hosting is still not executed.
+- Final public asset URL remains pending until website team upload.
+- Netlify test package must be redeployed before browser smoke.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

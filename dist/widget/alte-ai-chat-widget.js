@@ -15,7 +15,7 @@
       sourceDomain: config.sourceDomain || "alte.edu.ge",
       defaultLanguage: config.defaultLanguage || "ka",
       widgetVariant: config.widgetVariant || "pro_v2_safe",
-      mode: config.mode || "production"
+      mode: config.mode || "test_site"
     };
     return "<script>window.AlteChatWidgetConfig=" + JSON.stringify(publicConfig).replace(/</g, "\\u003c") + ";<\/script>";
   }

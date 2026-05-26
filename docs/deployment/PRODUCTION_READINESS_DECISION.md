@@ -569,3 +569,16 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+## Phase 9S Exact ZIP Source Pro v2 Port
+
+- Exact ZIP-source Pro v2 widget port: READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST.
+- Backend remains deployed and unchanged.
+- Real Alte site modified: NO.
+- Actual Alte embed: NO.
+- Public launch: NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

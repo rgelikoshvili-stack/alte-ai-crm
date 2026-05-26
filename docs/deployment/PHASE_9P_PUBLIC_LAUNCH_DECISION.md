@@ -97,3 +97,16 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+
+## Phase 9S Public Launch Gate
+
+- Exact ZIP-source Pro v2 port is ready for Netlify redeploy.
+- Browser smoke is not passed.
+- Real Alte site embed is not executed.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```

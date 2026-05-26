@@ -115,3 +115,15 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
 ```
+## Phase 9S განახლება
+
+- Test/production widget პაკეტი გადაკეთებულია `სრული ვერსია.zip` Pro v2 source-ის მიხედვით.
+- `dist/widget/alte-ai-chat-widget.js` და `dist/widget/alte-ai-chat-widget.html` არის safe backend-connected პაკეტი.
+- არ გამოიყენება `window.claude.complete`, `/api/chat`, ან direct AI provider browser call.
+- რეალურ საიტზე embed ჯერ არ გაკეთდეს, სანამ Netlify browser smoke არ დადასტურდება.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```
