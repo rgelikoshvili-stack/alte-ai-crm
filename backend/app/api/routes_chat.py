@@ -4,14 +4,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.models import Conversation, Lead
 from app.schemas.chat import (
+    ChatContactRequest,
+    ChatContactResponse,
     ChatHandoverRequest,
     ChatMessageRequest,
     ChatMessageResponse,
     ChatSessionStartRequest,
     ChatSessionStartResponse,
+    ChatTranscriptMessage,
 )
 from app.schemas.qualification import LeadQualificationResult
-from app.services.chat_service import handle_message, request_handover, start_session
+from app.services.chat_service import (
+    handle_message,
+    list_public_chat_messages,
+    request_handover,
+    start_session,
+    submit_chat_contact,
+)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -37,6 +46,34 @@ async def request_chat_handover(
 ):
     try:
         return await request_handover(db, conversation_id, session_id=payload.session_id if payload else None)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/contact/{conversation_id}", response_model=ChatContactResponse)
+async def submit_chat_contact_route(
+    conversation_id: str,
+    payload: ChatContactRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        return await submit_chat_contact(db, conversation_id, payload)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/messages/{conversation_id}", response_model=list[ChatTranscriptMessage])
+async def list_public_chat_messages_route(
+    conversation_id: str,
+    session_id: str | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        return await list_public_chat_messages(db, conversation_id, session_id=session_id)
     except PermissionError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:

@@ -67,6 +67,36 @@ class ChatHandoverRequest(BaseModel):
     session_id: str | None = None
 
 
+class ChatContactRequest(BaseModel):
+    session_id: str
+    first_name: str | None = None
+    last_name: str | None = None
+    full_name: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    interest_area: str | None = None
+    selected_department: str | None = None
+    selected_topic: str | None = None
+    source_domain: str | None = "alte.edu.ge"
+    language: Language | None = None
+    consent: bool = False
+
+
+class ChatContactResponse(BaseModel):
+    status: str
+    conversation_id: str
+    customer_id: str | None = None
+    lead_id: str | None = None
+    task_id: str | None = None
+
+
+class ChatTranscriptMessage(BaseModel):
+    id: str
+    sender_type: str
+    text: str
+    created_at: str
+
+
 class ChatMessageResponse(BaseModel):
     conversation_id: str
     reply: str

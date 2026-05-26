@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9S Pro v2 frontend event binding fix ready, pending Netlify redeploy.
+Current status: Phase 9U local operator-answer knowledge candidate workflow ready, pending CRM UI review controls.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. A separate Netlify test site is deployed at `https://nimble-croissant-2f66e8.netlify.app`; production CORS allows that exact origin and safe no-contact API smokes passed. The hosted widget later exposed a frontend initialization crash from an unguarded `addEventListener` binding; the event binding fix is prepared and the Netlify deploy package must be redeployed before manual browser retest. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_PRO_V2_EVENT_BINDING_FIXED_PENDING_NETLIFY_REDEPLOY
+BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL
 ```
 
 Checkpoint docs:
@@ -37,6 +37,8 @@ python -m app.scripts.verify_phase_9n_netlify_test_site_fix
 python -m app.scripts.verify_phase_9n_actual_netlify_origin_cors
 python -m app.scripts.verify_phase_9n_test_widget_session_payload_fix
 python -m app.scripts.verify_phase_9s_frontend_event_binding_fix
+python -m app.scripts.verify_phase_9t_chatbot_operator_wiring
+python -m app.scripts.verify_phase_9u_operator_answer_knowledge_candidates
 ```
 
 Local package:

@@ -7,12 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import AIInteraction, AuditLog, Conversation, Customer, Department, Lead, Message, Task
 from app.schemas.chat import (
     AIAnalysisResult,
+    ChatContactRequest,
+    ChatContactResponse,
     ChatMessageRequest,
     ChatMessageResponse,
     ChatSessionStartRequest,
     ChatSessionStartResponse,
+    ChatTranscriptMessage,
 )
-from app.schemas.crm import CustomerCreate, LeadCreate, TaskCreate
+from app.schemas.crm import CustomerCreate, LeadCreate, LeadUpdate, TaskCreate
 from app.services.audit_service import audit_event
 from app.services.ai_service import analyze_with_ai
 from app.services.customer_service import create_or_update_customer
@@ -264,6 +267,122 @@ async def request_handover(db: AsyncSession, conversation_id: str, *, session_id
     return {"status": "handover_requested", "conversation_id": conversation.id, "task_id": task.id}
 
 
+async def submit_chat_contact(
+    db: AsyncSession,
+    conversation_id: str,
+    payload: ChatContactRequest,
+) -> ChatContactResponse:
+    conversation = await db.get(Conversation, conversation_id)
+    if conversation is None:
+        raise ValueError("Conversation not found")
+    if not await handover_session_matches(db, conversation_id, payload.session_id):
+        raise PermissionError("Invalid chat session")
+    if not payload.consent:
+        raise PermissionError("Consent is required before contact handover")
+    if not (payload.phone or payload.email):
+        raise ValueError("Phone or email is required")
+
+    first_name, last_name = split_contact_name(payload)
+    customer = await create_or_update_customer(
+        db,
+        CustomerCreate(
+            first_name=first_name,
+            last_name=last_name,
+            phone=payload.phone,
+            email=payload.email,
+            source_channel="website_chat",
+            consent_status="explicit_chat_contact_request",
+        ),
+    )
+    conversation.customer_id = customer.id
+    conversation.human_handover = True
+
+    department_name = department_name_from_selection(payload.selected_department)
+    department = await find_department(db, department_name)
+    lead = None
+    lead_payload = lead_payload_from_contact(customer.id, payload, department.id if department else None)
+    if conversation.lead_id:
+        lead = await db.get(Lead, conversation.lead_id)
+        if lead:
+            await update_lead(db, lead, LeadUpdate(**{k: v for k, v in lead_payload.items() if k != "customer_id"}))
+    if lead is None:
+        lead = await create_lead(db, LeadCreate(**lead_payload))
+        conversation.lead_id = lead.id
+
+    await db.commit()
+
+    existing_task = await find_existing_handover_task(db, conversation)
+    if existing_task:
+        task_id = existing_task.id
+        status = "contact_received_handover_already_requested"
+    else:
+        task = await create_task(
+            db,
+            TaskCreate(
+                lead_id=conversation.lead_id,
+                customer_id=conversation.customer_id,
+                department_id=department.id if department else None,
+                title="Human handover requested",
+                description=(
+                    "Website chat visitor left contact details for operator follow-up. "
+                    f"Interest: {payload.interest_area or payload.selected_topic or 'not specified'}."
+                ),
+                due_date=datetime.now(UTC) + timedelta(hours=4),
+                priority="high" if payload.selected_department in {"international", "medicine"} else "normal",
+            ),
+        )
+        task_id = task.id
+        status = "contact_received_handover_requested"
+
+    await audit_event(
+        db,
+        action="chat_contact_submitted",
+        entity_type="conversation",
+        entity_id=conversation.id,
+        metadata_json={
+            "customer_id": customer.id,
+            "lead_id": conversation.lead_id,
+            "task_id": task_id,
+            "selected_department": payload.selected_department,
+            "selected_topic": payload.selected_topic,
+        },
+    )
+    return ChatContactResponse(
+        status=status,
+        conversation_id=conversation.id,
+        customer_id=customer.id,
+        lead_id=conversation.lead_id,
+        task_id=task_id,
+    )
+
+
+async def list_public_chat_messages(
+    db: AsyncSession,
+    conversation_id: str,
+    *,
+    session_id: str | None,
+) -> list[ChatTranscriptMessage]:
+    conversation = await db.get(Conversation, conversation_id)
+    if conversation is None:
+        raise ValueError("Conversation not found")
+    if not await handover_session_matches(db, conversation_id, session_id):
+        raise PermissionError("Invalid chat session")
+    messages = (
+        await db.scalars(
+            select(Message).where(Message.conversation_id == conversation_id).order_by(Message.created_at.asc())
+        )
+    ).all()
+    return [
+        ChatTranscriptMessage(
+            id=message.id,
+            sender_type=message.sender_type,
+            text=message.text,
+            created_at=message.created_at.isoformat(),
+        )
+        for message in messages
+    ]
+
+
 async def handover_session_matches(db: AsyncSession, conversation_id: str, session_id: str | None) -> bool:
     if not session_id:
         return False
@@ -287,6 +406,58 @@ async def handover_session_matches(db: AsyncSession, conversation_id: str, sessi
         )
     ).all()
     return any((row.metadata_json or {}).get("session_id") == session_id for row in message_rows)
+
+
+def split_contact_name(payload: ChatContactRequest) -> tuple[str | None, str | None]:
+    if payload.first_name or payload.last_name:
+        return payload.first_name, payload.last_name
+    if not payload.full_name:
+        return None, None
+    parts = payload.full_name.strip().split()
+    if not parts:
+        return None, None
+    return parts[0], " ".join(parts[1:]) or None
+
+
+def department_name_from_selection(selected_department: str | None) -> str:
+    return {
+        "admissions": "Admissions",
+        "programs": "Admissions",
+        "finance": "Finance",
+        "international": "International Admissions",
+        "medicine": "International Admissions",
+        "library": "Student Services",
+        "career": "Student Services",
+        "it": "IT Support",
+        "it_support": "IT Support",
+        "contact": "General",
+        "operator": "General",
+        "human_operator": "General",
+    }.get(selected_department or "", "Admissions")
+
+
+def lead_payload_from_contact(customer_id: str, payload: ChatContactRequest, department_id: str | None) -> dict:
+    selected = payload.selected_department or ""
+    source_domain = payload.source_domain if payload.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None
+    return {
+        "customer_id": customer_id,
+        "interest_area": payload.interest_area or payload.selected_topic or selected or "operator_handover",
+        "program": payload.selected_topic,
+        "department_id": department_id,
+        "status": "new",
+        "priority": "high" if selected in {"international", "medicine"} else "normal",
+        "source_channel": "website_chat",
+        "source_domain": source_domain,
+        "is_international_priority": selected in {"international", "medicine"},
+        "medical_track": selected == "medicine",
+        "qualification_intent": "human_request",
+        "urgency": "high" if selected in {"international", "medicine"} else "normal",
+        "lead_score": 80,
+        "qualification_status": "qualified",
+        "handover_required": True,
+        "handover_reason": "visitor_contact_form",
+        "recommended_next_action": "operator_follow_up",
+    }
 
 
 async def find_existing_handover_task(db: AsyncSession, conversation: Conversation) -> Task | None:

@@ -11,10 +11,13 @@ from app.schemas.knowledge import (
     KnowledgeSourceCreate,
     KnowledgeSourceRead,
     KnowledgeSourceUpdate,
+    OperatorReplyKnowledgeCandidateCreate,
+    OperatorReplyKnowledgeCandidateRead,
 )
 from app.services.knowledge_service import (
     approve_knowledge_snippet,
     archive_knowledge_snippet,
+    create_operator_reply_knowledge_candidate,
     create_knowledge_snippet,
     create_knowledge_source,
     list_knowledge_review_queue,
@@ -68,6 +71,28 @@ async def patch_source(source_id: str, payload: KnowledgeSourceUpdate, db: Async
 @router.post("/snippets", response_model=KnowledgeSnippetRead)
 async def create_snippet(payload: KnowledgeSnippetCreate, db: AsyncSession = Depends(get_db)):
     return await create_knowledge_snippet(db, payload)
+
+
+@router.post("/operator-reply-candidates/{message_id}", response_model=OperatorReplyKnowledgeCandidateRead)
+async def create_operator_reply_candidate(
+    message_id: str,
+    payload: OperatorReplyKnowledgeCandidateCreate | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        candidate = await create_operator_reply_knowledge_candidate(
+            db,
+            message_id,
+            created_by=(payload.created_by if payload else "operator"),
+            category=(payload.category if payload else None),
+            sensitivity=(payload.sensitivity if payload else "medium"),
+            review_required=(payload.review_required if payload else True),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if candidate is None:
+        raise HTTPException(status_code=404, detail="Operator message not found")
+    return candidate
 
 
 @router.get("/review-queue", response_model=list[KnowledgeReviewItem])

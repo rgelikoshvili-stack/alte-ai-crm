@@ -48,3 +48,36 @@ def test_public_chat_widget_endpoints_still_bypass_auth(client, monkeypatch):
 
     assert session.status_code == 200
     assert message.status_code == 200
+
+
+def test_public_chat_operator_bridge_endpoints_still_bypass_auth_with_session_guard(client, monkeypatch):
+    monkeypatch.setenv("AUTH_REQUIRED", "true")
+    get_settings.cache_clear()
+    try:
+        session = client.post("/chat/session/start", json={"source_domain": "alte.edu.ge", "language": "ka"})
+        handover = client.post(
+            f"/chat/handover/{session.json()['conversation_id']}",
+            json={"session_id": session.json()["session_id"]},
+        )
+        contact = client.post(
+            f"/chat/contact/{session.json()['conversation_id']}",
+            json={
+                "session_id": session.json()["session_id"],
+                "full_name": "Test Visitor",
+                "phone": "+995 500 00 00 02",
+                "consent": True,
+                "source_domain": "alte.edu.ge",
+                "language": "ka",
+            },
+        )
+        transcript = client.get(
+            f"/chat/messages/{session.json()['conversation_id']}?session_id={session.json()['session_id']}"
+        )
+    finally:
+        monkeypatch.setenv("AUTH_REQUIRED", "false")
+        get_settings.cache_clear()
+
+    assert session.status_code == 200
+    assert handover.status_code == 200
+    assert contact.status_code == 200
+    assert transcript.status_code == 200

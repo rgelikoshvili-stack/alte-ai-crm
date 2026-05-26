@@ -2,19 +2,20 @@ const state = {
   apiBase: localStorage.getItem("alte_api_base") || "http://127.0.0.1:8000",
   token: localStorage.getItem("alte_access_token") || "",
   limit: Number(localStorage.getItem("alte_operator_limit") || 20),
-  activeView: "dashboard",
+  activeView: localStorage.getItem("alte_active_view") || "dashboard",
   pipelines: [],
+  refreshTimer: null,
 };
 
 const titles = {
-  dashboard: ["Dashboard", "Live operator overview from the CRM backend."],
-  inbox: ["Inbox", "Website chat conversations and handover queue."],
-  leads: ["Leads", "Admissions leads, qualification status and source filters."],
-  pipeline: ["Pipeline", "Stage-based admissions board."],
-  tasks: ["Tasks", "Follow-up workload and overdue work."],
-  knowledge: ["Knowledge", "Approved source and snippet governance."],
-  analytics: ["Analytics", "Admissions performance, SLA, source coverage and AI quality."],
-  settings: ["Settings", "Local operator workspace settings."],
+  dashboard: ["Dashboard", "CRM backend-ის ცოცხალი overview ოპერატორისთვის."],
+  inbox: ["შეტყობინებები", "Website chat-ის საუბრები და handover რიგი."],
+  leads: ["ლიდები", "ადმისიების ლიდები, კვალიფიკაცია და წყაროების ფილტრები."],
+  pipeline: ["Pipeline", "Stage-ბაზირებული ადმისიების board."],
+  tasks: ["დავალებები", "Follow-up დავალებები და ვადაგასული სამუშაო."],
+  knowledge: ["ცოდნის ბაზა", "დამტკიცებული წყაროები და snippet-ების მართვა."],
+  analytics: ["ანალიტიკა", "ადმისიების performance, SLA, Knowledge coverage და AI ხარისხი."],
+  settings: ["პარამეტრები", "ლოკალური workspace-ის პარამეტრები."],
 };
 
 const $ = (id) => document.getElementById(id);
@@ -37,6 +38,10 @@ function escapeHtml(value) {
 function display(value, fallback = "-") {
   if (value === null || value === undefined || value === "") return fallback;
   return String(value);
+}
+
+function cssEscape(value) {
+  return globalThis.CSS?.escape ? globalThis.CSS.escape(String(value)) : String(value).replace(/"/g, '\\"');
 }
 
 function formatDate(value) {
@@ -74,6 +79,22 @@ async function apiGet(path, params = {}) {
   return response.json();
 }
 
+async function apiPatch(path, payload = {}) {
+  const url = new URL(path, state.apiBase);
+  const headers = { "Content-Type": "application/json" };
+  if (state.token) headers.Authorization = `Bearer ${state.token}`;
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${response.status} ${response.statusText}: ${text.slice(0, 160)}`);
+  }
+  return response.json();
+}
+
 async function apiPost(path, payload = {}) {
   const url = new URL(path, state.apiBase);
   const headers = { "Content-Type": "application/json" };
@@ -96,15 +117,15 @@ function listEmpty(message = "No data yet.") {
 
 function renderMetricCards(data) {
   const cards = [
-    ["Customers", data.total_customers],
-    ["Leads", data.total_leads],
-    ["Open leads", data.open_leads],
-    ["Won leads", data.won_leads],
-    ["Lost leads", data.lost_leads],
-    ["Conversations", data.total_conversations],
-    ["Handovers", data.human_handover_count],
-    ["Open tasks", data.open_tasks],
-    ["Overdue tasks", data.overdue_tasks],
+    ["კლიენტები", data.total_customers],
+    ["ლიდები", data.total_leads],
+    ["აქტიური ლიდები", data.open_leads],
+    ["ჩარიცხულები", data.won_leads],
+    ["დაკარგულები", data.lost_leads],
+    ["საუბრები", data.total_conversations],
+    ["Handover-ები", data.human_handover_count],
+    ["ღია დავალებები", data.open_tasks],
+    ["ვადაგასული", data.overdue_tasks],
   ];
   $("overviewCards").innerHTML = cards
     .map(
@@ -137,18 +158,18 @@ function renderConversationItem(item) {
   `;
 }
 
-function renderTaskTable(tasks) {
-  if (!tasks.length) return listEmpty("No tasks match the current filters.");
+function renderTaskTable(tasks, withComplete = false) {
+  if (!tasks.length) return listEmpty("დავალებები არ არის.");
   return `
     <table>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Customer</th>
-          <th>Due</th>
-          <th>Created</th>
+          <th>სათაური</th>
+          <th>სტატუსი</th>
+          <th>პრიორიტეტი</th>
+          <th>კლიენტი</th>
+          <th>ვადა</th>
+          ${withComplete ? "<th></th>" : ""}
         </tr>
       </thead>
       <tbody>
@@ -161,7 +182,7 @@ function renderTaskTable(tasks) {
                 <td>${badge(task.priority)}</td>
                 <td>${escapeHtml(display(task.customer_name))}</td>
                 <td>${escapeHtml(formatDate(task.due_date))}</td>
-                <td>${escapeHtml(formatDate(task.created_at))}</td>
+                ${withComplete && task.status !== "completed" ? `<td><button class="complete-task-btn secondary-action" data-task-id="${escapeHtml(task.task_id || task.id)}" type="button">✓</button></td>` : withComplete ? "<td></td>" : ""}
               </tr>
             `,
           )
@@ -169,6 +190,12 @@ function renderTaskTable(tasks) {
       </tbody>
     </table>
   `;
+}
+
+async function completeTask(taskId) {
+  await apiPatch(`/tasks/${taskId}/complete`, {});
+  setStatus("დავალება დასრულდა.");
+  await loadActiveView();
 }
 
 function renderBarList(id, items) {
@@ -221,11 +248,14 @@ function renderAnalyticsCards(data) {
 }
 
 async function loadDashboard() {
-  const data = await apiGet("/dashboard/overview");
+  const [data, deadlines] = await Promise.all([
+    apiGet("/dashboard/overview"),
+    apiGet("/deadlines").catch(() => []),
+  ]);
   renderMetricCards(data);
   $("latestConversations").innerHTML = data.latest_conversations?.length
     ? data.latest_conversations.map(renderConversationItem).join("")
-    : listEmpty("No conversations yet.");
+    : listEmpty("საუბრები ჯერ არ არის.");
   $("latestTasks").innerHTML = data.latest_tasks?.length
     ? data.latest_tasks
         .map(
@@ -240,9 +270,24 @@ async function loadDashboard() {
           `,
         )
         .join("")
-    : listEmpty("No tasks yet.");
+    : listEmpty("დავალებები ჯერ არ არის.");
   renderBarList("leadsByStage", data.leads_by_stage);
   renderBarList("leadsByPriority", data.leads_by_priority);
+  const deadlineEl = $("dashboardDeadlines");
+  if (deadlineEl) {
+    deadlineEl.innerHTML = deadlines.length
+      ? deadlines.slice(0, 8).map((d) => `
+          <article class="list-item">
+            <div class="item-title">
+              <span>${escapeHtml(d.title)}</span>
+              <span>${escapeHtml(formatDate(d.deadline_date))}</span>
+            </div>
+            <div class="item-meta">${escapeHtml(display(d.program, d.deadline_type))}</div>
+            <div class="badge-row">${badge(d.deadline_type)}${d.is_active ? badge("active", "approved") : badge("inactive")}</div>
+          </article>
+        `).join("")
+      : listEmpty("ვადები არ არის.");
+  }
 }
 
 async function loadInbox() {
@@ -258,18 +303,99 @@ async function loadInbox() {
   });
 }
 
+async function sendOperatorReply(conversationId) {
+  const textarea = document.getElementById(`reply-${conversationId}`);
+  const text = textarea?.value?.trim();
+  if (!text) return;
+  await apiPost(`/conversations/${conversationId}/messages`, { sender_type: "operator", text });
+  await loadConversationDetail(conversationId);
+  setStatus("პასუხი გაიგზავნა.");
+}
+
+async function createKnowledgeCandidateFromReply(messageId, conversationId) {
+  const data = await apiPost(`/knowledge/operator-reply-candidates/${messageId}`, {
+    created_by: "operator-ui",
+  });
+  setStatus(data.created ? "Knowledge candidate created for review." : "Knowledge candidate already exists.");
+  await loadConversationDetail(conversationId);
+}
+
+async function findKnowledgeCandidateForReply(messageId) {
+  const rows = await apiGet("/knowledge/sources", {
+    source_key: `operator_reply:${messageId}`,
+    limit: 1,
+  });
+  return rows[0] || null;
+}
+
+function openKnowledgeCandidateReview(sourceTitle = "") {
+  switchView("knowledge");
+  setTimeout(() => {
+    $("knowledgeStatus").value = "";
+    $("knowledgeSearch").value = sourceTitle || "Operator answer candidate";
+    loadKnowledge().catch((error) => setStatus(error.message, true));
+  }, 0);
+}
+
+function showOperatorAnswerDrafts() {
+  switchView("knowledge");
+  setTimeout(() => {
+    $("knowledgeStatus").value = "draft";
+    $("knowledgeSearch").value = "Operator answer candidate";
+    loadKnowledge().catch((error) => setStatus(error.message, true));
+  }, 0);
+}
+
+async function loadKnowledgeCandidateStatuses() {
+  const rows = Array.from($("conversationDetail").querySelectorAll("[data-knowledge-status-message-id]"));
+  await Promise.all(
+    rows.map(async (node) => {
+      const messageId = node.dataset.knowledgeStatusMessageId;
+      const candidate = await findKnowledgeCandidateForReply(messageId);
+      const action = $("conversationDetail").querySelector(`[data-open-knowledge-message-id="${cssEscape(messageId)}"]`);
+      if (!candidate) {
+        node.textContent = "No candidate yet";
+        node.className = "candidate-status missing";
+        if (action) action.style.display = "none";
+        return;
+      }
+      node.textContent = `Candidate: ${candidate.status}${candidate.review_required ? " / review" : ""}`;
+      node.className = `candidate-status ${candidate.status}`;
+      if (action) {
+        action.style.display = "inline-flex";
+        action.dataset.sourceTitle = candidate.title || "";
+      }
+    }),
+  );
+}
+
+function renderMessageActions(msg) {
+  if (msg.sender_type !== "operator") return "";
+  return `
+    <div class="message-actions">
+      <button class="secondary-action knowledge-candidate-btn" data-message-id="${escapeHtml(msg.id)}" type="button">
+        Create knowledge candidate
+      </button>
+      <button class="secondary-action open-knowledge-candidate-btn" data-open-knowledge-message-id="${escapeHtml(msg.id)}" type="button" style="display:none">
+        Open review
+      </button>
+      <span class="candidate-status loading" data-knowledge-status-message-id="${escapeHtml(msg.id)}">Checking candidate...</span>
+    </div>
+  `;
+}
+
 async function loadConversationDetail(conversationId) {
   const data = await apiGet(`/conversations/${conversationId}/detail`);
   const customer = data.customer || {};
   const lead = data.lead || {};
   $("conversationDetail").innerHTML = `
     <div class="detail-section">
-      <h3>Customer</h3>
+      <h3>კლიენტი</h3>
       <div class="field-grid">
-        <div class="field"><span>Name</span><strong>${escapeHtml(display([customer.first_name, customer.last_name].filter(Boolean).join(" ")))}</strong></div>
-        <div class="field"><span>Phone</span><strong>${escapeHtml(display(customer.phone))}</strong></div>
-        <div class="field"><span>Email</span><strong>${escapeHtml(display(customer.email))}</strong></div>
-        <div class="field"><span>Country</span><strong>${escapeHtml(display(customer.country))}</strong></div>
+        <div class="field"><span>სახელი</span><strong>${escapeHtml(display([customer.first_name, customer.last_name].filter(Boolean).join(" ")))}</strong></div>
+        <div class="field"><span>ტელეფონი</span><strong>${escapeHtml(display(customer.phone))}</strong></div>
+        <div class="field"><span>ელ-ფოსტა</span><strong>${escapeHtml(display(customer.email))}</strong></div>
+        <div class="field"><span>ქვეყანა</span><strong>${escapeHtml(display(customer.country))}</strong></div>
       </div>
     </div>
     <div class="detail-section">
@@ -281,31 +407,47 @@ async function loadConversationDetail(conversationId) {
         ${lead.medical_track ? badge("medicine", "handover") : ""}
       </div>
       <div class="field-grid">
-        <div class="field"><span>Program</span><strong>${escapeHtml(display(lead.program))}</strong></div>
+        <div class="field"><span>პროგრამა</span><strong>${escapeHtml(display(lead.program))}</strong></div>
         <div class="field"><span>Score</span><strong>${escapeHtml(display(lead.lead_score))}</strong></div>
       </div>
     </div>
     <div class="detail-section">
-      <h3>Messages</h3>
+      <h3>შეტყობინებები</h3>
       <div class="messages">
         ${
           data.messages?.length
             ? data.messages
                 .map(
-                  (message) => `
-                    <div class="message">
-                      <strong>${escapeHtml(message.sender_type)}</strong>
-                      <div>${escapeHtml(message.text)}</div>
-                      <div class="message-meta">${escapeHtml(formatDate(message.created_at))}</div>
+                  (msg) => `
+                    <div class="message ${msg.sender_type === "operator" ? "msg-operator" : msg.sender_type === "user" ? "msg-user" : "msg-ai"}">
+                      <strong>${msg.sender_type === "user" ? "👤 სტუდენტი" : msg.sender_type === "operator" ? "🎧 ოპერატორი" : "🤖 AI"}</strong>
+                      <div>${escapeHtml(msg.text)}</div>
+                      <div class="message-meta">${escapeHtml(formatDate(msg.created_at))}</div>
+                      ${renderMessageActions(msg)}
                     </div>
                   `,
                 )
                 .join("")
-            : listEmpty("No messages yet.")
+            : listEmpty("შეტყობინებები არ არის.")
         }
       </div>
     </div>
+    <div class="detail-section">
+      <h3>პასუხის გაგზავნა</h3>
+      <div class="reply-box">
+        <textarea id="reply-${escapeHtml(conversationId)}" class="reply-textarea" placeholder="შეიყვანეთ პასუხი..." rows="3"></textarea>
+        <button class="primary-action" id="replyBtn" type="button">გაგზავნა</button>
+      </div>
+    </div>
   `;
+  $("replyBtn").addEventListener("click", () => sendOperatorReply(conversationId));
+  $("conversationDetail").querySelectorAll(".knowledge-candidate-btn").forEach((button) => {
+    button.addEventListener("click", () => createKnowledgeCandidateFromReply(button.dataset.messageId, conversationId));
+  });
+  $("conversationDetail").querySelectorAll(".open-knowledge-candidate-btn").forEach((button) => {
+    button.addEventListener("click", () => openKnowledgeCandidateReview(button.dataset.sourceTitle || ""));
+  });
+  loadKnowledgeCandidateStatuses().catch((error) => setStatus(error.message, true));
 }
 
 function renderLeadItem(lead) {
@@ -340,10 +482,22 @@ async function loadLeads() {
   });
 }
 
+async function changeLeadStage(leadId, stageId) {
+  await apiPatch(`/leads/${leadId}/stage`, { stage_id: stageId });
+  await loadLeadDetail(leadId);
+  setStatus("Stage განახლდა.");
+}
+
 async function loadLeadDetail(leadId) {
-  const data = await apiGet(`/leads/${leadId}/detail`);
+  const [data, allStages] = await Promise.all([
+    apiGet(`/leads/${leadId}/detail`),
+    apiGet("/pipeline-stages"),
+  ]);
   const lead = data.lead || {};
   const customer = data.customer || {};
+  const stageOptions = allStages
+    .map((s) => `<option value="${escapeHtml(s.id)}" ${s.id === lead.stage_id ? "selected" : ""}>${escapeHtml(s.name)}</option>`)
+    .join("");
   $("leadDetail").innerHTML = `
     <div class="detail-section">
       <h3>${escapeHtml(display([customer.first_name, customer.last_name].filter(Boolean).join(" "), "Lead"))}</h3>
@@ -352,33 +506,61 @@ async function loadLeadDetail(leadId) {
         ${badge(lead.priority)}
         ${badge(lead.qualification_status)}
         ${lead.handover_required ? badge("handover required", "handover") : ""}
+        ${lead.is_international_priority ? badge("international", "handover") : ""}
+        ${lead.medical_track ? badge("medicine", "handover") : ""}
       </div>
     </div>
     <div class="detail-section">
       <div class="field-grid">
-        <div class="field"><span>Phone</span><strong>${escapeHtml(display(customer.phone))}</strong></div>
-        <div class="field"><span>Email</span><strong>${escapeHtml(display(customer.email))}</strong></div>
-        <div class="field"><span>Program</span><strong>${escapeHtml(display(lead.program))}</strong></div>
+        <div class="field"><span>ტელეფონი</span><strong>${escapeHtml(display(customer.phone))}</strong></div>
+        <div class="field"><span>ელ-ფოსტა</span><strong>${escapeHtml(display(customer.email))}</strong></div>
+        <div class="field"><span>პროგრამა</span><strong>${escapeHtml(display(lead.program))}</strong></div>
         <div class="field"><span>Lead score</span><strong>${escapeHtml(display(lead.lead_score))}</strong></div>
         <div class="field"><span>Intent</span><strong>${escapeHtml(display(lead.qualification_intent))}</strong></div>
-        <div class="field"><span>Next action</span><strong>${escapeHtml(display(lead.recommended_next_action))}</strong></div>
+        <div class="field"><span>შემდეგი ნაბიჯი</span><strong>${escapeHtml(display(lead.recommended_next_action))}</strong></div>
       </div>
     </div>
     <div class="detail-section">
-      <h3>Tasks</h3>
-      ${renderTaskTable(data.tasks || [])}
+      <h3>სტატუსი და Stage</h3>
+      <div class="action-row" style="margin-bottom:8px">
+        <select id="leadStatusSelect">
+          <option value="new" ${lead.status === "new" ? "selected" : ""}>New</option>
+          <option value="open" ${lead.status === "open" ? "selected" : ""}>Open</option>
+          <option value="in_progress" ${lead.status === "in_progress" ? "selected" : ""}>In progress</option>
+          <option value="won" ${lead.status === "won" ? "selected" : ""}>Won</option>
+          <option value="lost" ${lead.status === "lost" ? "selected" : ""}>Lost</option>
+        </select>
+        <button class="primary-action" id="leadStatusBtn" type="button">სტ. შეცვლა</button>
+      </div>
+      <div class="action-row">
+        <select id="stageSelect">${stageOptions}</select>
+        <button class="primary-action" id="stageChangeBtn" type="button">Stage</button>
+      </div>
     </div>
     <div class="detail-section">
-      <h3>Stage history</h3>
+      <div class="action-row" style="justify-content:space-between">
+        <h3 style="margin:0">დავალებები</h3>
+        <button class="secondary-action" id="addTaskToLeadBtn" data-lead-id="${escapeHtml(leadId)}" type="button">+ დავალება</button>
+      </div>
+      ${renderTaskTable(data.tasks || [], true)}
+    </div>
+    <div class="detail-section">
+      <h3>Stage-ის ისტორია</h3>
       ${
         data.stage_history?.length
           ? data.stage_history
-              .map((item) => `<div class="item-meta">${escapeHtml(formatDate(item.changed_at))} ${escapeHtml(display(item.from_stage_id))} -> ${escapeHtml(display(item.to_stage_id))}</div>`)
+              .map((item) => `<div class="item-meta">${escapeHtml(formatDate(item.changed_at))} — ${escapeHtml(display(item.stage_name || item.to_stage_id, "?"))}</div>`)
               .join("")
-          : listEmpty("No stage movement yet.")
+          : listEmpty("Stage-ის ცვლილება ჯერ არ მომხდარა.")
       }
     </div>
   `;
+  $("leadStatusBtn").addEventListener("click", () => changeLeadStatus(leadId, $("leadStatusSelect").value));
+  $("stageChangeBtn").addEventListener("click", () => changeLeadStage(leadId, $("stageSelect").value));
+  $("addTaskToLeadBtn").addEventListener("click", () => openTaskModal(leadId));
+  $("leadDetail").querySelectorAll(".complete-task-btn").forEach((btn) => {
+    btn.addEventListener("click", () => completeTask(btn.dataset.taskId));
+  });
 }
 
 async function loadPipelines() {
@@ -396,40 +578,45 @@ async function loadPipelines() {
 
 async function loadPipelineBoard() {
   const pipelineId = $("pipelineSelect").value;
-  if (!pipelineId) {
-    $("pipelineBoard").innerHTML = listEmpty("Select a pipeline.");
-    return;
-  }
+  if (!pipelineId) { $("pipelineBoard").innerHTML = listEmpty("Pipeline-ი აირჩიეთ."); return; }
   const board = await apiGet(`/pipelines/${pipelineId}/board`, { leads_per_stage: state.limit });
   $("pipelineBoard").innerHTML = board.stages?.length
-    ? board.stages
-        .map(
-          (stage) => `
-            <section class="pipeline-stage">
-              <header>
-                <span>${escapeHtml(stage.name)}</span>
-                <span>${Number(stage.lead_count || 0)}</span>
-              </header>
-              ${
-                stage.leads?.length
-                  ? stage.leads
-                      .map(
-                        (lead) => `
-                          <article class="pipeline-lead">
-                            <strong>${escapeHtml(lead.customer_name || "Unknown customer")}</strong>
-                            <div class="item-meta">${escapeHtml(display(lead.program, "No program"))}</div>
-                            <div class="badge-row">${badge(lead.priority)}</div>
-                          </article>
-                        `,
-                      )
-                      .join("")
-                  : `<div class="list-empty">No leads.</div>`
-              }
-            </section>
-          `,
-        )
-        .join("")
-    : listEmpty("No stages in this pipeline.");
+    ? board.stages.map((stage) => `
+        <section class="pipeline-stage">
+          <header>
+            <span>${escapeHtml(stage.name)}</span>
+            <span class="stage-count">${Number(stage.lead_count || 0)}</span>
+          </header>
+          ${stage.leads?.length
+            ? stage.leads.map((lead) => `
+                <article class="pipeline-lead" data-lead-id="${escapeHtml(lead.lead_id)}" style="cursor:pointer">
+                  <strong>${escapeHtml(lead.customer_name || "უცნობი კლიენტი")}</strong>
+                  <div class="item-meta">${escapeHtml(display(lead.program, "პროგრამა მითითებული არ არის"))}</div>
+                  <div class="badge-row">${badge(lead.priority)}${lead.is_international_priority ? badge("intl","handover") : ""}${lead.medical_track ? badge("medicine","handover") : ""}</div>
+                </article>
+              `).join("")
+            : `<div class="list-empty">ლიდები არ არის.</div>`}
+        </section>
+      `).join("")
+    : listEmpty("Pipeline-ში stage-ები არ არის.");
+  $("pipelineBoard").querySelectorAll("[data-lead-id]").forEach((card) => {
+    card.addEventListener("click", () => {
+      switchView("leads");
+      setTimeout(() => openLeadFromPipeline(card.dataset.leadId), 300);
+    });
+  });
+}
+
+async function openLeadFromPipeline(leadId) {
+  const rows = await apiGet("/leads", { limit: 100 });
+  const match = rows.find((r) => r.lead_id === leadId);
+  if (match) {
+    $("leadList").innerHTML = rows.map(renderLeadItem).join("");
+    $("leadList").querySelectorAll("[data-lead-id]").forEach((node) => {
+      node.addEventListener("click", () => loadLeadDetail(node.dataset.leadId));
+    });
+  }
+  await loadLeadDetail(leadId);
 }
 
 async function loadTasks() {
@@ -439,49 +626,180 @@ async function loadTasks() {
     priority: $("taskPriority").value,
     overdue: $("taskOverdue").value,
   });
-  $("taskList").innerHTML = renderTaskTable(rows);
+  $("taskList").innerHTML = renderTaskTable(rows, true);
+  $("taskList").querySelectorAll(".complete-task-btn").forEach((btn) => {
+    btn.addEventListener("click", () => completeTask(btn.dataset.taskId));
+  });
+}
+
+async function toggleSource(sourceId, activate) {
+  const field = activate ? "status" : "status";
+  await apiPatch(`/knowledge/sources/${sourceId}`, { status: activate ? "approved" : "archived" });
+  setStatus(activate ? "წყარო გააქტიურდა." : "წყარო დეაქტიურდა.");
+  await loadKnowledge();
+}
+
+async function approveKnowledgeSnippet(snippetId) {
+  await apiPatch(`/knowledge/snippets/${snippetId}/approve`, {});
+  setStatus("Knowledge candidate approved.");
+  await loadKnowledge();
+}
+
+async function archiveKnowledgeSnippet(snippetId) {
+  await apiPatch(`/knowledge/snippets/${snippetId}/archive`, {});
+  setStatus("Knowledge candidate archived.");
+  await loadKnowledge();
+}
+
+async function saveKnowledgeSnippetDraft(snippetId, sourceId) {
+  const editor = document.getElementById(`snippet-edit-${snippetId}`);
+  const category = document.getElementById(`snippet-category-${snippetId}`)?.value?.trim() || "operator_answer";
+  const sensitivity = document.getElementById(`snippet-sensitivity-${snippetId}`)?.value || "medium";
+  const language = document.getElementById(`snippet-language-${snippetId}`)?.value || "ka";
+  const content = editor?.value?.trim();
+  if (!content) {
+    setStatus("Knowledge candidate content is required before saving.", true);
+    return;
+  }
+  await apiPatch(`/knowledge/sources/${sourceId}`, {
+    category,
+    sensitivity,
+    language,
+    review_required: true,
+    status: "draft",
+  });
+  await apiPatch(`/knowledge/snippets/${snippetId}`, {
+    content,
+    category,
+    sensitivity,
+    language,
+    review_required: true,
+    status: "draft",
+  });
+  setStatus("Knowledge candidate draft saved.");
+  await loadKnowledge();
+}
+
+function renderKnowledgeReviewItem(item) {
+  return `
+    <article class="list-item knowledge-review-item">
+      <div class="item-title">
+        <span>${escapeHtml(item.snippet.title)}</span>
+        <span>${escapeHtml(item.snippet.language || item.source.language || "")}</span>
+      </div>
+      <div class="item-meta">${escapeHtml((item.snippet.content || "").slice(0, 260))}</div>
+      <textarea id="snippet-edit-${escapeHtml(item.snippet.id)}" class="knowledge-edit-textarea" rows="6">${escapeHtml(item.snippet.content || "")}</textarea>
+      <div class="knowledge-meta-grid">
+        <label>
+          Category
+          <input id="snippet-category-${escapeHtml(item.snippet.id)}" type="text" value="${escapeHtml(item.snippet.category || item.source.category || "operator_answer")}" />
+        </label>
+        <label>
+          Sensitivity
+          <select id="snippet-sensitivity-${escapeHtml(item.snippet.id)}">
+            ${["low", "medium", "high"].map((value) => `<option value="${value}" ${value === (item.snippet.sensitivity || item.source.sensitivity || "medium") ? "selected" : ""}>${value}</option>`).join("")}
+          </select>
+        </label>
+        <label>
+          Language
+          <select id="snippet-language-${escapeHtml(item.snippet.id)}">
+            ${["ka", "en"].map((value) => `<option value="${value}" ${value === (item.snippet.language || item.source.language || "ka") ? "selected" : ""}>${value}</option>`).join("")}
+          </select>
+        </label>
+      </div>
+      <div class="badge-row">
+        ${badge(item.snippet.status)}
+        ${badge(item.source.source_type)}
+        ${badge(item.snippet.category)}
+        ${item.reasons?.map((reason) => badge(reason, "handover")).join("") || ""}
+      </div>
+      <div class="action-row" style="margin-top:8px">
+        <button class="secondary-action save-snippet-draft-btn" data-snippet-id="${escapeHtml(item.snippet.id)}" data-source-id="${escapeHtml(item.source.id)}" type="button">
+          Save draft
+        </button>
+        <button class="primary-action approve-snippet-btn" data-snippet-id="${escapeHtml(item.snippet.id)}" type="button">
+          Approve
+        </button>
+        <button class="secondary-action archive-snippet-btn" data-snippet-id="${escapeHtml(item.snippet.id)}" type="button">
+          Archive
+        </button>
+      </div>
+    </article>
+  `;
 }
 
 async function loadKnowledge() {
   const q = $("knowledgeSearch").value.trim();
   const language = $("knowledgeLanguage").value;
   const status = $("knowledgeStatus").value;
+  const operatorDraftMode = q.toLowerCase().includes("operator answer candidate") && status === "draft";
+  const sourceParams = { q, language, status, limit: state.limit };
+  if (operatorDraftMode) {
+    sourceParams.source_type = "faq";
+  }
   const [sources, snippets] = await Promise.all([
-    apiGet("/knowledge/sources", { q, language, status, limit: state.limit }),
-    apiGet("/knowledge/snippets/search", { q, language, limit: state.limit }),
+    apiGet("/knowledge/sources", sourceParams),
+    q ? apiGet("/knowledge/snippets/search", { q, language, limit: state.limit }) : Promise.resolve([]),
   ]);
+  const reviewItems = operatorDraftMode
+    ? (await apiGet("/knowledge/review-queue", { status: "draft", review_required: true, limit: state.limit }))
+        .filter((item) => (item.source.source_key || "").startsWith("operator_reply:"))
+    : [];
   $("knowledgeSources").innerHTML = sources.length
-    ? sources
-        .map(
-          (source) => `
-            <article class="list-item">
-              <div class="item-title">
-                <span>${escapeHtml(source.title)}</span>
-                <span>${escapeHtml(source.language)}</span>
-              </div>
-              <div class="item-meta">${escapeHtml(display(source.source_url, source.source_type))}</div>
-              <div class="badge-row">${badge(source.status)}${badge(source.source_type)}</div>
-            </article>
-          `,
-        )
-        .join("")
-    : listEmpty("No sources match the current filters.");
-  $("knowledgeSnippets").innerHTML = snippets.length
-    ? snippets
-        .map(
-          (item) => `
-            <article class="list-item">
-              <div class="item-title">
-                <span>${escapeHtml(item.snippet.title)}</span>
-                <span>${Number(item.score || 0)}</span>
-              </div>
-              <div class="item-meta">${escapeHtml(item.snippet.content)}</div>
-              <div class="badge-row">${badge(item.source_status)}${badge(item.snippet.category)}${item.snippet.program_name ? badge(item.snippet.program_name) : ""}</div>
-            </article>
-          `,
-        )
-        .join("")
-    : listEmpty("No snippets match the current filters.");
+    ? sources.map((src) => `
+        <article class="list-item">
+          <div class="item-title">
+            <span>${escapeHtml(src.title)}</span>
+            <span>${escapeHtml(src.language || "")}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(display(src.source_url, src.source_type))}</div>
+          <div class="badge-row">
+            ${badge(src.status)}${badge(src.source_type)}
+            ${src.review_required ? badge("review", "handover") : ""}
+          </div>
+          <div class="action-row" style="margin-top:8px">
+            ${src.status !== "approved"
+              ? `<button class="source-activate secondary-action" data-source-id="${escapeHtml(src.id)}" type="button">✓ გააქტიუ.</button>`
+              : `<button class="source-deactivate secondary-action" data-source-id="${escapeHtml(src.id)}" type="button">✗ დეაქტ.</button>`}
+          </div>
+        </article>
+      `).join("")
+    : listEmpty("წყაროები ვერ მოიძებნა.");
+  $("knowledgeSources").querySelectorAll(".source-activate").forEach((btn) => {
+    btn.addEventListener("click", () => toggleSource(btn.dataset.sourceId, true));
+  });
+  $("knowledgeSources").querySelectorAll(".source-deactivate").forEach((btn) => {
+    btn.addEventListener("click", () => toggleSource(btn.dataset.sourceId, false));
+  });
+  const snippetHtml = snippets.length
+    ? snippets.map((item) => `
+        <article class="list-item">
+          <div class="item-title">
+            <span>${escapeHtml(item.snippet.title)}</span>
+            <span class="badge">${Number(item.score || 0)}</span>
+          </div>
+          <div class="item-meta">${escapeHtml((item.snippet.content || "").slice(0, 180))}</div>
+          <div class="badge-row">${badge(item.source_status)}${badge(item.snippet.category)}${item.snippet.program_name ? badge(item.snippet.program_name) : ""}</div>
+        </article>
+      `).join("")
+    : listEmpty("მოსაძებნად ჩაწერეთ საძიებო სიტყვა.");
+  $("knowledgeSnippets").innerHTML = operatorDraftMode
+    ? reviewItems.length
+      ? reviewItems.map(renderKnowledgeReviewItem).join("")
+      : listEmpty("No operator answer draft candidates found.")
+    : snippetHtml;
+  $("knowledgeSnippets").querySelectorAll(".approve-snippet-btn").forEach((btn) => {
+    btn.addEventListener("click", () => approveKnowledgeSnippet(btn.dataset.snippetId));
+  });
+  $("knowledgeSnippets").querySelectorAll(".save-snippet-draft-btn").forEach((btn) => {
+    btn.addEventListener("click", () => saveKnowledgeSnippetDraft(btn.dataset.snippetId, btn.dataset.sourceId));
+  });
+  $("knowledgeSnippets").querySelectorAll(".archive-snippet-btn").forEach((btn) => {
+    btn.addEventListener("click", () => archiveKnowledgeSnippet(btn.dataset.snippetId));
+  });
+  if (operatorDraftMode && !sources.length) {
+    setStatus("No operator answer draft candidates found.");
+  }
 }
 
 async function loadAnalytics() {
@@ -544,8 +862,29 @@ async function loadActiveView() {
   }
 }
 
+async function updateSidebarBadges() {
+  try {
+    const sla = await apiGet("/analytics/sla");
+    const overdue = Number(sla.overdue_tasks || 0);
+    const handovers = Number(sla.open_handover_conversations || 0);
+    const taskBadge = document.querySelector('[data-view="tasks"] .nav-badge');
+    const inboxBadge = document.querySelector('[data-view="inbox"] .nav-badge');
+    if (taskBadge) { taskBadge.textContent = overdue > 0 ? overdue : ""; taskBadge.style.display = overdue > 0 ? "inline-flex" : "none"; }
+    if (inboxBadge) { inboxBadge.textContent = handovers > 0 ? handovers : ""; inboxBadge.style.display = handovers > 0 ? "inline-flex" : "none"; }
+  } catch (_) {}
+}
+
+function startAutoRefresh() {
+  if (state.refreshTimer) clearInterval(state.refreshTimer);
+  state.refreshTimer = setInterval(() => {
+    if (state.activeView === "dashboard") loadDashboard().catch(() => {});
+    updateSidebarBadges().catch(() => {});
+  }, 15000);
+}
+
 function switchView(view) {
   state.activeView = view;
+  localStorage.setItem("alte_active_view", view);
   document.querySelectorAll(".nav-item").forEach((node) => node.classList.toggle("active", node.dataset.view === view));
   document.querySelectorAll(".view").forEach((node) => node.classList.toggle("active", node.id === `view-${view}`));
   $("viewTitle").textContent = titles[view][0];
@@ -583,6 +922,98 @@ function logoutOperator() {
   setStatus("Stored token cleared.");
 }
 
+async function changeLeadStatus(leadId, status) {
+  await apiPatch(`/leads/${leadId}`, { status });
+  setStatus("სტატუსი განახლდა.");
+  await loadLeadDetail(leadId);
+}
+
+let _taskModalLeadId = null;
+
+function openTaskModal(leadId = null) {
+  _taskModalLeadId = leadId;
+  ["mTaskTitle", "mTaskDesc"].forEach((id) => { const el = $(id); if (el) el.value = ""; });
+  $("mTaskPriority").value = "normal";
+  $("mTaskDue").value = "";
+  $("taskModalStatus").textContent = "";
+  $("taskModal").style.display = "flex";
+  $("mTaskTitle").focus();
+}
+
+function closeTaskModal() {
+  $("taskModal").style.display = "none";
+  _taskModalLeadId = null;
+}
+
+async function saveNewTask() {
+  const title = $("mTaskTitle").value.trim();
+  if (!title) { $("taskModalStatus").textContent = "სათაური სავალდებულოა."; return; }
+  $("taskModalSave").disabled = true;
+  $("taskModalStatus").textContent = "შენახვა...";
+  try {
+    const due = $("mTaskDue").value;
+    await apiPost("/tasks", {
+      title,
+      priority: $("mTaskPriority").value,
+      due_date: due ? new Date(due).toISOString() : undefined,
+      description: $("mTaskDesc").value.trim() || undefined,
+      lead_id: _taskModalLeadId || undefined,
+    });
+    closeTaskModal();
+    setStatus("დავალება შეიქმნა.");
+    if (_taskModalLeadId) {
+      await loadLeadDetail(_taskModalLeadId);
+    } else {
+      await loadActiveView();
+    }
+  } catch (error) {
+    $("taskModalStatus").textContent = error.message;
+  } finally {
+    $("taskModalSave").disabled = false;
+  }
+}
+
+function openLeadModal() {
+  ["mLeadName","mLeadPhone","mLeadEmail","mLeadProgram","mLeadSource","mLeadNotes"].forEach((id) => { const el = $(id); if (el) el.value = ""; });
+  $("mLeadPriority").value = "normal";
+  $("leadModalStatus").textContent = "";
+  $("leadModal").style.display = "flex";
+  $("mLeadName").focus();
+}
+
+function closeLeadModal() {
+  $("leadModal").style.display = "none";
+}
+
+async function saveNewLead() {
+  const name = $("mLeadName").value.trim();
+  if (!name) { $("leadModalStatus").textContent = "სახელი სავალდებულოა."; return; }
+  $("leadModalSave").disabled = true;
+  $("leadModalStatus").textContent = "შენახვა...";
+  try {
+    const parts = name.split(" ");
+    const customer = await apiPost("/customers", {
+      first_name: parts[0] || "",
+      last_name: parts.slice(1).join(" ") || undefined,
+      phone: $("mLeadPhone").value.trim() || undefined,
+      email: $("mLeadEmail").value.trim() || undefined,
+    });
+    await apiPost("/leads", {
+      customer_id: customer.id,
+      program: $("mLeadProgram").value.trim() || undefined,
+      priority: $("mLeadPriority").value,
+      source_channel: $("mLeadSource").value.trim() || undefined,
+    });
+    closeLeadModal();
+    setStatus("ახალი ლიდი შეიქმნა.");
+    await loadLeads();
+  } catch (error) {
+    $("leadModalStatus").textContent = error.message;
+  } finally {
+    $("leadModalSave").disabled = false;
+  }
+}
+
 function bindFilters() {
   [
     "inboxSearch",
@@ -612,7 +1043,13 @@ function init() {
 
   document.querySelectorAll(".nav-item").forEach((node) => {
     node.addEventListener("click", () => switchView(node.dataset.view));
+    node.classList.toggle("active", node.dataset.view === state.activeView);
   });
+  document.querySelectorAll(".view").forEach((node) => {
+    node.classList.toggle("active", node.id === `view-${state.activeView}`);
+  });
+  const titleEntry = titles[state.activeView];
+  if (titleEntry) { $("viewTitle").textContent = titleEntry[0]; $("viewSubtitle").textContent = titleEntry[1]; }
   $("refreshBtn").addEventListener("click", () => {
     state.apiBase = $("apiBase").value.trim().replace(/\/$/, "");
     localStorage.setItem("alte_api_base", state.apiBase);
@@ -629,8 +1066,21 @@ function init() {
   });
   $("loginBtn").addEventListener("click", loginOperator);
   $("logoutBtn").addEventListener("click", logoutOperator);
+  $("operatorKnowledgeFilterBtn").addEventListener("click", showOperatorAnswerDrafts);
+  $("newLeadBtn").addEventListener("click", openLeadModal);
+  $("newTaskBtn").addEventListener("click", () => openTaskModal(null));
+  $("taskModalClose").addEventListener("click", closeTaskModal);
+  $("taskModalCancel").addEventListener("click", closeTaskModal);
+  $("taskModalSave").addEventListener("click", saveNewTask);
+  $("taskModal").addEventListener("click", (e) => { if (e.target === $("taskModal")) closeTaskModal(); });
+  $("leadModalClose").addEventListener("click", closeLeadModal);
+  $("leadModalCancel").addEventListener("click", closeLeadModal);
+  $("leadModalSave").addEventListener("click", saveNewLead);
+  $("leadModal").addEventListener("click", (e) => { if (e.target === $("leadModal")) closeLeadModal(); });
   bindFilters();
   loadActiveView();
+  startAutoRefresh();
+  updateSidebarBadges();
 }
 
 init();

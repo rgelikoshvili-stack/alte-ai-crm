@@ -24,6 +24,36 @@ PUBLIC_LAUNCH_DECISION=NO_GO_PENDING_SITE_EMBED_AND_REAL_DOMAIN_SMOKE
 
 Public launch must remain NO-GO until all future GO criteria are completed and recorded.
 
+## Phase 9U Operator Answer Knowledge Candidate Update
+
+- Operator replies can be converted into draft knowledge candidates.
+- Automatic learning from operator replies: no.
+- Automatic approval: no.
+- Candidate knowledge remains review-gated before AI can use it as approved source material.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL
+```
+
+## Phase 9T Local Chatbot Operator Wiring Update
+
+- Local Pro v2 chatbot-to-operator wiring: LOCAL_CODE_READY_PENDING_BROWSER_WORKFLOW_TEST.
+- Added public-safe contact handover and same-session transcript endpoints.
+- Existing operator CRM inbox/reply workflow remains the operator workspace.
+- Real Alte site modified: NO.
+- Actual Alte embed: NO.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_LOCAL_PRO_V2_OPERATOR_WIRING_READY_PENDING_BROWSER_WORKFLOW_TEST
+```
+
 ## Phase 9N-Test Update
 
 - Standalone test site package: READY

@@ -1,10 +1,11 @@
 from datetime import date, datetime, timedelta
+from hashlib import sha256
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.mock_retriever import retrieve_snippets
-from app.models import KnowledgeSnippet, KnowledgeSource
+from app.models import Conversation, KnowledgeSnippet, KnowledgeSource, Message
 from app.schemas.knowledge import KnowledgeSnippetCreate, KnowledgeSnippetUpdate, KnowledgeSourceCreate, KnowledgeSourceUpdate
 from app.services.audit_service import audit_event
 
@@ -54,6 +55,111 @@ async def create_knowledge_snippet(db: AsyncSession, payload: KnowledgeSnippetCr
     await db.commit()
     await db.refresh(snippet)
     return snippet
+
+
+async def create_operator_reply_knowledge_candidate(
+    db: AsyncSession,
+    message_id: str,
+    *,
+    created_by: str | None = "operator",
+    category: str | None = None,
+    sensitivity: str | None = "medium",
+    review_required: bool = True,
+) -> dict | None:
+    message = await db.get(Message, message_id)
+    if message is None:
+        return None
+    if message.sender_type != "operator":
+        raise ValueError("Only operator replies can become knowledge candidates")
+    conversation = await db.get(Conversation, message.conversation_id)
+    if conversation is None:
+        raise ValueError("Conversation not found")
+
+    source_key = f"operator_reply:{message.id}"
+    existing_source = await db.scalar(select(KnowledgeSource).where(KnowledgeSource.source_key == source_key))
+    if existing_source:
+        existing_snippet = await db.scalar(select(KnowledgeSnippet).where(KnowledgeSnippet.source_id == existing_source.id))
+        if existing_snippet is None:
+            raise ValueError("Existing source has no candidate snippet")
+        return {
+            "status": "operator_reply_knowledge_candidate_exists",
+            "created": False,
+            "message_id": message.id,
+            "conversation_id": conversation.id,
+            "source": existing_source,
+            "snippet": existing_snippet,
+        }
+
+    previous_user_message = await find_previous_user_message(db, message)
+    language = normalize_candidate_language(conversation.language, message.text)
+    metadata = previous_user_message.metadata_json if previous_user_message and previous_user_message.metadata_json else {}
+    source_domain = metadata.get("source_domain")
+    selected_department = metadata.get("selected_department")
+    selected_topic = metadata.get("selected_topic")
+    candidate_category = category or selected_department or "operator_answer"
+    question = previous_user_message.text if previous_user_message else "Operator answer without matching visitor question"
+    title = truncate_text(f"Operator answer candidate: {question}", 255)
+    content = f"Visitor question:\n{question}\n\nOperator answer:\n{message.text}"
+
+    source = KnowledgeSource(
+        source_key=source_key,
+        title=title,
+        source_type="faq",
+        status="draft",
+        language=language,
+        source_url=None,
+        source_domain=source_domain,
+        category=candidate_category,
+        sensitivity=sensitivity,
+        review_required=review_required,
+        owner=created_by,
+    )
+    db.add(source)
+    await db.flush()
+    snippet = KnowledgeSnippet(
+        source_id=source.id,
+        source_key=source_key,
+        title=title,
+        content=content,
+        category=candidate_category,
+        source_domain=source_domain,
+        sensitivity=sensitivity,
+        review_required=review_required,
+        stale_after_days=90,
+        content_hash=sha256(content.encode("utf-8")).hexdigest(),
+        program_name=selected_topic,
+        keywords=build_candidate_keywords(question, message.text, selected_department, selected_topic),
+        status="draft",
+        language=language,
+    )
+    db.add(snippet)
+    await db.flush()
+    await audit_event(
+        db,
+        action="operator_reply_knowledge_candidate_created",
+        entity_type="knowledge_snippet",
+        entity_id=snippet.id,
+        actor_type="operator",
+        actor_id=created_by,
+        metadata_json={
+            "conversation_id": conversation.id,
+            "message_id": message.id,
+            "source_id": source.id,
+            "selected_department": selected_department,
+            "selected_topic": selected_topic,
+        },
+    )
+    await db.commit()
+    await db.refresh(source)
+    await db.refresh(snippet)
+    return {
+        "status": "operator_reply_knowledge_candidate_created",
+        "created": True,
+        "message_id": message.id,
+        "conversation_id": conversation.id,
+        "source": source,
+        "snippet": snippet,
+    }
 
 
 async def update_knowledge_source(
@@ -250,3 +356,42 @@ def as_date(value: date | datetime | None) -> date | None:
     if isinstance(value, datetime):
         return value.date()
     return value
+
+
+async def find_previous_user_message(db: AsyncSession, operator_message: Message) -> Message | None:
+    return await db.scalar(
+        select(Message)
+        .where(
+            Message.conversation_id == operator_message.conversation_id,
+            Message.sender_type == "user",
+            Message.created_at <= operator_message.created_at,
+        )
+        .order_by(Message.created_at.desc())
+    )
+
+
+def normalize_candidate_language(conversation_language: str | None, text: str) -> str:
+    if conversation_language in {"ka", "en"}:
+        return conversation_language
+    return "ka" if any("\u10a0" <= char <= "\u10ff" for char in text) else "en"
+
+
+def truncate_text(value: str, limit: int) -> str:
+    compact = " ".join(value.split())
+    return compact if len(compact) <= limit else f"{compact[: limit - 3]}..."
+
+
+def build_candidate_keywords(
+    question: str,
+    answer: str,
+    selected_department: str | None,
+    selected_topic: str | None,
+) -> str:
+    words = [selected_department, selected_topic]
+    for text in [question, answer]:
+        words.extend(word.strip(".,!?;:()[]{}\"'").lower() for word in text.split()[:24])
+    unique = []
+    for word in words:
+        if word and word not in unique:
+            unique.append(word)
+    return ", ".join(unique[:32])

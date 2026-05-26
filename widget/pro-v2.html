@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8"/>
+  <title>ალტე AI ჩათბოტი — Pro v2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; }
+    body {
+      font-family:'Noto Sans Georgian','Inter',system-ui,sans-serif;
+      background:#0c1416;
+      color:#0f1a1c;
+      overflow:hidden;
+    }
+    :root{
+      --alte-teal:#074045;
+      --alte-teal-deep:#052e32;
+      --alte-teal-mid:#0a5258;
+      --alte-orange:#e8714e;
+      --alte-cream:#f6f2e8;
+      --alte-paper:#f4f1ea;
+      --alte-paper-2:#faf8f1;
+      --alte-ink:#0f1a1c;
+      --alte-mute:#5a6c6d;
+      --alte-line:#e8e2d4;
+      --alte-success:#1ca672;
+    }
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:#d4ccba;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+    ::-webkit-scrollbar-thumb:hover{background:#a89e87;background-clip:padding-box;border:2px solid transparent}
+    ::-webkit-scrollbar-track{background:transparent}
+    #app{ position:fixed; inset:0; }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<!--
+  Alte AI CRM backend adapter.
+  Bridges window.claude.complete() (ZIP Pro v2 API) → FastAPI /chat/* endpoints.
+
+  LOCAL:      BACKEND = "http://127.0.0.1:8000"
+  PRODUCTION: BACKEND = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
+-->
+<script>
+(function () {
+  var cfg = window.AlteChatWidgetConfig || {};
+  var BACKEND = cfg.apiBaseUrl || "http://127.0.0.1:8000";
+  var SOURCE_DOMAIN = cfg.sourceDomain || "alte.edu.ge";
+
+  var STORAGE_KEY = "alte_chat_session_" + BACKEND.replace(/[^a-z0-9]/gi, "_");
+  var _stored = (function () {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch (e) { return null; }
+  }());
+  var _convId = (_stored && _stored.conv) ? _stored.conv : null;
+  var _sessId = (_stored && _stored.sess) ? _stored.sess : null;
+  var _lastResponse = null;
+
+  function detectLang(text) {
+    return /[Ⴀ-ჿ]/.test(text) ? "ka" : "en";
+  }
+
+  function lastUserText(messages) {
+    for (var i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        var c = messages[i].content;
+        if (typeof c === "string") return c;
+        if (Array.isArray(c)) return c.map(function (x) { return x.text || ""; }).join("");
+        return String(c || "");
+      }
+    }
+    return "";
+  }
+
+  function normalizeLang(value, fallbackText) {
+    if (value === "KA" || value === "ka") return "ka";
+    if (value === "EN" || value === "en") return "en";
+    return fallbackText ? detectLang(fallbackText) : (cfg.defaultLanguage || "ka");
+  }
+
+  function normalizeDepartment(value) {
+    if (value === "it") return "it_support";
+    if (value === "human") return "human_operator";
+    return value || null;
+  }
+
+  async function ensureSession(language) {
+    if (_convId && _sessId) return;
+    var sr = await fetch(BACKEND + "/chat/session/start", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        channel: "website_chat",
+        source_domain: SOURCE_DOMAIN,
+        language: normalizeLang(language),
+      }),
+    });
+    if (!sr.ok) throw new Error("Session start failed (" + sr.status + ")");
+    var sd = await sr.json();
+    _convId = sd.conversation_id;
+    _sessId = sd.session_id;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ conv: _convId, sess: _sessId })); } catch (e) {}
+  }
+
+  window.claude = {
+    _reset: function () { _convId = null; _sessId = null; _lastResponse = null; try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} },
+
+    complete: async function (opts) {
+      var messages = Array.isArray(opts.messages) ? opts.messages : [];
+      var userText = lastUserText(messages);
+      if (!userText) return "";
+      var context = opts.context || {};
+      var language = normalizeLang(context.language, userText);
+
+      await ensureSession(language);
+
+      var mr = await fetch(BACKEND + "/chat/message", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          conversation_id: _convId,
+          message: userText,
+          session_id: _sessId,
+          source_domain: SOURCE_DOMAIN,
+          language: language,
+          selected_department: normalizeDepartment(context.selected_department),
+          selected_topic: context.selected_topic || null,
+          page_url: window.location.href,
+          widget_variant: "pro_v2_safe",
+        }),
+      });
+      if (!mr.ok) {
+        var err = await mr.json().catch(function () { return {}; });
+        throw new Error("Chat error (" + mr.status + "): " + (err.detail || "unknown"));
+      }
+      var md = await mr.json();
+      _lastResponse = md;
+      return md.reply || "";
+    },
+  };
+
+  window.AlteChatBackend = {
+    get conversationId() { return _convId; },
+    get sessionId() { return _sessId; },
+    get lastResponse() { return _lastResponse; },
+    reset: window.claude._reset,
+    requestHandover: async function (context) {
+      await ensureSession(normalizeLang(context && context.language));
+      var response = await fetch(BACKEND + "/chat/handover/" + encodeURIComponent(_convId), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ session_id: _sessId }),
+      });
+      if (!response.ok) throw new Error("Handover failed (" + response.status + ")");
+      return response.json();
+    },
+    submitContact: async function (data) {
+      await ensureSession(normalizeLang(data && data.language));
+      var response = await fetch(BACKEND + "/chat/contact/" + encodeURIComponent(_convId), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          session_id: _sessId,
+          full_name: data.full_name || data.name || null,
+          phone: data.phone || null,
+          email: data.email || null,
+          interest_area: data.interest_area || data.interest || null,
+          selected_department: normalizeDepartment(data.selected_department),
+          selected_topic: data.selected_topic || null,
+          source_domain: SOURCE_DOMAIN,
+          language: normalizeLang(data.language),
+          consent: data.consent === true,
+        }),
+      });
+      if (!response.ok) {
+        var err = await response.json().catch(function () { return {}; });
+        throw new Error("Contact handover failed (" + response.status + "): " + (err.detail || "unknown"));
+      }
+      return response.json();
+    },
+    pollOperatorMessages: async function () {
+      if (!_convId || !_sessId) return [];
+      var url = BACKEND + "/chat/messages/" + encodeURIComponent(_convId) + "?session_id=" + encodeURIComponent(_sessId);
+      var response = await fetch(url);
+      if (response.status === 404) {
+        _convId = null; _sessId = null;
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        return [];
+      }
+      if (!response.ok) return [];
+      var rows = await response.json();
+      return rows.filter(function (row) { return row.sender_type === "operator"; });
+    },
+  };
+}());
+</script>
+
+<script type="text/babel" src="variants/tweaks-panel.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-icons.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-strings.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-chat.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-modals.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-page.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const { useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakSelect } = window;
+const { Page } = window;
+const { STRINGS } = window;
+
+const TWEAK_DEFAULTS = {
+  accent: "teal",
+  density: "cozy",
+  surface: "cream",
+  lang: "KA",
+  showSidebar: true,
+  openOnLoad: true,
+};
+
+const ACCENTS = {
+  teal:   { name:"ალტე Teal", primary:"#074045", deep:"#052e32", mid:"#0a5258", soft:"#eef7f5", line:"#d4e8e3", accent:"#e8714e" },
+  forest: { name:"Forest",    primary:"#1f4d3a", deep:"#143527", mid:"#2a6a4f", soft:"#eaf4ec", line:"#cfe5d3", accent:"#e8714e" },
+  ink:    { name:"Ink",       primary:"#1a1f2b", deep:"#0c0f17", mid:"#2a3346", soft:"#eef0f4", line:"#d4d8e0", accent:"#e8714e" },
+};
+const SURFACES = {
+  cream: { page:"#f4f1ea", paper:"#faf8f1", panel:"#ffffff", chip:"#f6f2e8", line:"#e8e2d4", ink:"#0f1a1c", mute:"#5a6c6d" },
+  paper: { page:"#ffffff", paper:"#fafaf9", panel:"#ffffff", chip:"#f4f4f1", line:"#e7e7e3", ink:"#0f1a1c", mute:"#5a6c6d" },
+};
+
+function applyTokens(t) {
+  const a = ACCENTS[t.accent] || ACCENTS.teal;
+  const s = SURFACES[t.surface] || SURFACES.cream;
+  const r = document.documentElement.style;
+  r.setProperty("--alte-teal",      a.primary);
+  r.setProperty("--alte-teal-deep", a.deep);
+  r.setProperty("--alte-teal-mid",  a.mid);
+  r.setProperty("--alte-orange",    a.accent);
+  r.setProperty("--alte-soft",      a.soft);
+  r.setProperty("--alte-soft-line", a.line);
+  r.setProperty("--alte-page",      s.page);
+  r.setProperty("--alte-paper",     s.paper);
+  r.setProperty("--alte-panel",     s.panel);
+  r.setProperty("--alte-chip",      s.chip);
+  r.setProperty("--alte-line",      s.line);
+  r.setProperty("--alte-ink",       s.ink);
+  r.setProperty("--alte-mute",      s.mute);
+  const d = t.density === "compact"
+    ? { gap: 8,  bub: "8px 12px",  font: 12.5, bubR: 11 }
+    : { gap: 11, bub: "10px 13px", font: 13,   bubR: 13 };
+  r.setProperty("--gap",      d.gap  + "px");
+  r.setProperty("--bub",      d.bub);
+  r.setProperty("--msg-font", d.font + "px");
+  r.setProperty("--bub-r",    d.bubR + "px");
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  useEffect(() => { applyTokens(tweaks); }, [tweaks]);
+  const lang = tweaks.lang || "KA";
+  const S = STRINGS[lang];
+
+  return (
+    <>
+      <Page tweaks={tweaks} S={S} setTweak={setTweak} />
+      <TweaksPanel title="Tweaks" defaultOpen={false}>
+        <TweakSection title="ბრენდი">
+          <TweakSelect
+            label="Accent"
+            value={tweaks.accent}
+            onChange={(v) => setTweak("accent", v)}
+            options={Object.keys(ACCENTS).map(k => ({ value: k, label: ACCENTS[k].name }))}
+          />
+          <TweakRadio
+            label="Surface"
+            value={tweaks.surface}
+            onChange={(v) => setTweak("surface", v)}
+            options={[{ value: "cream", label: "Cream" }, { value: "paper", label: "Paper" }]}
+          />
+        </TweakSection>
+        <TweakSection title="გამოცდილება">
+          <TweakRadio
+            label="ენა"
+            value={tweaks.lang}
+            onChange={(v) => setTweak("lang", v)}
+            options={[{ value: "KA", label: "KA" }, { value: "EN", label: "EN" }]}
+          />
+          <TweakRadio
+            label="Density"
+            value={tweaks.density}
+            onChange={(v) => setTweak("density", v)}
+            options={[{ value: "cozy", label: "Cozy" }, { value: "compact", label: "Compact" }]}
+          />
+          <TweakToggle label="Sidebar"   value={tweaks.showSidebar} onChange={(v) => setTweak("showSidebar", v)} />
+          <TweakToggle label="გახსნილი" value={tweaks.openOnLoad}  onChange={(v) => setTweak("openOnLoad",  v)} />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+</script>
+</body>
+</html>

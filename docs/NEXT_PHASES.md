@@ -1,5 +1,44 @@
 # Next Phases
 
+## Phase 9U: Operator Answer Knowledge Candidates Ready
+
+Status: `BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL`
+
+- Operator replies can now be converted into draft knowledge candidates.
+- Operator conversation UI includes a `Create knowledge candidate` action for operator replies.
+- Existing candidates are detected by `operator_reply:{message_id}` and shown beside the operator reply.
+- The `Open review` action jumps to the Knowledge page with the candidate search filled in.
+- Knowledge page includes an `Operator answer drafts` quick filter for draft FAQ-style operator answer candidates.
+- Operator answer draft review cards include `Approve` and `Archive` actions using the existing knowledge approval endpoints.
+- Operator answer draft review cards include an editable content field and `Save draft` before approval.
+- Draft metadata editing is available for category, sensitivity, and language; save updates both source and snippet records.
+- Endpoint: `POST /knowledge/operator-reply-candidates/{message_id}`.
+- Created knowledge is `draft` and `review_required=true`.
+- Automatic learning from operator replies: no.
+- Automatic approval: no.
+- AI continues to use approved knowledge only by default.
+- Real Alte site remains untouched.
+- No Cloud Run deploy, CORS change, DB migration, or Secret Manager change was executed.
+- Public launch remains NO-GO.
+
+Next required action: test the CRM browser flow manually, then package the stable local changes into a commit before Netlify/production packaging.
+
+## Phase 9T: Local Pro v2 Chatbot Operator Wiring Ready
+
+Status: `BACKEND_LOCAL_PRO_V2_OPERATOR_WIRING_READY_PENDING_BROWSER_WORKFLOW_TEST`
+
+- Local Pro v2 source widget: `widget/pro-v2.html`.
+- Operator CRM workspace: `frontend/index.html`.
+- Added backend wiring for chatbot contact handover and public session transcript polling.
+- Chatbot operator request now calls backend handover with valid `session_id`.
+- Chatbot contact modal can submit visitor contact to backend with consent and create CRM follow-up workflow.
+- Operator replies saved in CRM can be polled back into the chatbot for the same chat session.
+- Real Alte site remains untouched.
+- No Cloud Run deploy, CORS change, DB migration, or Secret Manager change was executed.
+- Public launch remains NO-GO.
+
+Next required action: run local browser workflow between `http://127.0.0.1:5500/pro-v2.html` and `http://127.0.0.1:5173/` to verify handover/contact/operator reply end to end.
+
 ## Phase 9S: Pro v2 Frontend Event Binding Fix Ready
 
 Status: `BACKEND_DEPLOYED_PRO_V2_EVENT_BINDING_FIXED_PENDING_NETLIFY_REDEPLOY`

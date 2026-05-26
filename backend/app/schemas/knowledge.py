@@ -149,3 +149,19 @@ class KnowledgeReviewItem(BaseModel):
     source: KnowledgeSourceRead
     is_stale: bool
     reasons: list[str]
+
+
+class OperatorReplyKnowledgeCandidateCreate(BaseModel):
+    created_by: str | None = "operator"
+    category: str | None = None
+    sensitivity: str | None = "medium"
+    review_required: bool = True
+
+
+class OperatorReplyKnowledgeCandidateRead(BaseModel):
+    status: str
+    created: bool
+    message_id: str
+    conversation_id: str
+    source: KnowledgeSourceRead
+    snippet: KnowledgeSnippetRead
