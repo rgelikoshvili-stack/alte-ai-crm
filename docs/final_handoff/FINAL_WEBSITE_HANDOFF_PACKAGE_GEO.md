@@ -110,3 +110,15 @@ https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 2. აღადგინეთ embed-მდე არსებული გვერდის ვერსია.
 3. გადაამოწმეთ, რომ widget აღარ იტვირთება real domain-ზე.
 4. ჩაწერეთ rollback შედეგი deployment log-ში.
+## Phase 9Q-9R Pro v2 განახლება
+
+- საბოლოო სამიზნე ვიზუალი არის ატვირთული Pro v2 standalone chatbot.
+- უსაფრთხო production/test ვერსია მომზადებულია backend-only ინტეგრაციით.
+- რეალურ Alte საიტზე ატვირთვა და embed ჯერ არ შესრულებულა.
+- Netlify test package ხელახლა უნდა აიტვირთოს/დაიდეპლოიდეს browser retest-მდე.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

@@ -83,3 +83,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Public Launch Gate
+
+- Uploaded Pro v2 is the approved final UI target.
+- Final safe widget package is ready for Netlify redeploy.
+- Browser smoke is not passed.
+- Real Alte site embed is not executed.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

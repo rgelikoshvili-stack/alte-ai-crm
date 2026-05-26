@@ -3,63 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alte AI Chatbot - Join/International Test Site</title>
+  <title>Alte AI Chatbot - Join Pro v2 Test</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #162033;
-      background: #f6f8fb;
-    }
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
-    .notice {
+    body { margin: 0; min-height: 100vh; background: #f4f1ea; font-family: Arial, sans-serif; }
+    .test-banner {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      padding: 7px 12px;
       border: 1px solid #d49d00;
+      border-radius: 999px;
       background: #fff8df;
-      padding: 16px;
-      border-radius: 8px;
-      margin: 20px 0;
+      color: #3a2b00;
+      font-size: 12px;
       font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
     }
-    .panel {
-      background: #ffffff;
-      border: 1px solid #dbe3ef;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    code {
-      background: #eef2f7;
-      padding: 2px 5px;
-      border-radius: 4px;
-    }
+    #alte-chat-widget-root { min-height: 100vh; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Alte AI Chatbot - Join/International Test Site</h1>
-    <div class="notice">TEST ONLY - this is not the official Alte website</div>
-
-    <section class="panel">
-      <h2>EN Testing</h2>
-      <p>Use this page to preview the Safe Pro Sidebar widget with the production backend and `sourceDomain=join.alte.edu.ge`.</p>
-      <ul>
-        <li>Ask: What documents do international students need?</li>
-        <li>Ask: I want to apply for medicine from India</li>
-        <li>Ask: Can you help with visa and relocation?</li>
-      </ul>
-    </section>
-
-    <section class="panel">
-      <h2>KA Testing</h2>
-      <p>For the main Georgian test configuration, open <a href="./index.html">index.html</a>.</p>
-      <p>If browser API calls fail, production CORS may not allow this test origin yet.</p>
-    </section>
-  </main>
-
+  <div class="test-banner">TEST ONLY - this is not the official Alte website</div>
+  <div id="alte-chat-widget-root"></div>
   <script>
     window.AlteChatWidgetConfig = {
       apiBaseUrl: "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
@@ -67,9 +34,10 @@
       defaultLanguage: "en",
       widgetVariant: "pro_v2_safe",
       widgetHtmlUrl: "./alte-ai-chat-widget.html",
+      containerId: "alte-chat-widget-root",
       mode: "test_site"
     };
   </script>
-  <script src="./alte-ai-chat-widget.js" defer></script>
+  <script src="./alte-ai-chat-widget.js"></script>
 </body>
 </html>

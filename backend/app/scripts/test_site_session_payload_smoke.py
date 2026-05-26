@@ -14,12 +14,14 @@ CASES = [
         "source_domain": "alte.edu.ge",
         "language": "ka",
         "mode": "test_site",
+        "widget_variant": "pro_v2_safe",
     },
     {
         "name": "join en test site session",
         "source_domain": "join.alte.edu.ge",
         "language": "en",
         "mode": "test_site",
+        "widget_variant": "pro_v2_safe",
     },
 ]
 
@@ -36,6 +38,11 @@ def build_session_payload(case: dict[str, str]) -> dict[str, object]:
         "source_domain": case["source_domain"],
         "language": case["language"],
         "channel": "website_chat",
+        "widget_variant": case.get("widget_variant", "pro_v2_safe"),
+        "metadata": {
+            "mode": case.get("mode", "test_site"),
+            "page_url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
+        },
     }
 
 
@@ -68,6 +75,7 @@ def run_smoke() -> dict[str, object]:
         "contact_flow_test_run": False,
         "intentional_lead_task_customer_creation": False,
         "payload_channel": "website_chat",
+        "widget_variant": "pro_v2_safe",
     }
 
 

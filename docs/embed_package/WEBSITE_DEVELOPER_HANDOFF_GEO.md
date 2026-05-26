@@ -104,3 +104,14 @@ Join Alte site:
 - Browser Anthropic/Claude-ს პირდაპირ არ იძახებს.
 - Browser მხოლოდ FastAPI backend-ს ეძახის.
 - Frontend CRM lead/task/customer-ს არ ქმნის.
+## Phase 9Q-9R Pro v2 შენიშვნა
+
+- widget-ის საბოლოო ვიზუალური სამიზნე არის Pro v2 standalone reference.
+- ბრაუზერი არ იძახებს AI provider-ს პირდაპირ; გამოიყენება მხოლოდ Alte FastAPI backend.
+- რეალურ საიტზე embed არ უნდა შესრულდეს მანამ, სანამ Netlify retest და საბოლოო approvals არ დასრულდება.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

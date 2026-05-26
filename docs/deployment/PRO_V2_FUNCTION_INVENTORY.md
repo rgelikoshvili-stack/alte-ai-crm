@@ -1,0 +1,84 @@
+# Pro v2 Function Inventory
+
+PRO_V2_FUNCTION_INVENTORY_STATUS=COMPLETED
+
+## Layout And Window
+
+- Launcher opens chat.
+- Close hides chat and returns launcher.
+- Expanded modal centers at desktop width around 980px.
+- Backdrop appears in expanded mode in the standalone.
+- Sidebar appears in expanded mode.
+- Sidebar collapse reduces it to icon-only mode.
+- Message area scrolls independently.
+- Mobile reflows/hides sidebar.
+
+## Header Controls
+
+- KA/EN language toggle.
+- Reset/new chat.
+- Settings button.
+- Expand/collapse button.
+- Close button.
+- Backend/status indicator.
+- Title/subtitle.
+
+## Sidebar And Navigation
+
+- Department list: Admissions, Programs, Tuition/Aid, International, Medicine/MD, Library, Career, IT Help.
+- Live operator entry.
+- Active department state.
+- Department icons/badges.
+- Bottom user/profile area.
+- Selected department context is used by chat behavior.
+
+## Greeting And Quick Actions
+
+- Greeting title and body.
+- Trending/recommended card.
+- Quick replies/popular questions.
+- Department/topic-specific context.
+
+## Chat Behavior
+
+- User and assistant bubbles.
+- Typing indicator.
+- Source cards.
+- Handover/operator card.
+- Contact request card.
+- Assistant message action buttons in the standalone.
+- Retry/regenerate pattern in standalone.
+- No-answer/fallback behavior.
+- Link rendering and markdown-like formatting.
+
+## Composer/Input
+
+- Textarea input.
+- Enter sends.
+- Shift+Enter inserts newline.
+- Plus/attachment button.
+- Microphone/voice button.
+- Send button.
+- Disabled/loading state.
+- Language-specific placeholder.
+- Footer hint.
+
+## Standalone AI/Backend Behavior
+
+- Direct browser-side model completion.
+- Hardcoded prompt and local routing helpers.
+- Local intent detection for handover/contact.
+- Local source inference.
+- Local contact/lead prototype.
+
+## Safety And Privacy
+
+- Trust bar says answers come from official sources.
+- Privacy/contact consent appears in contact prototype.
+- Sensitive facts are present in the standalone prompt and must be backend-governed in the safe widget.
+
+## Admin/Debug/Test
+
+- Bundler exposes some globals such as component references.
+- Settings panel exposes demo toggles.
+- Local state persistence is used for conversation/UI state.

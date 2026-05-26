@@ -61,3 +61,15 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Rebuild Update
+
+- Large Pro v2 safe modal package is prepared.
+- Hosted browser smoke is still pending Netlify redeploy and manual retest.
+- Do not mark browser smoke passed until the updated Netlify page is opened and verified.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

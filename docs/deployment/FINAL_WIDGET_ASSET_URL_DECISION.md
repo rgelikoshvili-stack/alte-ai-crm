@@ -73,3 +73,14 @@ Not recommended for production.
 ## Recommendation
 
 Use Alte-controlled hosting if the website team can upload static assets. If not possible, prepare a separate approved Cloud Storage hosting phase.
+## Phase 9Q-9R Pro v2 Asset Update
+
+- Final safe Pro v2 widget asset prepared locally.
+- Current upload target remains pending Alte website team action.
+- Netlify test package requires redeploy before browser retest.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

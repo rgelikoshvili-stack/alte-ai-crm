@@ -555,3 +555,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Pro v2 Rebuild Status
+
+- Final UI target: uploaded Pro v2 standalone.
+- Small widget status: rejected as final UI.
+- Safe frontend gaps implemented: large modal, close/reopen, expand, sidebar collapse, settings panel, Enter handling, source/handover/contact renderers.
+- Backend-required gaps documented and not faked.
+- Netlify redeploy and browser retest remain pending.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

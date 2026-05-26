@@ -1,14 +1,16 @@
 # Widget Asset Manifest
 
-Generated: `2026-05-25 16:03:56 UTC`
+Generated: `2026-05-26 Phase 9Q-9R`
 
 ## Assets
 
 | File | Size Bytes | SHA256 |
 | --- | ---: | --- |
-| `dist/widget/alte-ai-chat-widget.js` | 2162 | `eeb06eb222cb0909940b11b0e376b5d57ea5fa635e32c8eda92b9f470f5e2315` |
-| `dist/widget/alte-ai-chat-widget.html` | 36113 | `dc1e8df7162028a464e98eca513a20a5e0b4a81e8ab06203629dc3cfd708747a` |
-| `widget/alte-university-ai-chatbot-safe-pro.html` | 36113 | `dc1e8df7162028a464e98eca513a20a5e0b4a81e8ab06203629dc3cfd708747a` |
+| `widget/alte-ai-chatbot-pro-v2-safe.html` | 45166 | `383C59E1ADE072E7ABD4660CEB1900858EFE1719F789B12D93467E3B39728842` |
+| `test_site/alte-ai-chat-widget.js` | 2611 | `A5083446ADE39513D77969115FE0CEF21A4BF8EF3F588551BC87EFDD4E2C2B73` |
+| `dist/widget/alte-ai-chat-widget.js` | 2612 | `8C0A92F8EBF608ED4C7F1764549643DAC58DDA28FFAA0C65009DB989F9EC0C33` |
+| `dist/widget/alte-ai-chat-widget.html` | 45166 | `383C59E1ADE072E7ABD4660CEB1900858EFE1719F789B12D93467E3B39728842` |
+| `dist/netlify_test_site_deploy.zip` | 15833 | `F67AE832741157D612FADDABA34579D58A0AE299C71D04FEC88D1B6203C3C30E` |
 
 ## Safety Scan
 
@@ -19,6 +21,15 @@ Generated: `2026-05-25 16:03:56 UTC`
 - DB password patterns absent: PASS
 - /chat/session/start present: PASS
 - /chat/message present: PASS
+- source_domain present: PASS
+- selected_department present: PASS
+- selected_topic present: PASS
+- website_chat present: PASS
+- pro_v2_safe present: PASS
+- reset/expand/close controls present: PASS
+- operator/handover renderer present: PASS
+- source card renderer present: PASS
+- keyboard Enter handling present: PASS
 
 ## Launch Note
 

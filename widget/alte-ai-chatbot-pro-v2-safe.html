@@ -50,17 +50,56 @@
     }
 
     .pro-widget {
-      width: min(860px, calc(100vw - 24px));
-      height: min(690px, calc(100vh - 24px));
-      min-height: 610px;
+      width: min(1080px, calc(100vw - 28px));
+      height: min(742px, calc(100vh - 28px));
+      min-height: 650px;
       display: grid;
-      grid-template-columns: 196px minmax(0, 1fr);
+      grid-template-columns: 244px minmax(0, 1fr);
       overflow: hidden;
       border: 1px solid rgba(232, 226, 212, .95);
-      border-radius: 20px;
+      border-radius: 22px;
       background: rgba(250, 248, 241, .98);
       box-shadow: 0 28px 90px rgba(7, 64, 69, .22);
     }
+    .pro-widget.closed { display: none; }
+    .pro-widget.fullscreen {
+      width: calc(100vw - 18px);
+      height: calc(100vh - 18px);
+      min-height: 0;
+      border-radius: 18px;
+    }
+
+    .launcher {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      display: none;
+      grid-template-columns: 44px 1fr;
+      gap: 10px;
+      align-items: center;
+      width: min(320px, calc(100vw - 32px));
+      border: 1px solid rgba(232, 226, 212, .95);
+      border-radius: 18px;
+      padding: 10px 12px;
+      background: #fffdf8;
+      color: var(--alte-ink);
+      box-shadow: 0 18px 50px rgba(7, 64, 69, .22);
+      z-index: 5;
+      text-align: left;
+    }
+    .launcher.show { display: grid; }
+    .launcher-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--alte-teal);
+      color: #fff;
+      font-weight: 850;
+    }
+    .launcher-title { display: block; font-size: 13px; font-weight: 850; }
+    .launcher-sub { display: block; margin-top: 2px; color: var(--alte-muted); font-size: 11px; }
 
     .sidebar {
       display: flex;
@@ -172,6 +211,26 @@
       font-weight: 800;
     }
     .footer-name { color: var(--alte-ink); font-size: 12px; font-weight: 800; }
+
+    .sidebar-toggle {
+      margin: 0 10px 10px;
+      height: 28px;
+      border: 1px dashed #cbd9d6;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--alte-muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .sidebar.collapsed { width: 58px; }
+    .sidebar.collapsed .brand { grid-template-columns: 1fr; padding: 14px 9px; }
+    .sidebar.collapsed .brand > div:not(.mark),
+    .sidebar.collapsed .nav-label,
+    .sidebar.collapsed .nav-text,
+    .sidebar.collapsed .footer-name,
+    .sidebar.collapsed #footer-role { display: none; }
+    .sidebar.collapsed .nav-btn { grid-template-columns: 1fr; justify-items: center; padding: 9px; }
+    .pro-widget:has(.sidebar.collapsed) { grid-template-columns: 58px minmax(0, 1fr); }
 
     .chat {
       display: flex;
@@ -342,6 +401,51 @@
     .feature-card strong { display: block; font-size: 12px; }
     .feature-card span { display: block; margin-top: 3px; color: var(--alte-muted); font-size: 11px; line-height: 1.35; }
 
+    .settings-panel {
+      position: absolute;
+      right: 14px;
+      top: 58px;
+      z-index: 8;
+      width: min(310px, calc(100vw - 44px));
+      display: none;
+      border: 1px solid var(--alte-line);
+      border-radius: 16px;
+      background: #fffdf8;
+      padding: 12px;
+      box-shadow: 0 18px 48px rgba(7, 64, 69, .18);
+    }
+    .settings-panel.open { display: grid; gap: 10px; }
+    .settings-panel h2 { margin: 0; font-size: 15px; }
+    .settings-panel p { margin: 0; color: var(--alte-muted); font-size: 11px; line-height: 1.45; }
+    .setting-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border-top: 1px solid var(--alte-line);
+      padding-top: 9px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .switch {
+      width: 38px;
+      height: 22px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--alte-teal);
+      position: relative;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
     .typing {
       display: inline-flex;
       gap: 4px;
@@ -410,7 +514,7 @@
 
     .composer {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: auto auto minmax(0, 1fr) auto;
       gap: 8px;
       padding: 11px 16px 8px;
       border-top: 1px solid var(--alte-line);
@@ -427,6 +531,32 @@
       outline: none;
       font-size: 13px;
     }
+    .composer textarea {
+      height: 42px;
+      max-height: 120px;
+      min-width: 0;
+      resize: none;
+      border: 1px solid #d9e4e1;
+      border-radius: 13px;
+      background: #fff;
+      color: var(--alte-ink);
+      padding: 11px 13px;
+      outline: none;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .composer textarea:focus { border-color: var(--alte-teal); box-shadow: 0 0 0 3px rgba(7, 64, 69, .09); }
+    .tool-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--alte-line);
+      border-radius: 13px;
+      background: #fff;
+      color: var(--alte-muted);
+      font-size: 15px;
+      font-weight: 850;
+    }
+    .tool-btn:disabled { opacity: .48; cursor: not-allowed; }
     .composer input:focus { border-color: var(--alte-teal); box-shadow: 0 0 0 3px rgba(7, 64, 69, .09); }
     .send-btn {
       height: 40px;
@@ -448,6 +578,13 @@
       color: var(--alte-muted);
       font-size: 10.5px;
       line-height: 1.45;
+    }
+    .composer-hint {
+      padding: 0 16px 8px;
+      background: #fffdf8;
+      color: var(--alte-muted);
+      font-size: 10px;
+      line-height: 1.4;
     }
     .privacy a { color: var(--alte-teal-mid); text-decoration: none; }
     .privacy a:hover { text-decoration: underline; }
@@ -491,13 +628,18 @@
       .quick-row { padding: 0 12px 8px; }
       .composer { padding: 9px 12px 7px; }
       .send-btn span { display: none; }
+      .composer { grid-template-columns: auto auto minmax(0, 1fr) auto; }
     }
   </style>
 </head>
 <body>
   <h1 class="sr-only">Alte University AI Assistant</h1>
-  <section class="pro-widget" aria-label="Alte AI Chat">
-    <aside class="sidebar" aria-label="Departments">
+  <button class="launcher" id="launcher" type="button" aria-label="Open Alte AI Assistant">
+    <span class="launcher-mark">A</span>
+    <span><span class="launcher-title">Alte AI Assistant</span><span class="launcher-sub" id="launcher-sub">Ask us anything</span></span>
+  </button>
+  <section class="pro-widget fullscreen" id="pro-widget" aria-label="Alte AI Chat">
+    <aside class="sidebar" id="sidebar" aria-label="Departments">
       <div class="brand">
         <div class="mark">A</div>
         <div>
@@ -513,6 +655,7 @@
           <div id="footer-role">Website visitor</div>
         </div>
       </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" type="button" title="Collapse sidebar">‹</button>
     </aside>
 
     <main class="chat">
@@ -526,8 +669,17 @@
           <button class="lang-btn" id="lang-ka" type="button">KA</button>
           <button class="lang-btn" id="lang-en" type="button">EN</button>
           <button class="icon-btn" id="reset-chat" type="button" title="New conversation">New</button>
+          <button class="icon-btn" id="settings-chat" type="button" title="Settings">⚙</button>
+          <button class="icon-btn" id="expand-chat" type="button" title="Collapse">▣</button>
+          <button class="icon-btn danger" id="close-chat" type="button" title="Close">×</button>
         </div>
       </header>
+      <div class="settings-panel" id="settings-panel" aria-label="Settings">
+        <h2 id="settings-title">Settings</h2>
+        <p id="settings-sub">Language, source cards, privacy and test-safe disabled controls.</p>
+        <div class="setting-row"><span id="settings-sources">Source citations</span><button class="switch" type="button" aria-label="Source citations enabled"></button></div>
+        <div class="setting-row"><span id="settings-disabled">Voice and file upload require approval</span><button class="switch" type="button" disabled></button></div>
+      </div>
 
       <div class="status-strip">
         <span class="status-dot" aria-hidden="true"></span>
@@ -538,9 +690,12 @@
       <div class="quick-row" id="quick-row"></div>
 
       <form class="composer" id="composer">
-        <input id="message-input" type="text" autocomplete="off" aria-label="Message">
+        <button class="tool-btn" id="attach-button" type="button" disabled title="Attachment requires approval">+</button>
+        <button class="tool-btn" id="voice-button" type="button" disabled title="Voice requires approval">♪</button>
+        <textarea id="message-input" autocomplete="off" aria-label="Message" rows="1"></textarea>
         <button class="send-btn" id="send-button" type="submit"><span id="send-label">Send</span></button>
       </form>
+      <div class="composer-hint" id="composer-hint">Enter to send · Shift+Enter for newline</div>
       <div class="privacy" id="privacy-note"></div>
     </main>
   </section>
@@ -561,6 +716,8 @@
     let conversationId = localStorage.getItem("alte_pro_v2_conversation_id") || "";
     let sessionId = localStorage.getItem("alte_pro_v2_session_id") || "";
     let busy = false;
+    let expanded = true;
+    let sidebarCollapsed = false;
 
     const TXT = {
       ka: {
@@ -586,7 +743,13 @@
         contactTitle: "საკონტაქტო ინფორმაცია საჭირო იქნება",
         contactNote: "საჯარო smoke ტესტებში არ გაგზავნოთ ტელეფონი ან ელფოსტა.",
         privacy: "ჩატი მუშაობს Alte backend-ით. კონფიდენციალურობის ოფიციალური ბმული ჯერ დამტკიცების პროცესშია: ",
-        privacyLink: "privacy pending"
+        privacyLink: "privacy pending",
+        launcherSub: "დაგვისვი ნებისმიერი კითხვა",
+        composerHint: "Enter — გაგზავნა · Shift+Enter — ახალი ხაზი",
+        settingsTitle: "პარამეტრები",
+        settingsSub: "ენა, წყაროები, კონფიდენციალურობა და სატესტო უსაფრთხო ფუნქციები.",
+        settingsSources: "წყაროების ბარათები",
+        settingsDisabled: "ხმა და ფაილის ატვირთვა საჭიროებს დამტკიცებას"
       },
       en: {
         brand: "AI Assistant",
@@ -611,7 +774,13 @@
         contactTitle: "Contact details may be needed",
         contactNote: "Do not send phone or email in public smoke tests.",
         privacy: "This chat uses the Alte backend. Official privacy link is still pending approval: ",
-        privacyLink: "privacy pending"
+        privacyLink: "privacy pending",
+        launcherSub: "Ask us anything",
+        composerHint: "Enter to send · Shift+Enter for newline",
+        settingsTitle: "Settings",
+        settingsSub: "Language, source cards, privacy and test-safe disabled controls.",
+        settingsSources: "Source citations",
+        settingsDisabled: "Voice and file upload require approval"
       }
     };
 
@@ -658,6 +827,20 @@
       ka: document.getElementById("lang-ka"),
       en: document.getElementById("lang-en"),
       reset: document.getElementById("reset-chat"),
+      settings: document.getElementById("settings-chat"),
+      settingsPanel: document.getElementById("settings-panel"),
+      expand: document.getElementById("expand-chat"),
+      close: document.getElementById("close-chat"),
+      launcher: document.getElementById("launcher"),
+      launcherSub: document.getElementById("launcher-sub"),
+      widget: document.getElementById("pro-widget"),
+      sidebar: document.getElementById("sidebar"),
+      sidebarToggle: document.getElementById("sidebar-toggle"),
+      composerHint: document.getElementById("composer-hint"),
+      settingsTitle: document.getElementById("settings-title"),
+      settingsSub: document.getElementById("settings-sub"),
+      settingsSources: document.getElementById("settings-sources"),
+      settingsDisabled: document.getElementById("settings-disabled"),
       brandSub: document.getElementById("brand-sub"),
       footerName: document.getElementById("footer-name"),
       footerRole: document.getElementById("footer-role"),
@@ -730,6 +913,12 @@
       els.statusText.textContent = t.status;
       els.input.placeholder = t.placeholder;
       els.sendLabel.textContent = t.send;
+      els.launcherSub.textContent = t.launcherSub;
+      els.composerHint.textContent = t.composerHint;
+      els.settingsTitle.textContent = t.settingsTitle;
+      els.settingsSub.textContent = t.settingsSub;
+      els.settingsSources.textContent = t.settingsSources;
+      els.settingsDisabled.textContent = t.settingsDisabled;
       els.ka.classList.toggle("active", lang === "ka");
       els.en.classList.toggle("active", lang === "en");
       els.privacy.innerHTML = `${esc(t.privacy)}<a href="#privacy-policy-pending">${esc(t.privacyLink)}</a>`;
@@ -843,7 +1032,12 @@
           body: JSON.stringify({
             source_domain: cfg.sourceDomain || "alte.edu.ge",
             language: lang,
-            channel: "website_chat"
+            channel: "website_chat",
+            widget_variant: widgetVariant,
+            metadata: {
+              mode: cfg.mode || "test_site",
+              page_url: window.location.href
+            }
           })
         });
         if (!response.ok) {
@@ -871,6 +1065,7 @@
       if (!(await ensureSession())) return;
       addUser(value);
       els.input.value = "";
+      autosizeInput();
       showTyping();
       setBusy(true);
       try {
@@ -931,9 +1126,54 @@
       resetChat();
     }
 
+    function toggleSettings() {
+      els.settingsPanel.classList.toggle("open");
+    }
+
+    function toggleFullscreen() {
+      expanded = !expanded;
+      els.widget.classList.toggle("fullscreen", expanded);
+      els.expand.textContent = expanded ? "▣" : "⛶";
+      els.expand.title = expanded ? "Collapse" : "Expand";
+    }
+
+    function closeWidget() {
+      els.widget.classList.add("closed");
+      els.launcher.classList.add("show");
+    }
+
+    function openWidget() {
+      els.widget.classList.remove("closed");
+      els.launcher.classList.remove("show");
+      setTimeout(() => els.input.focus(), 50);
+    }
+
+    function toggleSidebarCollapse() {
+      sidebarCollapsed = !sidebarCollapsed;
+      els.sidebar.classList.toggle("collapsed", sidebarCollapsed);
+      els.sidebarToggle.textContent = sidebarCollapsed ? "›" : "‹";
+    }
+
+    function autosizeInput() {
+      els.input.style.height = "42px";
+      els.input.style.height = Math.min(120, els.input.scrollHeight) + "px";
+    }
+
     els.ka.addEventListener("click", () => setLanguage("ka"));
     els.en.addEventListener("click", () => setLanguage("en"));
     els.reset.addEventListener("click", resetChat);
+    els.settings.addEventListener("click", toggleSettings);
+    els.expand.addEventListener("click", toggleFullscreen);
+    els.close.addEventListener("click", closeWidget);
+    els.launcher.addEventListener("click", openWidget);
+    els.sidebarToggle.addEventListener("click", toggleSidebarCollapse);
+    els.input.addEventListener("input", autosizeInput);
+    els.input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage(els.input.value);
+      }
+    });
     els.composer.addEventListener("submit", (event) => {
       event.preventDefault();
       sendMessage(els.input.value);

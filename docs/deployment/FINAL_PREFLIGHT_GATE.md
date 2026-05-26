@@ -415,3 +415,19 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Gate
+
+- Uploaded Pro v2 extraction/audit: COMPLETE
+- Function inventory and gap matrix: COMPLETE
+- Safe Pro v2 frontend rebuild: READY
+- Backend-required gaps: DOCUMENTED_PENDING_APPROVAL
+- Netlify redeploy: PENDING
+- Hosted browser retest: PENDING
+- Public launch: NO-GO
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

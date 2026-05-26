@@ -1781,3 +1781,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Pro v2 Rebuild
+
+- Uploaded Pro v2 standalone is now recorded as visual and functional source-of-truth.
+- Safe widget was rebuilt toward the large Pro v2 modal layout.
+- Functional inventory, gap matrix, implementation plan, and backend approval gaps are documented.
+- Netlify ZIP was rebuilt and requires redeploy.
+- Browser smoke remains pending; real Alte site remains untouched; public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

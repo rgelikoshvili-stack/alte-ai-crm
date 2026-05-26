@@ -1069,3 +1069,16 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
 ```
+
+## Phase 9Q-9R Next Step
+
+- Redeploy latest `dist/netlify_test_site_deploy.zip` or latest `master` on Netlify.
+- Manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+- Confirm large Pro v2 modal, close/reopen, expand/collapse, settings, sidebar, chips, and backend chat.
+- Keep public launch blocked until browser smoke, real Alte embed, real-domain smoke, and final approvals pass.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_REBUILT_AND_FUNCTION_GAPS_AUDITED_PENDING_NETLIFY_REDEPLOY
+```

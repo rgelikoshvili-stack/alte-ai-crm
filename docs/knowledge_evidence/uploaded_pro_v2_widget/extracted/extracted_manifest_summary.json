@@ -1,0 +1,21 @@
+{
+  "source": "docs\\knowledge_evidence\\uploaded_pro_v2_widget\\Alte_AI_Chat_Pro_v2_standalone.html",
+  "has_manifest": true,
+  "has_template": true,
+  "manifest_asset_count": 32,
+  "decoded_asset_count": 32,
+  "external_resource_count": 0,
+  "outputs": [
+    "extracted_template.html",
+    "extracted_app.js",
+    "extracted_styles.css",
+    "extracted_manifest_summary.json",
+    "extracted_text_index.txt",
+    "extracted_asset_list.json"
+  ],
+  "limitations": [
+    "No uploaded JavaScript was executed.",
+    "Some bundled assets may remain binary or minified.",
+    "Functional behavior is inferred from extracted readable text and source scanning."
+  ]
+}
