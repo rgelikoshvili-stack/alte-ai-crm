@@ -1,6 +1,6 @@
 # Phase 9N Hosted Browser Smoke Result
 
-HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_RETEST
+HOSTED_BROWSER_SMOKE_STATUS=PENDING_REDEPLOY_AND_MANUAL_RETEST
 
 ## Current State
 
@@ -19,7 +19,10 @@ HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_RETEST
 - next required action: confirm the actual Netlify dashboard URL/site name, ensure deploy status is `Published`, and upload `dist/netlify_test_site_deploy.zip` to the correct Netlify site or configure Git deploy with publish directory `test_site`.
 - actual Netlify origin CORS update: DONE
 - result doc: `docs/deployment/PHASE_9N_ACTUAL_NETLIFY_ORIGIN_CORS_RESULT.md`
-- next required action: manually retest the browser page at `https://nimble-croissant-2f66e8.netlify.app`; do not enter phone/email/contact details.
+- session/start payload issue found: browser request reached backend but returned `422`.
+- frontend payload fix prepared: `channel` now uses backend-compatible `website_chat`.
+- payload fix result: `docs/deployment/PHASE_9N_TEST_WIDGET_SESSION_PAYLOAD_FIX_RESULT.md`
+- next required action: redeploy Netlify package `dist/netlify_test_site_deploy.zip`, then manually retest the browser page at `https://nimble-croissant-2f66e8.netlify.app`; do not enter phone/email/contact details.
 
 ## Manual Browser Smoke Instructions
 

@@ -1,5 +1,23 @@
 # Next Phases
 
+## Phase 9N-Test: Widget Session Payload Fix Ready
+
+Status: `BACKEND_DEPLOYED_TEST_WIDGET_SESSION_PAYLOAD_FIX_READY_PENDING_NETLIFY_REDEPLOY`
+
+- Netlify page loads and the Safe Pro Sidebar widget is visible.
+- CORS is fixed for `https://nimble-croissant-2f66e8.netlify.app`.
+- Browser reached `/chat/session/start`, but backend returned `422`.
+- Root cause: widget sent `channel: "website"` while backend requires `channel: "website_chat"`.
+- Frontend payload fix is prepared.
+- Session payload smoke passed `2/2`.
+- Updated deploy package: `dist/netlify_test_site_deploy.zip`.
+- Netlify redeploy required: YES.
+- Browser smoke remains pending and is not marked passed.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: redeploy `dist/netlify_test_site_deploy.zip` to Netlify, then manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+
 ## Phase 9N-CORS-Actual-Netlify-Origin: CORS Ready
 
 Status: `BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST`

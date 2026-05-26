@@ -26,8 +26,8 @@ NETLIFY_DEPLOY_README_GEO.md
 | --- | --- |
 | `index.html` | `AEFA1E9905512D4695E05D1670DBD547BF9E7D2EC9BC1E1E3B346B5C4DA269DF` |
 | `join.html` | `4EFE66F37F519FA332DC34C3F319ACE0E3F8379EA811F343F48298668C3545BC` |
-| `alte-ai-chat-widget.js` | `167485C9EA5406D449DB189EA4EE3292CA5664D2BFDA76DE8E742D02EFCE0332` |
-| `alte-ai-chat-widget.html` | `DC1E8DF7162028A464E98ECA513A20A5E0B4A81E8AB06203629DC3CFD708747A` |
+| `alte-ai-chat-widget.js` | `7E211D8302C2D0D960DC1739E7113A03849BCA6739EAB64E32532241533849BE` |
+| `alte-ai-chat-widget.html` | `2C750E566DDEDCD22BD0D53DA6F22F091503ABB8BCB088CE33C1395C453BD79C` |
 | `_redirects` | `47B45ECD4353A1E0921A7AD8E8B9B4A7CC8F77D5760B0B61EC6DB0703AE1F465` |
 
 ## Safety Scan
@@ -39,6 +39,8 @@ NETLIFY_DEPLOY_README_GEO.md
   `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
 - `/chat/session/start` present.
 - `/chat/message` present.
+- `/chat/session/start` 422 payload fix included:
+  session start now sends `channel: "website_chat"` to match backend schema.
 
 ## Deployment Status
 

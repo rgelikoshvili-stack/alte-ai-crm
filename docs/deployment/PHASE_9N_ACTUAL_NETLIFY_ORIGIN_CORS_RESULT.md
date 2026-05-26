@@ -62,9 +62,11 @@ Result:
 
 ## Hosted Browser Smoke
 
-- hosted browser smoke status: `CORS_READY_PENDING_MANUAL_BROWSER_RETEST`
+- hosted browser smoke status: `PENDING_REDEPLOY_AND_MANUAL_RETEST`
 - Manual browser retest must use:
   `https://nimble-croissant-2f66e8.netlify.app`
+- CORS issue is fixed and the widget is visible, but `/chat/session/start` returned `422` before this payload fix.
+- Frontend session payload fix is prepared; Netlify redeploy is required before browser retest.
 - Browser smoke is not marked passed yet.
 
 ## Safety Confirmation

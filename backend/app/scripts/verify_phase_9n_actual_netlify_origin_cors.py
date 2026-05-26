@@ -23,7 +23,9 @@ PUBLIC_LAUNCH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9P_PUBLIC_LAUNCH_D
 ACTUAL_ORIGIN = "https://nimble-croissant-2f66e8.netlify.app"
 STATUS = "PHASE_9N_ACTUAL_NETLIFY_ORIGIN_CORS_STATUS=READY_PENDING_MANUAL_BROWSER_RETEST"
 HOSTED_STATUS = "HOSTED_BROWSER_SMOKE_STATUS=CORS_READY_PENDING_MANUAL_BROWSER_RETEST"
+PAYLOAD_FIX_HOSTED_STATUS = "HOSTED_BROWSER_SMOKE_STATUS=PENDING_REDEPLOY_AND_MANUAL_RETEST"
 DECISION_STATE = "BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST"
+PAYLOAD_FIX_DECISION_STATE = "BACKEND_DEPLOYED_TEST_WIDGET_SESSION_PAYLOAD_FIX_READY_PENDING_NETLIFY_REDEPLOY"
 
 DOCS = [RESULT_DOC, HOSTED_SMOKE, README, NEXT_PHASES, READINESS, FINAL_PREFLIGHT, PUBLIC_LAUNCH]
 
@@ -59,12 +61,12 @@ def result_records_status() -> Check:
 
 def hosted_smoke_pending() -> Check:
     text = read(HOSTED_SMOKE)
-    return Check("Hosted browser smoke pending retest", HOSTED_STATUS in text)
+    return Check("Hosted browser smoke pending retest", HOSTED_STATUS in text or PAYLOAD_FIX_HOSTED_STATUS in text)
 
 
 def docs_record_decision_state() -> Check:
     text = "\n".join(read(path) for path in DOCS)
-    return Check("Docs record actual Netlify CORS decision state", DECISION_STATE in text)
+    return Check("Docs record actual Netlify CORS decision state", DECISION_STATE in text or PAYLOAD_FIX_DECISION_STATE in text)
 
 
 def cors_smoke_script_contains_origin() -> Check:

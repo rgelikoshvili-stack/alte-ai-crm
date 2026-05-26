@@ -519,8 +519,7 @@
           body: JSON.stringify({
             source_domain: cfg.sourceDomain || "alte.edu.ge",
             language: lang,
-            channel: "website",
-            widget_variant: "safe_pro_sidebar"
+            channel: "website_chat"
           })
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -531,9 +530,11 @@
         if (conversationId) localStorage.setItem(storage.conversationId, conversationId);
         setBusy(false, TXT[lang].online);
         return true;
-      } catch (_) {
+      } catch (error) {
+        const statusMatch = error && error.message ? String(error.message).match(/HTTP\s+(\d+)/) : null;
+        console.warn("Chat session start failed", { status: statusMatch ? statusMatch[1] : "network_or_validation" });
         setBusy(false, "Backend unavailable");
-        addBotMsg(esc(TXT[lang].error));
+        addBotMsg(esc(lang === "ka" ? "სესიის დაწყება ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით." : "Could not start the chat session. Please try again later."));
         return false;
       }
     }

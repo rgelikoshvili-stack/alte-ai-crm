@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9N actual Netlify origin CORS ready, pending manual browser retest.
+Current status: Phase 9N test widget session payload fix ready, pending Netlify redeploy.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. A separate Netlify test site is deployed at `https://nimble-croissant-2f66e8.netlify.app`; production CORS now allows that exact origin and safe no-contact API smokes passed. Hosted browser smoke still needs manual retest. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the Safe Pro widget package is prepared. A separate Netlify test site is deployed at `https://nimble-croissant-2f66e8.netlify.app`; production CORS allows that exact origin and safe no-contact API smokes passed. The hosted widget reached `/chat/session/start` but returned `422`; the frontend payload has been fixed and the Netlify deploy package must be redeployed before manual browser retest. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST
+BACKEND_DEPLOYED_TEST_WIDGET_SESSION_PAYLOAD_FIX_READY_PENDING_NETLIFY_REDEPLOY
 ```
 
 Checkpoint docs:
@@ -35,6 +35,7 @@ python -m app.scripts.verify_phase_9n_cors_test_origin_plan
 python -m app.scripts.verify_phase_9n_cors_test_origin_execution
 python -m app.scripts.verify_phase_9n_netlify_test_site_fix
 python -m app.scripts.verify_phase_9n_actual_netlify_origin_cors
+python -m app.scripts.verify_phase_9n_test_widget_session_payload_fix
 ```
 
 Local package:
