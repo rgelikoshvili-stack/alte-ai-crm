@@ -66,6 +66,27 @@ def test_auth_required_blocks_operator_endpoint_without_token(client, monkeypatc
         get_settings.cache_clear()
 
 
+def test_auth_required_allows_cors_preflight_for_protected_endpoint(client, monkeypatch):
+    monkeypatch.setenv("AUTH_REQUIRED", "true")
+    monkeypatch.setenv("CORS_ORIGINS", "http://127.0.0.1:5173")
+    get_settings.cache_clear()
+    try:
+        response = client.options(
+            "/dashboard/overview",
+            headers={
+                "Origin": "http://127.0.0.1:5173",
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "authorization,content-type",
+            },
+        )
+        assert response.status_code == 200
+        assert response.headers.get("access-control-allow-origin") == "http://127.0.0.1:5173"
+    finally:
+        monkeypatch.setenv("AUTH_REQUIRED", "false")
+        monkeypatch.delenv("CORS_ORIGINS", raising=False)
+        get_settings.cache_clear()
+
+
 def test_auth_required_allows_admin_token_for_operator_endpoint(client, monkeypatch):
     monkeypatch.setenv("AUTH_REQUIRED", "true")
     get_settings.cache_clear()

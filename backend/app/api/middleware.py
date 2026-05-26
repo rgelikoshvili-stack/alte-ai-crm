@@ -20,6 +20,9 @@ async def correlation_middleware(request: Request, call_next):
 
 async def auth_rbac_middleware(request: Request, call_next):
     settings = get_settings()
+    if request.method.upper() == "OPTIONS":
+        return await call_next(request)
+
     if not settings.AUTH_REQUIRED or is_public_path(request.url.path):
         return await call_next(request)
 
@@ -41,4 +44,3 @@ async def auth_rbac_middleware(request: Request, call_next):
     request.state.role = role
     request.state.authenticated = True
     return await call_next(request)
-
