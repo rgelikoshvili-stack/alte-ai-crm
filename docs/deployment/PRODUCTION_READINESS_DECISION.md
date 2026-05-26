@@ -542,3 +542,16 @@ BACKEND_DEPLOYED_SAFE_PRO_WIDGET_CANDIDATE_READY_PENDING_REVIEW_AND_SITE_EMBED
 ```
 
 Public launch remains blocked until human reviewer decisions, official content approval, privacy/data approval, final widget asset URL, actual site embed, real-domain browser smoke, and explicit launch approval are completed.
+## Phase 9Q Pro v2 Safe Widget Status
+
+- Backend remains deployed and unchanged.
+- Safe Pro v2 frontend package is ready for Netlify redeploy.
+- Hosted browser smoke is pending manual retest.
+- Real Alte site is not modified.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

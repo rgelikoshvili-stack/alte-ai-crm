@@ -5,13 +5,17 @@
   var assetBase = config.assetBaseUrl || "https://alte.edu.ge/assets";
   var widgetUrl = config.widgetHtmlUrl || assetBase.replace(/\/$/, "") + "/alte-ai-chat-widget.html";
   var containerId = config.containerId || "alte-ai-chat-widget-container";
+  var requiredBackendEndpoints = ["/chat/session/start", "/chat/message"];
+  var sessionStartPayloadFields = ["source_domain", "language", "channel", "widget_variant"];
+  var messagePayloadFields = ["selected_department", "selected_topic"];
 
   function publicConfigScript() {
     var publicConfig = {
       apiBaseUrl: config.apiBaseUrl || "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
       sourceDomain: config.sourceDomain || "alte.edu.ge",
       defaultLanguage: config.defaultLanguage || "ka",
-      widgetVariant: config.widgetVariant || "safe_pro_sidebar"
+      widgetVariant: config.widgetVariant || "pro_v2_safe",
+      mode: config.mode || "production"
     };
     return "<script>window.AlteChatWidgetConfig=" + JSON.stringify(publicConfig).replace(/</g, "\\u003c") + ";<\/script>";
   }
@@ -20,7 +24,7 @@
     var existing = document.getElementById(containerId);
     var container = existing || document.createElement("div");
     container.id = containerId;
-    container.setAttribute("data-alte-widget-variant", config.widgetVariant || "safe_pro_sidebar");
+    container.setAttribute("data-alte-widget-variant", config.widgetVariant || "pro_v2_safe");
     if (!existing) {
       document.body.appendChild(container);
     }

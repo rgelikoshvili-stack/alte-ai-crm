@@ -402,3 +402,16 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS
 ```
+## Phase 9Q Pro v2 Safe Widget Gate
+
+- Pro v2 safe widget adaptation: READY
+- Netlify redeploy: PENDING
+- Hosted browser retest: PENDING
+- Real Alte site embed: NOT_EXECUTED
+- Public launch: NO-GO
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

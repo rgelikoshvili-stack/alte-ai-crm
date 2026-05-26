@@ -82,3 +82,16 @@ Result:
 - production DB change: NO
 - Secret Manager change: NO
 - wildcard CORS: NO
+
+## Phase 9Q Pro v2 Safe Widget Update
+
+- Actual Netlify origin CORS remains ready.
+- Safe Pro v2 frontend package has been prepared locally.
+- Netlify redeploy is required before hosted browser retest.
+- Hosted browser smoke is not marked passed.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

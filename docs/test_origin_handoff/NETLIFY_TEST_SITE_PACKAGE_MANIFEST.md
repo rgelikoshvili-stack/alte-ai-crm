@@ -24,10 +24,10 @@ NETLIFY_DEPLOY_README_GEO.md
 
 | File | SHA256 |
 | --- | --- |
-| `index.html` | `AEFA1E9905512D4695E05D1670DBD547BF9E7D2EC9BC1E1E3B346B5C4DA269DF` |
-| `join.html` | `4EFE66F37F519FA332DC34C3F319ACE0E3F8379EA811F343F48298668C3545BC` |
-| `alte-ai-chat-widget.js` | `7E211D8302C2D0D960DC1739E7113A03849BCA6739EAB64E32532241533849BE` |
-| `alte-ai-chat-widget.html` | `2C750E566DDEDCD22BD0D53DA6F22F091503ABB8BCB088CE33C1395C453BD79C` |
+| `index.html` | `73CDE2CC2D9A9542D2DFFB97D573E9FBD372F598802E14A0F0E0A87E0F77E963` |
+| `join.html` | `A9DD4B365D4F19EDDBAB47292F712F41B171A8AF40781E4B1ED37626663A1F08` |
+| `alte-ai-chat-widget.js` | `0FBFA48F0F7424BFA5CDB7D3F8126475694AC48976F62A0278F5E4B8700314F2` |
+| `alte-ai-chat-widget.html` | `3D4C33CBC6D6615DCECDE0823BE52860CAFDFD4C8232D5E02C3E9F888ADA1465` |
 | `_redirects` | `47B45ECD4353A1E0921A7AD8E8B9B4A7CC8F77D5760B0B61EC6DB0703AE1F465` |
 
 ## Safety Scan
@@ -41,6 +41,8 @@ NETLIFY_DEPLOY_README_GEO.md
 - `/chat/message` present.
 - `/chat/session/start` 422 payload fix included:
   session start now sends `channel: "website_chat"` to match backend schema.
+- Pro v2 safe widget adaptation included:
+  `widget_variant` defaults to `pro_v2_safe` and the test package includes the updated Pro v2 safe HTML.
 
 ## Deployment Status
 

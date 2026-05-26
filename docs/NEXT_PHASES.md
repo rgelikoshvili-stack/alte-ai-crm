@@ -1055,3 +1055,17 @@ Still pending:
 - Explicit public launch approval.
 
 Decision state: `BACKEND_DEPLOYED_FINAL_PRE_EMBED_GATE_READY_NO_GO_PENDING_APPROVALS`
+
+## Phase 9Q Next Step
+
+- Redeploy `dist/netlify_test_site_deploy.zip` to Netlify.
+- Open `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+- Confirm the safe Pro v2 widget loads and sends messages with no console errors.
+- Do not enter phone/email/contact details during smoke.
+- Real Alte site embed and public launch remain blocked.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

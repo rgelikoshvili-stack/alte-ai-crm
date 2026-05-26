@@ -1766,3 +1766,18 @@ Phase 9K fixes were deployed to Cloud Run.
 - No intentional production lead/task/customer creation was performed.
 
 Public launch remains `NOT_COMPLETE`; actual site embed remains blocked pending final approvals.
+
+## Phase 9Q Pro v2 Safe Widget
+
+- Safe Pro v2 widget adaptation is prepared locally.
+- Final widget: `widget/alte-ai-chatbot-pro-v2-safe.html`
+- Deploy JS: `dist/widget/alte-ai-chat-widget.js`
+- Netlify ZIP: `dist/netlify_test_site_deploy.zip`
+- Browser smoke is pending Netlify redeploy and manual retest.
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

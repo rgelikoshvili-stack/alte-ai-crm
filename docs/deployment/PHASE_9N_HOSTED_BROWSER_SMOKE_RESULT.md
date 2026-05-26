@@ -49,3 +49,15 @@ HOSTED_BROWSER_SMOKE_STATUS=PENDING_REDEPLOY_AND_MANUAL_RETEST
 - no intentional lead/task/customer creation.
 
 Do not mark hosted browser smoke passed until the temporary origin is hosted and the browser checklist passes.
+
+## Phase 9Q Pro v2 Update
+
+- The hosted test package now contains the safe Pro v2 widget adaptation.
+- Netlify redeploy is required before the browser can show the updated Pro v2 safe UI.
+- Browser smoke remains pending and must not be marked passed until manual retest confirms the new widget works.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```

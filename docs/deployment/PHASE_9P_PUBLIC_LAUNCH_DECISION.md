@@ -69,3 +69,17 @@ Decision state:
 ```text
 BACKEND_DEPLOYED_ACTUAL_NETLIFY_ORIGIN_CORS_READY_PENDING_BROWSER_RETEST
 ```
+
+## Phase 9Q Pro v2 Safe Widget Update
+
+- Safe Pro v2 widget adaptation: READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+- Final widget path: `widget/alte-ai-chatbot-pro-v2-safe.html`
+- Netlify package path: `dist/netlify_test_site_deploy.zip`
+- Real Alte site modified: NO
+- Public launch remains NO-GO.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_SAFE_WIDGET_READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+```
