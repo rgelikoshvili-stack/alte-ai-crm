@@ -1,5 +1,21 @@
 # Next Phases
 
+## Phase 9S: Pro v2 Frontend Event Binding Fix Ready
+
+Status: `BACKEND_DEPLOYED_PRO_V2_EVENT_BINDING_FIXED_PENDING_NETLIFY_REDEPLOY`
+
+- Netlify Pro v2 shell loads, but hosted browser testing found a frontend initialization crash on `addEventListener`.
+- Root cause: `cw-attach` and `cw-voice` existed in DOM but were missing from the widget element map; direct event bindings had no missing-target guard.
+- Fix prepared: `attach`/`voice` are mapped and controls now bind through the safe `on(selectorOrElement, event, handler, options)` helper.
+- Backend-only integration remains unchanged: `/chat/session/start`, `/chat/message`, `website_chat`, `pro_v2_safe`, `selected_department`, and `selected_topic`.
+- Updated deploy package: `dist/netlify_test_site_deploy.zip`.
+- Netlify redeploy required: YES.
+- Browser smoke remains pending and is not marked passed.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: redeploy `dist/netlify_test_site_deploy.zip` to Netlify, then manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+
 ## Phase 9N-Test: Widget Session Payload Fix Ready
 
 Status: `BACKEND_DEPLOYED_TEST_WIDGET_SESSION_PAYLOAD_FIX_READY_PENDING_NETLIFY_REDEPLOY`

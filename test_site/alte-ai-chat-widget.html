@@ -400,7 +400,7 @@
       const el = {
         win: document.getElementById("cw-win"), backdrop: document.getElementById("cw-backdrop"), launch: document.getElementById("cw-launch"),
         side: document.getElementById("cw-side"), sideToggle: document.getElementById("cw-side-toggle"), nav: document.getElementById("cw-nav"),
-        msgs: document.getElementById("cw-msgs"), form: document.getElementById("cw-form"), input: document.getElementById("cw-input"), inputBox: document.getElementById("cw-input-box"), send: document.getElementById("cw-send"),
+        msgs: document.getElementById("cw-msgs"), form: document.getElementById("cw-form"), input: document.getElementById("cw-input"), inputBox: document.getElementById("cw-input-box"), send: document.getElementById("cw-send"), attach: document.getElementById("cw-attach"), voice: document.getElementById("cw-voice"),
         ka: document.getElementById("cw-lang-ka"), en: document.getElementById("cw-lang-en"), newChat: document.getElementById("cw-new"), settings: document.getElementById("cw-settings"), expand: document.getElementById("cw-expand"), close: document.getElementById("cw-close"),
         title: document.getElementById("cw-title"), status: document.getElementById("cw-status"), trust: document.getElementById("cw-trust"), brandSub: document.getElementById("cw-brand-sub"), you: document.getElementById("cw-you"), role: document.getElementById("cw-role"), userInitial: document.getElementById("cw-user-initial"),
         composerHint: document.getElementById("cw-composer-hint"), verified: document.getElementById("cw-verified"), toast: document.getElementById("cw-toast"),
@@ -409,6 +409,17 @@
         settingsTitle: document.getElementById("cw-settings-title"), settingsSub: document.getElementById("cw-settings-sub"), settingsLang: document.getElementById("cw-settings-lang"), settingsExp: document.getElementById("cw-settings-exp"), settingsPrivacy: document.getElementById("cw-settings-privacy"),
         optSources: document.getElementById("cw-opt-sources"), optSourcesSub: document.getElementById("cw-opt-sources-sub"), optNotify: document.getElementById("cw-opt-notify"), optNotifySub: document.getElementById("cw-opt-notify-sub"), optDark: document.getElementById("cw-opt-dark"), optDarkSub: document.getElementById("cw-opt-dark-sub"), optClear: document.getElementById("cw-opt-clear"), optClearSub: document.getElementById("cw-opt-clear-sub"), privacyLink: document.getElementById("cw-privacy-link")
       };
+      function on(selectorOrElement, event, handler, options) {
+        const target = typeof selectorOrElement === "string"
+          ? document.querySelector(selectorOrElement)
+          : selectorOrElement;
+        if (!target || typeof target.addEventListener !== "function") {
+          console.warn("[AlteChatWidget] missing event target", selectorOrElement);
+          return false;
+        }
+        target.addEventListener(event, handler, options);
+        return true;
+      }
       function S() { return strings[lang]; }
       function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
       function md(text) {
@@ -481,7 +492,7 @@
           btn.type = "button";
           btn.className = "item" + (d.id === activeDept ? " on" : "");
           btn.innerHTML = `<span class="ic">${icons[d.id] || "•"}</span><span class="item-text">${esc(lang === "KA" ? d.kaShort || d.ka : d.enShort || d.en)}</span>${d.badge ? `<span class="badge">${esc(d.badge)}</span>` : ""}`;
-          btn.addEventListener("click", () => {
+          on(btn, "click", () => {
             activeDept = d.id;
             activeTopic = d.topic;
             renderNav();
@@ -493,7 +504,7 @@
         human.type = "button";
         human.className = "item human" + (activeDept === "human_operator" ? " on" : "");
         human.innerHTML = `<span class="ic">${icons.human_operator}</span><span class="item-text">${esc(S().liveOperator)}</span>`;
-        human.addEventListener("click", () => {
+        on(human, "click", () => {
           activeDept = "human_operator";
           activeTopic = "human_operator";
           renderNav();
@@ -512,8 +523,8 @@
           <div class="cw-hint">${esc(lang === "KA" ? "ან აირჩიე ქვემოთ მოცემული კითხვებიდან" : "Or pick a question below")}</div>
           <div class="cw-chips">${S().quickReplies.map(q => `<button class="cw-chip" type="button" data-topic="${esc(q.topic)}" data-text="${esc(q.text)}"><span class="em">${esc(q.emoji)}</span><span>${esc(q.text)}</span></button>`).join("")}</div>`;
         el.msgs.appendChild(row);
-        row.querySelector("#cw-feat").addEventListener("click", () => sendMessage(S().quickReplies[2].text, S().quickReplies[2].topic));
-        row.querySelectorAll(".cw-chip").forEach(btn => btn.addEventListener("click", () => sendMessage(btn.getAttribute("data-text"), btn.getAttribute("data-topic"))));
+        on(row.querySelector("#cw-feat"), "click", () => sendMessage(S().quickReplies[2].text, S().quickReplies[2].topic));
+        row.querySelectorAll(".cw-chip").forEach(btn => on(btn, "click", () => sendMessage(btn.getAttribute("data-text"), btn.getAttribute("data-topic"))));
       }
       function scrollBottom() { el.msgs.scrollTop = el.msgs.scrollHeight; }
       function addRow(role, html, extras) {
@@ -553,8 +564,8 @@
         const row = document.createElement("div");
         row.className = "cw-row";
         row.innerHTML = `<div class="cw-av">A</div><div class="cw-bub-wrap" style="max-width:92%"><div class="cw-handover" data-renderer="operator handover renderer"><div class="h"><div class="ic">☏</div>${esc(S().handoverTitle)}</div><div class="dept-pill">${esc(deptLabel(normalizeDept(dept)))}</div><div class="note">${esc(S().handoverNote)}</div><div class="acts"><button class="cw-btn-p" type="button">${esc(S().handoverYes)}</button><button class="cw-btn-s" type="button">${esc(S().handoverNo)}</button></div></div></div>`;
-        row.querySelector(".cw-btn-p").addEventListener("click", () => showToast(S().contactNote));
-        row.querySelector(".cw-btn-s").addEventListener("click", () => showToast(lang === "KA" ? "კარგი, დაველოდებით." : "OK, we will wait."));
+        on(row.querySelector(".cw-btn-p"), "click", () => showToast(S().contactNote));
+        on(row.querySelector(".cw-btn-s"), "click", () => showToast(lang === "KA" ? "კარგი, დაველოდებით." : "OK, we will wait."));
         el.msgs.appendChild(row);
         scrollBottom();
       }
@@ -683,32 +694,32 @@
         el.sideToggle.textContent = el.side.classList.contains("collapsed") ? "›" : "‹";
       }
       function toggleSettings() { el.modal.classList.toggle("cw-hidden"); }
-      el.form.addEventListener("submit", ev => { ev.preventDefault(); sendMessage(); });
-      el.input.addEventListener("input", resizeInput);
-      el.input.addEventListener("focus", () => el.inputBox.classList.add("focus"));
-      el.input.addEventListener("blur", () => el.inputBox.classList.remove("focus"));
-      el.input.addEventListener("keydown", ev => {
+      on(el.form, "submit", ev => { ev.preventDefault(); sendMessage(); });
+      on(el.input, "input", resizeInput);
+      on(el.input, "focus", () => el.inputBox && el.inputBox.classList.add("focus"));
+      on(el.input, "blur", () => el.inputBox && el.inputBox.classList.remove("focus"));
+      on(el.input, "keydown", ev => {
         if (ev.key === "Enter" && !ev.shiftKey) {
           ev.preventDefault();
           sendMessage();
         }
       });
-      el.attach.addEventListener("click", () => showToast(S().disabled));
-      el.voice.addEventListener("click", () => showToast(S().disabled));
-      el.ka.addEventListener("click", () => setLanguage("KA"));
-      el.en.addEventListener("click", () => setLanguage("EN"));
-      el.settingsKa.addEventListener("click", () => setLanguage("KA"));
-      el.settingsEn.addEventListener("click", () => setLanguage("EN"));
-      el.newChat.addEventListener("click", resetChat);
-      el.settings.addEventListener("click", toggleSettings);
-      el.modalClose.addEventListener("click", toggleSettings);
-      el.modal.addEventListener("click", ev => { if (ev.target === el.modal) toggleSettings(); });
-      el.clear.addEventListener("click", () => { resetChat(); toggleSettings(); });
-      el.expand.addEventListener("click", toggleExpanded);
-      el.close.addEventListener("click", closeWidget);
-      el.launch.addEventListener("click", openWidget);
-      el.backdrop.addEventListener("click", toggleExpanded);
-      el.sideToggle.addEventListener("click", toggleSidebar);
+      on(el.attach, "click", () => showToast(S().disabled));
+      on(el.voice, "click", () => showToast(S().disabled));
+      on(el.ka, "click", () => setLanguage("KA"));
+      on(el.en, "click", () => setLanguage("EN"));
+      on(el.settingsKa, "click", () => setLanguage("KA"));
+      on(el.settingsEn, "click", () => setLanguage("EN"));
+      on(el.newChat, "click", resetChat);
+      on(el.settings, "click", toggleSettings);
+      on(el.modalClose, "click", toggleSettings);
+      on(el.modal, "click", ev => { if (ev.target === el.modal) toggleSettings(); });
+      on(el.clear, "click", () => { resetChat(); toggleSettings(); });
+      on(el.expand, "click", toggleExpanded);
+      on(el.close, "click", closeWidget);
+      on(el.launch, "click", openWidget);
+      on(el.backdrop, "click", toggleExpanded);
+      on(el.sideToggle, "click", toggleSidebar);
       renderStatic();
       renderGreeting();
     })();

@@ -23,6 +23,9 @@ HOSTED_BROWSER_SMOKE_STATUS=PENDING_REDEPLOY_AND_MANUAL_RETEST
 - frontend payload fix prepared: `channel` now uses backend-compatible `website_chat`.
 - payload fix result: `docs/deployment/PHASE_9N_TEST_WIDGET_SESSION_PAYLOAD_FIX_RESULT.md`
 - next required action: redeploy Netlify package `dist/netlify_test_site_deploy.zip`, then manually retest the browser page at `https://nimble-croissant-2f66e8.netlify.app`; do not enter phone/email/contact details.
+- frontend event binding issue found: Pro v2 shell rendered, but initialization stopped on `addEventListener` for a missing mapped control.
+- frontend event binding fix prepared: `cw-attach`/`cw-voice` are mapped and event binding is guarded with `on(...)`.
+- event binding fix result: `docs/deployment/PHASE_9S_FRONTEND_EVENT_BINDING_FIX_RESULT.md`
 
 ## Manual Browser Smoke Instructions
 
@@ -86,4 +89,16 @@ Decision state:
 
 ```text
 BACKEND_DEPLOYED_EXACT_ZIP_SOURCE_PRO_V2_WIDGET_READY_PENDING_NETLIFY_REDEPLOY
+```
+
+## Phase 9S Event Binding Fix Update
+
+- The Pro v2 initialization crash from unguarded `addEventListener` binding has been fixed locally.
+- Netlify package was rebuilt and requires redeploy.
+- Hosted browser smoke remains pending until manual retest confirms the chat body renders and controls work.
+
+Decision state:
+
+```text
+BACKEND_DEPLOYED_PRO_V2_EVENT_BINDING_FIXED_PENDING_NETLIFY_REDEPLOY
 ```
