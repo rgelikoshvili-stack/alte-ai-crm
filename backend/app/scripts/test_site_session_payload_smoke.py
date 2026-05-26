@@ -36,11 +36,6 @@ def build_session_payload(case: dict[str, str]) -> dict[str, object]:
         "source_domain": case["source_domain"],
         "language": case["language"],
         "channel": "website_chat",
-        "widget_variant": "safe_pro_sidebar",
-        "metadata": {
-            "mode": case["mode"],
-            "page_url": f"https://{case['source_domain']}/test-site",
-        },
     }
 
 
