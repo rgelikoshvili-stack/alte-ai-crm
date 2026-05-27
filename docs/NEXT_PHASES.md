@@ -2,7 +2,7 @@
 
 ## Phase 9Z: Chatbot Required Alte Knowledge Package Ready
 
-Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_APPLY`
+Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_APPLIED_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL`
 
 - Required student/applicant-facing Alte documents were selected from the local `alte_documents` export.
 - Internal-only administrative documents were skipped unless directly useful for chatbot users.
@@ -16,11 +16,14 @@ Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_AP
 - Dry-run apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`.
 - Smoke question bank: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_smoke_questions.jsonl`.
 - Review summary: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_review_summary.md`.
-- Production DB modified: NO.
-- DB apply run: NO.
+- Production DB modified: YES - Knowledge Base source/snippet records only.
+- DB apply run: YES, using `--apply --approve-for-chatbot`.
+- Imported into production Knowledge Base: `433` sources and `433` snippets.
+- Approved for chatbot retrieval: `433`; review-required metadata retained for `360` sensitive/cautious records.
+- Post-apply safe smokes passed: session payload `2/2`, test site API `10/10`, production knowledge `25/25`.
 - Public launch remains NO-GO.
 
-Next required action: review the generated JSONL/Markdown package, then explicitly approve a separate DB apply/import step if the content should become active chatbot knowledge.
+Next required action: run safe chatbot smoke against the production backend/test widget to confirm the newly imported Knowledge Base answers as expected. Public launch and real Alte site embed remain blocked.
 
 ## Phase 9T: Official Alte 8 PDF Knowledge Base Prepared
 

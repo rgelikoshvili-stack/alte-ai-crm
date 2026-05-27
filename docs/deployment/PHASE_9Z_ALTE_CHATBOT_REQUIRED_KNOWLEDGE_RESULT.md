@@ -1,10 +1,10 @@
 # Phase 9Z - Alte Chatbot Required Knowledge Package
 
-PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_STATUS=READY_PENDING_REVIEW_AND_DB_APPLY
+PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_STATUS=APPLIED_TO_PRODUCTION_KB_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL
 
 Decision state:
 
-BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_APPLY
+BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_APPLIED_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL
 
 ## Source
 
@@ -64,11 +64,26 @@ The generated package includes chatbot-ready Georgian Q&A records from the requi
 - Duplicate content skipped: `6`
 - Direct internal-only administrative documents skipped where they were not student/applicant-facing
 - Dry-run apply result: PASS
+- Production apply result: PASS
+- Production apply mode: `--apply --approve-for-chatbot`
+- Created sources: `433`
+- Created snippets: `433`
+- Re-approval update after user approval: `433` sources and `433` snippets updated to `approved` for chatbot retrieval
+- Review-required metadata retained: `360`
+- Approved for chatbot retrieval: `433`
+- Post-apply session payload smoke: PASS `2/2`
+- Post-apply test site API smoke: PASS `10/10`
+- Post-apply production knowledge smoke: PASS `25/25`
+- Post-apply smoke warning: one IT-support case returned `should_create_lead=true` without contact details, but no customer/lead/task record was created
 
 ## Safety
 
-- Production DB modified: NO
-- `--apply run: NO`
+- Production DB modified: YES - Knowledge Base source/snippet records only
+- `--apply run: YES`
+- Lead/task/customer creation: NO
+- Contact details sent in smoke: NO
+- Contact-flow test run: NO
+- Migration/seed run: NO
 - Cloud Run deploy: NO
 - CORS change: NO
 - Secret Manager change: NO
@@ -79,4 +94,4 @@ The generated package includes chatbot-ready Georgian Q&A records from the requi
 
 ## Next Step
 
-Before DB import, the generated JSONL/Markdown should be reviewed for official wording, sensitive policy handling, and department routing. After review, a separate explicit approval is required to create or run a DB apply step.
+The user approved direct use of the official extracted document content. The package was applied to production Knowledge Base tables only. Sensitive records retain review-required metadata and conservative answer text, but are approved for chatbot retrieval. Public launch remains NO-GO until website/privacy/embed/smoke approvals are complete.

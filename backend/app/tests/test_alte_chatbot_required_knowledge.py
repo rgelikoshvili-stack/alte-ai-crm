@@ -98,5 +98,7 @@ def test_alte_chatbot_required_knowledge_smoke_questions_cover_core_topics():
 def test_alte_chatbot_required_knowledge_apply_script_defaults_to_dry_run_text():
     script_text = (PROJECT_ROOT / "backend" / "app" / "scripts" / "apply_alte_chatbot_required_knowledge.py").read_text(encoding="utf-8")
     assert "--apply" in script_text
+    assert "--approve-for-chatbot" in script_text
     assert "dry-run" in script_text
     assert '"would_write": False' in script_text
+    assert "approve_for_chatbot" in script_text

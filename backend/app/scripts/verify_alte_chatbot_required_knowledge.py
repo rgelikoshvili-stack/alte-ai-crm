@@ -136,11 +136,12 @@ def run_checks() -> dict:
 
     result_text = RESULT_PATH.read_text(encoding="utf-8")
     require(
-        "PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_STATUS=READY_PENDING_REVIEW_AND_DB_APPLY" in result_text,
+        "PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_STATUS=APPLIED_TO_PRODUCTION_KB_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL" in result_text,
         "Result status missing or incorrect",
     )
-    require("Production DB modified: NO" in result_text, "Result must record no production DB modification")
-    require("--apply run: NO" in result_text, "Result must record apply was not run")
+    require("Production DB modified: YES - Knowledge Base source/snippet records only" in result_text, "Result must record scoped production DB modification")
+    require("--apply run: YES" in result_text, "Result must record apply was run")
+    require("Approved for chatbot retrieval: `433`" in result_text, "Result must record chatbot retrieval approval")
     require("Dry-run apply result: PASS" in result_text, "Result must record dry-run apply passed")
 
     docs_text = "\n".join(
@@ -154,7 +155,7 @@ def run_checks() -> dict:
         if path.exists()
     )
     require(
-        "BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_APPLY" in docs_text,
+        "BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_APPLIED_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL" in docs_text,
         "Decision state missing from status docs",
     )
     require("PUBLIC_LAUNCH_DECISION=GO_APPROVED_FOR_PUBLIC_LAUNCH" not in docs_text, "Public launch must not be GO")

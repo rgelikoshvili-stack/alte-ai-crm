@@ -48,7 +48,7 @@ def summarize(rows: list[dict]) -> dict:
     }
 
 
-async def apply_rows(rows: list[dict]) -> dict:
+async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> dict:
     from sqlalchemy import select
 
     from app.core.database import AsyncSessionLocal
@@ -56,6 +56,7 @@ async def apply_rows(rows: list[dict]) -> dict:
 
     created_sources = 0
     created_snippets = 0
+    updated_sources = 0
     updated_snippets = 0
     async with AsyncSessionLocal() as db:
         for row in rows:
@@ -63,12 +64,13 @@ async def apply_rows(rows: list[dict]) -> dict:
             review_required = review_required_for(row)
             sensitivity = sensitivity_for(row)
             source = await db.scalar(select(KnowledgeSource).where(KnowledgeSource.source_key == source_key))
+            status = "approved" if approve_for_chatbot or not review_required else "draft"
             if source is None:
                 source = KnowledgeSource(
                     source_key=source_key,
                     title=row["source_title"][:255],
                     source_type="alte_chatbot_required_document",
-                    status="draft" if review_required else "approved",
+                    status=status,
                     language=row["language"],
                     source_url=row.get("source_url"),
                     source_domain="alte_chatbot_required_knowledge",
@@ -80,6 +82,12 @@ async def apply_rows(rows: list[dict]) -> dict:
                 db.add(source)
                 await db.flush()
                 created_sources += 1
+            else:
+                source.status = status
+                source.review_required = review_required
+                source.sensitivity = sensitivity
+                source.category = row["topic"][:120]
+                updated_sources += 1
             content = f"კითხვა: {row['question']}\n\nპასუხი: {row['answer']}"
             content_hash = sha256(content.encode("utf-8")).hexdigest()
             snippet = await db.scalar(select(KnowledgeSnippet).where(KnowledgeSnippet.source_key == source_key))
@@ -97,7 +105,7 @@ async def apply_rows(rows: list[dict]) -> dict:
                     content_hash=content_hash,
                     program_name=None,
                     keywords=",".join(row.get("keywords") or []),
-                    status="draft" if review_required else "approved",
+                    status=status,
                     language=row["language"],
                 )
                 db.add(snippet)
@@ -107,14 +115,16 @@ async def apply_rows(rows: list[dict]) -> dict:
                 snippet.content_hash = content_hash
                 snippet.review_required = review_required
                 snippet.sensitivity = sensitivity
-                snippet.status = "draft" if review_required else "approved"
+                snippet.status = status
                 snippet.category = row["topic"][:120]
                 updated_snippets += 1
         await db.commit()
     return {
         "created_sources": created_sources,
+        "updated_sources": updated_sources,
         "created_snippets": created_snippets,
         "updated_snippets": updated_snippets,
+        "approve_for_chatbot": approve_for_chatbot,
     }
 
 
@@ -122,13 +132,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Prepare or apply chatbot-required Alte knowledge.")
     parser.add_argument("--apply", action="store_true", help="Write to Knowledge Base tables. Omit for dry-run.")
     parser.add_argument("--dry-run", action="store_true", help="Dry-run only. This is the default.")
+    parser.add_argument(
+        "--approve-for-chatbot",
+        action="store_true",
+        help=(
+            "Mark imported snippets/sources as approved for chatbot retrieval while preserving "
+            "review_required metadata for sensitive topics."
+        ),
+    )
     args = parser.parse_args()
     rows = load_rows()
     summary = summarize(rows)
     if not args.apply:
         print(json.dumps({"mode": "dry-run", "would_write": False, **summary}, ensure_ascii=False, indent=2))
         return
-    result = asyncio.run(apply_rows(rows))
+    result = asyncio.run(apply_rows(rows, approve_for_chatbot=args.approve_for_chatbot))
     print(json.dumps({"mode": "apply", "would_write": True, **summary, **result}, ensure_ascii=False, indent=2))
 
 
