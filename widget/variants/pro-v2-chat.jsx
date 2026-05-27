@@ -630,12 +630,13 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     return null;
   };
 
-  const requestBackendHandover = useCallback(async (deptId=currentDept) => {
+  const requestBackendHandover = useCallback(async (deptId=currentDept, messageText='') => {
     if (!window.AlteChatBackend?.requestHandover) return null;
     return await window.AlteChatBackend.requestHandover({
       language: lang,
       selected_department: deptId,
       selected_topic: deptId,
+      message: messageText,
     });
   }, [currentDept, lang]);
 
@@ -660,7 +661,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     if (detectIntent(text) === 'handover'){
       setTyping(true);
       try {
-        await requestBackendHandover(currentDept);
+        await requestBackendHandover(currentDept, text);
         setTyping(false);
         setMessages(m => [...m, {
           id:'a'+Date.now(),
@@ -762,12 +763,13 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   };
 
   const startHandover = () => {
+    const requestText = lang==='KA' ? 'გადამამისამართე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
     setMessages(m => [...m, {
       id:'u'+Date.now(),
       role:'user',
-      text: lang==='KA' ? 'გადამამისამართე ცოცხალ ოპერატორთან' : 'Connect me with a live operator',
+      text: requestText,
     }]);
-    requestBackendHandover(currentDept).catch(()=>null).finally(()=>{
+    requestBackendHandover(currentDept, requestText).catch(()=>null).finally(()=>{
       setMessages(m => [...m, {
         id:'a'+Date.now(),
         role:'assistant',

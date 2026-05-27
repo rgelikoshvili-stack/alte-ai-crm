@@ -1,5 +1,21 @@
 # Next Phases
 
+## Phase 9Y: Operator Handover Message Persistence Fix Ready
+
+Status: `BACKEND_OPERATOR_HANDOVER_MESSAGE_FIX_READY_PENDING_NETLIFY_REDEPLOY`
+
+- Production no-contact diagnostic confirmed chatbot handover conversations appear in CRM Inbox.
+- Production diagnostic confirmed operator replies can be returned through chatbot transcript polling for the same session.
+- Root cause of the perceived missing operator message: Pro v2 handover branch called `/chat/handover` but did not persist the local operator request text through `/chat/message`.
+- Fix prepared in the Pro v2 widget and Netlify deploy package.
+- Updated package: `dist/netlify_test_site_deploy.zip`.
+- Netlify redeploy required: YES.
+- Browser retest required: YES.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: redeploy `dist/netlify_test_site_deploy.zip` to Netlify and retest operator request -> CRM Inbox -> operator reply -> chatbot return.
+
 ## Phase 9X: Manual Browser Workflow Package Ready
 
 Status: `BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING`

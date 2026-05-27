@@ -155,6 +155,24 @@
     reset: window.AlteChatBridge._reset,
     requestHandover: async function (context) {
       await ensureSession(normalizeLang(context && context.language));
+      if (context && context.message) {
+        await fetch(BACKEND + "/chat/message", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            conversation_id: _convId,
+            message: context.message,
+            session_id: _sessId,
+            source_domain: SOURCE_DOMAIN,
+            language: normalizeLang(context.language, context.message),
+            selected_department: normalizeDepartment(context.selected_department),
+            selected_topic: context.selected_topic || "operator",
+            page_url: window.location.href,
+            widget_variant: "pro_v2_safe",
+            metadata: { handover_request: true },
+          }),
+        }).catch(function () {});
+      }
       var response = await fetch(BACKEND + "/chat/handover/" + encodeURIComponent(_convId), {
         method: "POST",
         headers: { "content-type": "application/json" },
