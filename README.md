@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9V staging test workflow ready: Netlify chatbot can be tested against production backend while the local operator CRM can switch between Local API and Production API.
+Current status: Phase 9W chatbot function audit passed by automated smoke checks; manual browser workflow remains the next required step.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP includes the Pro v2 HTML and `variants/` source needed for the hosted test page. The local operator CRM now has explicit `Local API` and `Production API` controls so the team can test Netlify chatbot messages and operator replies against the same production backend. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP includes the Pro v2 HTML and `variants/` source needed for the hosted test page. The local operator CRM now has explicit `Local API` and `Production API` controls so the team can test Netlify chatbot messages and operator replies against the same production backend. Automated smoke checks passed for session payload, test site API, CORS, security/reliability, department routing, finance no-contact, knowledge, local operator workflow, and Phase 9T/9U/9V targeted tests. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL
+BACKEND_CHATBOT_FUNCTION_AUDIT_PASSED_PENDING_MANUAL_BROWSER_WORKFLOW
 ```
 
 Checkpoint docs:

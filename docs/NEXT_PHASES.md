@@ -1,5 +1,25 @@
 # Next Phases
 
+## Phase 9W: Chatbot Function Audit Passed
+
+Status: `BACKEND_CHATBOT_FUNCTION_AUDIT_PASSED_PENDING_MANUAL_BROWSER_WORKFLOW`
+
+- Automated session payload smoke passed: `2/2`.
+- Test site API smoke passed: `10/10`.
+- CORS smoke passed: `10/10`.
+- Security/reliability smoke passed: `16/16`.
+- Department routing/sidebar smoke passed: `28/28`.
+- Finance no-contact smoke passed: `24/24`.
+- Knowledge smoke passed: `25/25`.
+- Local operator workflow smoke passed: `5/5`.
+- Phase 9T/9U/9V targeted tests passed: `18`.
+- No frontend direct Anthropic/API-key/secret patterns were found in active widget assets.
+- Operator answers remain draft/review-required knowledge candidates, not automatically approved learning.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: run the manual browser workflow between the Netlify chatbot and local CRM Production API mode, then record whether operator reply returns to the chatbot and whether the knowledge candidate review UI works end to end.
+
 ## Phase 9U: Operator Answer Knowledge Candidates Ready
 
 Status: `BACKEND_LOCAL_OPERATOR_ANSWER_REVIEW_LEARNING_READY_PENDING_UI_REVIEW_AND_APPROVAL`
