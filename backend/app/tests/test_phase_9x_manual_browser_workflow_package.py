@@ -32,10 +32,15 @@ def test_phase_9x_runbook_records_required_browser_flow():
         assert marker in text
 
 
-def test_phase_9x_result_is_pending_not_passed():
+def test_phase_9x_result_records_operator_roundtrip_but_knowledge_pending():
     text = read("docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RESULT.md")
-    assert "PHASE_9X_MANUAL_BROWSER_WORKFLOW_STATUS=PENDING_MANUAL_TEST" in text
-    assert "BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING" in text
+    assert (
+        "PHASE_9X_MANUAL_BROWSER_WORKFLOW_STATUS=OPERATOR_CHAT_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW"
+        in text
+    )
+    assert "BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW" in text
+    assert "| Operator reply appears in chatbot | CONFIRMED |" in text
+    assert "| Knowledge candidate can be created from operator reply | PENDING |" in text
     assert "PHASE_9X_MANUAL_BROWSER_WORKFLOW_STATUS=PASSED" not in text
 
 
@@ -48,10 +53,11 @@ def test_phase_9x_status_docs_keep_public_launch_no_go():
             "docs/deployment/PHASE_9P_PUBLIC_LAUNCH_DECISION.md",
         ]
     )
-    assert "backend_chatbot_manual_browser_workflow_pending" in text
+    assert "backend_chatbot_operator_roundtrip_confirmed_pending_knowledge_review" in text
     assert "public_launch_decision=go" not in text
     assert "actual_site_embed_execution_status=executed" not in text
     assert "real_domain_smoke_status=passed" not in text
+    assert "knowledge candidate can be created from operator reply | confirmed" not in text
 
 
 def test_phase_9x_frontend_has_safe_backend_markers():
@@ -77,4 +83,3 @@ def test_phase_9x_frontend_has_safe_backend_markers():
         assert marker in text
     for forbidden in ["api.anthropic.com", "ANTHROPIC_API_KEY", "sk" + "-ant", "DATABASE_URL", "window.claude.complete"]:
         assert forbidden not in text
-

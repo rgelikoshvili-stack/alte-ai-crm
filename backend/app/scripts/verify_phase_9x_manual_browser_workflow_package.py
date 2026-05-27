@@ -71,14 +71,17 @@ def run_checks() -> dict:
         require(marker in runbook, f"Runbook missing marker: {marker}")
 
     for marker in [
-        "PHASE_9X_MANUAL_BROWSER_WORKFLOW_STATUS=PENDING_MANUAL_TEST",
-        "BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING",
+        "PHASE_9X_MANUAL_BROWSER_WORKFLOW_STATUS=OPERATOR_CHAT_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW",
+        "BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW",
         "Operator reply appears in chatbot",
         "Knowledge candidate can be created from operator reply",
     ]:
         require(marker in result, f"Result missing marker: {marker}")
 
-    require("BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING" in docs, "Pending manual workflow state not recorded")
+    require(
+        "BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW" in docs,
+        "Operator roundtrip decision state not recorded",
+    )
 
     for marker in [
         "/chat/session/start",
@@ -108,6 +111,7 @@ def run_checks() -> dict:
         "actual_site_embed_execution_status=executed",
         "real_domain_smoke_status=passed",
         "phase_9x_manual_browser_workflow_status=passed",
+        "knowledge candidate can be created from operator reply | confirmed",
     ]:
         require(phrase not in lower_docs, f"False completion marker found: {phrase}")
 
@@ -116,7 +120,7 @@ def run_checks() -> dict:
 
     return {
         "status": "PASS",
-        "decision_state": "BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING",
+        "decision_state": "BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW",
     }
 
 
@@ -126,4 +130,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

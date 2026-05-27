@@ -2,31 +2,33 @@
 
 ## Phase 9Y: Operator Handover Message Persistence Fix Ready
 
-Status: `BACKEND_OPERATOR_HANDOVER_MESSAGE_FIX_READY_PENDING_NETLIFY_REDEPLOY`
+Status: `BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW`
 
 - Production no-contact diagnostic confirmed chatbot handover conversations appear in CRM Inbox.
 - Production diagnostic confirmed operator replies can be returned through chatbot transcript polling for the same session.
 - Root cause of the perceived missing operator message: Pro v2 handover branch called `/chat/handover` but did not persist the local operator request text through `/chat/message`.
 - Fix prepared in the Pro v2 widget and Netlify deploy package.
+- User browser test confirmed: chatbot message reaches operator CRM, operator can reply, and the answer returns to chatbot.
 - Updated package: `dist/netlify_test_site_deploy.zip`.
-- Netlify redeploy required: YES.
-- Browser retest required: YES.
+- Netlify/browser roundtrip retest: CONFIRMED.
+- Knowledge review UI test: PENDING.
 - Real Alte site remains untouched.
 - Public launch remains NO-GO.
 
-Next required action: redeploy `dist/netlify_test_site_deploy.zip` to Netlify and retest operator request -> CRM Inbox -> operator reply -> chatbot return.
+Next required action: test `Create knowledge candidate` -> `Open review` for an operator reply, and confirm the candidate remains draft/review-required.
 
 ## Phase 9X: Manual Browser Workflow Package Ready
 
-Status: `BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING`
+Status: `BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW`
 
 - Manual workflow runbook created for Netlify chatbot to local CRM Production API testing.
-- Result template remains pending until a human browser run confirms the flow.
+- Human browser run confirmed chatbot message -> CRM operator -> operator reply -> chatbot return.
 - Required browser checks: Pro v2 widget load, no console/CORS errors, AI answer, department selection, operator handover, CRM Inbox, operator reply return, knowledge candidate creation, and review queue opening.
+- Knowledge candidate/review checks remain pending.
 - Real Alte site remains untouched.
 - Public launch remains NO-GO.
 
-Next required action: execute `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RUNBOOK.md` in the browser and update `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RESULT.md` with PASS/FAIL evidence.
+Next required action: test the knowledge candidate/review part of `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RUNBOOK.md` and update `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RESULT.md` with PASS/FAIL evidence.
 
 ## Phase 9W: Chatbot Function Audit Passed
 

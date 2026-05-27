@@ -1,6 +1,6 @@
 # Phase 9Y Operator Handover Message Persistence Fix
 
-PHASE_9Y_OPERATOR_HANDOVER_MESSAGE_FIX_STATUS=READY_PENDING_NETLIFY_REDEPLOY_AND_BROWSER_RETEST
+PHASE_9Y_OPERATOR_HANDOVER_MESSAGE_FIX_STATUS=OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW_TEST
 
 ## Issue
 
@@ -51,6 +51,10 @@ Updated the Pro v2 safe widget handover flow:
 
 - Targeted tests: `18 passed`.
 - Frontend forbidden pattern scan: PASS.
+- User browser retest confirmed:
+  - chatbot message reaches the operator CRM.
+  - operator can reply.
+  - operator reply returns to chatbot.
 - Active widget assets still do not contain:
   - `api.anthropic.com`
   - `ANTHROPIC_API_KEY`
@@ -61,21 +65,13 @@ Updated the Pro v2 safe widget handover flow:
 
 ## Next Step
 
-Redeploy the updated Netlify package:
+Test the knowledge review part of the operator workflow:
 
-```text
-dist/netlify_test_site_deploy.zip
-```
-
-Then retest:
-
-1. Open `https://nimble-croissant-2f66e8.netlify.app/join.html`.
-2. Ask for an operator.
-3. Open local CRM `http://127.0.0.1:5173/`.
-4. Select `Production API`.
-5. Confirm the Inbox conversation shows the operator request text.
-6. Send an operator reply.
-7. Confirm the reply appears back in the chatbot.
+1. Open the confirmed conversation in `http://127.0.0.1:5173/`.
+2. Find the operator reply.
+3. Click `Create knowledge candidate`.
+4. Click `Open review`.
+5. Confirm the candidate appears in Knowledge review.
+6. Confirm it remains `draft` / `review_required`.
 
 Public launch remains NO-GO.
-
