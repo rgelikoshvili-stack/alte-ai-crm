@@ -19,7 +19,9 @@ The source export contains `132` Alte documentation files. This phase selected o
 - JSONL: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.jsonl`
 - Markdown: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.md`
 - Sources: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_sources.md`
+- Reviewer CSV: `backend/reports/alte_chatbot_required_knowledge_reviewer_queue.csv`
 - Builder: `backend/app/scripts/build_alte_chatbot_required_knowledge.py`
+- Apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`
 - Verifier: `backend/app/scripts/verify_alte_chatbot_required_knowledge.py`
 
 ## Included Knowledge Scope
@@ -52,10 +54,12 @@ The generated package includes chatbot-ready Georgian Q&A records from the requi
 ## Output Summary
 
 - Generated records: `394`
+- Reviewer queue rows: `394`
 - Generated language: Georgian
 - Format: question-answer records with topic, department, source, and answer policy metadata
 - Duplicate content skipped: `6`
 - Direct internal-only administrative documents skipped where they were not student/applicant-facing
+- Dry-run apply result: PASS
 
 ## Safety
 

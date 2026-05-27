@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import csv
 from collections import Counter
 from pathlib import Path
 
@@ -13,7 +14,9 @@ JSONL_PATH = KB_DIR / "alte_chatbot_required_knowledge.jsonl"
 MD_PATH = KB_DIR / "alte_chatbot_required_knowledge.md"
 SOURCES_PATH = KB_DIR / "alte_chatbot_required_sources.md"
 BUILDER_PATH = PROJECT_ROOT / "backend" / "app" / "scripts" / "build_alte_chatbot_required_knowledge.py"
+APPLY_PATH = PROJECT_ROOT / "backend" / "app" / "scripts" / "apply_alte_chatbot_required_knowledge.py"
 RESULT_PATH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_RESULT.md"
+REVIEWER_CSV_PATH = PROJECT_ROOT / "backend" / "reports" / "alte_chatbot_required_knowledge_reviewer_queue.csv"
 
 REQUIRED_TOPICS = {
     "საგანმანათლებლო პროგრამები",
@@ -69,7 +72,7 @@ def is_tracked(path: str) -> bool:
 
 
 def run_checks() -> dict:
-    for path in [BUILDER_PATH, JSONL_PATH, MD_PATH, SOURCES_PATH, RESULT_PATH]:
+    for path in [BUILDER_PATH, APPLY_PATH, JSONL_PATH, MD_PATH, SOURCES_PATH, RESULT_PATH, REVIEWER_CSV_PATH]:
         require(path.exists(), f"Missing required knowledge artifact: {path}")
 
     rows = load_jsonl(JSONL_PATH)
@@ -108,6 +111,11 @@ def run_checks() -> dict:
     require(topics["საგანმანათლებლო პროგრამები"] >= 20, "Program catalog coverage is too small")
     require(topics["სასწავლო პროცესი"] >= 10, "Study process coverage is too small")
 
+    with REVIEWER_CSV_PATH.open("r", encoding="utf-8-sig", newline="") as handle:
+        reviewer_rows = list(csv.DictReader(handle))
+    require(len(reviewer_rows) == len(rows), "Reviewer CSV row count must match JSONL")
+    require(all(not row["reviewer_decision"] for row in reviewer_rows), "Reviewer decisions must start blank")
+
     generated_text = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in [JSONL_PATH, MD_PATH, SOURCES_PATH, RESULT_PATH])
     for pattern in FORBIDDEN_PATTERNS:
         require(not re.search(pattern, generated_text, re.IGNORECASE), f"Forbidden marker found: {pattern}")
@@ -119,6 +127,7 @@ def run_checks() -> dict:
     )
     require("Production DB modified: NO" in result_text, "Result must record no production DB modification")
     require("--apply run: NO" in result_text, "Result must record apply was not run")
+    require("Dry-run apply result: PASS" in result_text, "Result must record dry-run apply passed")
 
     docs_text = "\n".join(
         path.read_text(encoding="utf-8", errors="ignore")
@@ -143,6 +152,7 @@ def run_checks() -> dict:
         "records": len(rows),
         "topics": dict(topics),
         "source_count": len({row["source_title"] for row in rows}),
+        "reviewer_rows": len(reviewer_rows),
     }
 
 

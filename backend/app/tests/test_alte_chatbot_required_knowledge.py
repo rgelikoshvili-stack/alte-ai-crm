@@ -1,5 +1,6 @@
 import importlib
 import json
+import csv
 from pathlib import Path
 
 
@@ -8,6 +9,7 @@ KB_DIR = PROJECT_ROOT / "backend" / "app" / "knowledge_seed" / "alte_chatbot_req
 JSONL_PATH = KB_DIR / "alte_chatbot_required_knowledge.jsonl"
 MD_PATH = KB_DIR / "alte_chatbot_required_knowledge.md"
 SOURCES_PATH = KB_DIR / "alte_chatbot_required_sources.md"
+REVIEWER_CSV_PATH = PROJECT_ROOT / "backend" / "reports" / "alte_chatbot_required_knowledge_reviewer_queue.csv"
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -17,12 +19,14 @@ def load_jsonl(path: Path) -> list[dict]:
 def test_alte_chatbot_required_knowledge_scripts_importable():
     assert hasattr(importlib.import_module("app.scripts.build_alte_chatbot_required_knowledge"), "main")
     assert hasattr(importlib.import_module("app.scripts.verify_alte_chatbot_required_knowledge"), "run_checks")
+    assert hasattr(importlib.import_module("app.scripts.apply_alte_chatbot_required_knowledge"), "main")
 
 
 def test_alte_chatbot_required_knowledge_outputs_exist():
     assert JSONL_PATH.exists()
     assert MD_PATH.exists()
     assert SOURCES_PATH.exists()
+    assert REVIEWER_CSV_PATH.exists()
 
 
 def test_alte_chatbot_required_knowledge_has_expected_topics_and_sources():
@@ -60,3 +64,18 @@ def test_alte_chatbot_required_knowledge_has_no_forbidden_secret_patterns():
     text = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in [JSONL_PATH, MD_PATH, SOURCES_PATH])
     for forbidden in ["ANTHROPIC_API_KEY", "sk" + "-ant", "api.anthropic.com", "DATABASE_URL"]:
         assert forbidden not in text
+
+
+def test_alte_chatbot_required_knowledge_reviewer_queue_matches_jsonl_and_is_blank():
+    rows = load_jsonl(JSONL_PATH)
+    with REVIEWER_CSV_PATH.open("r", encoding="utf-8-sig", newline="") as handle:
+        reviewer_rows = list(csv.DictReader(handle))
+    assert len(reviewer_rows) == len(rows)
+    assert all(row["reviewer_decision"] == "" for row in reviewer_rows)
+
+
+def test_alte_chatbot_required_knowledge_apply_script_defaults_to_dry_run_text():
+    script_text = (PROJECT_ROOT / "backend" / "app" / "scripts" / "apply_alte_chatbot_required_knowledge.py").read_text(encoding="utf-8")
+    assert "--apply" in script_text
+    assert "dry-run" in script_text
+    assert '"would_write": False' in script_text

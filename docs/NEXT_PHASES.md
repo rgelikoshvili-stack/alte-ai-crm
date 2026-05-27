@@ -11,6 +11,8 @@ Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_AP
   - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.md`
   - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_sources.md`
 - Generated records: `394`.
+- Reviewer queue: `backend/reports/alte_chatbot_required_knowledge_reviewer_queue.csv`.
+- Dry-run apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`.
 - Production DB modified: NO.
 - DB apply run: NO.
 - Public launch remains NO-GO.

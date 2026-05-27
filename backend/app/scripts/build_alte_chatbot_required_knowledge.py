@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import csv
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -22,6 +23,7 @@ DEFAULT_SOURCE_DIR = Path(
     r"\unexpected-status-403-forbidden-detail-code\alte_documents"
 )
 OUTPUT_DIR = REPO_ROOT / "backend" / "app" / "knowledge_seed" / "alte_chatbot_required_knowledge"
+REVIEWER_CSV_PATH = REPO_ROOT / "backend" / "reports" / "alte_chatbot_required_knowledge_reviewer_queue.csv"
 
 
 @dataclass(frozen=True)
@@ -629,6 +631,51 @@ def write_sources(records: list[dict], skipped: list[dict], source_dir: Path, pa
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def suggested_decision(record: dict) -> str:
+    policy = record["answer_policy"]
+    if "finance" in record["department"] or "eligibility" in policy:
+        return "APPROVE_CONSERVATIVE_OR_HANDOVER"
+    if "handover" in policy or record["department"] == "academic_registry":
+        return "APPROVE_CONSERVATIVE"
+    return "APPROVE_PUBLIC"
+
+
+def write_reviewer_csv(records: list[dict]) -> None:
+    REVIEWER_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    fields = [
+        "source_id",
+        "question",
+        "source_title",
+        "source_file",
+        "topic",
+        "department",
+        "answer_policy",
+        "handover_recommended",
+        "suggested_decision",
+        "reviewer_decision",
+        "reviewer_comment",
+    ]
+    with REVIEWER_CSV_PATH.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for record in records:
+            writer.writerow(
+                {
+                    "source_id": record["source_id"],
+                    "question": record["question"],
+                    "source_title": record["source_title"],
+                    "source_file": record["source_file"],
+                    "topic": record["topic"],
+                    "department": record["department"],
+                    "answer_policy": record["answer_policy"],
+                    "handover_recommended": record["handover_recommended"],
+                    "suggested_decision": suggested_decision(record),
+                    "reviewer_decision": "",
+                    "reviewer_comment": "",
+                }
+            )
+
+
 def main() -> None:
     source_dir = DEFAULT_SOURCE_DIR
     if not source_dir.exists():
@@ -645,6 +692,7 @@ def main() -> None:
     write_jsonl(records, jsonl_path)
     write_markdown(records, md_path)
     write_sources(records, skipped, source_dir, sources_path)
+    write_reviewer_csv(records)
 
     by_topic: dict[str, int] = {}
     for record in records:
@@ -658,6 +706,7 @@ def main() -> None:
                 "jsonl": str(jsonl_path.relative_to(REPO_ROOT)),
                 "markdown": str(md_path.relative_to(REPO_ROOT)),
                 "sources": str(sources_path.relative_to(REPO_ROOT)),
+                "reviewer_csv": str(REVIEWER_CSV_PATH.relative_to(REPO_ROOT)),
                 "records": len(records),
                 "topics": by_topic,
                 "duplicates_skipped": len(skipped),
