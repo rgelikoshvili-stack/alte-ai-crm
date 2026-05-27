@@ -9,6 +9,8 @@ KB_DIR = PROJECT_ROOT / "backend" / "app" / "knowledge_seed" / "alte_chatbot_req
 JSONL_PATH = KB_DIR / "alte_chatbot_required_knowledge.jsonl"
 MD_PATH = KB_DIR / "alte_chatbot_required_knowledge.md"
 SOURCES_PATH = KB_DIR / "alte_chatbot_required_sources.md"
+SMOKE_QUESTIONS_PATH = KB_DIR / "alte_chatbot_required_smoke_questions.jsonl"
+REVIEW_SUMMARY_PATH = KB_DIR / "alte_chatbot_required_review_summary.md"
 REVIEWER_CSV_PATH = PROJECT_ROOT / "backend" / "reports" / "alte_chatbot_required_knowledge_reviewer_queue.csv"
 
 
@@ -26,6 +28,8 @@ def test_alte_chatbot_required_knowledge_outputs_exist():
     assert JSONL_PATH.exists()
     assert MD_PATH.exists()
     assert SOURCES_PATH.exists()
+    assert SMOKE_QUESTIONS_PATH.exists()
+    assert REVIEW_SUMMARY_PATH.exists()
     assert REVIEWER_CSV_PATH.exists()
 
 
@@ -77,6 +81,18 @@ def test_alte_chatbot_required_knowledge_reviewer_queue_matches_jsonl_and_is_bla
         reviewer_rows = list(csv.DictReader(handle))
     assert len(reviewer_rows) == len(rows)
     assert all(row["reviewer_decision"] == "" for row in reviewer_rows)
+
+
+def test_alte_chatbot_required_knowledge_smoke_questions_cover_core_topics():
+    smoke_rows = load_jsonl(SMOKE_QUESTIONS_PATH)
+    assert len(smoke_rows) >= 20
+    topics = {row["expected_topic"] for row in smoke_rows}
+    assert "ფინანსური მხარდაჭერა" in topics
+    assert "სახელმწიფო და სოციალური გრანტები" in topics
+    assert "ბაკალავრიატი" in topics
+    assert "მაგისტრატურა" in topics
+    assert "IT მხარდაჭერა" in topics
+    assert all(row["no_contact_details"] is True for row in smoke_rows)
 
 
 def test_alte_chatbot_required_knowledge_apply_script_defaults_to_dry_run_text():

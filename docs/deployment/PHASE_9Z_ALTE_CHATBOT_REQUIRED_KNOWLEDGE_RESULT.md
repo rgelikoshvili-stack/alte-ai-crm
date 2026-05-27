@@ -20,6 +20,8 @@ The source export contains `132` Alte documentation files. This phase selected o
 - Markdown: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.md`
 - Sources: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_sources.md`
 - Reviewer CSV: `backend/reports/alte_chatbot_required_knowledge_reviewer_queue.csv`
+- Smoke questions: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_smoke_questions.jsonl`
+- Review summary: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_review_summary.md`
 - Builder: `backend/app/scripts/build_alte_chatbot_required_knowledge.py`
 - Apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`
 - Verifier: `backend/app/scripts/verify_alte_chatbot_required_knowledge.py`
@@ -56,6 +58,7 @@ The generated package includes chatbot-ready Georgian Q&A records from the requi
 - Generated records: `433`
 - Reviewer queue rows: `433`
 - Expanded coverage: payment/finance routing, state/social grants, formal communication, international student routing, IT support, and student service department routing
+- Smoke question bank: `20` no-contact questions for post-import validation
 - Generated language: Georgian
 - Format: question-answer records with topic, department, source, and answer policy metadata
 - Duplicate content skipped: `6`

@@ -14,6 +14,8 @@ Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_AP
 - Expanded with payment/finance routing, state/social grant, formal communication, international student routing, IT support, and student service department content.
 - Reviewer queue: `backend/reports/alte_chatbot_required_knowledge_reviewer_queue.csv`.
 - Dry-run apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`.
+- Smoke question bank: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_smoke_questions.jsonl`.
+- Review summary: `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_review_summary.md`.
 - Production DB modified: NO.
 - DB apply run: NO.
 - Public launch remains NO-GO.

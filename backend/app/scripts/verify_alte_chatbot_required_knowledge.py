@@ -13,6 +13,8 @@ KB_DIR = PROJECT_ROOT / "backend" / "app" / "knowledge_seed" / "alte_chatbot_req
 JSONL_PATH = KB_DIR / "alte_chatbot_required_knowledge.jsonl"
 MD_PATH = KB_DIR / "alte_chatbot_required_knowledge.md"
 SOURCES_PATH = KB_DIR / "alte_chatbot_required_sources.md"
+SMOKE_QUESTIONS_PATH = KB_DIR / "alte_chatbot_required_smoke_questions.jsonl"
+REVIEW_SUMMARY_PATH = KB_DIR / "alte_chatbot_required_review_summary.md"
 BUILDER_PATH = PROJECT_ROOT / "backend" / "app" / "scripts" / "build_alte_chatbot_required_knowledge.py"
 APPLY_PATH = PROJECT_ROOT / "backend" / "app" / "scripts" / "apply_alte_chatbot_required_knowledge.py"
 RESULT_PATH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9Z_ALTE_CHATBOT_REQUIRED_KNOWLEDGE_RESULT.md"
@@ -78,7 +80,7 @@ def is_tracked(path: str) -> bool:
 
 
 def run_checks() -> dict:
-    for path in [BUILDER_PATH, APPLY_PATH, JSONL_PATH, MD_PATH, SOURCES_PATH, RESULT_PATH, REVIEWER_CSV_PATH]:
+    for path in [BUILDER_PATH, APPLY_PATH, JSONL_PATH, MD_PATH, SOURCES_PATH, SMOKE_QUESTIONS_PATH, REVIEW_SUMMARY_PATH, RESULT_PATH, REVIEWER_CSV_PATH]:
         require(path.exists(), f"Missing required knowledge artifact: {path}")
 
     rows = load_jsonl(JSONL_PATH)
@@ -122,7 +124,13 @@ def run_checks() -> dict:
     require(len(reviewer_rows) == len(rows), "Reviewer CSV row count must match JSONL")
     require(all(not row["reviewer_decision"] for row in reviewer_rows), "Reviewer decisions must start blank")
 
-    generated_text = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in [JSONL_PATH, MD_PATH, SOURCES_PATH, RESULT_PATH])
+    smoke_questions = load_jsonl(SMOKE_QUESTIONS_PATH)
+    require(len(smoke_questions) >= 20, "Smoke question bank must cover core chatbot workflows")
+    smoke_topics = {row["expected_topic"] for row in smoke_questions}
+    for topic in ["ფინანსური მხარდაჭერა", "სახელმწიფო და სოციალური გრანტები", "ბაკალავრიატი", "მაგისტრატურა", "IT მხარდაჭერა"]:
+        require(topic in smoke_topics, f"Smoke question topic missing: {topic}")
+
+    generated_text = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in [JSONL_PATH, MD_PATH, SOURCES_PATH, SMOKE_QUESTIONS_PATH, REVIEW_SUMMARY_PATH, RESULT_PATH])
     for pattern in FORBIDDEN_PATTERNS:
         require(not re.search(pattern, generated_text, re.IGNORECASE), f"Forbidden marker found: {pattern}")
 
@@ -159,6 +167,7 @@ def run_checks() -> dict:
         "topics": dict(topics),
         "source_count": len({row["source_title"] for row in rows}),
         "reviewer_rows": len(reviewer_rows),
+        "smoke_questions": len(smoke_questions),
     }
 
 

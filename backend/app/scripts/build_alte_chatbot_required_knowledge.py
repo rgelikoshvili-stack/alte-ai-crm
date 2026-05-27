@@ -24,6 +24,8 @@ DEFAULT_SOURCE_DIR = Path(
 )
 OUTPUT_DIR = REPO_ROOT / "backend" / "app" / "knowledge_seed" / "alte_chatbot_required_knowledge"
 REVIEWER_CSV_PATH = REPO_ROOT / "backend" / "reports" / "alte_chatbot_required_knowledge_reviewer_queue.csv"
+SMOKE_QUESTIONS_PATH = OUTPUT_DIR / "alte_chatbot_required_smoke_questions.jsonl"
+REVIEW_SUMMARY_PATH = OUTPUT_DIR / "alte_chatbot_required_review_summary.md"
 
 
 @dataclass(frozen=True)
@@ -755,6 +757,89 @@ def write_reviewer_csv(records: list[dict]) -> None:
             )
 
 
+def smoke_questions() -> list[dict]:
+    questions = [
+        ("რა პროგრამები აქვს ალტე უნივერსიტეტს?", "საგანმანათლებლო პროგრამები", "programs"),
+        ("მედიცინის პროგრამა რამდენ კრედიტიანია?", "საგანმანათლებლო პროგრამები", "programs"),
+        ("როდის იწყება 2025-2026 წლის შემოდგომის სემესტრი?", "აკადემიური კალენდარი", "academic_registry"),
+        ("როდის არის დასკვნითი გამოცდები?", "აკადემიური კალენდარი", "academic_registry"),
+        ("სწავლის საფასურის გადახდა ნაწილ-ნაწილ შეიძლება?", "ფინანსური მხარდაჭერა", "finance"),
+        ("ვის ეკუთვნის სოციალური გრანტი?", "სახელმწიფო და სოციალური გრანტები", "finance"),
+        ("რა არის დეკანის გრანტი?", "დეკანის გრანტი", "finance"),
+        ("ბაკალავრიატში ჩასარიცხად რა მჭირდება?", "ბაკალავრიატი", "admissions"),
+        ("მაგისტრატურაში ჩასარიცხად საჭიროა საერთო სამაგისტრო გამოცდა?", "მაგისტრატურა", "admissions"),
+        ("სხვა უნივერსიტეტიდან გადმოსვლისას კრედიტებს მიღიარებენ?", "კრედიტების აღიარება", "academic_registry"),
+        ("სტუდენტის სტატუსის შეჩერება როგორ ხდება?", "სასწავლო პროცესი", "student_services"),
+        ("გამოცდის შედეგის გასაჩივრება როგორ ხდება?", "გამოცდები", "academic_registry"),
+        ("რა ითვლება პლაგიატად?", "აკადემიური კეთილსინდისიერება", "academic_registry"),
+        ("როგორ ვისარგებლო ბიბლიოთეკით?", "ბიბლიოთეკა", "library"),
+        ("ვის მივმართო პორტალზე ტექნიკური პრობლემისას?", "IT მხარდაჭერა", "it_support"),
+        ("საერთაშორისო სტუდენტმა ვის უნდა მიმართოს?", "საერთაშორისო სტუდენტები და ურთიერთობები", "international"),
+        ("როგორ უნდა შევიტანო ოფიციალური განცხადება?", "ფორმალური კომუნიკაცია და განცხადებები", "student_services"),
+        ("რა არის სტუდენტური ომბუდსმენი?", "ომბუდსმენი", "student_services"),
+        ("რა მხარდაჭერა აქვს სპეციალური საჭიროების მქონე სტუდენტს?", "სპეციალური საჭიროების მქონე პირთა მომსახურება", "student_services"),
+        ("როგორ შეიძლება გენერაციული AI-ის გამოყენება სწავლაში?", "გენერაციული AI", "academic_registry"),
+    ]
+    return [
+        {
+            "question": question,
+            "language": "ka",
+            "expected_topic": topic,
+            "expected_department": department,
+            "no_contact_details": True,
+            "expected_policy": "answer_from_kb_or_conservative_handover",
+        }
+        for question, topic, department in questions
+    ]
+
+
+def write_smoke_questions() -> None:
+    write_jsonl(smoke_questions(), SMOKE_QUESTIONS_PATH)
+
+
+def write_review_summary(records: list[dict]) -> None:
+    by_topic: dict[str, int] = {}
+    by_department: dict[str, int] = {}
+    by_policy: dict[str, int] = {}
+    for record in records:
+        by_topic[record["topic"]] = by_topic.get(record["topic"], 0) + 1
+        by_department[record["department"]] = by_department.get(record["department"], 0) + 1
+        by_policy[record["answer_policy"]] = by_policy.get(record["answer_policy"], 0) + 1
+    lines = [
+        "# Alte Chatbot Required Knowledge Review Summary",
+        "",
+        f"- total_records: `{len(records)}`",
+        f"- source_count: `{len({record['source_title'] for record in records})}`",
+        "- production_db_modified: NO",
+        "- apply_run: NO",
+        "",
+        "## Records By Department",
+        "",
+    ]
+    for key, value in sorted(by_department.items()):
+        lines.append(f"- `{key}`: `{value}`")
+    lines.extend(["", "## Records By Topic", ""])
+    for key, value in sorted(by_topic.items()):
+        lines.append(f"- {key}: `{value}`")
+    lines.extend(["", "## Records By Answer Policy", ""])
+    for key, value in sorted(by_policy.items()):
+        lines.append(f"- `{key}`: `{value}`")
+    lines.extend(
+        [
+            "",
+            "## Review Priority",
+            "",
+            "1. Finance, tuition, grants, and payment-related records.",
+            "2. Admissions, bachelor/master entry requirements, and program details.",
+            "3. Academic calendar, exams, student status, and ECTS recognition.",
+            "4. Student services, rights, ombudsman, special needs support, IT support, and formal communication.",
+            "5. Public low-risk program and library/career information.",
+            "",
+        ]
+    )
+    REVIEW_SUMMARY_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
 def main() -> None:
     source_dir = DEFAULT_SOURCE_DIR
     if not source_dir.exists():
@@ -772,6 +857,8 @@ def main() -> None:
     write_markdown(records, md_path)
     write_sources(records, skipped, source_dir, sources_path)
     write_reviewer_csv(records)
+    write_smoke_questions()
+    write_review_summary(records)
 
     by_topic: dict[str, int] = {}
     for record in records:
@@ -786,6 +873,8 @@ def main() -> None:
                 "markdown": str(md_path.relative_to(REPO_ROOT)),
                 "sources": str(sources_path.relative_to(REPO_ROOT)),
                 "reviewer_csv": str(REVIEWER_CSV_PATH.relative_to(REPO_ROOT)),
+                "smoke_questions": str(SMOKE_QUESTIONS_PATH.relative_to(REPO_ROOT)),
+                "review_summary": str(REVIEW_SUMMARY_PATH.relative_to(REPO_ROOT)),
                 "records": len(records),
                 "topics": by_topic,
                 "duplicates_skipped": len(skipped),
