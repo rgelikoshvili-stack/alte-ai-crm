@@ -1,5 +1,17 @@
 # Next Phases
 
+## Phase 9X: Manual Browser Workflow Package Ready
+
+Status: `BACKEND_CHATBOT_MANUAL_BROWSER_WORKFLOW_PENDING`
+
+- Manual workflow runbook created for Netlify chatbot to local CRM Production API testing.
+- Result template remains pending until a human browser run confirms the flow.
+- Required browser checks: Pro v2 widget load, no console/CORS errors, AI answer, department selection, operator handover, CRM Inbox, operator reply return, knowledge candidate creation, and review queue opening.
+- Real Alte site remains untouched.
+- Public launch remains NO-GO.
+
+Next required action: execute `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RUNBOOK.md` in the browser and update `docs/deployment/PHASE_9X_MANUAL_BROWSER_WORKFLOW_RESULT.md` with PASS/FAIL evidence.
+
 ## Phase 9W: Chatbot Function Audit Passed
 
 Status: `BACKEND_CHATBOT_FUNCTION_AUDIT_PASSED_PENDING_MANUAL_BROWSER_WORKFLOW`
