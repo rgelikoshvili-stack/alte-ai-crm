@@ -1,3 +1,8 @@
+from app.schemas.chat import AIAnalysisResult
+from app.schemas.qualification import LeadQualificationResult
+from app.services.chat_service import apply_no_contact_lead_guard, build_source_backed_reply
+
+
 def start_session(client, language="en"):
     response = client.post("/chat/session/start", json={"source_domain": "alte.edu.ge", "language": language})
     assert response.status_code == 200
@@ -89,3 +94,41 @@ def test_chat_marks_no_approved_source_found_for_scholarship(client):
     data = response.json()
     assert data["answer_source_status"] == "no_approved_source_found"
     assert data["should_handover"] is True
+
+
+def test_source_backed_reply_preserves_ai_answer_and_adds_source():
+    analysis = AIAnalysisResult(
+        reply="International students need to submit the required application documents.",
+        language="en",
+        intent="international_admission",
+        confidence=0.9,
+        should_create_lead=False,
+        should_handover=False,
+        qualification=LeadQualificationResult(intent="admission_requirements"),
+    )
+
+    reply = build_source_backed_reply(analysis, ["International admissions routing - EN"])
+
+    assert "International students need to submit" in reply
+    assert "Source: International admissions routing - EN." in reply
+    assert "I found verified information" not in reply
+
+
+def test_program_info_without_contact_does_not_append_contact_request():
+    analysis = AIAnalysisResult(
+        reply="Alte offers several programs. Which program would you like to compare?",
+        language="en",
+        intent="admission_interest",
+        confidence=0.9,
+        should_create_lead=True,
+        should_handover=False,
+        missing_fields=["phone_or_email"],
+        qualification=LeadQualificationResult(intent="program_info", recommended_next_action="ask_phone_or_email"),
+    )
+
+    apply_no_contact_lead_guard(analysis)
+
+    assert analysis.should_create_lead is False
+    assert "phone_or_email" not in analysis.missing_fields
+    assert "Please share your name" not in analysis.reply
+    assert analysis.qualification.recommended_next_action == "answer_or_ask_followup"

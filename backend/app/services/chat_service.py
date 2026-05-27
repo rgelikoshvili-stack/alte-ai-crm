@@ -627,6 +627,11 @@ def apply_no_contact_lead_guard(analysis: AIAnalysisResult) -> None:
     if analysis.intent not in CONTACT_GATED_LEAD_INTENTS or has_contact(analysis):
         return
     analysis.should_create_lead = False
+    if not should_prompt_for_contact(analysis):
+        analysis.missing_fields = [field for field in analysis.missing_fields if field not in {CONTACT_FIELD, "first_name"}]
+        if analysis.qualification.recommended_next_action in {"ask_phone_or_email", "create_follow_up_task", "ask_contact_details"}:
+            analysis.qualification.recommended_next_action = "answer_or_ask_followup"
+        return
     if CONTACT_FIELD not in analysis.missing_fields:
         analysis.missing_fields.append(CONTACT_FIELD)
     if not analysis.extracted_contact.first_name and "first_name" not in analysis.missing_fields:
@@ -695,6 +700,14 @@ def is_info_only_no_contact_question(analysis: AIAnalysisResult) -> bool:
         analysis.qualification.intent in INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS
         and analysis.intent not in CONTACT_GATED_LEAD_INTENTS
     )
+
+
+def should_prompt_for_contact(analysis: AIAnalysisResult) -> bool:
+    if analysis.intent in {"consultation_request", "medicine_admission"}:
+        return True
+    if analysis.qualification.intent in {"application", "human_help"}:
+        return True
+    return analysis.qualification.handover_required and analysis.qualification.handover_reason == "human_requested"
 
 
 def ensure_contact_request_reply(analysis: AIAnalysisResult) -> str:
@@ -854,9 +867,16 @@ def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
 
 def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[str]) -> str:
     source_hint = ", ".join(snippet_titles[:2])
+    base_reply = analysis.reply.strip()
+    if not source_hint:
+        return base_reply
     if analysis.language == "en":
-        return f"I found verified information from approved sources: {source_hint}. A consultant can help with the next step if you want."
-    return f"მოვძებნე დადასტურებული ინფორმაცია დამტკიცებული წყაროდან: {source_hint}. სურვილის შემთხვევაში კონსულტანტიც დაგეხმარებათ შემდეგ ნაბიჯში."
+        if "approved source" in base_reply.lower() or "verified information" in base_reply.lower():
+            return base_reply
+        return f"{base_reply}\n\nSource: {source_hint}."
+    if "წყარო" in base_reply or "დადასტურებულ" in base_reply:
+        return base_reply
+    return f"{base_reply}\n\nწყარო: {source_hint}."
 
 
 def build_no_source_reply(analysis: AIAnalysisResult) -> str:
