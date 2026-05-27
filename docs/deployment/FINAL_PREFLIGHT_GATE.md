@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_OFFICIAL_ALTE_8_PDF_KB_PREPARED_PENDING_REVIEW_AND_APPLY`
+Current decision: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_APPLY`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -19,6 +19,7 @@ Phase 9N-CORS temporary hosted test-origin plan is ready. No test origin URL is 
 Phase 9N-CORS-Execution configured temporary CORS for `https://alte-ai-chat-test.netlify.app` and deployed revision `alte-ai-crm-backend-00009-bhk`. CORS smoke and safe API smokes passed. Hosted browser smoke remains pending; actual Alte site embed is not executed.
 Phase 9N-CORS-Actual-Netlify-Origin configured temporary CORS for the actual deployed Netlify origin `https://nimble-croissant-2f66e8.netlify.app` and deployed revision `alte-ai-crm-backend-00010-g47`. CORS smoke and safe API smokes passed. Hosted browser smoke remains pending manual retest; actual Alte site embed is not executed.
 Phase 9T official Alte 8 PDF Knowledge Base package is prepared. The 8 PDFs were copied as evidence and normalized into `273` JSONL chunks with `56` review-required chunks. Dry-run apply passed with `would_write=false`; production DB was not modified and `--apply` was not run. Human review and explicit apply approval are still required.
+Phase 9Z chatbot-required knowledge package is prepared from the larger local Alte documents export. The package contains `394` Georgian Q&A records from the selected student/applicant-facing source set. Production DB was not modified, no DB apply/import was run, and review plus explicit apply approval are still required.
 
 | Area | Check | Status |
 | --- | --- | --- |

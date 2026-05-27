@@ -1,5 +1,22 @@
 # Next Phases
 
+## Phase 9Z: Chatbot Required Alte Knowledge Package Ready
+
+Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_APPLY`
+
+- Required student/applicant-facing Alte documents were selected from the local `alte_documents` export.
+- Internal-only administrative documents were skipped unless directly useful for chatbot users.
+- Generated final files:
+  - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.jsonl`
+  - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.md`
+  - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_sources.md`
+- Generated records: `394`.
+- Production DB modified: NO.
+- DB apply run: NO.
+- Public launch remains NO-GO.
+
+Next required action: review the generated JSONL/Markdown package, then explicitly approve a separate DB apply/import step if the content should become active chatbot knowledge.
+
 ## Phase 9T: Official Alte 8 PDF Knowledge Base Prepared
 
 Status: `BACKEND_DEPLOYED_OFFICIAL_ALTE_8_PDF_KB_PREPARED_PENDING_REVIEW_AND_APPLY`
