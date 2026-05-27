@@ -10,7 +10,8 @@ Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_READY_PENDING_REVIEW_AND_AP
   - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.jsonl`
   - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_knowledge.md`
   - `backend/app/knowledge_seed/alte_chatbot_required_knowledge/alte_chatbot_required_sources.md`
-- Generated records: `394`.
+- Generated records: `433`.
+- Expanded with payment/finance routing, state/social grant, formal communication, international student routing, IT support, and student service department content.
 - Reviewer queue: `backend/reports/alte_chatbot_required_knowledge_reviewer_queue.csv`.
 - Dry-run apply script: `backend/app/scripts/apply_alte_chatbot_required_knowledge.py`.
 - Production DB modified: NO.

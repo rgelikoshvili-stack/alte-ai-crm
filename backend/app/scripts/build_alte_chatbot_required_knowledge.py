@@ -189,6 +189,33 @@ REQUIRED_SOURCES: tuple[RequiredSource, ...] = (
         ),
     ),
     RequiredSource(
+        "state_social_grants",
+        "სახელმწიფო სასწავლო გრანტები და სოციალური პროგრამა",
+        "სახელმწიფო და სოციალური გრანტები",
+        "finance",
+        "conservative_handover_for_eligibility",
+        True,
+        r"alte_documents\files\072_hTOQuhgor4.pdf",
+        (
+            "ვის ეკუთვნის სოციალური პროგრამის დაფინანსება?",
+            "სად უნდა დავრეგისტრირდე სოციალური დაფინანსებისთვის?",
+            "რა ხდება თუ სამინისტროს გადაწყვეტილებას ველოდები?",
+        ),
+    ),
+    RequiredSource(
+        "finance_department_routing",
+        "საფინანსო დეპარტამენტის დებულება",
+        "ფინანსური საკითხების დეპარტამენტი",
+        "finance",
+        "handover_for_personal_finance_case",
+        True,
+        r"alte_documents\files\021_vtW1PMLU2V.pdf",
+        (
+            "ვის მივმართო სწავლის საფასურის ან გადახდის საკითხზე?",
+            "რა საკითხებს განიხილავს საფინანსო დეპარტამენტი?",
+        ),
+    ),
+    RequiredSource(
         "deans_grant",
         "დეკანის გრანტის წესი",
         "დეკანის გრანტი",
@@ -212,6 +239,19 @@ REQUIRED_SOURCES: tuple[RequiredSource, ...] = (
         (
             "რა სერვისებს სთავაზობს უნივერსიტეტი სტუდენტებს?",
             "ვის მივმართო სტუდენტურ სერვისებზე?",
+        ),
+    ),
+    RequiredSource(
+        "study_process_student_services_department",
+        "სასწავლო პროცესისა და სტუდენტური სერვისების დეპარტამენტის დებულება",
+        "სტუდენტური სერვისების დეპარტამენტი",
+        "student_services",
+        "direct_general_handover_personal",
+        True,
+        r"alte_documents\files\023_V9uUBO5ycd.pdf",
+        (
+            "რომელი დეპარტამენტი მეხმარება სასწავლო პროცესის საკითხებზე?",
+            "ვის მივმართო სტუდენტურ სერვისებზე ან სასწავლო პროცესის პრობლემაზე?",
         ),
     ),
     RequiredSource(
@@ -290,6 +330,45 @@ REQUIRED_SOURCES: tuple[RequiredSource, ...] = (
         (
             "რა კარიერულ სერვისებს სთავაზობს უნივერსიტეტი სტუდენტებს?",
             "რა სერვისებია კურსდამთავრებულებისთვის?",
+        ),
+    ),
+    RequiredSource(
+        "international_affairs_department",
+        "საერთაშორისო ურთიერთობების დეპარტამენტის დებულება",
+        "საერთაშორისო სტუდენტები და ურთიერთობები",
+        "international",
+        "direct_general_handover_personal",
+        True,
+        r"alte_documents\files\027_BuGH59sVB6.pdf",
+        (
+            "ვის მივმართო საერთაშორისო სტუდენტობის ან საერთაშორისო ურთიერთობების საკითხზე?",
+            "რომელი დეპარტამენტი მუშაობს საერთაშორისო ურთიერთობებზე?",
+        ),
+    ),
+    RequiredSource(
+        "it_service_department",
+        "ინფორმაციული ტექნოლოგიების სამსახურის დებულება",
+        "IT მხარდაჭერა",
+        "it_support",
+        "handover_for_technical_issue",
+        True,
+        r"alte_documents\files\033_elnTmWV7e8.pdf",
+        (
+            "ვის მივმართო პორტალზე ან ტექნიკურ პრობლემაზე?",
+            "რომელი სამსახური უზრუნველყოფს IT მხარდაჭერას?",
+        ),
+    ),
+    RequiredSource(
+        "case_management_rule",
+        "საქმისწარმოების წესი",
+        "ფორმალური კომუნიკაცია და განცხადებები",
+        "student_services",
+        "direct_general_handover_personal",
+        True,
+        r"alte_documents\files\009_8HZmR5i6sh.pdf",
+        (
+            "როგორ ხდება ოფიციალური განცხადების ან დოკუმენტის წარდგენა?",
+            "რა წესით მიმდინარეობს უნივერსიტეტთან ფორმალური კომუნიკაცია?",
         ),
     ),
     RequiredSource(

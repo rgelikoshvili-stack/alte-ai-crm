@@ -36,10 +36,15 @@ def test_alte_chatbot_required_knowledge_has_expected_topics_and_sources():
     assert "საგანმანათლებლო პროგრამები" in topics
     assert "აკადემიური კალენდარი" in topics
     assert "ფინანსური მხარდაჭერა" in topics
+    assert "სახელმწიფო და სოციალური გრანტები" in topics
+    assert "ფინანსური საკითხების დეპარტამენტი" in topics
     assert "დეკანის გრანტი" in topics
+    assert "საერთაშორისო სტუდენტები და ურთიერთობები" in topics
+    assert "IT მხარდაჭერა" in topics
+    assert "ფორმალური კომუნიკაცია და განცხადებები" in topics
     assert "გენერაციული AI" in topics
     assert "ეთიკა" in topics
-    assert len({row["source_title"] for row in rows}) >= 22
+    assert len({row["source_title"] for row in rows}) >= 30
 
 
 def test_alte_chatbot_required_knowledge_is_georgian_and_student_facing():

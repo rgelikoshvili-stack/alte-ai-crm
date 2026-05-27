@@ -53,8 +53,9 @@ The generated package includes chatbot-ready Georgian Q&A records from the requi
 
 ## Output Summary
 
-- Generated records: `394`
-- Reviewer queue rows: `394`
+- Generated records: `433`
+- Reviewer queue rows: `433`
+- Expanded coverage: payment/finance routing, state/social grants, formal communication, international student routing, IT support, and student service department routing
 - Generated language: Georgian
 - Format: question-answer records with topic, department, source, and answer policy metadata
 - Duplicate content skipped: `6`

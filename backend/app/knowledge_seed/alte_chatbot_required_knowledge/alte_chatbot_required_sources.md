@@ -103,6 +103,24 @@ Source export directory: `C:\Users\Acer\Documents\Codex\2026-05-19\unexpected-st
 - generated_qas: `5`
 - answer_policy: `conservative_handover_for_eligibility`
 
+### სახელმწიფო სასწავლო გრანტები და სოციალური პროგრამა
+
+- topic: `სახელმწიფო და სოციალური გრანტები`
+- department: `finance`
+- local_path: `alte_documents\files\072_hTOQuhgor4.pdf`
+- sha256: `3875a775db60d78a01336d6ca629ba7248423758282b8d5b5ec56bb7abc95f26`
+- generated_qas: `2`
+- answer_policy: `conservative_handover_for_eligibility`
+
+### საფინანსო დეპარტამენტის დებულება
+
+- topic: `ფინანსური საკითხების დეპარტამენტი`
+- department: `finance`
+- local_path: `alte_documents\files\021_vtW1PMLU2V.pdf`
+- sha256: `07fd32914641740c61e4998173e34f963aa2e9a813b16d13fb50bf3eb97f2c8e`
+- generated_qas: `5`
+- answer_policy: `handover_for_personal_finance_case`
+
 ### დეკანის გრანტის წესი
 
 - topic: `დეკანის გრანტი`
@@ -119,6 +137,15 @@ Source export directory: `C:\Users\Acer\Documents\Codex\2026-05-19\unexpected-st
 - local_path: `alte_documents\files\094_69lz6nfM5T.pdf`
 - sha256: `17492c02ec2a4cadff0fcad3223adac9d26ab80fedc34dd5c2a33fd39d088095`
 - generated_qas: `4`
+- answer_policy: `direct_general_handover_personal`
+
+### სასწავლო პროცესისა და სტუდენტური სერვისების დეპარტამენტის დებულება
+
+- topic: `სტუდენტური სერვისების დეპარტამენტი`
+- department: `student_services`
+- local_path: `alte_documents\files\023_V9uUBO5ycd.pdf`
+- sha256: `cb413377e5a90560721bfb4c25b633e51aada7268d06dada323aae38762417a8`
+- generated_qas: `10`
 - answer_policy: `direct_general_handover_personal`
 
 ### სტუდენტთა უფლებების დაცვის მექანიზმები
@@ -174,6 +201,33 @@ Source export directory: `C:\Users\Acer\Documents\Codex\2026-05-19\unexpected-st
 - sha256: `93b9b964d8d946b865af45e08bbf0a1be1e614b819de9f8ad1c5244f79c0e80d`
 - generated_qas: `4`
 - answer_policy: `direct_general`
+
+### საერთაშორისო ურთიერთობების დეპარტამენტის დებულება
+
+- topic: `საერთაშორისო სტუდენტები და ურთიერთობები`
+- department: `international`
+- local_path: `alte_documents\files\027_BuGH59sVB6.pdf`
+- sha256: `302705435a7845a40c2bcd00c8309eb551ab0bdd67d1bb7eadc97dd9652d8033`
+- generated_qas: `3`
+- answer_policy: `direct_general_handover_personal`
+
+### ინფორმაციული ტექნოლოგიების სამსახურის დებულება
+
+- topic: `IT მხარდაჭერა`
+- department: `it_support`
+- local_path: `alte_documents\files\033_elnTmWV7e8.pdf`
+- sha256: `42df28407bc4692550d3706f7ce88a5d84c8ba565116e2bd55d8bc8d17d192ff`
+- generated_qas: `3`
+- answer_policy: `handover_for_technical_issue`
+
+### საქმისწარმოების წესი
+
+- topic: `ფორმალური კომუნიკაცია და განცხადებები`
+- department: `student_services`
+- local_path: `alte_documents\files\009_8HZmR5i6sh.pdf`
+- sha256: `5ff73d6aa92697a8af2bfdfd62feb9e2dc8620b575d5b68c60c9d3a27c43572e`
+- generated_qas: `16`
+- answer_policy: `direct_general_handover_personal`
 
 ### გენერაციული AI გამოყენების პოლიტიკა
 
