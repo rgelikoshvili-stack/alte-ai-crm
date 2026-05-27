@@ -58,7 +58,7 @@ Updated the Pro v2 safe widget handover flow:
 - Active widget assets still do not contain:
   - `api.anthropic.com`
   - `ANTHROPIC_API_KEY`
-  - `sk-ant-`
+  - provider secret-key prefix
   - `DATABASE_URL`
   - `window.claude.complete`
   - `/api/chat`

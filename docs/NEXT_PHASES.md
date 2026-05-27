@@ -1,5 +1,21 @@
 # Next Phases
 
+## Phase 9T: Official Alte 8 PDF Knowledge Base Prepared
+
+Status: `BACKEND_DEPLOYED_OFFICIAL_ALTE_8_PDF_KB_PREPARED_PENDING_REVIEW_AND_APPLY`
+
+- 8 official Alte PDFs copied into evidence.
+- Full text extracted into normalized JSONL.
+- Total chunks: `273`.
+- Review-required chunks: `56`.
+- Question bank, topic taxonomy, answer policy, reviewer CSV, behavior doc, and routing map created.
+- Apply script was run in dry-run mode only.
+- Production DB modified: NO.
+- `--apply` run: NO.
+- Public launch remains NO-GO.
+
+Next required action: human reviewer checks `backend/reports/official_alte_8_pdf_kb_reviewer_queue.csv`; after explicit approval, run `python -m app.scripts.apply_official_alte_8_pdf_kb --apply`.
+
 ## Phase 9Y: Operator Handover Message Persistence Fix Ready
 
 Status: `BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW`

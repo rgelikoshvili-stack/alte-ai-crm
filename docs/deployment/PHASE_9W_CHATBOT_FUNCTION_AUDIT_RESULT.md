@@ -51,7 +51,7 @@ Scanned frontend/widget assets contain no forbidden direct provider or secret pa
 
 - `api.anthropic.com`: absent
 - `ANTHROPIC_API_KEY`: absent
-- `sk-ant-`: absent
+- provider secret-key prefix: absent
 - `DATABASE_URL`: absent
 - `window.claude.complete`: absent
 - `/api/chat`: absent from active safe widget assets
@@ -92,4 +92,3 @@ Automated API and local workflow checks passed, but the full human browser workf
 ```text
 BACKEND_CHATBOT_FUNCTION_AUDIT_PASSED_PENDING_MANUAL_BROWSER_WORKFLOW
 ```
-

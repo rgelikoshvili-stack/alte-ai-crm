@@ -1,0 +1,73 @@
+{
+  "academic_calendar": {
+    "caveat_ka": "გთხოვთ, საბოლოო დადასტურებისთვის გადაამოწმოთ უნივერსიტეტის ოფიციალურ არხზე.",
+    "policy": "handover_if_uncertain",
+    "public_answer_allowed": false,
+    "rules": [
+      "Use exact date ranges from the 2025-2026 calendar.",
+      "Route personalized schedule questions to Academic Registry."
+    ]
+  },
+  "bachelor_regulation": {
+    "policy": "handover_if_uncertain",
+    "public_answer_allowed": true,
+    "rules": [
+      "General admission rules may be answered.",
+      "Personal cases, document validation, and deadlines route to Admissions."
+    ]
+  },
+  "finance": {
+    "policy": "conservative",
+    "public_answer_allowed": false,
+    "rules": [
+      "Do not guarantee eligibility or financing.",
+      "Route personal qualification/payment cases to Finance."
+    ]
+  },
+  "master_regulation": {
+    "policy": "handover_if_uncertain",
+    "public_answer_allowed": true,
+    "rules": [
+      "General admission rules may be answered.",
+      "Personal cases, document validation, and deadlines route to Admissions."
+    ]
+  },
+  "mobility_and_credit_recognition": {
+    "policy": "handover_if_uncertain",
+    "public_answer_allowed": false,
+    "rules": [
+      "Explain general recognition principles.",
+      "Never guarantee exact credit recognition.",
+      "Route transcript review to Academic Registry."
+    ]
+  },
+  "not_found": {
+    "policy": "handover_if_uncertain",
+    "reply_ka": "ამ საკითხზე ზუსტი ინფორმაცია მოცემულ ოფიციალურ დოკუმენტებში ვერ ვიპოვე."
+  },
+  "programs": {
+    "policy": "direct",
+    "public_answer_allowed": true,
+    "rules": [
+      "Answer general program facts directly from the catalog.",
+      "Route to Admissions/Programs if a detail is missing or conflicting."
+    ]
+  },
+  "state_grants": {
+    "policy": "conservative",
+    "public_answer_allowed": false,
+    "rules": [
+      "Explain the general process.",
+      "Do not guarantee ministry decisions.",
+      "Route personal eligibility to Finance/Admissions."
+    ]
+  },
+  "study_process": {
+    "policy": "handover_if_uncertain",
+    "public_answer_allowed": false,
+    "rules": [
+      "Answer general rules.",
+      "Route personal status/exam/tuition decisions to Academic Registry or Student Services."
+    ]
+  }
+}

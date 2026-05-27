@@ -10,3 +10,4 @@ anthropic
 pytest
 httpx
 aiosqlite
+pypdf

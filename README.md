@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9Y operator chatbot roundtrip is confirmed; knowledge review UI remains the next workflow check.
+Current status: Phase 9T official Alte 8 PDF Knowledge Base package is prepared pending human review and DB apply approval.
 
-Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP includes the Pro v2 HTML and `variants/` source needed for the hosted test page. The local operator CRM now has explicit `Local API` and `Production API` controls so the team can test Netlify chatbot messages and operator replies against the same production backend. Automated smoke checks passed for session payload, test site API, CORS, security/reliability, department routing, finance no-contact, knowledge, local operator workflow, and Phase 9T/9U/9V targeted tests. A production no-contact diagnostic confirmed handover conversations appear in Inbox and operator replies can return to the same chatbot session. The user browser workflow confirmed that chatbot messages reach the operator, the operator can reply, and the reply returns to chatbot. Operator replies are not automatically learned or approved; they enter the knowledge review queue as `draft` and `review_required=true`. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
+Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP includes the Pro v2 HTML and `variants/` source needed for the hosted test page. The local operator CRM now has explicit `Local API` and `Production API` controls so the team can test Netlify chatbot messages and operator replies against the same production backend. Automated smoke checks passed for session payload, test site API, CORS, security/reliability, department routing, finance no-contact, knowledge, local operator workflow, and Phase 9T/9U/9V targeted tests. A production no-contact diagnostic confirmed handover conversations appear in Inbox and operator replies can return to the same chatbot session. The user browser workflow confirmed that chatbot messages reach the operator, the operator can reply, and the reply returns to chatbot. The official Alte 8 PDF Knowledge Base package has been extracted and normalized into 273 chunks with question bank, taxonomy, answer policy, reviewer CSV, and dry-run apply support; production DB apply has not been run. Operator replies and official PDF chunks are not automatically learned or approved; they remain review-gated where required. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_CHATBOT_OPERATOR_ROUNDTRIP_CONFIRMED_PENDING_KNOWLEDGE_REVIEW
+BACKEND_DEPLOYED_OFFICIAL_ALTE_8_PDF_KB_PREPARED_PENDING_REVIEW_AND_APPLY
 ```
 
 Checkpoint docs:

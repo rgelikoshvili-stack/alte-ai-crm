@@ -1,0 +1,44 @@
+{
+  "academic_calendar": {
+    "department": "academic_registry"
+  },
+  "admissions": {
+    "department": "admissions"
+  },
+  "bachelor_regulation": {
+    "department": "admissions"
+  },
+  "exams": {
+    "department": "academic_registry"
+  },
+  "finance": {
+    "department": "finance"
+  },
+  "formal_communication": {
+    "department": "student_services"
+  },
+  "master_regulation": {
+    "department": "admissions"
+  },
+  "mobility_and_credit_recognition": {
+    "department": "academic_registry"
+  },
+  "programs": {
+    "department": "programs"
+  },
+  "state_grants": {
+    "department": "finance"
+  },
+  "student_rights_obligations": {
+    "department": "student_services"
+  },
+  "student_status": {
+    "department": "academic_registry"
+  },
+  "study_process": {
+    "department": "student_services"
+  },
+  "tuition": {
+    "department": "finance"
+  }
+}
