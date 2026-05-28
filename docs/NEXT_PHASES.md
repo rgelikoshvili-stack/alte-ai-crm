@@ -10,11 +10,12 @@ Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_ENDPOINT_CORS_FIXED_PENDING_NETLIFY_RED
   - `POST /chat/message`
 - Rebuilt `dist/netlify_test_site_deploy.zip`.
 - CORS smoke script added for actual Netlify origin.
+- Agent preview UI now loads, but backend smoke from `https://agent-6a18610fa7c881465--nimble-croissant-2f66e8.netlify.app` is blocked by preview-origin CORS. This is expected for an unapproved Netlify preview origin and is not a widget code regression.
 - Live POST smoke is blocked by current production DB credential mismatch and is not fixed in this phase.
 - Real Alte site modified: NO.
 - Public launch remains NO-GO.
 
-Next required action: fix the production DB credential mismatch, then redeploy the Netlify package and manually retest browser chat.
+Next required action: merge/redeploy to the already-approved production test origin `https://nimble-croissant-2f66e8.netlify.app`, fix the production DB credential mismatch, then manually retest browser chat.
 
 ## Phase 9Z: Chatbot Required Alte Knowledge Package Ready
 

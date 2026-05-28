@@ -88,6 +88,13 @@ ZIP root includes:
 
 - Netlify redeploy required: YES
 - Browser smoke pending manual retest
+- Agent preview backend smoke: BLOCKED_BY_PREVIEW_ORIGIN_CORS
+- Agent preview origin:
+  - `https://agent-6a18610fa7c881465--nimble-croissant-2f66e8.netlify.app`
+- Reason: the Agent preview URL is a different Netlify preview origin and is not on the production CORS allowlist.
+- Code status: the Pro v2 widget flow remains restricted to `/chat/session/start` and `/chat/message`; the Agent preview CORS failure is not a widget endpoint regression.
+- Test target: use the already-approved production test origin after merge/redeploy:
+  - `https://nimble-croissant-2f66e8.netlify.app`
 - Real Alte site modified: NO
 - Production DB modified: NO
 - Contact details sent: NO
