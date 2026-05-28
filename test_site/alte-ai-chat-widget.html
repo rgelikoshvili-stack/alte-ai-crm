@@ -102,6 +102,11 @@
         channel: "website_chat",
         source_domain: SOURCE_DOMAIN,
         language: normalizeLang(language),
+        widget_variant: "pro_v2_safe",
+        metadata: {
+          page_url: window.location.href,
+          mode: cfg.mode || "test_site"
+        },
       }),
     });
     if (!sr.ok) throw new Error("Session start failed (" + sr.status + ")");
@@ -206,17 +211,7 @@
       return response.json();
     },
     pollOperatorMessages: async function () {
-      if (!_convId || !_sessId) return [];
-      var url = BACKEND + "/chat/messages/" + encodeURIComponent(_convId) + "?session_id=" + encodeURIComponent(_sessId);
-      var response = await fetch(url);
-      if (response.status === 404) {
-        _convId = null; _sessId = null;
-        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-        return [];
-      }
-      if (!response.ok) return [];
-      var rows = await response.json();
-      return rows.filter(function (row) { return row.sender_type === "operator"; });
+      return [];
     },
   };
 }());

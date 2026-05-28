@@ -1,11 +1,22 @@
 <!doctype html>
 <html lang="ka">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alte AI Chat - Pro v2 Safe</title>
+  <meta charset="utf-8"/>
+  <title>ალტე AI ჩათბოტი — Pro v2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; }
+    body {
+      font-family:'Noto Sans Georgian','Inter',system-ui,sans-serif;
+      background:#0c1416;
+      color:#0f1a1c;
+      overflow:hidden;
+    }
+    :root{
       --alte-teal:#074045;
       --alte-teal-deep:#052e32;
       --alte-teal-mid:#0a5258;
@@ -13,716 +24,303 @@
       --alte-cream:#f6f2e8;
       --alte-paper:#f4f1ea;
       --alte-paper-2:#faf8f1;
-      --alte-panel:#ffffff;
-      --alte-chip:#f6f2e8;
       --alte-ink:#0f1a1c;
       --alte-mute:#5a6c6d;
       --alte-line:#e8e2d4;
-      --alte-soft:#eef7f5;
-      --alte-soft-line:#d4e8e3;
       --alte-success:#1ca672;
-      --gap:11px;
-      --bub:10px 13px;
-      --msg-font:13px;
-      --bub-r:13px;
-      color-scheme: light;
     }
-    * { box-sizing: border-box; }
-    html, body { margin:0; min-height:100%; }
-    body {
-      font-family: "Noto Sans Georgian", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--alte-ink);
-      background: transparent;
-      overflow: hidden;
-    }
-    button, textarea, input { font: inherit; }
-    button { cursor: pointer; }
-    .cw { font-family:"Noto Sans Georgian", Inter, sans-serif; color:var(--alte-ink); }
-    .cw, .cw * { box-sizing:border-box; }
-    .cw-hidden { display:none !important; }
-    .cw-backdrop { position:fixed; inset:0; background:rgba(15,26,28,.45); backdrop-filter:blur(3px); z-index:45; }
-    .cw-win {
-      position:fixed; right:22px; bottom:22px;
-      width:min(94vw,420px); height:min(92vh,680px);
-      background:var(--alte-panel); border-radius:18px;
-      box-shadow:0 24px 80px -10px rgba(7,32,36,.35), 0 8px 20px -8px rgba(7,32,36,.25);
-      display:flex; flex-direction:column; overflow:hidden;
-      transform-origin:bottom right; z-index:50;
-      border:1px solid rgba(15,26,28,.06);
-    }
-    .cw-win.expanded {
-      width:min(96vw,980px); height:min(92vh,720px);
-      right:auto; bottom:auto; left:50%; top:50%;
-      transform:translate(-50%,-50%);
-    }
-    .cw-shell { display:flex; flex:1; min-height:0; }
-    .cw-side {
-      width:188px; background:var(--alte-paper); border-right:1px solid var(--alte-line);
-      display:flex; flex-direction:column; flex-shrink:0; transition:width .25s ease;
-    }
-    .cw-win:not(.expanded) .cw-side { display:none; }
-    .cw-side.collapsed { width:54px; }
-    .cw-side .brand { padding:14px 12px; border-bottom:1px solid var(--alte-line); display:flex; align-items:center; gap:9px; min-height:60px; }
-    .cw-mark { width:32px; height:32px; border-radius:11px; display:flex; align-items:center; justify-content:center; background:var(--alte-teal); color:#fff; font-weight:800; box-shadow:0 8px 18px rgba(7,64,69,.18); flex-shrink:0; }
-    .cw-side .brand .nm { font-family:Georgia, "Times New Roman", serif; font-size:13.5px; font-weight:700; color:var(--alte-ink); letter-spacing:-.01em; line-height:1.15; }
-    .cw-side .brand .sb { font-size:9.5px; color:var(--alte-mute); margin-top:1px; }
-    .cw-side.collapsed .brand-text { display:none; }
-    .cw-side.collapsed .brand { justify-content:center; padding:14px 8px; }
-    .cw-side .nav { flex:1; padding:8px 6px; overflow-y:auto; }
-    .cw-side .sec { font-size:9px; font-weight:700; color:var(--alte-mute); letter-spacing:.1em; text-transform:uppercase; padding:10px 9px 5px; opacity:.75; }
-    .cw-side.collapsed .sec { display:none; }
-    .cw-side .item { display:flex; align-items:center; gap:9px; padding:7px 9px; border:0; width:100%; border-radius:8px; font-size:11.5px; color:var(--alte-ink); background:transparent; font-weight:500; line-height:1.25; cursor:pointer; position:relative; user-select:none; text-align:left; }
-    .cw-side .item .ic { width:16px; height:16px; opacity:.62; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-    .cw-side .item:hover { background:rgba(7,64,69,.06); }
-    .cw-side .item.on { background:var(--alte-teal); color:#fff; }
-    .cw-side .item.on .ic { opacity:1; }
-    .cw-side .item .badge { margin-left:auto; font-size:9px; font-weight:700; padding:1px 6px; border-radius:9px; background:var(--alte-chip); color:var(--alte-mute); }
-    .cw-side .item.on .badge { background:rgba(255,255,255,.18); color:#fff; }
-    .cw-side .item.human { margin:6px 0 2px; background:var(--alte-panel); border:1px solid var(--alte-line); color:var(--alte-teal); font-weight:600; }
-    .cw-side .item.human:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); }
-    .cw-side.collapsed .item-text, .cw-side.collapsed .badge { display:none; }
-    .cw-side.collapsed .item { justify-content:center; padding:9px; }
-    .cw-side .foot { padding:10px; border-top:1px solid var(--alte-line); display:flex; align-items:center; gap:9px; }
-    .cw-side .foot .av { width:28px; height:28px; border-radius:50%; background:var(--alte-panel); border:1px solid var(--alte-line); color:var(--alte-teal); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
-    .cw-side .foot .who { font-size:11.5px; font-weight:600; color:var(--alte-ink); line-height:1.15; }
-    .cw-side .foot .rl { font-size:9.5px; color:var(--alte-mute); margin-top:1px; }
-    .cw-side.collapsed .foot-text { display:none; }
-    .cw-side .toggler { padding:0 6px 8px; }
-    .cw-side .toggler button { width:100%; background:transparent; border:1px dashed var(--alte-line); border-radius:7px; height:24px; display:flex; align-items:center; justify-content:center; color:var(--alte-mute); cursor:pointer; }
-    .cw-main { flex:1; display:flex; flex-direction:column; min-width:0; background:var(--alte-panel); position:relative; }
-    .cw-hdr { padding:11px 14px; border-bottom:1px solid var(--alte-line); display:flex; align-items:center; gap:11px; flex-shrink:0; background:var(--alte-panel); position:relative; z-index:2; }
-    .cw-hdr .av { position:relative; }
-    .cw-hdr .av .stat-dot { position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; background:var(--alte-success); border:2px solid var(--alte-panel); z-index:2; }
-    .cw-hdr .nm { font-family:Georgia, "Times New Roman", serif; font-size:14px; font-weight:700; color:var(--alte-ink); letter-spacing:-.01em; }
-    .cw-hdr .stt { font-size:10.5px; color:var(--alte-mute); display:flex; align-items:center; gap:5px; margin-top:1px; }
-    .cw-hdr .stt::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--alte-success); animation:cwPulse 2.4s infinite; }
-    @keyframes cwPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .cw-hdr .acts { margin-left:auto; display:flex; gap:5px; align-items:center; }
-    .cw-hdr .lang { display:flex; height:26px; border:1px solid var(--alte-line); border-radius:7px; overflow:hidden; font-size:10.5px; font-weight:700; }
-    .cw-hdr .lang button { padding:0 9px; display:flex; align-items:center; color:var(--alte-mute); background:transparent; border:0; cursor:pointer; font-family:inherit; font-weight:700; }
-    .cw-hdr .lang button.on { background:var(--alte-teal); color:#fff; }
-    .cw-hdr .ic { width:28px; height:28px; border-radius:7px; border:1px solid var(--alte-line); background:var(--alte-panel); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s; }
-    .cw-hdr .ic:hover { background:var(--alte-soft); color:var(--alte-teal); border-color:var(--alte-soft-line); }
-    .cw-hdr .ic.danger:hover { background:#fdf0e8; color:#c2410c; border-color:#fadbc8; }
-    .cw-trust { padding:6px 14px; background:var(--alte-soft); font-size:10.5px; color:var(--alte-teal-mid); display:flex; align-items:center; gap:7px; border-bottom:1px solid var(--alte-soft-line); }
-    .cw-trust strong { color:var(--alte-teal); font-weight:700; }
-    .cw-msgs { flex:1; overflow-y:auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:var(--gap); background:var(--alte-panel); scroll-behavior:smooth; }
-    .cw-msgs.empty { padding-top:8px; }
-    .cw-row { display:flex; gap:8px; align-items:flex-end; animation:cwMsg .18s ease-out; }
-    @keyframes cwMsg { from{transform:translateY(6px); opacity:0} to{transform:translateY(0); opacity:1} }
-    .cw-row.u { flex-direction:row-reverse; }
-    .cw-av { width:26px; height:26px; border-radius:50%; background:var(--alte-soft); color:var(--alte-teal); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; overflow:hidden; }
-    .cw-av.u { background:var(--alte-chip); color:var(--alte-mute); }
-    .cw-bub-wrap { max-width:82%; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
-    .cw-row.u .cw-bub-wrap { align-items:flex-end; }
-    .cw-bub { background:var(--alte-chip); border:1px solid var(--alte-line); border-radius:var(--bub-r) var(--bub-r) var(--bub-r) 3px; padding:var(--bub); font-size:var(--msg-font); line-height:1.55; color:var(--alte-ink); word-wrap:break-word; overflow-wrap:anywhere; }
-    .cw-row.u .cw-bub { background:var(--alte-teal); color:#fff; border-color:var(--alte-teal); border-radius:var(--bub-r) var(--bub-r) 3px var(--bub-r); }
-    .cw-bub strong { font-weight:700; color:var(--alte-teal); }
-    .cw-row.u .cw-bub strong { color:#bef264; }
-    .cw-bub p { margin:0; }
-    .cw-bub p + p { margin-top:6px; }
-    .cw-bub ul, .cw-bub ol { margin:6px 0; padding-left:18px; }
-    .cw-bub a { color:var(--alte-teal); text-decoration:underline; text-underline-offset:2px; }
-    .cw-dept { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:var(--alte-soft); color:var(--alte-teal); border-radius:20px; font-size:10px; font-weight:700; letter-spacing:.01em; }
-    .cw-dept .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
-    .cw-srcs { display:flex; gap:5px; flex-wrap:wrap; }
-    .cw-src { display:inline-flex; align-items:center; gap:5px; padding:4px 9px 4px 6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:20px; font-size:10.5px; color:var(--alte-teal-mid); font-weight:500; cursor:pointer; transition:.15s; max-width:100%; text-decoration:none; }
-    .cw-src:hover { border-color:var(--alte-soft-line); background:var(--alte-soft); }
-    .cw-src .n { width:14px; height:14px; border-radius:50%; background:var(--alte-teal); color:#fff; font-size:8.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .cw-src .u { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px; }
-    .cw-msg-acts { display:flex; gap:4px; margin-top:2px; opacity:0; transition:.15s; }
-    .cw-row:hover .cw-msg-acts { opacity:1; }
-    .cw-msg-acts button { width:22px; height:22px; border-radius:6px; background:transparent; border:0; color:var(--alte-mute); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.12s; }
-    .cw-msg-acts button:hover { background:var(--alte-chip); color:var(--alte-teal); }
-    .cw-typing { display:flex; gap:4px; padding:8px 12px; background:var(--alte-chip); border:1px solid var(--alte-line); border-radius:var(--bub-r) var(--bub-r) var(--bub-r) 3px; align-self:flex-start; }
-    .cw-typing span { width:6px; height:6px; border-radius:50%; background:var(--alte-mute); animation:cwBlink 1.3s infinite both; }
-    .cw-typing span:nth-child(2){ animation-delay:.15s; }
-    .cw-typing span:nth-child(3){ animation-delay:.3s; }
-    @keyframes cwBlink { 0%,80%,100%{opacity:.25; transform:translateY(0)} 40%{opacity:1; transform:translateY(-2px)} }
-    .cw-greet { padding:6px 0 4px; }
-    .cw-greet h2 { font-family:Georgia, "Times New Roman", serif; font-size:22px; font-weight:700; color:var(--alte-ink); letter-spacing:-.018em; margin:0 0 6px; }
-    .cw-greet p { font-size:12.5px; color:var(--alte-mute); line-height:1.55; margin:0; }
-    .cw-feat { margin-top:14px; padding:11px 12px; background:var(--alte-paper); border:1px solid var(--alte-line); border-radius:11px; display:flex; gap:11px; align-items:center; cursor:pointer; transition:.15s; }
-    .cw-feat:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); }
-    .cw-feat .ic { width:34px; height:34px; border-radius:9px; background:var(--alte-teal); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .cw-feat .ttl { font-size:12.5px; font-weight:700; color:var(--alte-ink); }
-    .cw-feat .desc { font-size:10.5px; color:var(--alte-mute); line-height:1.4; margin-top:2px; }
-    .cw-feat .arrow { margin-left:auto; color:var(--alte-mute); }
-    .cw-hint { font-size:11px; color:var(--alte-mute); margin:14px 2px 8px; font-weight:500; }
-    .cw-chips { display:flex; gap:6px; flex-wrap:wrap; }
-    .cw-chip { background:var(--alte-paper); border:1px solid var(--alte-line); padding:8px 12px; border-radius:9px; font-size:11.5px; color:var(--alte-ink); font-weight:500; display:flex; gap:6px; align-items:center; cursor:pointer; transition:.15s; text-align:left; line-height:1.3; }
-    .cw-chip:hover { background:var(--alte-soft); border-color:var(--alte-soft-line); color:var(--alte-teal); transform:translateY(-1px); }
-    .cw-handover { background:var(--alte-panel); border:1px solid #f5cab4; border-left:3px solid #e8714e; border-radius:10px; padding:10px 12px; }
-    .cw-handover .h { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; color:#c2410c; margin-bottom:7px; }
-    .cw-handover .h .ic { width:22px; height:22px; border-radius:7px; background:#fdf0e8; display:flex; align-items:center; justify-content:center; color:#c2410c; }
-    .cw-handover .dept-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:#fdf0e8; color:#c2410c; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:7px; }
-    .cw-handover .note { font-size:11.5px; color:var(--alte-ink); line-height:1.5; }
-    .cw-handover .acts { display:flex; gap:6px; margin-top:9px; padding-top:9px; border-top:1px dashed var(--alte-line); }
-    .cw-btn-p { background:var(--alte-teal); color:#fff; padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:0; cursor:pointer; font-family:inherit; }
-    .cw-btn-s { background:var(--alte-panel); color:var(--alte-teal); padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:1px solid var(--alte-teal); cursor:pointer; font-family:inherit; }
-    .cw-contact { border:1px solid var(--alte-soft-line); background:var(--alte-soft); color:var(--alte-teal); border-radius:10px; padding:9px 11px; font-size:11px; line-height:1.45; }
-    .cw-comp { border-top:1px solid var(--alte-line); padding:9px 11px 10px; flex-shrink:0; background:var(--alte-panel); position:relative; }
-    .cw-comp .box { display:flex; align-items:flex-end; gap:6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:13px; padding:5px 5px 5px 9px; transition:.15s; }
-    .cw-comp .box.focus { border-color:var(--alte-teal); box-shadow:0 0 0 3px rgba(7,64,69,.08); }
-    .cw-comp textarea { flex:1; min-width:0; border:0; outline:0; resize:none; font-family:inherit; font-size:13px; line-height:1.45; padding:7px 4px; background:transparent; color:var(--alte-ink); max-height:120px; }
-    .cw-comp textarea::placeholder { color:#9aa5a8; }
-    .cw-comp .tool { width:30px; height:30px; border-radius:8px; background:transparent; color:var(--alte-mute); border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.12s; flex-shrink:0; }
-    .cw-comp .tool:hover { background:var(--alte-chip); color:var(--alte-teal); }
-    .cw-comp .send { width:32px; height:32px; border-radius:9px; background:var(--alte-teal); color:#fff; border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.15s; }
-    .cw-comp .send:disabled { background:var(--alte-chip); color:var(--alte-mute); cursor:not-allowed; }
-    .cw-comp .send:not(:disabled):hover { background:var(--alte-teal-deep); transform:translateY(-1px); }
-    .cw-comp .hint { font-size:9.5px; color:var(--alte-mute); margin-top:6px; padding:0 6px; display:flex; align-items:center; gap:5px; }
-    .cw-comp .hint .dot { width:3px; height:3px; border-radius:50%; background:var(--alte-mute); }
-    .cw-comp .hint .verified { color:var(--alte-teal); font-weight:600; }
-    .cw-attach-menu { position:absolute; bottom:62px; left:14px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.12); padding:6px; display:flex; flex-direction:column; gap:2px; z-index:20; min-width:188px; }
-    .cw-attach-menu button { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; background:transparent; border:0; cursor:pointer; font-family:inherit; font-size:12px; color:var(--alte-ink); text-align:left; }
-    .cw-attach-menu button:hover { background:var(--alte-chip); color:var(--alte-teal); }
-    .cw-toast { position:absolute; bottom:78px; left:50%; transform:translateX(-50%); background:var(--alte-teal-deep); color:#fff; padding:6px 12px; border-radius:7px; font-size:11px; font-weight:600; box-shadow:0 6px 16px rgba(0,0,0,.15); z-index:25; pointer-events:none; }
-    .cw-launch { position:fixed; right:22px; bottom:22px; width:60px; height:60px; border-radius:18px; border:0; background:var(--alte-teal); color:#fff; box-shadow:0 18px 50px rgba(7,32,36,.35); z-index:50; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; }
-    .cw-launch span { position:absolute; right:-4px; top:-4px; width:18px; height:18px; border-radius:50%; background:var(--alte-orange); border:2px solid #fff; }
-    .cw-overlay { position:absolute; inset:0; background:rgba(15,26,28,.55); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; padding:16px; z-index:40; }
-    .cw-modal { background:var(--alte-panel); border-radius:16px; width:100%; max-width:380px; box-shadow:0 24px 60px rgba(0,0,0,.35); overflow:hidden; max-height:92%; display:flex; flex-direction:column; }
-    .cw-modal .head { padding:16px 20px 12px; border-bottom:1px solid var(--alte-line); position:relative; flex-shrink:0; }
-    .cw-modal .head .close { position:absolute; right:12px; top:12px; width:28px; height:28px; border-radius:8px; background:var(--alte-chip); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; cursor:pointer; border:0; }
-    .cw-modal .head h3 { font-family:Georgia, "Times New Roman", serif; font-size:18px; font-weight:700; color:var(--alte-ink); margin:0 0 4px; letter-spacing:-.015em; }
-    .cw-modal .head .sb { font-size:11.5px; color:var(--alte-mute); line-height:1.55; }
-    .cw-modal .body { padding:14px 20px 18px; overflow-y:auto; }
-    .cw-settings h4 { font-size:10px; font-weight:700; color:var(--alte-mute); text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; }
-    .cw-settings h4:not(:first-child){ margin-top:14px; }
-    .cw-settings .lang-cards { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-    .cw-settings .lc { padding:11px; border:1.5px solid var(--alte-line); border-radius:11px; position:relative; cursor:pointer; transition:.15s; background:var(--alte-panel); }
-    .cw-settings .lc.on { border-color:var(--alte-teal); background:var(--alte-soft); }
-    .cw-settings .lc .nm { font-size:12px; font-weight:700; color:var(--alte-ink); margin-top:4px; }
-    .cw-settings .lc .sub { font-size:10px; color:var(--alte-mute); }
-    .cw-settings .opt { background:var(--alte-paper); border-radius:11px; padding:10px 12px; display:flex; align-items:center; gap:11px; margin-bottom:6px; cursor:pointer; transition:.12s; }
-    .cw-settings .opt .ic { width:30px; height:30px; border-radius:9px; background:var(--alte-panel); color:var(--alte-mute); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .cw-settings .opt .lb { flex:1; font-size:12px; font-weight:600; color:var(--alte-ink); line-height:1.2; }
-    .cw-settings .opt .sb { font-size:10.5px; color:var(--alte-mute); margin-top:2px; font-weight:400; }
-    .cw-settings .sw { width:34px; height:20px; background:var(--alte-teal); border-radius:20px; position:relative; flex-shrink:0; transition:.15s; }
-    .cw-settings .sw::after { content:""; position:absolute; right:2px; top:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.15); }
-    .cw-settings .sw.off { background:#cbd5e1; }
-    .cw-settings .sw.off::after { left:2px; right:auto; }
-    .cw-settings .danger-btn { color:#c2410c; font-size:11.5px; font-weight:700; background:transparent; border:0; cursor:pointer; padding:6px 10px; border-radius:7px; font-family:inherit; }
-    .cw-settings .ftr { font-size:10px; color:var(--alte-mute); margin-top:14px; padding-top:11px; border-top:1px solid var(--alte-line); display:flex; justify-content:space-between; align-items:center; }
-    @media (max-width:700px) {
-      .cw-win, .cw-win.expanded { width:100vw; height:100dvh; right:0; bottom:0; left:0; top:0; transform:none; border-radius:0; }
-      .cw-backdrop { display:none; }
-      .cw-side { width:100%; max-width:none; height:auto; border-right:0; border-bottom:1px solid var(--alte-line); }
-      .cw-win.expanded .cw-shell { flex-direction:column; }
-      .cw-win:not(.expanded) .cw-shell { flex-direction:column; }
-      .cw-win.expanded .cw-side { display:flex; }
-      .cw-side .brand, .cw-side .foot, .cw-side .toggler, .cw-side .sec { display:none; }
-      .cw-side .nav { display:flex; gap:6px; padding:7px; overflow-x:auto; overflow-y:hidden; }
-      .cw-side .item { width:auto; flex:0 0 auto; white-space:nowrap; }
-      .cw-side .item .badge { display:none; }
-      .cw-bub-wrap { max-width:90%; }
-      .cw-hdr { padding:10px; gap:8px; }
-      .cw-hdr .nm { font-size:13px; }
-      .cw-hdr .ic { width:27px; height:27px; }
-    }
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:#d4ccba;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+    ::-webkit-scrollbar-thumb:hover{background:#a89e87;background-clip:padding-box;border:2px solid transparent}
+    ::-webkit-scrollbar-track{background:transparent}
+    #app{ position:fixed; inset:0; }
   </style>
 </head>
 <body>
-  <div class="cw" id="cw-root">
-    <button class="cw-launch cw-hidden" id="cw-launch" type="button" aria-label="Open Alte AI Assistant">A<span></span></button>
-    <div class="cw-backdrop" id="cw-backdrop"></div>
-    <section class="cw-win expanded" id="cw-win" aria-label="Alte AI Assistant">
-      <div class="cw-shell">
-        <aside class="cw-side" id="cw-side" aria-label="Departments">
-          <div class="brand">
-            <div class="cw-mark">A</div>
-            <div class="brand-text">
-              <div class="nm">Alte University</div>
-              <div class="sb" id="cw-brand-sub">AI · 8 departments</div>
-            </div>
-          </div>
-          <nav class="nav" id="cw-nav"></nav>
-          <div class="foot">
-            <div class="av" id="cw-user-initial">N</div>
-            <div class="foot-text">
-              <div class="who" id="cw-you">Nino</div>
-              <div class="rl" id="cw-role">Applicant</div>
-            </div>
-          </div>
-          <div class="toggler"><button id="cw-side-toggle" type="button" title="Collapse sidebar">‹</button></div>
-        </aside>
-        <main class="cw-main">
-          <header class="cw-hdr">
-            <div class="av"><div class="cw-mark">A</div><span class="stat-dot"></span></div>
-            <div>
-              <div class="nm" id="cw-title">Alte AI Assistant</div>
-              <div class="stt" id="cw-status">Online · Backend</div>
-            </div>
-            <div class="acts">
-              <div class="lang">
-                <button id="cw-lang-ka" type="button">KA</button>
-                <button id="cw-lang-en" type="button">EN</button>
-              </div>
-              <button class="ic" id="cw-new" type="button" title="New chat">↻</button>
-              <button class="ic" id="cw-settings" type="button" title="Settings">⚙</button>
-              <button class="ic" id="cw-expand" type="button" title="Expand">⛶</button>
-              <button class="ic danger" id="cw-close" type="button" title="Close">×</button>
-            </div>
-          </header>
-          <div class="cw-trust" id="cw-trust">🛡 <span>Answers from <strong>alte.edu.ge</strong> official sources · no hallucinations</span></div>
-          <div class="cw-msgs empty" id="cw-msgs"></div>
-          <form class="cw-comp" id="cw-form">
-            <div class="box" id="cw-input-box">
-              <button class="tool" id="cw-attach" type="button" title="Attach">+</button>
-              <textarea id="cw-input" rows="1" placeholder="Ask about programs, admissions, tuition..."></textarea>
-              <button class="tool" id="cw-voice" type="button" title="Voice">🎙</button>
-              <button class="send" id="cw-send" type="submit" title="Send">➤</button>
-            </div>
-            <div class="hint"><span class="verified" id="cw-verified">verified sources</span><span class="dot"></span><span id="cw-composer-hint">Enter to send · Shift+Enter for newline</span></div>
-          </form>
-          <div class="cw-toast cw-hidden" id="cw-toast"></div>
-        </main>
-      </div>
-      <div class="cw-overlay cw-hidden" id="cw-settings-modal">
-        <div class="cw-modal cw-settings">
-          <div class="head">
-            <button class="close" id="cw-settings-close" type="button">×</button>
-            <h3 id="cw-settings-title">Settings</h3>
-            <div class="sb" id="cw-settings-sub">Language, notifications and privacy</div>
-          </div>
-          <div class="body">
-            <h4 id="cw-settings-lang">Language</h4>
-            <div class="lang-cards">
-              <div class="lc" id="cw-settings-ka"><div class="nm">ქართული</div><div class="sub">Georgian</div></div>
-              <div class="lc" id="cw-settings-en"><div class="nm">English</div><div class="sub">International</div></div>
-            </div>
-            <h4 id="cw-settings-exp">Experience</h4>
-            <div class="opt" id="cw-settings-sources"><div class="ic">🔗</div><div style="flex:1"><div class="lb" id="cw-opt-sources">Source citations</div><div class="sb" id="cw-opt-sources-sub">alte.edu.ge link with every answer</div></div><div class="sw"></div></div>
-            <div class="opt" id="cw-settings-notify"><div class="ic">🔔</div><div style="flex:1"><div class="lb" id="cw-opt-notify">Callback notification</div><div class="sb" id="cw-opt-notify-sub">When an operator reaches out</div></div><div class="sw"></div></div>
-            <div class="opt" id="cw-settings-dark"><div class="ic">☾</div><div style="flex:1"><div class="lb" id="cw-opt-dark">Dark theme</div><div class="sb" id="cw-opt-dark-sub">Requires approval</div></div><div class="sw off"></div></div>
-            <h4 id="cw-settings-privacy">Privacy</h4>
-            <div class="opt"><div class="ic">🗑</div><div style="flex:1"><div class="lb" id="cw-opt-clear">Clear conversation</div><div class="sb" id="cw-opt-clear-sub">All local messages will be deleted</div></div><button class="danger-btn" id="cw-clear" type="button">Delete</button></div>
-            <div class="ftr"><span>v2.0 · FastAPI backend</span><a href="#privacy-policy-pending" id="cw-privacy-link">Privacy Policy</a></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-    (function () {
-      "use strict";
-      const cfg = window.AlteChatWidgetConfig || {};
-      const apiBaseUrl = (cfg.apiBaseUrl || "https://alte-ai-crm-backend-226875230147.europe-west1.run.app").replace(/\/$/, "");
-      const sourceDomain = cfg.sourceDomain || "alte.edu.ge";
-      const widgetVariant = cfg.widgetVariant || "pro_v2_safe";
-      let lang = (cfg.defaultLanguage || "ka").toLowerCase() === "en" ? "EN" : "KA";
-      let activeDept = sourceDomain.indexOf("join.") === 0 ? "international" : "admissions";
-      let activeTopic = "admissions";
-      let conversationId = "";
-      let sessionId = "";
-      let typing = false;
-      let expanded = true;
-      let settingsState = { sources: true, notify: true, dark: false };
-      const backendEndpoints = ["/chat/session/start", "/chat/message"];
-      const backendPayloadMarkers = ["source_domain", "language", "channel", "widget_variant", "selected_department", "selected_topic", "website_chat", "pro_v2_safe"];
-      const uiMarkers = ["cw-win", "cw-win expanded", "cw-backdrop", "cw-side", "cw-side collapsed", "cw-compose", "cw-comp", "quick", "composer", "settings", "expand", "fullscreen", "close", "operator", "handover", "source card renderer", "keyboard Enter handling"];
 
-      const icons = {
-        admissions:"🎓", programs:"🏛", finance:"₾", international:"🌍", medicine:"♥", library:"📚", career:"💼", it_support:"▣", human_operator:"☏"
-      };
-      const depts = [
-        { id:"admissions", sourceId:"admissions", ka:"მიღება", en:"Admissions", topic:"admissions", badge:"3" },
-        { id:"programs", sourceId:"programs", ka:"პროგრამები", en:"Programs", topic:"programs", badge:"3" },
-        { id:"finance", sourceId:"finance", ka:"დაფინანსება", en:"Tuition & Aid", topic:"tuition", badge:"3" },
-        { id:"international", sourceId:"international", ka:"საერთ. სტუდენტები", en:"International", topic:"international", badge:"3" },
-        { id:"medicine", sourceId:"medicine", ka:"მედიცინა · MD", en:"Medicine · MD", topic:"medicine", badge:"3" },
-        { id:"library", sourceId:"library", ka:"ბიბლიოთეკა", en:"Library", topic:"library", badge:"" },
-        { id:"career", sourceId:"career", ka:"კარიერა", en:"Career", topic:"career", badge:"" },
-        { id:"it_support", sourceId:"it", ka:"IT დახმარება", en:"IT Help", topic:"it_support", badge:"" }
-      ];
-      const strings = {
-        KA: {
-          appName:"Alte AI Assistant", appSub:"AI · 8 დეპარტამენტი", online:"ონლაინ · FastAPI backend",
-          trust:"პასუხები alte.edu.ge-ის ოფიციალური წყაროებიდან · არ ვიგონებთ ფაქტებს",
-          menu:"მენიუ", other:"სხვა", liveOperator:"ცოცხალი ოპერატორი", you:"ნინო", youRole:"აბიტურიენტი",
-          greetingTitle:"გამარჯობა, ნინო 👋",
-          greetingBody:"მე ვარ ალტეს AI ასისტენტი. სიდბარიდან აირჩიე დეპარტამენტი ან პირდაპირ მომწერე კითხვა — პასუხები მოდის ჩვენს backend-იდან.",
-          featTitle:"პოპულარული 2026", featDesc:"MD პროგრამა · ბაკალავრიატის ვადები · საერთ. სტუდენტი · დაფინანსება",
-          quickReplies:[
-            { emoji:"🎓", text:"როგორ ჩავაბარო ბაკალავრიატზე?", topic:"admissions" },
-            { emoji:"₾", text:"რა ღირს სწავლა?", topic:"tuition" },
-            { emoji:"🩺", text:"MD პროგრამა — გასაჩივრების ვადები?", topic:"medicine" },
-            { emoji:"🌍", text:"საერთაშორისო სტუდენტი ვარ, რა მჭირდება?", topic:"international" },
-            { emoji:"📅", text:"როდის არის ჩარიცხვის ბოლო ვადა?", topic:"deadlines" },
-            { emoji:"📄", text:"რა საბუთები მჭირდება?", topic:"documents" }
-          ],
-          composerPh:"მკითხე პროგრამაზე, მიღებაზე, დაფინანსებაზე…",
-          composerHint:"Enter — გასაგზავნად · Shift+Enter — ახალი ხაზი", send:"გაგზავნა", attach:"მიმაგრება", voice:"ხმოვანი",
-          new:"ახალი საუბარი", settings:"პარამეტრები", close:"დახურვა", expand:"სრულად", collapse:"შემცირება",
-          sources:"წყაროები", handoverTitle:"ოპერატორი ჩაერთო", handoverDept:"შესაბამისი დეპარტამენტი",
-          handoverNote:"სატესტო smoke-ში არ შეიყვანოთ ტელეფონი ან ელ.ფოსტა. საჭიროებისას backend გადამისამართებას დააფიქსირებს.",
-          handoverYes:"გასაგებია", handoverNo:"დალოდება", contactTitle:"კონტაქტი შეიძლება დაგჭირდეთ", contactNote:"ამ ვერსიაში საკონტაქტო ფორმა განზრახ არ აგზავნის CRM მონაცემებს.",
-          error:"სესიის დაწყება ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.", replyError:"კავშირი დროებით მიუწვდომელია. გთხოვთ სცადოთ მოგვიანებით.",
-          poweredVerified:"ვერიფიცირებული წყაროები", settingsTitle:"პარამეტრები", settingsSub:"ენა, შეტყობინებები და კონფიდენციალურობა",
-          settingsLang:"ენა · Language", settingsExp:"გამოცდილება", settingsPriv:"კონფიდენციალურობა",
-          optSources:"წყაროების ბმულები", optSourcesSub:"backend-ის დაბრუნებული წყაროები პასუხთან",
-          optNotify:"დაბრუნების შეტყობინება", optNotifySub:"რეალური შეტყობინება საჭიროებს დამტკიცებას",
-          optDark:"მუქი თემა", optDarkSub:"ამ ეტაპზე მხოლოდ UI პარამეტრია",
-          optClear:"საუბრის წაშლა", optClearSub:"ლოკალური შეტყობინებები წაიშლება", deleteWord:"წაშლა",
-          privacyPolicy:"კონფიდენციალურობის პოლიტიკა", copied:"დაკოპირდა", disabled:"ეს ფუნქცია საჭიროებს ცალკე დამტკიცებას."
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<!--
+  Alte AI CRM backend adapter.
+  Bridges the ZIP Pro v2 chat completion API → FastAPI /chat/* endpoints.
+
+  LOCAL:      BACKEND = "http://127.0.0.1:8000"
+  PRODUCTION: BACKEND = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
+-->
+<script>
+(function () {
+  var cfg = window.AlteChatWidgetConfig || {};
+  var BACKEND = cfg.apiBaseUrl || "http://127.0.0.1:8000";
+  var SOURCE_DOMAIN = cfg.sourceDomain || "alte.edu.ge";
+
+  var STORAGE_KEY = "alte_chat_session_" + BACKEND.replace(/[^a-z0-9]/gi, "_");
+  var _stored = (function () {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch (e) { return null; }
+  }());
+  var _convId = (_stored && _stored.conv) ? _stored.conv : null;
+  var _sessId = (_stored && _stored.sess) ? _stored.sess : null;
+  var _lastResponse = null;
+
+  function detectLang(text) {
+    return /[Ⴀ-ჿ]/.test(text) ? "ka" : "en";
+  }
+
+  function lastUserText(messages) {
+    for (var i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        var c = messages[i].content;
+        if (typeof c === "string") return c;
+        if (Array.isArray(c)) return c.map(function (x) { return x.text || ""; }).join("");
+        return String(c || "");
+      }
+    }
+    return "";
+  }
+
+  function normalizeLang(value, fallbackText) {
+    if (value === "KA" || value === "ka") return "ka";
+    if (value === "EN" || value === "en") return "en";
+    return fallbackText ? detectLang(fallbackText) : (cfg.defaultLanguage || "ka");
+  }
+
+  function normalizeDepartment(value) {
+    if (value === "it") return "it_support";
+    if (value === "human") return "human_operator";
+    return value || null;
+  }
+
+  async function ensureSession(language) {
+    if (_convId && _sessId) return;
+    var sr = await fetch(BACKEND + "/chat/session/start", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        channel: "website_chat",
+        source_domain: SOURCE_DOMAIN,
+        language: normalizeLang(language),
+        widget_variant: "pro_v2_safe",
+        metadata: {
+          page_url: window.location.href,
+          mode: cfg.mode || "test_site"
         },
-        EN: {
-          appName:"Alte AI Assistant", appSub:"AI · 8 departments", online:"Online · FastAPI backend",
-          trust:"Answers from alte.edu.ge official sources · no hallucinations",
-          menu:"Menu", other:"Other", liveOperator:"Live operator", you:"Nino", youRole:"Applicant",
-          greetingTitle:"Hello, Nino 👋",
-          greetingBody:"I'm Alte's AI assistant. Pick a department from the sidebar or just ask — answers come from our backend.",
-          featTitle:"Trending 2026", featDesc:"MD program · Bachelor deadlines · International · Financial aid",
-          quickReplies:[
-            { emoji:"🎓", text:"How do I apply for a Bachelor?", topic:"admissions" },
-            { emoji:"💰", text:"What does tuition cost?", topic:"tuition" },
-            { emoji:"🩺", text:"MD program — deadlines?", topic:"medicine" },
-            { emoji:"🌍", text:"I'm international — what do I need?", topic:"international" },
-            { emoji:"📅", text:"When does enrollment close?", topic:"deadlines" },
-            { emoji:"📄", text:"What documents do I need?", topic:"documents" }
-          ],
-          composerPh:"Ask about programs, admissions, tuition…",
-          composerHint:"Enter to send · Shift+Enter for newline", send:"Send", attach:"Attach", voice:"Voice",
-          new:"New chat", settings:"Settings", close:"Close", expand:"Expand", collapse:"Collapse",
-          sources:"Sources", handoverTitle:"Operator engaged", handoverDept:"Relevant department",
-          handoverNote:"Do not enter phone or email during test smoke. Backend may route this to the right department.",
-          handoverYes:"Understood", handoverNo:"Wait", contactTitle:"Contact details may be needed", contactNote:"This version intentionally does not submit CRM contact details from the browser.",
-          error:"Could not start the chat session. Please try again later.", replyError:"The connection is temporarily unavailable. Please try again later.",
-          poweredVerified:"verified sources", settingsTitle:"Settings", settingsSub:"Language, notifications and privacy",
-          settingsLang:"Language", settingsExp:"Experience", settingsPriv:"Privacy",
-          optSources:"Source citations", optSourcesSub:"Backend-returned evidence with answers",
-          optNotify:"Callback notification", optNotifySub:"Real notifications require approval",
-          optDark:"Dark theme", optDarkSub:"UI-only setting at this stage",
-          optClear:"Clear conversation", optClearSub:"Local messages will be deleted", deleteWord:"Delete",
-          privacyPolicy:"Privacy Policy", copied:"Copied", disabled:"This feature requires separate approval."
-        }
-      };
-      const el = {
-        win: document.getElementById("cw-win"), backdrop: document.getElementById("cw-backdrop"), launch: document.getElementById("cw-launch"),
-        side: document.getElementById("cw-side"), sideToggle: document.getElementById("cw-side-toggle"), nav: document.getElementById("cw-nav"),
-        msgs: document.getElementById("cw-msgs"), form: document.getElementById("cw-form"), input: document.getElementById("cw-input"), inputBox: document.getElementById("cw-input-box"), send: document.getElementById("cw-send"), attach: document.getElementById("cw-attach"), voice: document.getElementById("cw-voice"),
-        ka: document.getElementById("cw-lang-ka"), en: document.getElementById("cw-lang-en"), newChat: document.getElementById("cw-new"), settings: document.getElementById("cw-settings"), expand: document.getElementById("cw-expand"), close: document.getElementById("cw-close"),
-        title: document.getElementById("cw-title"), status: document.getElementById("cw-status"), trust: document.getElementById("cw-trust"), brandSub: document.getElementById("cw-brand-sub"), you: document.getElementById("cw-you"), role: document.getElementById("cw-role"), userInitial: document.getElementById("cw-user-initial"),
-        composerHint: document.getElementById("cw-composer-hint"), verified: document.getElementById("cw-verified"), toast: document.getElementById("cw-toast"),
-        modal: document.getElementById("cw-settings-modal"), modalClose: document.getElementById("cw-settings-close"), clear: document.getElementById("cw-clear"),
-        settingsKa: document.getElementById("cw-settings-ka"), settingsEn: document.getElementById("cw-settings-en"),
-        settingsTitle: document.getElementById("cw-settings-title"), settingsSub: document.getElementById("cw-settings-sub"), settingsLang: document.getElementById("cw-settings-lang"), settingsExp: document.getElementById("cw-settings-exp"), settingsPrivacy: document.getElementById("cw-settings-privacy"),
-        optSources: document.getElementById("cw-opt-sources"), optSourcesSub: document.getElementById("cw-opt-sources-sub"), optNotify: document.getElementById("cw-opt-notify"), optNotifySub: document.getElementById("cw-opt-notify-sub"), optDark: document.getElementById("cw-opt-dark"), optDarkSub: document.getElementById("cw-opt-dark-sub"), optClear: document.getElementById("cw-opt-clear"), optClearSub: document.getElementById("cw-opt-clear-sub"), privacyLink: document.getElementById("cw-privacy-link")
-      };
-      function on(selectorOrElement, event, handler, options) {
-        const target = typeof selectorOrElement === "string"
-          ? document.querySelector(selectorOrElement)
-          : selectorOrElement;
-        if (!target || typeof target.addEventListener !== "function") {
-          console.warn("[AlteChatWidget] missing event target", selectorOrElement);
-          return false;
-        }
-        target.addEventListener(event, handler, options);
-        return true;
-      }
-      function S() { return strings[lang]; }
-      function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
-      function md(text) {
-        return esc(text).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n\s*[-•]\s+/g, "<br>• ").replace(/\n/g, "<br>");
-      }
-      function normalizeDept(value) {
-        const raw = String(value || "").toLowerCase();
-        if (raw.includes("finance") || raw.includes("tuition") || raw.includes("ფინანს") || raw.includes("დაფინანს")) return "finance";
-        if (raw.includes("medicine") || raw.includes("md") || raw.includes("მედ")) return "medicine";
-        if (raw.includes("international") || raw.includes("visa") || raw.includes("საერთ")) return "international";
-        if (raw.includes("program")) return "programs";
-        if (raw.includes("library")) return "library";
-        if (raw.includes("career")) return "career";
-        if (raw.includes("it") || raw.includes("portal") || raw.includes("პორტ")) return "it_support";
-        if (raw.includes("operator") || raw.includes("handover") || raw.includes("human") || raw.includes("ოპერატ")) return "human_operator";
-        return depts.some(d => d.id === value) ? value : activeDept;
-      }
-      function deptLabel(id) {
-        if (id === "human_operator") return S().liveOperator;
-        const d = depts.find(x => x.id === id) || depts[0];
-        return lang === "KA" ? d.ka : d.en;
-      }
-      function sourceDept(id) {
-        if (id === "it_support") return "it_support";
-        if (id === "human_operator") return "human_operator";
-        return id;
-      }
-      function renderStatic() {
-        document.documentElement.lang = lang === "KA" ? "ka" : "en";
-        el.title.textContent = S().appName;
-        el.status.textContent = S().online;
-        el.brandSub.textContent = S().appSub;
-        el.you.textContent = S().you;
-        el.role.textContent = S().youRole;
-        el.userInitial.textContent = S().you.charAt(0);
-        el.trust.innerHTML = "🛡 <span>" + esc(S().trust).replace("alte.edu.ge", "<strong>alte.edu.ge</strong>") + "</span>";
-        el.input.placeholder = S().composerPh;
-        el.verified.textContent = S().poweredVerified;
-        el.composerHint.textContent = S().composerHint;
-        el.ka.classList.toggle("on", lang === "KA");
-        el.en.classList.toggle("on", lang === "EN");
-        el.settingsKa.classList.toggle("on", lang === "KA");
-        el.settingsEn.classList.toggle("on", lang === "EN");
-        el.settingsTitle.textContent = S().settingsTitle;
-        el.settingsSub.textContent = S().settingsSub;
-        el.settingsLang.textContent = S().settingsLang;
-        el.settingsExp.textContent = S().settingsExp;
-        el.settingsPrivacy.textContent = S().settingsPriv;
-        el.optSources.textContent = S().optSources;
-        el.optSourcesSub.textContent = S().optSourcesSub;
-        el.optNotify.textContent = S().optNotify;
-        el.optNotifySub.textContent = S().optNotifySub;
-        el.optDark.textContent = S().optDark;
-        el.optDarkSub.textContent = S().optDarkSub;
-        el.optClear.textContent = S().optClear;
-        el.optClearSub.textContent = S().optClearSub;
-        el.clear.textContent = S().deleteWord;
-        el.privacyLink.textContent = S().privacyPolicy;
-        renderNav();
-        if (el.msgs.classList.contains("empty")) renderGreeting();
-      }
-      function renderNav() {
-        el.nav.innerHTML = "";
-        const sec = document.createElement("div");
-        sec.className = "sec";
-        sec.textContent = S().menu;
-        el.nav.appendChild(sec);
-        depts.forEach(d => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "item" + (d.id === activeDept ? " on" : "");
-          btn.innerHTML = `<span class="ic">${icons[d.id] || "•"}</span><span class="item-text">${esc(lang === "KA" ? d.kaShort || d.ka : d.enShort || d.en)}</span>${d.badge ? `<span class="badge">${esc(d.badge)}</span>` : ""}`;
-          on(btn, "click", () => {
-            activeDept = d.id;
-            activeTopic = d.topic;
-            renderNav();
-            if (!el.msgs.classList.contains("empty")) addAssistant(`${lang === "KA" ? "გადავერთე დეპარტამენტზე" : "Switched to"} **${deptLabel(d.id)}**.`, { department_key: d.id });
-          });
-          el.nav.appendChild(btn);
-        });
-        const human = document.createElement("button");
-        human.type = "button";
-        human.className = "item human" + (activeDept === "human_operator" ? " on" : "");
-        human.innerHTML = `<span class="ic">${icons.human_operator}</span><span class="item-text">${esc(S().liveOperator)}</span>`;
-        on(human, "click", () => {
-          activeDept = "human_operator";
-          activeTopic = "human_operator";
-          renderNav();
-          addUser(lang === "KA" ? "მინდა ოპერატორთან საუბარი" : "I want to talk to an operator");
-          addHandover("human_operator");
-        });
-        el.nav.appendChild(human);
-      }
-      function renderGreeting() {
-        el.msgs.innerHTML = "";
-        el.msgs.classList.add("empty");
-        const row = document.createElement("div");
-        row.className = "cw-greet";
-        row.innerHTML = `<h2>${esc(S().greetingTitle)}</h2><p>${esc(S().greetingBody)}</p>
-          <div class="cw-feat" id="cw-feat"><div class="ic">✦</div><div style="flex:1"><div class="ttl">${esc(S().featTitle)}</div><div class="desc">${esc(S().featDesc)}</div></div><div class="arrow">›</div></div>
-          <div class="cw-hint">${esc(lang === "KA" ? "ან აირჩიე ქვემოთ მოცემული კითხვებიდან" : "Or pick a question below")}</div>
-          <div class="cw-chips">${S().quickReplies.map(q => `<button class="cw-chip" type="button" data-topic="${esc(q.topic)}" data-text="${esc(q.text)}"><span class="em">${esc(q.emoji)}</span><span>${esc(q.text)}</span></button>`).join("")}</div>`;
-        el.msgs.appendChild(row);
-        on(row.querySelector("#cw-feat"), "click", () => sendMessage(S().quickReplies[2].text, S().quickReplies[2].topic));
-        row.querySelectorAll(".cw-chip").forEach(btn => on(btn, "click", () => sendMessage(btn.getAttribute("data-text"), btn.getAttribute("data-topic"))));
-      }
-      function scrollBottom() { el.msgs.scrollTop = el.msgs.scrollHeight; }
-      function addRow(role, html, extras) {
-        el.msgs.classList.remove("empty");
-        const row = document.createElement("div");
-        row.className = "cw-row" + (role === "user" ? " u" : "");
-        row.innerHTML = `<div class="cw-av ${role === "user" ? "u" : ""}">${role === "user" ? esc(S().you.charAt(0)) : "A"}</div><div class="cw-bub-wrap">${role !== "user" ? `<div class="cw-dept"><span class="dot"></span>${esc(deptLabel(activeDept))}</div>` : ""}<div class="cw-bub">${html}</div></div>`;
-        el.msgs.appendChild(row);
-        if (extras) renderExtras(row.querySelector(".cw-bub-wrap"), extras);
-        scrollBottom();
-        return row;
-      }
-      function addUser(text) { addRow("user", md(text)); }
-      function addAssistant(text, extras) { addRow("assistant", md(text || S().replyError), extras); }
-      function renderExtras(parent, payload) {
-        const sources = Array.isArray(payload.used_sources) ? payload.used_sources.filter(Boolean) : [];
-        if (sources.length && settingsState.sources) {
-          const src = document.createElement("div");
-          src.className = "cw-srcs";
-          src.setAttribute("data-renderer", "source card renderer");
-          sources.slice(0, 3).forEach((s, i) => {
-            const safe = esc(s);
-            const url = /^https?:\/\//i.test(s) ? safe : "https://" + safe;
-            src.insertAdjacentHTML("beforeend", `<a class="cw-src" href="${url}" target="_blank" rel="noopener noreferrer"><span class="n">${i + 1}</span><span class="u">${safe.replace(/^https?:\/\//i, "")}</span></a>`);
-          });
-          parent.appendChild(src);
-        }
-        const missing = Array.isArray(payload.missing_fields) ? payload.missing_fields : [];
-        if (missing.includes("phone") || missing.includes("email")) {
-          const card = document.createElement("div");
-          card.className = "cw-contact";
-          card.innerHTML = `<strong>${esc(S().contactTitle)}</strong><br>${esc(S().contactNote)}`;
-          parent.appendChild(card);
-        }
-      }
-      function addHandover(dept) {
-        const row = document.createElement("div");
-        row.className = "cw-row";
-        row.innerHTML = `<div class="cw-av">A</div><div class="cw-bub-wrap" style="max-width:92%"><div class="cw-handover" data-renderer="operator handover renderer"><div class="h"><div class="ic">☏</div>${esc(S().handoverTitle)}</div><div class="dept-pill">${esc(deptLabel(normalizeDept(dept)))}</div><div class="note">${esc(S().handoverNote)}</div><div class="acts"><button class="cw-btn-p" type="button">${esc(S().handoverYes)}</button><button class="cw-btn-s" type="button">${esc(S().handoverNo)}</button></div></div></div>`;
-        on(row.querySelector(".cw-btn-p"), "click", () => showToast(S().contactNote));
-        on(row.querySelector(".cw-btn-s"), "click", () => showToast(lang === "KA" ? "კარგი, დაველოდებით." : "OK, we will wait."));
-        el.msgs.appendChild(row);
-        scrollBottom();
-      }
-      function showTyping() {
-        const row = document.createElement("div");
-        row.id = "cw-typing-row";
-        row.className = "cw-row";
-        row.innerHTML = `<div class="cw-av">A</div><div class="cw-typing"><span></span><span></span><span></span></div>`;
-        el.msgs.appendChild(row);
-        scrollBottom();
-      }
-      function removeTyping() { const row = document.getElementById("cw-typing-row"); if (row) row.remove(); }
-      function showToast(text) {
-        el.toast.textContent = text;
-        el.toast.classList.remove("cw-hidden");
-        setTimeout(() => el.toast.classList.add("cw-hidden"), 1600);
-      }
-      async function ensureSession() {
-        if (conversationId && sessionId) return true;
-        try {
-          const response = await fetch(`${apiBaseUrl}/chat/session/start`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              source_domain: cfg.sourceDomain || sourceDomain,
-              language: lang === "KA" ? "ka" : "en",
-              channel: "website_chat",
-              widget_variant: widgetVariant,
-              metadata: { mode: cfg.mode || "test_site", page_url: window.location.href, referrer: document.referrer || "" }
-            })
-          });
-          if (!response.ok) {
-            console.warn("Alte chat session start failed", { status: response.status });
-            throw new Error("session_start_failed");
-          }
-          const data = await response.json();
-          conversationId = data.conversation_id || "";
-          sessionId = data.session_id || "";
-          return Boolean(conversationId && sessionId);
-        } catch (err) {
-          console.warn("Alte chat session unavailable", { type: err && err.name ? err.name : "unknown" });
-          addAssistant(S().error);
-          return false;
-        }
-      }
-      async function sendMessage(text, topic) {
-        const value = String(text || el.input.value || "").trim();
-        if (!value || typing) return;
-        activeTopic = topic || activeTopic;
-        if (!(await ensureSession())) return;
-        addUser(value);
-        el.input.value = "";
-        resizeInput();
-        typing = true;
-        el.send.disabled = true;
-        showTyping();
-        try {
-          const response = await fetch(`${apiBaseUrl}/chat/message`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              conversation_id: conversationId,
-              session_id: sessionId,
-              message: value,
-              language: lang === "KA" ? "ka" : "en",
-              source_domain: sourceDomain,
-              selected_department: sourceDept(activeDept),
-              selected_topic: activeTopic,
-              widget_variant: widgetVariant,
-              metadata: { mode: cfg.mode || "test_site", page_url: window.location.href }
-            })
-          });
-          if (!response.ok) {
-            console.warn("Alte chat message failed", { status: response.status });
-            throw new Error("message_failed");
-          }
-          const data = await response.json();
-          const routed = normalizeDept(data.department_key || data.route_department || activeDept);
-          activeDept = routed === "human_operator" ? activeDept : routed;
-          renderNav();
-          removeTyping();
-          addAssistant(data.reply || S().replyError, data);
-          if (data.should_handover) addHandover(data.department_key || data.route_department || activeDept);
-        } catch (err) {
-          console.warn("Alte chat response unavailable", { type: err && err.name ? err.name : "unknown" });
-          removeTyping();
-          addAssistant(S().replyError);
-        } finally {
-          typing = false;
-          el.send.disabled = false;
-        }
-      }
-      function resetChat() {
-        conversationId = "";
-        sessionId = "";
-        renderGreeting();
-      }
-      function setLanguage(next) {
-        lang = next === "EN" ? "EN" : "KA";
-        renderStatic();
-        resetChat();
-      }
-      function resizeInput() {
-        el.input.style.height = "auto";
-        el.input.style.height = Math.min(120, el.input.scrollHeight) + "px";
-      }
-      function closeWidget() {
-        el.win.classList.add("cw-hidden");
-        el.backdrop.classList.add("cw-hidden");
-        el.launch.classList.remove("cw-hidden");
-      }
-      function openWidget() {
-        el.win.classList.remove("cw-hidden");
-        if (expanded) el.backdrop.classList.remove("cw-hidden");
-        el.launch.classList.add("cw-hidden");
-        setTimeout(() => el.input.focus(), 40);
-      }
-      function toggleExpanded() {
-        expanded = !expanded;
-        el.win.classList.toggle("expanded", expanded);
-        el.backdrop.classList.toggle("cw-hidden", !expanded);
-        el.expand.title = expanded ? S().collapse : S().expand;
-      }
-      function toggleSidebar() {
-        el.side.classList.toggle("collapsed");
-        el.sideToggle.textContent = el.side.classList.contains("collapsed") ? "›" : "‹";
-      }
-      function toggleSettings() { el.modal.classList.toggle("cw-hidden"); }
-      on(el.form, "submit", ev => { ev.preventDefault(); sendMessage(); });
-      on(el.input, "input", resizeInput);
-      on(el.input, "focus", () => el.inputBox && el.inputBox.classList.add("focus"));
-      on(el.input, "blur", () => el.inputBox && el.inputBox.classList.remove("focus"));
-      on(el.input, "keydown", ev => {
-        if (ev.key === "Enter" && !ev.shiftKey) {
-          ev.preventDefault();
-          sendMessage();
-        }
+      }),
+    });
+    if (!sr.ok) throw new Error("Session start failed (" + sr.status + ")");
+    var sd = await sr.json();
+    _convId = sd.conversation_id;
+    _sessId = sd.session_id;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ conv: _convId, sess: _sessId })); } catch (e) {}
+  }
+
+  window.AlteChatBridge = {
+    _reset: function () { _convId = null; _sessId = null; _lastResponse = null; try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} },
+
+    complete: async function (opts) {
+      var messages = Array.isArray(opts.messages) ? opts.messages : [];
+      var userText = lastUserText(messages);
+      if (!userText) return "";
+      var context = opts.context || {};
+      var language = normalizeLang(context.language, userText);
+
+      await ensureSession(language);
+
+      var mr = await fetch(BACKEND + "/chat/message", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          conversation_id: _convId,
+          message: userText,
+          session_id: _sessId,
+          source_domain: SOURCE_DOMAIN,
+          language: language,
+          selected_department: normalizeDepartment(context.selected_department),
+          selected_topic: context.selected_topic || null,
+          page_url: window.location.href,
+          widget_variant: "pro_v2_safe",
+        }),
       });
-      on(el.attach, "click", () => showToast(S().disabled));
-      on(el.voice, "click", () => showToast(S().disabled));
-      on(el.ka, "click", () => setLanguage("KA"));
-      on(el.en, "click", () => setLanguage("EN"));
-      on(el.settingsKa, "click", () => setLanguage("KA"));
-      on(el.settingsEn, "click", () => setLanguage("EN"));
-      on(el.newChat, "click", resetChat);
-      on(el.settings, "click", toggleSettings);
-      on(el.modalClose, "click", toggleSettings);
-      on(el.modal, "click", ev => { if (ev.target === el.modal) toggleSettings(); });
-      on(el.clear, "click", () => { resetChat(); toggleSettings(); });
-      on(el.expand, "click", toggleExpanded);
-      on(el.close, "click", closeWidget);
-      on(el.launch, "click", openWidget);
-      on(el.backdrop, "click", toggleExpanded);
-      on(el.sideToggle, "click", toggleSidebar);
-      renderStatic();
-      renderGreeting();
-    })();
-  </script>
+      if (!mr.ok) {
+        var err = await mr.json().catch(function () { return {}; });
+        throw new Error("Chat error (" + mr.status + "): " + (err.detail || "unknown"));
+      }
+      var md = await mr.json();
+      _lastResponse = md;
+      return md.reply || "";
+    },
+  };
+
+  window.AlteChatBackend = {
+    get conversationId() { return _convId; },
+    get sessionId() { return _sessId; },
+    get lastResponse() { return _lastResponse; },
+    reset: window.AlteChatBridge._reset,
+    requestHandover: async function (context) {
+      await ensureSession(normalizeLang(context && context.language));
+      if (context && context.message) {
+        await fetch(BACKEND + "/chat/message", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            conversation_id: _convId,
+            message: context.message,
+            session_id: _sessId,
+            source_domain: SOURCE_DOMAIN,
+            language: normalizeLang(context.language, context.message),
+            selected_department: normalizeDepartment(context.selected_department),
+            selected_topic: context.selected_topic || "operator",
+            page_url: window.location.href,
+            widget_variant: "pro_v2_safe",
+            metadata: { handover_request: true },
+          }),
+        }).catch(function () {});
+      }
+      var response = await fetch(BACKEND + "/chat/handover/" + encodeURIComponent(_convId), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ session_id: _sessId }),
+      });
+      if (!response.ok) throw new Error("Handover failed (" + response.status + ")");
+      return response.json();
+    },
+    submitContact: async function (data) {
+      await ensureSession(normalizeLang(data && data.language));
+      var response = await fetch(BACKEND + "/chat/contact/" + encodeURIComponent(_convId), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          session_id: _sessId,
+          full_name: data.full_name || data.name || null,
+          phone: data.phone || null,
+          email: data.email || null,
+          interest_area: data.interest_area || data.interest || null,
+          selected_department: normalizeDepartment(data.selected_department),
+          selected_topic: data.selected_topic || null,
+          source_domain: SOURCE_DOMAIN,
+          language: normalizeLang(data.language),
+          consent: data.consent === true,
+        }),
+      });
+      if (!response.ok) {
+        var err = await response.json().catch(function () { return {}; });
+        throw new Error("Contact handover failed (" + response.status + "): " + (err.detail || "unknown"));
+      }
+      return response.json();
+    },
+    pollOperatorMessages: async function () {
+      return [];
+    },
+  };
+}());
+</script>
+
+<script type="text/babel" src="variants/tweaks-panel.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-icons.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-strings.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-chat.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-modals.jsx"></script>
+<script type="text/babel" src="variants/pro-v2-page.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const { useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakSelect } = window;
+const { Page } = window;
+const { STRINGS } = window;
+
+const TWEAK_DEFAULTS = {
+  accent: "teal",
+  density: "cozy",
+  surface: "cream",
+  lang: "KA",
+  showSidebar: true,
+  openOnLoad: true,
+};
+
+const ACCENTS = {
+  teal:   { name:"ალტე Teal", primary:"#074045", deep:"#052e32", mid:"#0a5258", soft:"#eef7f5", line:"#d4e8e3", accent:"#e8714e" },
+  forest: { name:"Forest",    primary:"#1f4d3a", deep:"#143527", mid:"#2a6a4f", soft:"#eaf4ec", line:"#cfe5d3", accent:"#e8714e" },
+  ink:    { name:"Ink",       primary:"#1a1f2b", deep:"#0c0f17", mid:"#2a3346", soft:"#eef0f4", line:"#d4d8e0", accent:"#e8714e" },
+};
+const SURFACES = {
+  cream: { page:"#f4f1ea", paper:"#faf8f1", panel:"#ffffff", chip:"#f6f2e8", line:"#e8e2d4", ink:"#0f1a1c", mute:"#5a6c6d" },
+  paper: { page:"#ffffff", paper:"#fafaf9", panel:"#ffffff", chip:"#f4f4f1", line:"#e7e7e3", ink:"#0f1a1c", mute:"#5a6c6d" },
+};
+
+function applyTokens(t) {
+  const a = ACCENTS[t.accent] || ACCENTS.teal;
+  const s = SURFACES[t.surface] || SURFACES.cream;
+  const r = document.documentElement.style;
+  r.setProperty("--alte-teal",      a.primary);
+  r.setProperty("--alte-teal-deep", a.deep);
+  r.setProperty("--alte-teal-mid",  a.mid);
+  r.setProperty("--alte-orange",    a.accent);
+  r.setProperty("--alte-soft",      a.soft);
+  r.setProperty("--alte-soft-line", a.line);
+  r.setProperty("--alte-page",      s.page);
+  r.setProperty("--alte-paper",     s.paper);
+  r.setProperty("--alte-panel",     s.panel);
+  r.setProperty("--alte-chip",      s.chip);
+  r.setProperty("--alte-line",      s.line);
+  r.setProperty("--alte-ink",       s.ink);
+  r.setProperty("--alte-mute",      s.mute);
+  const d = t.density === "compact"
+    ? { gap: 8,  bub: "8px 12px",  font: 12.5, bubR: 11 }
+    : { gap: 11, bub: "10px 13px", font: 13,   bubR: 13 };
+  r.setProperty("--gap",      d.gap  + "px");
+  r.setProperty("--bub",      d.bub);
+  r.setProperty("--msg-font", d.font + "px");
+  r.setProperty("--bub-r",    d.bubR + "px");
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  useEffect(() => { applyTokens(tweaks); }, [tweaks]);
+  const lang = tweaks.lang || "KA";
+  const S = STRINGS[lang];
+
+  return (
+    <>
+      <Page tweaks={tweaks} S={S} setTweak={setTweak} />
+      <TweaksPanel title="Tweaks" defaultOpen={false}>
+        <TweakSection title="ბრენდი">
+          <TweakSelect
+            label="Accent"
+            value={tweaks.accent}
+            onChange={(v) => setTweak("accent", v)}
+            options={Object.keys(ACCENTS).map(k => ({ value: k, label: ACCENTS[k].name }))}
+          />
+          <TweakRadio
+            label="Surface"
+            value={tweaks.surface}
+            onChange={(v) => setTweak("surface", v)}
+            options={[{ value: "cream", label: "Cream" }, { value: "paper", label: "Paper" }]}
+          />
+        </TweakSection>
+        <TweakSection title="გამოცდილება">
+          <TweakRadio
+            label="ენა"
+            value={tweaks.lang}
+            onChange={(v) => setTweak("lang", v)}
+            options={[{ value: "KA", label: "KA" }, { value: "EN", label: "EN" }]}
+          />
+          <TweakRadio
+            label="Density"
+            value={tweaks.density}
+            onChange={(v) => setTweak("density", v)}
+            options={[{ value: "cozy", label: "Cozy" }, { value: "compact", label: "Compact" }]}
+          />
+          <TweakToggle label="Sidebar"   value={tweaks.showSidebar} onChange={(v) => setTweak("showSidebar", v)} />
+          <TweakToggle label="გახსნილი" value={tweaks.openOnLoad}  onChange={(v) => setTweak("openOnLoad",  v)} />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+</script>
 </body>
 </html>

@@ -1,5 +1,21 @@
 # Next Phases
 
+## Phase 9S: Pro v2 Message Endpoint and CORS Fix Ready
+
+Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_ENDPOINT_CORS_FIXED_PENDING_NETLIFY_REDEPLOY`
+
+- Removed hosted test widget polling to `/chat/messages`.
+- Browser chat flow now uses only approved endpoints:
+  - `POST /chat/session/start`
+  - `POST /chat/message`
+- Rebuilt `dist/netlify_test_site_deploy.zip`.
+- CORS smoke script added for actual Netlify origin.
+- Live POST smoke is blocked by current production DB credential mismatch and is not fixed in this phase.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Next required action: fix the production DB credential mismatch, then redeploy the Netlify package and manually retest browser chat.
+
 ## Phase 9Z: Chatbot Required Alte Knowledge Package Ready
 
 Status: `BACKEND_DEPLOYED_CHATBOT_REQUIRED_KNOWLEDGE_APPLIED_PENDING_SAFE_SMOKE_AND_PUBLIC_LAUNCH_APPROVAL`
