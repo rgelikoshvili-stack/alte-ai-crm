@@ -14,6 +14,8 @@ KNOWLEDGE_PATH = ROOT / "backend" / "app" / "data" / "knowledge" / "official_aca
 ANSWER_KEY = ROOT / "docs" / "evaluation" / "ALTE_OFFICIAL_ACADEMIC_RULES_20_QA_EXPECTED_ANSWER_KEY.md"
 EVAL_REPORT = ROOT / "docs" / "evaluation" / "ALTE_OFFICIAL_ACADEMIC_RULES_20_QA_EVALUATION_RESULT.md"
 RESULT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_RESULT.md"
+DB_IMPORT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_DB_IMPORT_RESULT.md"
+APPLY_SCRIPT = ROOT / "backend" / "app" / "scripts" / "apply_official_academic_rules_knowledge.py"
 
 EVIDENCE_FILES = [
     "sastsavlo_procesis_maregulirebeli_wesi.pdf",
@@ -89,6 +91,8 @@ def main() -> None:
         ANSWER_KEY,
         EVAL_REPORT,
         RESULT_DOC,
+        DB_IMPORT_DOC,
+        APPLY_SCRIPT,
     ]:
         if not path.exists():
             raise AssertionError(f"Missing required artifact: {path.relative_to(ROOT)}")
@@ -137,6 +141,7 @@ def main() -> None:
             ANSWER_KEY,
             EVAL_REPORT,
             RESULT_DOC,
+            DB_IMPORT_DOC,
         ]
     )
     if "PUBLIC_LAUNCH_DECISION=GO" in docs_text or "PUBLIC_LAUNCH_STATUS=COMPLETE" in docs_text:

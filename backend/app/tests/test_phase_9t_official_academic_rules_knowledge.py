@@ -21,6 +21,7 @@ def load_json(path: Path) -> list[dict]:
 def test_phase_9t_scripts_importable():
     assert callable(importlib.import_module("app.scripts.evaluate_official_academic_rules_20_qa").main)
     assert callable(importlib.import_module("app.scripts.verify_phase_9t_official_academic_rules_knowledge").main)
+    assert callable(importlib.import_module("app.scripts.apply_official_academic_rules_knowledge").main)
 
 
 def test_manifest_extractions_summary_and_answer_key_exist():

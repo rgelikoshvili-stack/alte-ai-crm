@@ -1,10 +1,10 @@
 # Phase 9T Official Academic Rules Import Result
 
-PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_STATUS=READY_PENDING_REVIEW_OR_DB_IMPORT_APPROVAL
+PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_STATUS=IMPORTED_TO_PRODUCTION_KB_PENDING_BROWSER_QA_SMOKE
 
 Decision state:
 
-BACKEND_CODE_OFFICIAL_ACADEMIC_RULES_KNOWLEDGE_PREPARED_PENDING_REVIEW_OR_IMPORT_APPROVAL
+BACKEND_PRODUCTION_KB_OFFICIAL_ACADEMIC_RULES_IMPORTED_PENDING_BROWSER_QA_SMOKE
 
 ## Imported Files
 
@@ -34,7 +34,8 @@ The expected uploaded spec filename was not present on local disk, so the implem
 - 20-question QA dataset: DONE
 - Expected answer key: DONE
 - QA evaluator/report: DONE
-- DB import approval note: DONE
+- DB import approval note: APPROVED_AND_APPLIED
+- Production DB Knowledge Base import: DONE
 
 ## QA Evaluation
 
@@ -59,8 +60,8 @@ Needs additional official source or operator handover:
 
 ## Safety
 
-- Production DB modified: NO
-- Production DB import run: NO
+- Production DB modified: YES - Knowledge Base source/snippet records only
+- Production DB import run: YES
 - Migration run: NO
 - Seed run: NO
 - Cloud Run deploy: NO
@@ -77,4 +78,4 @@ Needs additional official source or operator handover:
 
 ## Next Gate
 
-Review the extracted facts and QA answer key. Production Knowledge Base import requires explicit DB import approval before any write.
+Run a browser/API QA smoke against the production chatbot after confirming no unrelated workflow is active. Public launch remains blocked until the normal final launch gates are complete.
