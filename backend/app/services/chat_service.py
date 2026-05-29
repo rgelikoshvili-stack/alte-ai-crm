@@ -31,6 +31,37 @@ CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "int
 CONTACT_FIELD = "phone_or_email"
 INFO_ONLY_NO_CONTACT_INTENTS = {"finance_question", "deadline_question"}
 INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS = {"tuition_fee", "scholarship", "schedule"}
+SAFE_CONTACT_CONSENT_EN = (
+    'If you would like an operator to follow up, click "Yes, contact". '
+    "Contact details should only be shared after your explicit consent."
+)
+SAFE_CONTACT_CONSENT_KA = (
+    "თუ გსურთ ოპერატორთან დაკავშირება, დააჭირეთ „დიახ, კონტაქტი“-ს. "
+    "საკონტაქტო ინფორმაციის გაზიარება მხოლოდ თქვენი მკაფიო თანხმობის შემდეგ უნდა მოხდეს."
+)
+CONTACT_REQUEST_MARKERS = [
+    "please confirm your contact details",
+    "contact details (name, phone, email)",
+    "please share your name and phone number or email",
+    "please share your name, phone, or email",
+    "please share your phone or email",
+    "please provide your phone",
+    "please provide your email",
+    "provide phone or email",
+    "phone or email so",
+    "name, phone, email",
+    "name and phone",
+    "share your name",
+    "share your phone",
+    "share your email",
+    "გთხოვთ მოგვწეროთ სახელი",
+    "გთხოვთ მომწეროთ სახელი",
+    "ტელეფონი ან ელფოსტა",
+    "ტელეფონი ან ელ.ფოსტა",
+    "ტელეფონი ან ელ-ფოსტა",
+    "დატოვოთ საკონტაქტო ინფორმაცია",
+    "დატოვეთ საკონტაქტო ინფორმაცია",
+]
 
 
 async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> ChatSessionStartResponse:
@@ -118,13 +149,15 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif should_require_knowledge(analysis):
+    elif should_require_knowledge(analysis) or is_official_academic_rules_text(payload.message):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
+    sanitize_premature_contact_request(analysis)
     apply_no_contact_lead_guard(analysis)
     apply_info_only_no_contact_guard(analysis)
     routing = apply_department_routing(analysis, payload, knowledge)
+    sanitize_premature_contact_request(analysis)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -716,30 +749,42 @@ def should_prompt_for_contact(analysis: AIAnalysisResult) -> bool:
 
 
 def ensure_contact_request_reply(analysis: AIAnalysisResult) -> str:
+    reply = strip_contact_request_sentence(analysis.reply)
+    consent = safe_contact_consent_text(analysis.language)
+    if not reply:
+        return consent
+    if consent in reply:
+        return reply
+    return f"{reply} {consent}"
+
+
+def sanitize_premature_contact_request(analysis: AIAnalysisResult) -> None:
+    if has_contact(analysis):
+        return
     if reply_requests_contact(analysis.reply):
-        return analysis.reply
-    if analysis.language == "en":
-        return (
-            f"{analysis.reply} Please share your name and phone number or email so an admissions consultant can follow up."
-        )
-    return f"{analysis.reply} გთხოვთ მოგვწეროთ სახელი და ტელეფონი ან ელფოსტა, რომ კონსულტანტი დაგიკავშირდეთ."
+        analysis.reply = ensure_contact_request_reply(analysis)
+
+
+def safe_contact_consent_text(language: str) -> str:
+    return SAFE_CONTACT_CONSENT_EN if language == "en" else SAFE_CONTACT_CONSENT_KA
+
+
+def strip_contact_request_sentence(reply: str) -> str:
+    cleaned = (reply or "").strip()
+    lowered = cleaned.lower()
+    for marker in CONTACT_REQUEST_MARKERS:
+        index = lowered.find(marker.lower())
+        if index >= 0:
+            cleaned = cleaned[:index].strip()
+            break
+    if cleaned and cleaned[-1] not in ".!?":
+        cleaned = cleaned.rstrip(" .,!?:;") + "."
+    return cleaned
 
 
 def reply_requests_contact(reply: str) -> bool:
     lowered = reply.lower()
-    return any(
-        token in lowered
-        for token in [
-            "phone",
-            "email",
-            "contact",
-            "name",
-            "ტელეფ",
-            "ელფოსტ",
-            "საკონტაქტ",
-            "სახელი",
-        ]
-    )
+    return any(marker.lower() in lowered for marker in CONTACT_REQUEST_MARKERS)
 
 
 def is_medical(analysis: AIAnalysisResult) -> bool:
@@ -753,9 +798,10 @@ def mentions_relocation(analysis: AIAnalysisResult) -> bool:
 
 
 async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
-    if not should_use_knowledge(analysis):
+    academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
+    if not academic_rules_question and not should_use_knowledge(analysis):
         return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
-    category = category_for_analysis(analysis)
+    category = None if academic_rules_question else category_for_analysis(analysis)
     results = await search_knowledge_snippets(
         db,
         query=message,
@@ -844,14 +890,14 @@ async def persist_ai_interaction(
 
 
 def should_use_knowledge(analysis: AIAnalysisResult) -> bool:
-    return analysis.intent in {"admission_interest", "international_admission", "finance_question"} or (
+    return is_official_academic_rules_question(analysis) or analysis.intent in {"admission_interest", "international_admission", "finance_question"} or (
         analysis.qualification.intent
         in {"program_info", "admission_requirements", "tuition_fee", "scholarship", "application"}
     )
 
 
 def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
-    return analysis.intent == "finance_question" or analysis.qualification.intent in {
+    return is_official_academic_rules_question(analysis) or analysis.intent == "finance_question" or analysis.qualification.intent in {
         "tuition_fee",
         "scholarship",
         "admission_requirements",
@@ -859,6 +905,8 @@ def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
 
 
 def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
+    if is_official_academic_rules_question(analysis):
+        return None
     if analysis.qualification.intent == "tuition_fee":
         return "finance"
     if analysis.qualification.intent == "scholarship":
@@ -868,6 +916,76 @@ def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
     if analysis.program:
         return "programs"
     return None
+
+
+def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:
+    haystack = " ".join(
+        [
+            analysis.reply or "",
+            analysis.conversation_summary or "",
+            analysis.program or "",
+            analysis.interest_area or "",
+            analysis.qualification.intent or "",
+        ]
+    ).lower()
+    markers = [
+        "academic calendar",
+        "registration",
+        "midterm",
+        "final exam",
+        "retake",
+        "ects",
+        "gpa",
+        "fx",
+        "mobility",
+        "status suspension",
+        "status termination",
+        "teaching language",
+        "master admission",
+        "bachelor admission",
+        "ეროვნული გამოცდ",
+        "რეგისტრაცი",
+        "შუალედურ",
+        "დასკვნით",
+        "კრედიტ",
+        "სტატუს",
+        "მობილობ",
+        "მაგისტრატურ",
+        "ბაკალავრიატ",
+        "სწავლების ენა",
+    ]
+    return any(marker in haystack for marker in markers)
+
+
+def is_official_academic_rules_text(text: str) -> bool:
+    haystack = (text or "").lower()
+    markers = [
+        "academic calendar",
+        "registration",
+        "midterm",
+        "final exam",
+        "retake",
+        "ects",
+        "gpa",
+        "fx",
+        "mobility",
+        "status suspension",
+        "status termination",
+        "teaching language",
+        "master admission",
+        "bachelor admission",
+        "ეროვნული გამოცდ",
+        "რეგისტრაცი",
+        "შუალედურ",
+        "დასკვნით",
+        "კრედიტ",
+        "სტატუს",
+        "მობილობ",
+        "მაგისტრატურ",
+        "ბაკალავრიატ",
+        "სწავლების ენა",
+    ]
+    return any(marker in haystack for marker in markers)
 
 
 def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[str]) -> str:

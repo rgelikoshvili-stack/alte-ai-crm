@@ -1,0 +1,782 @@
+[
+  {
+    "id": "Q01",
+    "question": "როდის იწყება შუალედური გამოცდები შემოდგომის სემესტრში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "17-22 November",
+      "24-29 November",
+      "1-6 December",
+      "5-10 January"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q02",
+    "question": "როდის აქვს Computer Science-ის სტუდენტს გაზაფხულის რეგისტრაცია?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "9-14 March"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q03",
+    "question": "როდის იწყება გაზაფხულის სემესტრი სამაგისტრო პროგრამებისთვის?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "16 March"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q04",
+    "question": "როდის არის დასკვნითი გამოცდები ერთსაფეხურიან პროგრამებზე?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "20-31 July"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q05",
+    "question": "რამდენი ECTS სჭირდება ბაკალავრიატის დასრულებას?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "240 ECTS"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q06",
+    "question": "რამდენი ECTS აქვს მედიცინის ერთსაფეხურიან პროგრამას?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "360 ECTS"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q07",
+    "question": "რამდენი ECTS აქვს სტომატოლოგიის პროგრამას?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "300 ECTS"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q08",
+    "question": "რამდენი ECTS აქვს მაგისტრატურას?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "120 ECTS",
+      "60",
+      "30",
+      "4 semesters"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q09",
+    "question": "Who can study in a master’s program?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "common master exam",
+      "bachelor or equivalent"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q10",
+    "question": "What documents are required for master admission?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "ID card copy",
+      "CV",
+      "3x4",
+      "notarized diploma copy"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q11",
+    "question": "რა საბუთები მჭირდება მაგისტრატურაზე ჩასარიცხად?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "ID card copy",
+      "CV",
+      "3x4",
+      "diploma supplement copy"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q12",
+    "question": "შესაძლებელია თუ არა ბაკალავრიატზე ჩარიცხვა ეროვნული გამოცდების გარეშე?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "without national exams",
+      "foreign citizens"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q13",
+    "question": "What are the English certificate levels accepted for English-language programs?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q14",
+    "question": "რა არის სტუდენტის სტატუსის შეჩერების საფუძვლები?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "written request",
+      "illness",
+      "tuition non-payment"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q15",
+    "question": "რამდენი წლით შეიძლება სტუდენტის სტატუსის შეჩერება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "5 years"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q16",
+    "question": "როდის წყდება სტუდენტის სტატუსი?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "termination grounds"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q17",
+    "question": "როგორ აღიდგენს სტუდენტი შეჩერებულ სტატუსს?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "status restoration"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q18",
+    "question": "რა არის შიდა მობილობა?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "internal mobility"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q19",
+    "question": "როგორ ხდება მობილობისას კრედიტების აღიარება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "comparing prior completed courses",
+      "syllabus"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q20",
+    "question": "რა ენაზე მიმდინარეობს სწავლება ალტე უნივერსიტეტში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "Georgian",
+      "English"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q21",
+    "question": "Who approves educational programs?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "Board of Directors"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q22",
+    "question": "როგორ მტკიცდება საგანმანათლებლო პროგრამა?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "Quality Management and Compliance Department",
+      "School Council",
+      "Board of Directors"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q23",
+    "question": "რა ხდება თუ სტუდენტი FX შეფასებას მიიღებს?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "41-50 points",
+      "additional exam once"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q24",
+    "question": "როგორ გამოითვლება GPA?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "GPA = (X - 50) * 0.06 + 1"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q25",
+    "question": "რა წინაპირობები აქვს დასკვნით გამოცდაზე დაშვებას?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "no financial debt",
+      "mandatory/intermediate"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q26",
+    "question": "უცხო ქვეყანაში მიღებული განათლების აღიარებისთვის რა პროცედურაა?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "NCEQE",
+      "Ministry decision"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q27",
+    "question": "What is the fall semester calendar for bachelor programs except CS?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_eng_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "22 September",
+      "17-22 November",
+      "26 January-7 February"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q28",
+    "question": "What is the calendar for first-year one-cycle English programs?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_source_documents": [
+      "academic_calendar_eng_2025_2026.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "24 November",
+      "5-10 January",
+      "16-21 February"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q29",
+    "question": "რა წესები აქვს საბაკალავრო ნაშრომს?",
+    "language": "ka",
+    "expected_status": "PARTIALLY_ANSWERABLE",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "additional official source"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  },
+  {
+    "id": "Q30",
+    "question": "რა წესები აქვს სამაგისტრო ნაშრომს?",
+    "language": "ka",
+    "expected_status": "PARTIALLY_ANSWERABLE",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_pages_or_articles": [
+      "official source page/article reference required"
+    ],
+    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "required_exact_values": [
+      "additional official source"
+    ],
+    "forbidden_hallucinations": [
+      "unsupported tuition amounts",
+      "unsupported deadlines",
+      "unsupported contact process",
+      "phone/email request",
+      "lead/task/customer creation"
+    ],
+    "should_handover_if_uncertain": true,
+    "must_not_request_contact_details": true
+  }
+]
