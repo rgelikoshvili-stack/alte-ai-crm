@@ -49,4 +49,6 @@ def test_result_docs_keep_launch_no_go() -> None:
 
 def test_cors_middleware_documents_error_response_coverage() -> None:
     main_py = (ROOT / "backend" / "app" / "main.py").read_text(encoding="utf-8")
+    middleware_py = (ROOT / "backend" / "app" / "api" / "middleware.py").read_text(encoding="utf-8")
     assert "error responses, including backend 500s" in main_py
+    assert "safe_error_response_middleware" in middleware_py

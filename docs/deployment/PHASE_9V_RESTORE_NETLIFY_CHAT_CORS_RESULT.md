@@ -24,6 +24,7 @@ The local operator admin panel issue is separate and was not changed in this pha
 ## Fix
 
 - CORS middleware was moved to the outermost user middleware position in `backend/app/main.py`.
+- A minimal safe error middleware now converts unhandled exceptions into generic `500` JSON responses before they leave the app stack, allowing the outer CORS middleware to attach the exact allowed origin header.
 - This is a minimal CORS reliability change so backend error responses, including `500`, still carry the exact allowed origin header.
 - No wildcard CORS was added.
 

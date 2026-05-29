@@ -67,6 +67,8 @@ def main() -> int:
 
     main_py = read(BACKEND / "app" / "main.py")
     check("error responses, including backend 500s" in main_py, "CORS outermost error-response note exists", failures)
+    middleware_py = read(BACKEND / "app" / "api" / "middleware.py")
+    check("safe_error_response_middleware" in middleware_py, "safe generic 500 middleware exists", failures)
 
     check("HOSTED_BROWSER_SMOKE_STATUS=PASSED" not in docs, "browser smoke not falsely marked passed", failures)
     check("PUBLIC_LAUNCH_DECISION=GO_APPROVED_FOR_PUBLIC_LAUNCH" not in docs, "public launch not complete", failures)

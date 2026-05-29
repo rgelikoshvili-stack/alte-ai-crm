@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.middleware import auth_rbac_middleware, correlation_middleware
+from app.api.middleware import auth_rbac_middleware, correlation_middleware, safe_error_response_middleware
 from app.api.routes_analytics import router as analytics_router
 from app.api.routes_auth import router as auth_router
 from app.api.routes_chat import router as chat_router
@@ -28,6 +28,7 @@ app = FastAPI(
 
 app.middleware("http")(correlation_middleware)
 app.middleware("http")(auth_rbac_middleware)
+app.middleware("http")(safe_error_response_middleware)
 
 # Keep CORS as the outermost user middleware for browser-visible error responses, including backend 500s.
 # This lets failed chat requests still carry the exact allowed origin.
