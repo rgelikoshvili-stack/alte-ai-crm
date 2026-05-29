@@ -1,10 +1,10 @@
 # Phase 9T Official Academic Rules Knowledge Import Result
 
-PHASE_9T_OFFICIAL_ACADEMIC_RULES_KNOWLEDGE_STATUS=LOCAL_KB_INTEGRATED_PENDING_BROWSER_OR_DEPLOY_APPROVAL
+PHASE_9T_OFFICIAL_ACADEMIC_RULES_KNOWLEDGE_STATUS=DEPLOYED_AND_PRODUCTION_SMOKE_PASSED
 
 Decision state:
 
-BACKEND_CODE_OFFICIAL_ACADEMIC_RULES_KB_READY_PENDING_REVIEW_AND_DEPLOY_APPROVAL
+BACKEND_DEPLOYED_OFFICIAL_ACADEMIC_RULES_KB_ACTIVE_PENDING_BROWSER_QA_RETEST
 
 ## Imported Source Files
 
@@ -22,7 +22,7 @@ BACKEND_CODE_OFFICIAL_ACADEMIC_RULES_KB_READY_PENDING_REVIEW_AND_DEPLOY_APPROVAL
 - Calendar JSON status: DONE, `backend/app/data/knowledge/academic_calendar_2025_2026_structured.json`
 - QA dataset status: DONE, `backend/app/data/evaluation/alte_official_academic_rules_30_qa.json`
 - QA evaluation score: 30/30 PASS
-- Chatbot integration status: local code prioritizes official academic rules retrieval for academic/calendar/status/ECTS/GPA/exam/mobility questions.
+- Chatbot integration status: deployed code prioritizes official academic rules retrieval for academic/calendar/status/ECTS/GPA/exam/mobility questions.
 
 ## Answerable
 
@@ -34,9 +34,9 @@ Unsupported tuition/payment specifics, unsupported thesis details, career/alumni
 
 ## Safety
 
-- Production DB changed in this local update: NO
-- New production DB import approval needed: YES before applying any new local artifact rows to production
-- Deploy run: NO
+- Production DB changed in this deploy: NO
+- New production DB import approval needed: NO for current approved KB records; YES before applying any future new local artifact rows to production
+- Deploy run: YES
 - Migration run: NO
 - Seed run: NO
 - Real Alte site modified: NO
