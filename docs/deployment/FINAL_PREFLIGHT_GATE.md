@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
+Current decision: `BACKEND_DEPLOYED_DB_CREDENTIAL_FIXED_CHAT_READY_PENDING_BROWSER_RETEST`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -24,6 +24,7 @@ Phase 9S Pro v2 message endpoint/CORS fix is prepared. The hosted test widget no
 Phase 9S Pro v2 message 500 flow fix is prepared. Typed operator intent no longer automatically calls `/chat/handover/{conversation_id}`; handover remains behind explicit operator/sidebar action. Failed `/chat/message` now renders a visible user-facing error card. Netlify deploy ZIP was rebuilt. No DB, Secret Manager, Cloud Run, CORS, or real-site change was performed.
 Phase 9V Netlify chatbot CORS restore is deployed on revision `alte-ai-crm-backend-00016-2gk`. The active CORS allowlist includes `https://nimble-croissant-2f66e8.netlify.app`; `/chat/session/start`, `/chat/message`, and `/chat/handover/{conversation_id}` preflights return the exact origin and no wildcard. CORS middleware was moved outermost and a generic safe error middleware was added so backend error responses can include CORS headers. Real `/chat/session/start` still returns backend `500` before DB repair, but the failed response now includes the Netlify CORS header. Production DB and Secret Manager were not changed.
 Phase 9W diagnosed the `/chat/session/start` backend `500`. Sanitized logs show `asyncpg.exceptions.InvalidPasswordError` during PostgreSQL connection/flush in `start_session()`. This is a production DB credential or Secret Manager mapping issue and requires explicit approval before any Secret Manager, DB credential, or production DB change. The session schema now explicitly accepts Pro v2 `widget_variant` and `metadata`, but production chat remains blocked until credential repair is approved.
+Phase 9W-DB repaired the production DB credential after explicit approval. The Cloud SQL app user password was updated to match the active `alte-database-url:latest` Secret Manager credential without printing secret values. Cloud Run still maps `DATABASE_URL` from Secret Manager. `/chat/session/start` now returns `200` with exact Netlify CORS origin, and `/chat/message` succeeds in production DB credential smoke without contact details or intentional CRM record creation. Netlify public chat CORS smoke passed; department routing sidebar smoke passed `28/28`; finance no-contact smoke passed `21/22` with one timeout; knowledge smoke passed `24/25` with one deadline conservativeness assertion needing review. No Secret Manager payload, migration, seed, schema, DB data, frontend design, or real Alte site change was made.
 
 | Area | Check | Status |
 | --- | --- | --- |

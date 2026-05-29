@@ -1,5 +1,23 @@
 # Next Phases
 
+## Phase 9W-DB: Production DB Credential Fixed
+
+Status: `BACKEND_DEPLOYED_DB_CREDENTIAL_FIXED_CHAT_READY_PENDING_BROWSER_RETEST`
+
+- Root cause was production Cloud SQL app user password mismatch with the active `alte-database-url:latest` Secret Manager credential.
+- The Cloud SQL app user password was repaired after explicit approval, without printing secret values.
+- Cloud Run still maps `DATABASE_URL` from Secret Manager.
+- `/chat/session/start` now returns 200 with exact Netlify CORS origin.
+- Production DB credential smoke reached `/chat/message` without contact details or intentional CRM record creation.
+- Netlify public chat CORS smoke passed.
+- Department routing sidebar smoke passed `28/28`.
+- Finance no-contact smoke passed `21/22`; one deadline case timed out and needs retry/review.
+- Knowledge smoke passed `24/25`; one deadline conservativeness assertion needs review.
+- No migration, seed, schema change, DB data change, real Alte site change, or frontend design change was made.
+- Public launch remains NO-GO.
+
+Next required action: manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+
 ## Phase 9W: Chat Session Start 500 Diagnosed
 
 Status: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
@@ -11,7 +29,7 @@ Status: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
 - No Secret Manager, DB user/password, production DB, migration, seed, real Alte site, or frontend design change was made.
 - Public launch remains NO-GO.
 
-Next required action: explicitly approve a production credential repair phase before changing Secret Manager or DB credentials.
+Resolved by Phase 9W-DB after explicit approval.
 
 ## Phase 9V: Netlify Chat CORS Restore Deployed
 
