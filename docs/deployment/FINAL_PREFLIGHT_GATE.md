@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_ENDPOINT_CORS_FIXED_PENDING_NETLIFY_REDEPLOY`
+Current decision: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_500_FIXED_PENDING_NETLIFY_REDEPLOY`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -21,6 +21,7 @@ Phase 9N-CORS-Actual-Netlify-Origin configured temporary CORS for the actual dep
 Phase 9T official Alte 8 PDF Knowledge Base package is prepared. The 8 PDFs were copied as evidence and normalized into `273` JSONL chunks with `56` review-required chunks. Dry-run apply passed with `would_write=false`; production DB was not modified and `--apply` was not run. Human review and explicit apply approval are still required.
 Phase 9Z chatbot-required knowledge package is prepared from the larger local Alte documents export and has been applied to production Knowledge Base tables after explicit user approval. The package contains `433` Georgian Q&A records from the selected student/applicant-facing source set, a `433` row reviewer queue, and safe apply tooling. Coverage was expanded with payment/finance routing, state/social grants, formal communication, international student routing, IT support, and student service department content. Production apply created `433` KnowledgeSource and `433` KnowledgeSnippet records, then approved all `433` for chatbot retrieval while retaining review-required metadata on `360` sensitive/cautious records. Post-apply safe smokes passed: session payload `2/2`, test site API `10/10`, and production knowledge `25/25`. No migrations, seed, lead/task/customer creation, backend deploy, CORS change, or real-site changes were performed.
 Phase 9S Pro v2 message endpoint/CORS fix is prepared. The hosted test widget no longer calls `/chat/messages`; the browser chat flow is restricted to `POST /chat/session/start` and `POST /chat/message`. Netlify deploy ZIP was rebuilt. Production CORS smoke script exists, but live POST smoke is blocked by the current production DB credential mismatch. Public launch remains NO-GO.
+Phase 9S Pro v2 message 500 flow fix is prepared. Typed operator intent no longer automatically calls `/chat/handover/{conversation_id}`; handover remains behind explicit operator/sidebar action. Failed `/chat/message` now renders a visible user-facing error card. Netlify deploy ZIP was rebuilt. No DB, Secret Manager, Cloud Run, CORS, or real-site change was performed.
 
 | Area | Check | Status |
 | --- | --- | --- |

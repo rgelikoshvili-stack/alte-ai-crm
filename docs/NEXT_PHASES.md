@@ -1,5 +1,21 @@
 # Next Phases
 
+## Phase 9S: Pro v2 Message 500 Flow Fix Ready
+
+Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_500_FIXED_PENDING_NETLIFY_REDEPLOY`
+
+- Normal browser message flow remains restricted to:
+  - `POST /chat/session/start`
+  - `POST /chat/message`
+- Typed operator intent no longer automatically calls `/chat/handover/{conversation_id}`.
+- Backend handover remains guarded behind explicit operator/sidebar action.
+- Visible Pro v2 error card added for failed `/chat/message`.
+- Netlify deploy ZIP rebuilt.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Next required action: redeploy Netlify from latest package/master, repair the known production DB credential mismatch, then manually retest browser chat.
+
 ## Phase 9S: Pro v2 Message Endpoint and CORS Fix Ready
 
 Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_ENDPOINT_CORS_FIXED_PENDING_NETLIFY_REDEPLOY`
