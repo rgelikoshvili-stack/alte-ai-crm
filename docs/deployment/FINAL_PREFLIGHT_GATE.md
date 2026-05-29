@@ -1,6 +1,6 @@
 # Final Preflight Gate
 
-Current decision: `BACKEND_DEPLOYED_NETLIFY_CHAT_CORS_RESTORED_PENDING_BROWSER_RETEST`
+Current decision: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
 
 Previous backend deployment state `BACKEND_DEPLOYED_PENDING_WEBSITE_PRIVACY` remains true. Historical gate `NO-GO_FOR_ACTUAL_DEPLOYMENT` is superseded for backend deployment only. Keep full public launch blocked until every remaining website/privacy item below is checked.
 Previous smoke state `BACKEND_DEPLOYED_STANDALONE_WIDGET_API_SMOKE_PASSED_PENDING_REAL_DOMAIN_SMOKE` remains true.
@@ -23,6 +23,7 @@ Phase 9Z chatbot-required knowledge package is prepared from the larger local Al
 Phase 9S Pro v2 message endpoint/CORS fix is prepared. The hosted test widget no longer calls `/chat/messages`; the browser chat flow is restricted to `POST /chat/session/start` and `POST /chat/message`. Netlify deploy ZIP was rebuilt. Production CORS smoke script exists, but live POST smoke is blocked by the current production DB credential mismatch. Public launch remains NO-GO.
 Phase 9S Pro v2 message 500 flow fix is prepared. Typed operator intent no longer automatically calls `/chat/handover/{conversation_id}`; handover remains behind explicit operator/sidebar action. Failed `/chat/message` now renders a visible user-facing error card. Netlify deploy ZIP was rebuilt. No DB, Secret Manager, Cloud Run, CORS, or real-site change was performed.
 Phase 9V Netlify chatbot CORS restore is deployed on revision `alte-ai-crm-backend-00016-2gk`. The active CORS allowlist includes `https://nimble-croissant-2f66e8.netlify.app`; `/chat/session/start`, `/chat/message`, and `/chat/handover/{conversation_id}` preflights return the exact origin and no wildcard. CORS middleware was moved outermost and a generic safe error middleware was added so backend error responses can include CORS headers. Real `/chat/session/start` still returns backend `500` before DB repair, but the failed response now includes the Netlify CORS header. Production DB and Secret Manager were not changed.
+Phase 9W diagnosed the `/chat/session/start` backend `500`. Sanitized logs show `asyncpg.exceptions.InvalidPasswordError` during PostgreSQL connection/flush in `start_session()`. This is a production DB credential or Secret Manager mapping issue and requires explicit approval before any Secret Manager, DB credential, or production DB change. The session schema now explicitly accepts Pro v2 `widget_variant` and `metadata`, but production chat remains blocked until credential repair is approved.
 
 | Area | Check | Status |
 | --- | --- | --- |

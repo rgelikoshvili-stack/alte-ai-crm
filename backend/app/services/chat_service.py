@@ -43,7 +43,12 @@ async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> C
         action="chat_session_started",
         entity_type="conversation",
         entity_id=conversation.id,
-        metadata_json={"source_domain": payload.source_domain, "session_id": session_id},
+        metadata_json={
+            "source_domain": payload.source_domain,
+            "session_id": session_id,
+            "widget_variant": payload.widget_variant,
+            "metadata": payload.metadata or {},
+        },
     )
     await db.commit()
     await db.refresh(conversation)

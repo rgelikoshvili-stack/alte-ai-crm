@@ -1,5 +1,18 @@
 # Next Phases
 
+## Phase 9W: Chat Session Start 500 Diagnosed
+
+Status: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
+
+- `/chat/session/start` reaches the backend and carries the exact Netlify CORS header.
+- Sanitized production logs show `asyncpg.exceptions.InvalidPasswordError` during DB connection/flush in `start_session()`.
+- Root cause is production DB credential or Secret Manager mapping, not frontend payload and not CORS.
+- Session schema now explicitly accepts Pro v2 `widget_variant` and `metadata`.
+- No Secret Manager, DB user/password, production DB, migration, seed, real Alte site, or frontend design change was made.
+- Public launch remains NO-GO.
+
+Next required action: explicitly approve a production credential repair phase before changing Secret Manager or DB credentials.
+
 ## Phase 9V: Netlify Chat CORS Restore Deployed
 
 Status: `BACKEND_DEPLOYED_NETLIFY_CHAT_CORS_RESTORED_PENDING_BROWSER_RETEST`
