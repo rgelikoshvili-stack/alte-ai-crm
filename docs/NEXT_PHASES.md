@@ -1,5 +1,18 @@
 # Next Phases
 
+## Phase 9V: Netlify Chat CORS Restore Ready
+
+Status: `BACKEND_DEPLOYED_NETLIFY_CHAT_CORS_RESTORED_PENDING_BROWSER_RETEST`
+
+- Exact Netlify origin remains the approved public chatbot test origin:
+  - `https://nimble-croissant-2f66e8.netlify.app`
+- Preflight CORS for `/chat/message` returns the exact origin and no wildcard.
+- CORS middleware is now positioned to cover backend error responses as well, including `500`.
+- No DB, Secret Manager, real Alte site, or wildcard CORS change was made.
+- Public launch remains NO-GO.
+
+Next required action: deploy the backend CORS middleware-order fix, then manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+
 ## Phase 9S: Pro v2 Message 500 Flow Fix Ready
 
 Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_500_FIXED_PENDING_NETLIFY_REDEPLOY`

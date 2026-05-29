@@ -2,14 +2,14 @@
 
 AI-powered website chatbot and CRM backend foundation for Alte University / alte.edu.ge.
 
-Current status: Phase 9S Pro v2 message 500 flow fix is ready pending Netlify redeploy, browser retest, and production DB credential repair.
+Current status: Phase 9V Netlify chatbot CORS restore is ready pending backend redeploy and browser retest.
 
 Production backend is deployed with Phase 9K security/reliability fixes, and the exact Pro v2 safe widget package is prepared. Local Pro v2 chatbot/operator wiring is ready, including contact handover, operator reply polling, and draft knowledge candidate creation from operator replies. The Netlify deploy ZIP includes the Pro v2 HTML and `variants/` source needed for the hosted test page. The local operator CRM now has explicit `Local API` and `Production API` controls so the team can test Netlify chatbot messages and operator replies against the same production backend. Automated smoke checks passed for session payload, test site API, CORS, security/reliability, department routing, finance no-contact, knowledge, local operator workflow, and Phase 9T/9U/9V targeted tests. A production no-contact diagnostic confirmed handover conversations appear in Inbox and operator replies can return to the same chatbot session. The user browser workflow confirmed that chatbot messages reach the operator, the operator can reply, and the reply returns to chatbot. The official Alte 8 PDF Knowledge Base package has been extracted and normalized into 273 chunks with question bank, taxonomy, answer policy, reviewer CSV, and dry-run apply support. A separate chatbot-required knowledge package was generated from the larger Alte documents export with 433 Georgian Q&A records across the student/applicant-facing source set, expanded with payment/finance routing, state/social grants, formal communication, international, IT support, and student service routing content; after explicit user approval it was applied to production Knowledge Base tables and all 433 records were approved for chatbot retrieval while retaining review-required metadata on 360 sensitive/cautious records. Post-apply safe smokes passed: session payload 2/2, test site API 10/10, and production knowledge 25/25. Operator replies are not automatically learned or approved; they remain review-gated where required. Public launch remains NO-GO until the official privacy URL, actual asset upload, actual site embed, real-domain smoke, and final public launch approval are recorded.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_PRO_V2_MESSAGE_500_FIXED_PENDING_NETLIFY_REDEPLOY
+BACKEND_DEPLOYED_NETLIFY_CHAT_CORS_RESTORED_PENDING_BROWSER_RETEST
 ```
 
 Checkpoint docs:

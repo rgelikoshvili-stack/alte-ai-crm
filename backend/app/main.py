@@ -26,6 +26,11 @@ app = FastAPI(
     version=settings.APP_VERSION,
 )
 
+app.middleware("http")(correlation_middleware)
+app.middleware("http")(auth_rbac_middleware)
+
+# Keep CORS as the outermost user middleware for browser-visible error responses, including backend 500s.
+# This lets failed chat requests still carry the exact allowed origin.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -33,9 +38,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.middleware("http")(correlation_middleware)
-app.middleware("http")(auth_rbac_middleware)
 
 app.include_router(system_router)
 app.include_router(auth_router)
