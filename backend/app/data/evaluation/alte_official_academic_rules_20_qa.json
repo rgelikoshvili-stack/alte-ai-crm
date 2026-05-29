@@ -1,0 +1,442 @@
+[
+  {
+    "id": "Q01",
+    "user_type": "applicant",
+    "department": "academic_registry",
+    "question": "როდის იწყება და სრულდება შუალედური გამოცდები შემოდგომის სემესტრში?",
+    "language": "ka",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf",
+      "academic_calendar_eng_2025_2026.pdf"
+    ],
+    "expected_source_sections": [
+      "Autumn semester calendar rows by program/category"
+    ],
+    "expected_answer_summary": "List autumn midterm exam ranges by program/category when no program is specified: Bachelor except Computer Science 17-22 November; Computer Science GEO/ENG 24-29 November; Master 17-22 November; One-cycle 1-6 December; first-year one-cycle English 5-10 January.",
+    "expected_answer_policy": "answer with exact calendar dates; handover if program/category unclear",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": true,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q02",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "რამდენი ECTS კრედიტის დაგროვებაა სავალდებულო საბაკალავრო პროგრამის დასასრულებლად და დიპლომის მისაღებად?",
+    "language": "ka",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf",
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Bachelor regulation Article 19; study process diploma rules"
+    ],
+    "expected_answer_summary": "Bachelor requires 240 ECTS; if one-cycle is relevant, Medicine is 360 ECTS and Dentistry is 300 ECTS.",
+    "expected_answer_policy": "answer exact credit numbers only from source",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q03",
+    "user_type": "student",
+    "department": "student_services",
+    "question": "რა შემთხვევაში შემიძლია სტუდენტის სტატუსის შეჩერება და რა არის შეჩერების მაქსიმალური დასაშვები ვადა?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Student status suspension articles"
+    ],
+    "expected_answer_summary": "Suspension grounds include written request, foreign university study, illness, pregnancy/childbirth, military service, tuition non-payment, registration/document issues, and legal grounds. Maximum total suspension is 5 years.",
+    "expected_answer_policy": "answer generally; handover personal status cases",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q04",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "როგორ გამოითვლება GPA (საშუალო აკადემიური შეფასება) ალტე უნივერსიტეტში?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "GPA formula section"
+    ],
+    "expected_answer_summary": "Course GPA = (X - 50) * 0.06 + 1. Summary GPA = sum(course GPA * credits) / total credits. FX and F count as 0.",
+    "expected_answer_policy": "answer exact formulas",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q05",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "რა ხდება იმ შემთხვევაში, თუ სასწავლო კურსში მივიღე უარყოფითი შეფასება FX (ვერ ჩააბარა)?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf",
+      "bakalavriatis_debuleba_2.pdf",
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_sections": [
+      "Assessment/FX rules"
+    ],
+    "expected_answer_summary": "FX is 41-50 points. The student needs more work and has the right to take an additional exam once.",
+    "expected_answer_policy": "answer exact FX rule; do not invent extra attempts",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q06",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "როდის იწყება გაზაფხულის სემესტრის აკადემიური რეგისტრაცია კომპიუტერული მეცნიერების პროგრამის სტუდენტებისთვის?",
+    "language": "ka",
+    "expected_source_documents": [
+      "academic_calendar_geo_2025_2026.pdf",
+      "academic_calendar_eng_2025_2026.pdf"
+    ],
+    "expected_source_sections": [
+      "Computer Science spring registration row"
+    ],
+    "expected_answer_summary": "Computer Science spring academic/administrative registration is 9-14 March.",
+    "expected_answer_policy": "answer exact date",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": true,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q07",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "მაქვს თუ არა უფლება გავიდე დამატებით გამოცდაზე, თუ დასკვნით გამოცდაზე საპატიო მიზეზით ვერ გამოვცხადდი?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Additional exam rules"
+    ],
+    "expected_answer_summary": "If final exam was missed for a valid reason and prerequisites are satisfied, the student may take an additional exam. It is after final results are announced, not earlier than 5 days.",
+    "expected_answer_policy": "answer conditionally; handover personal evidence cases",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q08",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "რა წინაპირობები უნდა დავაკმაყოფილო იმისათვის, რომ დავიშვა დასკვნით გამოცდაზე?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Final exam admission rules"
+    ],
+    "expected_answer_summary": "Final exam admission prerequisites include no financial debt and required minimum positive evaluations in mandatory/intermediate syllabus components. Do not invent additional conditions.",
+    "expected_answer_policy": "answer from regulation only",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q09",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "რა საბუთები მჭირდება მაგისტრატურაზე ჩასარიცხად?",
+    "language": "ka",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_sections": [
+      "Master admission documents"
+    ],
+    "expected_answer_summary": "Master admission documents: ID card copy, CV/autobiography, one 3x4 color photo printed and electronic, military registration certificate copy for male applicants, notarized diploma copy, diploma supplement copy.",
+    "expected_answer_policy": "answer document list; handover personal eligibility cases",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q10",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "შესაძლებელია თუ არა ალტე უნივერსიტეტის საბაკალავრო პროგრამაზე ჩარიცხვა ერთიანი ეროვნული გამოცდების გავლის გარეშე?",
+    "language": "ka",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf",
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Bachelor admission without national exams"
+    ],
+    "expected_answer_summary": "Admission without national exams is possible for legally defined categories, including foreign citizens/stateless persons with foreign full general education, Georgian citizens with last 2 years abroad, and other legal/ministry cases.",
+    "expected_answer_policy": "answer cautiously and cite law/ministry basis",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q11",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "რა დონის ინგლისური ენის სერტიფიკატია საჭირო ინგლისურენოვან საბაკალავრო პროგრამაზე მოსახვედრად?",
+    "language": "ka",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_sections": [
+      "English certificate levels appendix"
+    ],
+    "expected_answer_summary": "Do not give one universal level. Regulation maps certificates to A2, B1, B2, C1; include B2/C1 examples if needed and recommend checking the specific program requirement.",
+    "expected_answer_policy": "avoid universal requirement; handover program-specific cases",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q12",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "როგორ ხდება სხვა უმაღლესი საგანმანათლებლო დაწესებულებიდან მობილობით გადმოსვლისას გავლილი საგნებისა და ECTS კრედიტების აღიარება?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Mobility and credit recognition articles"
+    ],
+    "expected_answer_summary": "Recognition is done by comparing prior completed courses/program with the Alte program. School and/or quality assurance evaluate compatibility; transcript, curriculum, syllabus and additional documents may be required.",
+    "expected_answer_policy": "do not guarantee exact recognition; handover transcript cases",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q13",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "რა პროცედურები უნდა გავიარო მაგისტრატურაში ჩასარიცხად და რა კრიტერიუმებით ფასდება მაგისტრანტობის კანდიდატი შიდა საუნივერსიტეტო გამოცდაზე?",
+    "language": "ka",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf"
+    ],
+    "expected_source_sections": [
+      "Master admission procedure and internal exam criteria"
+    ],
+    "expected_answer_summary": "Procedure includes common master exam, university application/documents, internal university exam(s) in field and English and/or interview. Criteria include broad field knowledge, logical thinking, reasoned conclusions, speech culture, clear expression, exact and comprehensive answers.",
+    "expected_answer_policy": "answer general criteria; handover program-specific scoring",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q14",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "ჩარიცხვის პროცესში, სწავლის წლიური საფასურის რა ნაწილის გადახდა მოეთხოვება აბიტურიენტს ადმინისტრაციული რეგისტრაციისთვის?",
+    "language": "ka",
+    "expected_source_documents": [
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_sections": [
+      "Administrative registration documents"
+    ],
+    "expected_answer_summary": "For bachelor administrative registration after national exams, proof of payment of half of the annual tuition fee is required. For other categories/programs, refer to contract/admissions office.",
+    "expected_answer_policy": "answer exact fraction for bachelor national exam case; handover other categories",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": true,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q15",
+    "user_type": "applicant",
+    "department": "admissions",
+    "question": "რა პროცედურები უნდა გავიარო უცხო ქვეყანაში მიღებული განათლების აღიარებისთვის ალტე უნივერსიტეტში ჩასარიცხად?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Foreign education recognition procedure"
+    ],
+    "expected_answer_summary": "University may require formal recognition, legalization and/or apostille. After university consent, applicant submits documents to NCEQE; after Ministry decision, university president issues enrollment order.",
+    "expected_answer_policy": "answer procedure generally; handover document validation",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q16",
+    "user_type": "student",
+    "department": "student_services",
+    "question": "რა მიზნებს ემსახურება და რა ფუნქციებს ასრულებს სასწავლო პროცესის მართვისა და სტუდენტური გამოცდილების დეპარტამენტი ალტე უნივერსიტეტში?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Learning process organization references"
+    ],
+    "expected_answer_summary": "Partial: source confirms learning process organization involves educational process/student experience management and school, but full department goals/functions are not fully described. Additional official source/operator needed.",
+    "expected_answer_policy": "partial conservative answer only",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "PARTIALLY_ANSWERABLE"
+  },
+  {
+    "id": "Q17",
+    "user_type": "student",
+    "department": "student_services",
+    "question": "რა როლი აქვს სტუდენტთა კარიერულ განვითარებასა და კურსდამთავრებულებთან ურთიერთობის სამსახურს უნივერსიტეტის სტრუქტურაში?",
+    "language": "ka",
+    "expected_source_documents": [],
+    "expected_source_sections": [],
+    "expected_answer_summary": "Uploaded official files do not clearly describe career development and alumni relations service. Additional official source or operator handover is needed.",
+    "expected_answer_policy": "do not invent; handover",
+    "should_answer_from_kb": false,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "NEEDS_ADDITIONAL_OFFICIAL_SOURCE"
+  },
+  {
+    "id": "Q18",
+    "user_type": "student",
+    "department": "academic_registry",
+    "question": "რა ენებზე ხორციელდება სწავლება ალტე უნივერსიტეტის საგანმანათლებლო პროგრამებზე?",
+    "language": "ka",
+    "expected_source_documents": [
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf",
+      "bakalavriatis_debuleba_2.pdf"
+    ],
+    "expected_source_sections": [
+      "Teaching language/program language references"
+    ],
+    "expected_answer_summary": "University teaching language is Georgian; some programs are taught in English.",
+    "expected_answer_policy": "answer generally; program-specific language requires exact source",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q19",
+    "user_type": "staff",
+    "department": "quality_management",
+    "question": "ვინ განიხილავს და ამტკიცებს უნივერსიტეტის საგანმანათლებლო პროგრამებს?",
+    "language": "ka",
+    "expected_source_documents": [
+      "magistraturis_debuleba.pdf",
+      "sastsavlo_procesis_maregulirebeli_wesi.pdf"
+    ],
+    "expected_source_sections": [
+      "Program approval process"
+    ],
+    "expected_answer_summary": "School/workgroup prepares program; Quality Management and Compliance Department reviews and gives expert conclusion; School Council discusses; Board of Directors makes final approval/refusal decision.",
+    "expected_answer_policy": "answer from approval process only",
+    "should_answer_from_kb": true,
+    "should_handover_if_uncertain": false,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "ANSWERABLE"
+  },
+  {
+    "id": "Q20",
+    "user_type": "staff",
+    "department": "quality_management",
+    "question": "რა არის სწავლება-სწავლის ექსელენს ცენტრის მთავარი ფუნქციები და როგორ უწყობს ის ხელს ინოვაციური სწავლების მეთოდების დანერგვას?",
+    "language": "ka",
+    "expected_source_documents": [],
+    "expected_source_sections": [],
+    "expected_answer_summary": "Uploaded files do not clearly describe Teaching-Learning Excellence Center functions. Additional official source or operator handover is needed.",
+    "expected_answer_policy": "do not invent; handover",
+    "should_answer_from_kb": false,
+    "should_handover_if_uncertain": true,
+    "sensitivity": "official academic rule / academic calendar",
+    "requires_exact_date": false,
+    "requires_exact_number": false,
+    "must_not_hallucinate": true,
+    "expected_status": "NEEDS_ADDITIONAL_OFFICIAL_SOURCE"
+  }
+]
