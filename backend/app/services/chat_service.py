@@ -807,7 +807,13 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         query=message,
         language=analysis.language if analysis.language in {"ka", "en"} else None,
         category=category,
-        source_domain=analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
+        source_domain=(
+            None
+            if academic_rules_question
+            else analysis.source_domain
+            if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"}
+            else None
+        ),
         program_name=analysis.program,
         approved_only=True,
     )
