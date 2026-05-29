@@ -11,6 +11,7 @@ EVIDENCE = ROOT / "docs" / "knowledge_evidence" / "official_academic_rules"
 EXTRACTED = EVIDENCE / "extracted"
 QA_PATH = ROOT / "backend" / "app" / "data" / "evaluation" / "alte_official_academic_rules_20_qa.json"
 KNOWLEDGE_PATH = ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_ka_en.json"
+FULL_CHUNKS_PATH = ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_full_chunks.json"
 ANSWER_KEY = ROOT / "docs" / "evaluation" / "ALTE_OFFICIAL_ACADEMIC_RULES_20_QA_EXPECTED_ANSWER_KEY.md"
 
 
@@ -20,6 +21,7 @@ def load_json(path: Path) -> list[dict]:
 
 def test_phase_9t_scripts_importable():
     assert callable(importlib.import_module("app.scripts.evaluate_official_academic_rules_20_qa").main)
+    assert callable(importlib.import_module("app.scripts.build_official_academic_rules_full_chunks").main)
     assert callable(importlib.import_module("app.scripts.verify_phase_9t_official_academic_rules_knowledge").main)
     assert callable(importlib.import_module("app.scripts.apply_official_academic_rules_knowledge").main)
 
@@ -58,6 +60,20 @@ def test_official_knowledge_items_have_source_refs():
         assert row["document_title"]
         assert row["normalized_file_path"]
         assert row["page_article_reference"]
+        assert row["official"] is True
+        assert row["requires_exact_source"] is True
+
+
+def test_full_chunk_artifact_covers_all_five_official_files():
+    rows = load_json(FULL_CHUNKS_PATH)
+    assert len(rows) >= 100
+    assert len({row["document_title"] for row in rows}) == 5
+    for row in rows:
+        assert row["source_id"].startswith("official_academic_rules_full_")
+        assert row["document_title"]
+        assert row["normalized_file_path"]
+        assert row["page_article_reference"]
+        assert row["text"]
         assert row["official"] is True
         assert row["requires_exact_source"] is True
 

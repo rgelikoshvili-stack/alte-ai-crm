@@ -1,10 +1,10 @@
 # Phase 9T Official Academic Rules Import Result
 
-PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_STATUS=IMPORTED_TO_PRODUCTION_KB_PENDING_BROWSER_QA_SMOKE
+PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_STATUS=FULL_CHUNKS_IMPORTED_TO_PRODUCTION_KB_PENDING_BROWSER_QA_SMOKE
 
 Decision state:
 
-BACKEND_PRODUCTION_KB_OFFICIAL_ACADEMIC_RULES_IMPORTED_PENDING_BROWSER_QA_SMOKE
+BACKEND_PRODUCTION_KB_OFFICIAL_ACADEMIC_RULES_FULL_CHUNKS_IMPORTED_PENDING_BROWSER_QA_SMOKE
 
 ## Imported Files
 
@@ -31,11 +31,22 @@ The expected uploaded spec filename was not present on local disk, so the implem
 - Manifest: DONE
 - Structured summary: DONE
 - Local static knowledge artifact: DONE
+- Full source chunk knowledge artifact: DONE
 - 20-question QA dataset: DONE
 - Expected answer key: DONE
 - QA evaluator/report: DONE
 - DB import approval note: APPROVED_AND_APPLIED
 - Production DB Knowledge Base import: DONE
+
+## Production Knowledge Coverage
+
+- Official PDF source files: 5
+- Structured QA/answer and gap-marker records: 20
+- Full official source chunks: 136
+- Total production KB records for `official_academic_rules`: 156
+- Production KnowledgeSource records: 156
+- Production KnowledgeSnippet records: 156
+- Retrieval status: approved
 
 ## QA Evaluation
 

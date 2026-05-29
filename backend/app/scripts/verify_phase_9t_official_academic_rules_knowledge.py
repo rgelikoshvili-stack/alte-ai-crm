@@ -11,6 +11,7 @@ EVIDENCE = ROOT / "docs" / "knowledge_evidence" / "official_academic_rules"
 EXTRACTED = EVIDENCE / "extracted"
 QA_PATH = ROOT / "backend" / "app" / "data" / "evaluation" / "alte_official_academic_rules_20_qa.json"
 KNOWLEDGE_PATH = ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_ka_en.json"
+FULL_CHUNKS_PATH = ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_full_chunks.json"
 ANSWER_KEY = ROOT / "docs" / "evaluation" / "ALTE_OFFICIAL_ACADEMIC_RULES_20_QA_EXPECTED_ANSWER_KEY.md"
 EVAL_REPORT = ROOT / "docs" / "evaluation" / "ALTE_OFFICIAL_ACADEMIC_RULES_20_QA_EVALUATION_RESULT.md"
 RESULT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_IMPORT_RESULT.md"
@@ -88,6 +89,7 @@ def main() -> None:
         EVIDENCE / "OFFICIAL_ACADEMIC_RULES_SUMMARY.md",
         QA_PATH,
         KNOWLEDGE_PATH,
+        FULL_CHUNKS_PATH,
         ANSWER_KEY,
         EVAL_REPORT,
         RESULT_DOC,
@@ -122,6 +124,18 @@ def main() -> None:
                 raise AssertionError(f"Knowledge item missing {key}: {row.get('source_id')}")
         if row.get("official") is not True or row.get("requires_exact_source") is not True:
             raise AssertionError(f"Knowledge item lacks official source flags: {row.get('source_id')}")
+    full_chunks = load_json(FULL_CHUNKS_PATH)
+    if len(full_chunks) < 100:
+        raise AssertionError("Full chunk artifact must contain broad coverage from the five official files")
+    full_docs = {row.get("document_title") for row in full_chunks}
+    if len(full_docs) != 5:
+        raise AssertionError("Full chunk artifact must cover all five official source files")
+    for row in full_chunks:
+        for key in ["source_id", "document_title", "normalized_file_path", "page_article_reference", "text"]:
+            if not row.get(key):
+                raise AssertionError(f"Full chunk missing {key}: {row.get('source_id')}")
+        if row.get("official") is not True or row.get("requires_exact_source") is not True:
+            raise AssertionError(f"Full chunk lacks official flags: {row.get('source_id')}")
 
     frontend_text = read(ROOT / "test_site" / "alte-ai-chat-widget.js") + "\n" + read(
         ROOT / "dist" / "widget" / "alte-ai-chat-widget.js"

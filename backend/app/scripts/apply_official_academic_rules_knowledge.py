@@ -8,13 +8,19 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-KNOWLEDGE_PATH = PROJECT_ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_ka_en.json"
+STRUCTURED_KNOWLEDGE_PATH = PROJECT_ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_ka_en.json"
+FULL_CHUNKS_PATH = PROJECT_ROOT / "backend" / "app" / "data" / "knowledge" / "official_academic_rules_full_chunks.json"
 
 
-def load_rows() -> list[dict]:
-    data = json.loads(KNOWLEDGE_PATH.read_text(encoding="utf-8"))
+def load_rows(*, include_full_chunks: bool = False) -> list[dict]:
+    data = json.loads(STRUCTURED_KNOWLEDGE_PATH.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise RuntimeError("Official academic rules knowledge artifact must be a list")
+    if include_full_chunks:
+        full_data = json.loads(FULL_CHUNKS_PATH.read_text(encoding="utf-8"))
+        if not isinstance(full_data, list):
+            raise RuntimeError("Official academic rules full chunks artifact must be a list")
+        data = [*data, *full_data]
     return data
 
 
@@ -70,7 +76,7 @@ async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> 
                     category=str(row["topic"])[:120],
                     sensitivity="medium",
                     review_required=review_required,
-                    owner="phase_9t_official_academic_rules",
+                    owner="phase_9t_official_academic_rules_full" if source_key.startswith("official_academic_rules_full_") else "phase_9t_official_academic_rules",
                 )
                 db.add(source)
                 await db.flush()
@@ -84,7 +90,7 @@ async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> 
                 source.category = str(row["topic"])[:120]
                 source.sensitivity = "medium"
                 source.review_required = review_required
-                source.owner = "phase_9t_official_academic_rules"
+                source.owner = "phase_9t_official_academic_rules_full" if source_key.startswith("official_academic_rules_full_") else "phase_9t_official_academic_rules"
                 updated_sources += 1
 
             content = (
@@ -108,7 +114,7 @@ async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> 
                     stale_after_days=365,
                     content_hash=content_hash,
                     program_name=None,
-                    keywords=", ".join(row.get("qa_ids") or []),
+                    keywords=row.get("keywords") or ", ".join(row.get("qa_ids") or []),
                     status=status,
                     language=row["language"],
                 )
@@ -123,7 +129,7 @@ async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> 
                 snippet.sensitivity = "medium"
                 snippet.review_required = review_required
                 snippet.stale_after_days = 365
-                snippet.keywords = ", ".join(row.get("qa_ids") or [])
+                snippet.keywords = row.get("keywords") or ", ".join(row.get("qa_ids") or [])
                 snippet.status = status
                 snippet.language = row["language"]
                 updated_snippets += 1
@@ -146,8 +152,13 @@ def main() -> None:
         action="store_true",
         help="Mark snippets/sources approved for chatbot retrieval while preserving review_required metadata.",
     )
+    parser.add_argument(
+        "--include-full-chunks",
+        action="store_true",
+        help="Apply both the 20 structured answers and full chunks extracted from the five official files.",
+    )
     args = parser.parse_args()
-    rows = load_rows()
+    rows = load_rows(include_full_chunks=args.include_full_chunks)
     summary = summarize(rows)
     if not args.apply:
         print(json.dumps({"mode": "dry-run", "would_write": False, **summary}, ensure_ascii=False, indent=2))

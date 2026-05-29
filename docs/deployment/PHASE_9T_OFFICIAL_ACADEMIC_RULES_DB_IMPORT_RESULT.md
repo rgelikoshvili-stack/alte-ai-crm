@@ -4,7 +4,7 @@ PHASE_9T_OFFICIAL_ACADEMIC_RULES_DB_IMPORT_STATUS=APPLIED_TO_PRODUCTION_KB
 
 Decision state:
 
-BACKEND_PRODUCTION_KB_OFFICIAL_ACADEMIC_RULES_IMPORTED_PENDING_BROWSER_QA_SMOKE
+BACKEND_PRODUCTION_KB_OFFICIAL_ACADEMIC_RULES_FULL_CHUNKS_IMPORTED_PENDING_BROWSER_QA_SMOKE
 
 ## Approval
 
@@ -12,14 +12,17 @@ The project owner approved proceeding with the previously prepared Phase 9T offi
 
 ## Production Import
 
-- Source package: `backend/app/data/knowledge/official_academic_rules_ka_en.json`
-- Production KnowledgeSource records: 20
-- Production KnowledgeSnippet records: 20
+- Structured source package: `backend/app/data/knowledge/official_academic_rules_ka_en.json`
+- Full chunk source package: `backend/app/data/knowledge/official_academic_rules_full_chunks.json`
+- Production KnowledgeSource records: 156
+- Production KnowledgeSnippet records: 156
+- Structured QA/answer records: 20
+- Full source chunks: 136
 - Source domain: `official_academic_rules`
 - Source type: `official_academic_rules`
 - Status for chatbot retrieval: `approved`
 - Review-required metadata preserved: YES
-- Imported source rows are limited to official academic rules/calendar answer and gap-marker entries.
+- Imported source rows are limited to official academic rules/calendar answer, gap-marker, and full official-source chunk entries.
 
 ## Safety
 
@@ -43,5 +46,6 @@ The project owner approved proceeding with the previously prepared Phase 9T offi
 - Import script dry-run: PASS
 - Production DB apply: PASS
 - Production DB count check: PASS
+- Full source chunk expansion: PASS, 136 chunks
 - QA evaluator: PASS, 20/20
 - Phase verifier: PASS
