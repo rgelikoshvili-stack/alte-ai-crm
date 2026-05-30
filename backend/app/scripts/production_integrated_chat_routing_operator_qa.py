@@ -38,6 +38,7 @@ class QaCase:
     must_include_any: list[list[str]] = field(default_factory=list)
     must_exclude: list[str] = field(default_factory=list)
     expected_route_any: list[str] = field(default_factory=list)
+    forbidden_route_any: list[str] = field(default_factory=list)
     expect_handover: bool | None = None
     require_sources: bool = False
 
@@ -104,7 +105,13 @@ OFFICIAL_KB_CASES = [
 ]
 
 ROUTING_CASES = [
-    QaCase("route_admissions", "როგორ ჩავირიცხო ბაკალავრიატზე?", "auto_routing", expected_route_any=["admissions", "registration", "student_services"]),
+    QaCase(
+        "admissions_auto_route_fixed",
+        "როგორ ჩავირიცხო ბაკალავრიატზე?",
+        "auto_routing",
+        expected_route_any=["admissions", "registration", "student_services"],
+        forbidden_route_any=["programs", "international"],
+    ),
     QaCase("route_programs", "რა პროგრამები გაქვთ და რომელზე შემიძლია ჩაბარება?", "auto_routing", expected_route_any=["programs", "admissions"]),
     QaCase("route_finance", "სწავლის საფასურის გადახდის გრაფიკი მაინტერესებს", "auto_routing", expected_route_any=["finance", "tuition"]),
     QaCase("route_student_status", "სტუდენტის სტატუსის შეჩერება მინდა", "auto_routing", expected_route_any=["study_process", "student_status", "registrar"]),
@@ -112,7 +119,13 @@ ROUTING_CASES = [
     QaCase("route_mobility", "სხვა უნივერსიტეტიდან გადმოსვლა მინდა და კრედიტების აღიარება როგორ ხდება?", "auto_routing", expected_route_any=["mobility", "ects", "study_process"]),
     QaCase("route_international_medicine", "I am an international student and want to apply to Medicine.", "auto_routing", expected_route_any=["international", "medicine", "admissions"]),
     QaCase("route_it_help", "emis.alte.edu.ge-ში ვერ შევდივარ", "auto_routing", expected_route_any=["it", "support", "student_services"]),
-    QaCase("route_library", "ბიბლიოთეკის რესურსები როგორ გამოვიყენო?", "auto_routing", expected_route_any=["library"]),
+    QaCase(
+        "library_auto_route_fixed",
+        "ბიბლიოთეკის რესურსები როგორ გამოვიყენო?",
+        "auto_routing",
+        expected_route_any=["library"],
+        forbidden_route_any=["international"],
+    ),
     QaCase(
         "route_unsupported_2031",
         "2031 წლის კოსმოსური კამპუსის სტიპენდია როგორ მივიღო?",
@@ -126,7 +139,14 @@ ROUTING_CASES = [
 
 HANDOVER_CASES = [
     QaCase("handover_operator", "მინდა ოპერატორთან დაკავშირება", "handover", expect_handover=True),
-    QaCase("handover_finance", "მინდა ფინანსურ დეპარტამენტთან დაკავშირება სწავლის საფასურზე", "handover", expected_route_any=["finance"], expect_handover=True),
+    QaCase(
+        "finance_handover_route_fixed",
+        "მინდა ფინანსურ დეპარტამენტთან დაკავშირება სწავლის საფასურზე",
+        "handover",
+        expected_route_any=["finance"],
+        forbidden_route_any=["international"],
+        expect_handover=True,
+    ),
 ]
 
 
@@ -239,6 +259,7 @@ def _evaluate(case: QaCase, payload: dict[str, Any], allow_origin: str | None) -
         "must_include_any": all(any(token in reply for token in group) for group in case.must_include_any),
         "must_exclude": not any(token in reply for token in case.must_exclude),
         "route": not case.expected_route_any or any(token in route_text for token in case.expected_route_any),
+        "forbidden_route": not any(token in route_text for token in case.forbidden_route_any),
         "handover": case.expect_handover is None or payload.get("should_handover") is case.expect_handover,
         "no_direct_contact_request": not _has_direct_contact_request(reply),
         "no_created_lead": payload.get("created_lead_id") is None,

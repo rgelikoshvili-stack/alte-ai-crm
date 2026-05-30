@@ -203,21 +203,36 @@ def test_spec_medicine_md_route():
     assert result.department_key == "medicine"
 
 
-def test_spec_library_and_career_route_to_student_services():
-    for message in ["ბიბლიოთეკის წესები მაინტერესებს", "კარიერული მხარდაჭერა არსებობს?"]:
-        result = resolve_department(
-            message_text=message,
-            ai_intent="student_service",
-            ai_confidence=0.9,
-            source_domain="alte.edu.ge",
-            selected_department=None,
-            selected_topic=None,
-            risk_flags=[],
-            used_sources=["official_alte_pdf_kb"],
-            language="ka",
-        )
+def test_spec_library_routes_to_library():
+    result = resolve_department(
+        message_text="ბიბლიოთეკის წესები მაინტერესებს",
+        ai_intent="student_service",
+        ai_confidence=0.9,
+        source_domain="alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_alte_pdf_kb"],
+        language="ka",
+    )
 
-        assert result.department_key == "student_services"
+    assert result.department_key == "library"
+
+
+def test_spec_career_routes_to_student_services():
+    result = resolve_department(
+        message_text="კარიერული მხარდაჭერა არსებობს?",
+        ai_intent="student_service",
+        ai_confidence=0.9,
+        source_domain="alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_alte_pdf_kb"],
+        language="ka",
+    )
+
+    assert result.department_key == "student_services"
 
 
 def test_spec_study_process_exam_ects_status_routes():

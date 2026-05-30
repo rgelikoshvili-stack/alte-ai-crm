@@ -9,6 +9,7 @@ DEPARTMENT_LABELS = {
     "international": "International Admissions",
     "finance": "Finance",
     "medicine": "Medicine / MD",
+    "library": "Library",
     "study_process": "Study Process",
     "student_services": "Student Services",
     "it_support": "IT Support",
@@ -29,6 +30,7 @@ SELECTED_DEPARTMENT_ALIASES = {
     "finance": "finance",
     "tuition": "finance",
     "funding": "finance",
+    "library": "library",
     "international": "international",
     "international_admissions": "international",
     "join": "international",
@@ -214,6 +216,15 @@ KEYWORDS = {
         "სპეციალური საჭირო",
         "სსმ",
     ],
+    "library": [
+        "library",
+        "library resources",
+        "library service",
+        "library services",
+        "ბიბლიოთეკ",
+        "ბიბლიოთეკის რესურს",
+        "ბიბლიოთეკით",
+    ],
     "it_support": [
         "portal",
         "login",
@@ -227,6 +238,27 @@ KEYWORDS = {
         "შესვლა",
         "პაროლი",
         "საიტი",
+    ],
+}
+
+EXPLICIT_GEORGIAN_ROUTE_ALIASES = {
+    "admissions": [
+        "ჩავირიცხ",
+        "ჩარიცხვ",
+        "ჩასარიცხ",
+        "ჩაბარ",
+        "აბიტურიენტ",
+    ],
+    "finance": [
+        "ფინანსურ",
+        "ფინანსებ",
+        "საფასურ",
+        "გადახდ",
+        "სტიპენდ",
+        "დაფინანს",
+    ],
+    "library": [
+        "ბიბლიოთეკ",
     ],
 }
 
@@ -367,15 +399,16 @@ def resolve_department(
         if item
     ).lower()
     selected_key = normalize_selected_department(selected_department)
+    message_context = (message_text or "").lower()
     message_only_context = " ".join(item for item in [message_text or "", source_domain or ""] if item).lower()
     if selected_key == "international" and mentions_documents_or_admission(message_only_context):
         keyword_key = "international"
-    elif any(keyword.lower() in message_only_context for keyword in KEYWORDS["medicine"]) and has_international_context(
+    elif any(keyword.lower() in message_context for keyword in KEYWORDS["medicine"]) and has_international_context(
         message_only_context, source_domain
     ):
         keyword_key = "medicine"
     else:
-        keyword_key = keyword_department(message_only_context)
+        keyword_key = keyword_department(message_context)
     intent_key = INTENT_TO_DEPARTMENT.get((ai_intent or "").lower())
     ambiguous_message = is_ambiguous_message(message_text, language) and keyword_key is None
 
@@ -401,7 +434,12 @@ def resolve_department(
         department_key = "admissions"
         reason = "default_admissions"
 
-    if department_key == "admissions" and source_domain == "join.alte.edu.ge" and mentions_documents_or_admission(routing_context):
+    if (
+        department_key == "admissions"
+        and source_domain == "join.alte.edu.ge"
+        and mentions_documents_or_admission(routing_context)
+        and has_explicit_international_text(message_context)
+    ):
         department_key = "international"
         reason = "join_domain_admissions_context"
     if department_key == "medicine" and has_international_context(routing_context, source_domain):
@@ -445,6 +483,9 @@ def normalize_selected_department(value: str | None) -> str | None:
 
 
 def keyword_department(text: str) -> str | None:
+    explicit_key = explicit_georgian_route_alias(text)
+    if explicit_key:
+        return explicit_key
     matches: dict[str, int] = {}
     for key, keywords in KEYWORDS.items():
         score = sum(1 for keyword in keywords if keyword.lower() in text)
@@ -452,8 +493,26 @@ def keyword_department(text: str) -> str | None:
             matches[key] = score
     if not matches:
         return None
-    priority = ["finance", "medicine", "international", "it_support", "study_process", "student_services", "programs", "admissions"]
+    priority = [
+        "finance",
+        "medicine",
+        "international",
+        "it_support",
+        "study_process",
+        "library",
+        "student_services",
+        "programs",
+        "admissions",
+    ]
     return sorted(matches, key=lambda key: (-matches[key], priority.index(key) if key in priority else 99))[0]
+
+
+def explicit_georgian_route_alias(text: str) -> str | None:
+    lowered = (text or "").lower()
+    for key in ["finance", "library", "admissions"]:
+        if any(alias in lowered for alias in EXPLICIT_GEORGIAN_ROUTE_ALIASES[key]):
+            return key
+    return None
 
 
 def is_ambiguous_message(message_text: str | None, language: str | None = None) -> bool:
@@ -488,6 +547,10 @@ def is_unknown(text: str, risk_flags: list[str] | None) -> bool:
 
 def has_international_context(text: str, source_domain: str | None) -> bool:
     return source_domain == "join.alte.edu.ge" or any(term in text for term in KEYWORDS["international"])
+
+
+def has_explicit_international_text(text: str) -> bool:
+    return any(term in (text or "") for term in KEYWORDS["international"] if term != "join.alte")
 
 
 def mentions_documents_or_admission(text: str) -> bool:
