@@ -1,11 +1,11 @@
 # Phase 9AB Mobile Responsive Widget Fix Result
 
-PHASE_9AB_MOBILE_RESPONSIVE_STATUS=BLOCKED_NETLIFY_REDEPLOY_REQUIRED
+PHASE_9AB_MOBILE_RESPONSIVE_STATUS=PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_WIDGET_MOBILE_RESPONSIVE_FIXED_PENDING_NETLIFY_REDEPLOY
+BACKEND_DEPLOYED_WIDGET_MOBILE_RESPONSIVE_VISUAL_QA_PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL
 ```
 
 ## Scope
@@ -105,18 +105,18 @@ Screenshots:
 - `docs/deployment/visual_qa/local_widget_mobile_390x844_phase_9ab.png`
 - `docs/deployment/visual_qa/local_widget_mobile_375x667_phase_9ab.png`
 
-Netlify visual QA:
+Netlify visual QA after deploy-source fix:
 
+- Netlify visual QA: PASS
 - `desktop_1440x900`: PASS.
-- `mobile_430x932`: FAIL on strict mobile layout criteria.
-- `mobile_390x844`: FAIL on strict mobile layout criteria.
-- `mobile_375x667`: FAIL on strict mobile layout criteria.
-- Page-level horizontal scroll is no longer present on Netlify, but the deployed Netlify asset is stale and still shows the desktop sidebar on mobile.
-- Current deployed Netlify `variants/pro-v2-chat.jsx` does not include the local `@media (max-width: 1024px)` responsive guard.
-- Netlify redeploy is currently blocked in this environment because Netlify CLI is not authenticated and no Netlify auth token/site linkage is available.
-- Attempted deploy command returned: `Unauthorized: could not retrieve project`.
-- Netlify redeploy is needed before marking `PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL`.
-- Do not mark Netlify mobile visual QA passed until the redeployed `https://nimble-croissant-2f66e8.netlify.app/join.html` is rechecked and mobile `sidebarVisible=false`.
+- Mobile 430x932: PASS
+- `mobile_430x932`: PASS, `sidebarVisible=false`.
+- `mobile_390x844`: PASS, `sidebarVisible=false`.
+- `mobile_375x667`: PASS, `sidebarVisible=false`.
+- No page-level horizontal scroll was detected.
+- Header and composer were visible on all checked viewports.
+- The deployed Netlify `variants/pro-v2-chat.jsx` now includes the `@media (max-width: 1024px)` responsive guard.
+- Netlify freshness and deploy-source details are documented in `docs/deployment/PHASE_9AB_NETLIFY_DEPLOY_SOURCE_FIX_RESULT.md`.
 
 Netlify screenshots from strict QA:
 
@@ -164,8 +164,6 @@ Official facts remain documented and protected:
 
 ## Remaining Before Final Embed Approval
 
-- Push branch and allow Netlify to redeploy test assets.
-- Re-run Netlify desktop/mobile visual QA after redeploy.
 - Confirm official privacy URL.
 - Approve contact-flow copy and contact creation gate separately.
 - Approve final asset URL.
@@ -176,5 +174,5 @@ Official facts remain documented and protected:
 Final recommendation:
 
 ```text
-PUBLIC_LAUNCH_RECOMMENDATION=NO_GO_PENDING_NETLIFY_REDEPLOY_PRIVACY_URL_FINAL_SITE_EMBED_APPROVAL_REAL_DOMAIN_SMOKE
+PUBLIC_LAUNCH_RECOMMENDATION=NO_GO_PENDING_PRIVACY_URL_FINAL_SITE_EMBED_APPROVAL_REAL_DOMAIN_SMOKE
 ```

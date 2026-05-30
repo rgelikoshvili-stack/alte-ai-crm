@@ -1,5 +1,5 @@
 {
-  "status": "FAILED",
+  "status": "PASSED",
   "url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
   "checks": [
     {
@@ -42,7 +42,7 @@
         "width": 430,
         "height": 932
       },
-      "passed": false,
+      "passed": true,
       "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_430x932_phase_9ab.png",
       "metrics": {
         "outer": {
@@ -60,10 +60,10 @@
           "documentScrollWidth": 430,
           "bodyScrollWidth": 430,
           "modalVisible": true,
-          "modalWidth": 412.796875,
-          "modalRight": 421.3984375,
-          "modalLeft": 8.6015625,
-          "sidebarVisible": true,
+          "modalWidth": 418,
+          "modalRight": 424,
+          "modalLeft": 6,
+          "sidebarVisible": false,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
@@ -76,7 +76,7 @@
         "width": 390,
         "height": 844
       },
-      "passed": false,
+      "passed": true,
       "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_390x844_phase_9ab.png",
       "metrics": {
         "outer": {
@@ -94,10 +94,10 @@
           "documentScrollWidth": 390,
           "bodyScrollWidth": 390,
           "modalVisible": true,
-          "modalWidth": 374.390625,
-          "modalRight": 382.1953125,
-          "modalLeft": 7.8046875,
-          "sidebarVisible": true,
+          "modalWidth": 378,
+          "modalRight": 384,
+          "modalLeft": 6,
+          "sidebarVisible": false,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
@@ -110,7 +110,7 @@
         "width": 375,
         "height": 667
       },
-      "passed": false,
+      "passed": true,
       "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_375x667_phase_9ab.png",
       "metrics": {
         "outer": {
@@ -128,10 +128,10 @@
           "documentScrollWidth": 375,
           "bodyScrollWidth": 375,
           "modalVisible": true,
-          "modalWidth": 360,
-          "modalRight": 367.5,
-          "modalLeft": 7.5,
-          "sidebarVisible": true,
+          "modalWidth": 363,
+          "modalRight": 369,
+          "modalLeft": 6,
+          "sidebarVisible": false,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
