@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -59,8 +60,18 @@ CONTACT_REQUEST_MARKERS = [
     "ტელეფონი ან ელფოსტა",
     "ტელეფონი ან ელ.ფოსტა",
     "ტელეფონი ან ელ-ფოსტა",
+    "მიუთითოთ საკონტაქტო ინფორმაცია",
+    "მიუთითეთ საკონტაქტო ინფორმაცია",
+    "საკონტაქტო ინფორმაცია (სახელი",
+    "სახელი, ტელეფონი ან ელ. ფოსტა",
     "დატოვოთ საკონტაქტო ინფორმაცია",
     "დატოვეთ საკონტაქტო ინფორმაცია",
+]
+
+CONTACT_REQUEST_REGEXES = [
+    "გთხოვთ.{0,80}(სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი)",
+    "(მიუთითოთ|მიუთითეთ|შეიყვანოთ|შეიყვანეთ|დატოვოთ|დატოვეთ).{0,80}(საკონტაქტო|სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი)",
+    "(სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი).{0,80}(მიუთითოთ|მიუთითეთ|შეიყვანოთ|შეიყვანეთ|დატოვოთ|დატოვეთ)",
 ]
 
 
@@ -789,6 +800,12 @@ def strip_contact_request_sentence(reply: str) -> str:
         if index >= 0:
             cleaned = cleaned[:index].strip()
             break
+    else:
+        for pattern in CONTACT_REQUEST_REGEXES:
+            match = re.search(pattern, lowered)
+            if match:
+                cleaned = cleaned[: match.start()].strip()
+                break
     if cleaned and cleaned[-1] not in ".!?":
         cleaned = cleaned.rstrip(" .,!?:;") + "."
     return cleaned
@@ -796,7 +813,9 @@ def strip_contact_request_sentence(reply: str) -> str:
 
 def reply_requests_contact(reply: str) -> bool:
     lowered = reply.lower()
-    return any(marker.lower() in lowered for marker in CONTACT_REQUEST_MARKERS)
+    return any(marker.lower() in lowered for marker in CONTACT_REQUEST_MARKERS) or any(
+        re.search(pattern, lowered) for pattern in CONTACT_REQUEST_REGEXES
+    )
 
 
 def is_medical(analysis: AIAnalysisResult) -> bool:
@@ -813,6 +832,19 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
     haystack = (message or "").lower()
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     asks_credit = any(marker in haystack for marker in ["ects", "კრედიტ"])
+
+    if is_master_admission_documents_question(haystack):
+        if is_ka:
+            return (
+                "მაგისტრატურაზე ჩასარიცხად საჭიროა: პირადობის დამადასტურებელი დოკუმენტის ასლი; CV; "
+                "3x4 ფოტოსურათი ბეჭდური და ელექტრონული ფორმით; სამხედრო აღრიცხვაზე ყოფნის დამადასტურებელი "
+                "დოკუმენტის ასლი მამაკაცი აპლიკანტებისთვის; ნოტარიულად დამოწმებული დიპლომის ასლი; "
+                "დიპლომის დანართის ასლი."
+            )
+        return (
+            "For master's admission, the required documents are: ID copy; CV; 3x4 photo in printed and electronic form; "
+            "copy of military registration certificate for male applicants; notarized diploma copy; diploma supplement copy."
+        )
 
     if asks_credit and any(marker in haystack for marker in ["ბაკალავრ", "bachelor"]):
         if is_ka:
@@ -841,6 +873,23 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
         return "The total student status suspension period must not exceed 5 years."
 
     return None
+
+
+def is_master_admission_documents_question(haystack: str) -> bool:
+    has_master = any(marker in haystack for marker in ["მაგისტრატურ", "სამაგისტრო", "master"])
+    has_documents = any(
+        marker in haystack
+        for marker in [
+            "საბუთ",
+            "დოკუმენტ",
+            "ჩასარიცხ",
+            "ჩარიცხვისთვის",
+            "admission document",
+            "required document",
+            "documents",
+        ]
+    )
+    return has_master and has_documents
 
 
 async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:

@@ -74,6 +74,18 @@ def seed_official_academic_rules(client):
         content="სამაგისტრო პროგრამაზე საჭიროა არანაკლებ 120 კრედიტი.",
         keywords="მაგისტრატურა master ECTS კრედიტი 120",
     )
+    create_snippet(
+        client,
+        master,
+        title="მაგისტრატურის დებულება - ჩარიცხვის საბუთები",
+        content=(
+            "მაგისტრატურაზე ჩასარიცხად საჭიროა პირადობის დამადასტურებელი დოკუმენტის ასლი, CV, "
+            "3x4 ფოტოსურათი ბეჭდური და ელექტრონული ფორმით, სამხედრო აღრიცხვაზე ყოფნის "
+            "დამადასტურებელი დოკუმენტის ასლი მამაკაცი აპლიკანტებისთვის, ნოტარიულად დამოწმებული "
+            "დიპლომის ასლი და დიპლომის დანართის ასლი."
+        ),
+        keywords="მაგისტრატურა საბუთები დოკუმენტები ჩარიცხვა ID CV 3x4 სამხედრო ნოტარიული დიპლომის დანართი",
+    )
     stale_marketing = create_source(client, title="Old marketing bachelor program", source_domain="alte.edu.ge")
     create_snippet(
         client,
@@ -130,6 +142,18 @@ def test_master_ects_returns_120(client):
 
     assert payload["answer_source_status"] == "answered_from_approved_source"
     assert "120" in payload["reply"]
+    assert_no_contact_request(payload)
+
+
+def test_master_admission_documents_returns_official_checklist(client):
+    seed_official_academic_rules(client)
+
+    payload = ask(client, "რა საბუთები მჭირდება მაგისტრატურაზე ჩასარიცხად?")
+
+    assert payload["answer_source_status"] == "answered_from_approved_source"
+    reply = payload["reply"]
+    for expected in ["პირადობის", "CV", "3x4", "სამხედრო", "ნოტარ", "დიპლომის დანართ"]:
+        assert expected in reply
     assert_no_contact_request(payload)
 
 
