@@ -145,11 +145,20 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
-    knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
+    unsupported_official_question = is_clearly_unsupported_official_question(payload.message)
+    if unsupported_official_question:
+        knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    else:
+        knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif should_require_knowledge(analysis) or is_official_academic_rules_text(payload.message) or is_selected_official_document_text(payload.message):
+    elif (
+        unsupported_official_question
+        or should_require_knowledge(analysis)
+        or is_official_academic_rules_text(payload.message)
+        or is_selected_official_document_text(payload.message)
+    ):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
@@ -950,6 +959,13 @@ def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:
         "teaching language",
         "master admission",
         "bachelor admission",
+        "program catalog",
+        "educational program",
+        "educational programme",
+        "პროგრამ",
+        "მიღებ",
+        "ჩარიცხვ",
+        "საგანმანათლებლო პროგრამ",
         "ეროვნული გამოცდ",
         "რეგისტრაცი",
         "შუალედურ",
@@ -981,6 +997,13 @@ def is_official_academic_rules_text(text: str) -> bool:
         "teaching language",
         "master admission",
         "bachelor admission",
+        "program catalog",
+        "educational program",
+        "educational programme",
+        "პროგრამ",
+        "მიღებ",
+        "ჩარიცხვ",
+        "საგანმანათლებლო პროგრამ",
         "ეროვნული გამოცდ",
         "რეგისტრაცი",
         "შუალედურ",
@@ -993,6 +1016,21 @@ def is_official_academic_rules_text(text: str) -> bool:
         "სწავლების ენა",
     ]
     return any(marker in haystack for marker in markers)
+
+
+def is_clearly_unsupported_official_question(text: str) -> bool:
+    haystack = (text or "").lower()
+    unsupported_markers = [
+        "space campus",
+        "cosmic campus",
+        "კოსმოსური კამპუს",
+        "კოსმოსურ კამპუს",
+    ]
+    future_year_markers = ["2031", "2032", "2033", "2034", "2035"]
+    return any(marker in haystack for marker in unsupported_markers) or (
+        any(year in haystack for year in future_year_markers)
+        and any(marker in haystack for marker in ["სტიპენდ", "scholarship", "კამპუს", "campus"])
+    )
 
 
 def is_selected_official_document_text(text: str) -> bool:
