@@ -1,0 +1,11 @@
+{
+  "status": "PLAYWRIGHT_UNAVAILABLE",
+  "url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
+  "reason": "No module named 'playwright'",
+  "manual_steps": [
+    "Open the URL in desktop viewport 1440x900 and confirm no horizontal scroll.",
+    "Open the URL in mobile viewport 430x932 and confirm no horizontal scroll or cropped right edge.",
+    "Confirm header, messages, source chips/cards, and composer are visible."
+  ],
+  "note": "The script did not fake a pass. Local Chrome headless screenshots were captured separately from the fixed local static test site."
+}

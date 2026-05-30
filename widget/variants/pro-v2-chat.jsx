@@ -213,6 +213,77 @@ const proV2Css = `
 
 /* Action confirm tooltip */
 .cw-toast{ position:absolute; bottom:78px; left:50%; transform:translateX(-50%); background:var(--alte-teal-deep); color:#fff; padding:6px 12px; border-radius:7px; font-size:11px; font-weight:600; box-shadow:0 6px 16px rgba(0,0,0,0.15); z-index:25; pointer-events:none; }
+
+@media (max-width: 1024px){
+  .cw{ width:100%; max-width:100vw; overflow-x:hidden; }
+  .cw-win,
+  .cw-win.expanded{
+    left:8px; right:8px; top:8px; bottom:8px;
+    width:auto; max-width:calc(100vw - 16px);
+    height:auto; max-height:calc(100vh - 16px);
+    transform:none; border-radius:16px;
+  }
+  .cw-backdrop{ display:none; }
+  .cw-shell{ width:100%; min-width:0; overflow:hidden; }
+  .cw-win.expanded .cw-side,
+  .cw-side{ display:none; }
+  .cw-main{ width:100%; min-width:0; max-width:100%; }
+  .cw-hdr{ padding:10px 10px; gap:8px; min-width:0; }
+  .cw-hdr .av{ flex-shrink:0; }
+  .cw-hdr > div:nth-child(2){ min-width:0; flex:1; }
+  .cw-hdr .nm,
+  .cw-hdr .stt{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cw-hdr .acts{ gap:4px; flex-shrink:0; }
+  .cw-hdr .ic{ width:26px; height:26px; }
+  .cw-hdr .lang{ height:26px; }
+  .cw-hdr .lang button{ padding:0 7px; }
+  .cw-trust{ padding:6px 10px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cw-msgs{ padding:12px 10px 8px; overflow-x:hidden; }
+  .cw-row{ max-width:100%; min-width:0; }
+  .cw-bub-wrap{ max-width:calc(100% - 34px); min-width:0; }
+  .cw-bub{ max-width:100%; }
+  .cw-srcs{ width:100%; min-width:0; }
+  .cw-src{ max-width:100%; min-width:0; }
+  .cw-src .u{ max-width:calc(100vw - 92px); }
+  .cw-feat{ align-items:flex-start; }
+  .cw-feat > div:nth-child(2){ min-width:0; }
+  .cw-feat .ttl,
+  .cw-feat .desc,
+  .cw-greet p{ overflow-wrap:anywhere; }
+  .cw-feat .arrow{ display:none; }
+  .cw-chips{ display:grid; grid-template-columns:1fr; gap:6px; }
+  .cw-chip{ width:100%; min-width:0; }
+  .cw-handover{ max-width:100%; }
+  .cw-handover .acts{ flex-wrap:wrap; }
+  .cw-btn-p,
+  .cw-btn-s{ flex:1 1 130px; min-width:0; }
+  .cw-file .inner{ min-width:0; }
+  .cw-file .name{ max-width:100%; min-width:0; }
+  .cw-comp{ padding:8px 8px 9px; }
+  .cw-comp .box{ gap:4px; padding-left:7px; padding-right:42px; position:relative; }
+  .cw-comp .tool{ display:none; }
+  .cw-comp .send{ position:absolute; right:5px; bottom:5px; width:30px; height:30px; }
+  .cw-comp .hint{ font-size:9px; flex-wrap:wrap; line-height:1.35; }
+  .cw-attach-menu{ left:8px; right:8px; min-width:0; }
+}
+
+@media (max-width: 480px){
+  .cw-win,
+  .cw-win.expanded{
+    left:6px; right:6px; top:6px; bottom:6px;
+    max-width:calc(100vw - 12px);
+    max-height:calc(100vh - 12px);
+  }
+  .cw-hdr{ padding:9px 8px; gap:7px; }
+  .cw-hdr .acts button.ic{ display:none; }
+  .cw-hdr .acts button.ic.danger{ display:flex; }
+  .cw-hdr .lang button{ padding:0 6px; }
+  .cw-greet h2{ font-size:20px; }
+  .cw-greet p{ font-size:12px; }
+  .cw-feat{ padding:10px; gap:9px; }
+  .cw-feat .ic{ width:30px; height:30px; }
+  .cw-chip{ padding:8px 10px; }
+}
 `;
 
 // Mini markdown â†’ JSX. Supports # headers, **bold**, *italic*, [link](url), `code`, â€¢ bullets, line breaks.
