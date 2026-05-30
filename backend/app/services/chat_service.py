@@ -149,7 +149,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif should_require_knowledge(analysis) or is_official_academic_rules_text(payload.message):
+    elif should_require_knowledge(analysis) or is_official_academic_rules_text(payload.message) or is_selected_official_document_text(payload.message):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
         analysis.reply = build_no_source_reply(analysis)
@@ -799,7 +799,8 @@ def mentions_relocation(analysis: AIAnalysisResult) -> bool:
 
 async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
     academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
-    if not academic_rules_question and not should_use_knowledge(analysis):
+    selected_official_document_question = is_selected_official_document_text(message)
+    if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis):
         return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
     category = None if academic_rules_question else category_for_analysis(analysis)
     results = await search_knowledge_snippets(
@@ -809,7 +810,7 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         category=category,
         source_domain=(
             None
-            if academic_rules_question
+            if academic_rules_question or selected_official_document_question
             else analysis.source_domain
             if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"}
             else None
@@ -990,6 +991,57 @@ def is_official_academic_rules_text(text: str) -> bool:
         "მაგისტრატურ",
         "ბაკალავრიატ",
         "სწავლების ენა",
+    ]
+    return any(marker in haystack for marker in markers)
+
+
+def is_selected_official_document_text(text: str) -> bool:
+    haystack = (text or "").lower()
+    markers = [
+        "ai policy",
+        "artificial intelligence",
+        "generative artificial",
+        "examination regulations",
+        "plagiarism",
+        "ethics code",
+        "ombudsman",
+        "library",
+        "career development",
+        "alumni",
+        "special needs",
+        "individual study plan",
+        "electronic learning",
+        "dean's list",
+        "dean",
+        "iro policy",
+        "sustainability",
+        "edi policy",
+        "research component",
+        "student rights",
+        "self-government",
+        "school council",
+        "funding rule",
+        "გენერაციული",
+        "ხელოვნური ინტელექტ",
+        "გამოცდების ჩატარ",
+        "პლაგიატ",
+        "ეთიკის კოდექს",
+        "ომბუდსმენ",
+        "ბიბლიოთეკ",
+        "კარიერული",
+        "კურსდამთავრებულ",
+        "სპეციალური საჭირო",
+        "სსმ",
+        "ინდივიდუალური სასწავლო",
+        "ელექტრონული სწავლ",
+        "დეკანის გრანტ",
+        "დაფინანსების წესი",
+        "სტუდენტთა უფლებ",
+        "თვითმმართველ",
+        "სკოლის საბჭ",
+        "მდგრადი განვითარების",
+        "კვლევითი კომპონენტ",
+        "ინფორმაციული ტექნოლოგი",
     ]
     return any(marker in haystack for marker in markers)
 
