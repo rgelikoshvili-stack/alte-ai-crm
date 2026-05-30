@@ -1,11 +1,11 @@
 # Phase 9AF Georgian Encoding Fix Result
 
-PHASE_9AF_GEORGIAN_ENCODING_STATUS=FIXED_PENDING_NETLIFY_REDEPLOY
+PHASE_9AF_GEORGIAN_ENCODING_STATUS=PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_GEORGIAN_ENCODING_FIXED_PENDING_NETLIFY_REDEPLOY
+BACKEND_DEPLOYED_GEORGIAN_ENCODING_FIXED_PENDING_PRIVACY_AND_EMBED_APPROVAL
 ```
 
 Public launch: NO-GO
@@ -114,10 +114,13 @@ Local source status:
 Live Netlify status:
 
 ```text
-PENDING_NETLIFY_REDEPLOY
+PASSED
 ```
 
-The live Netlify site must be redeployed from the branch/source that includes this fix before marking the browser UI fixed.
+- Live `/variants/pro-v2-chat.jsx`: fresh after master deploy `01e8fd7`.
+- Live `/variants/pro-v2-chat.jsx`: `Content-Type: text/plain; charset=UTF-8`.
+- Live source contains valid Georgian strings such as `ოპერატორი` and `დაკოპირდა`.
+- Live source does not contain the `áƒ` mojibake marker.
 
 ## Visual QA Result
 
@@ -136,7 +139,7 @@ New Georgian encoding check:
 Current visual QA state:
 
 ```text
-LOCAL_PASS_PENDING_NETLIFY_REDEPLOY_AND_RERUN
+PASSED_ON_NETLIFY
 ```
 
 Local static visual QA against `http://127.0.0.1:5179/join.html`: PASS.
@@ -152,6 +155,20 @@ Local screenshots:
 - `docs/deployment/visual_qa/local_widget_mobile_430x932_phase_9ab.png`
 - `docs/deployment/visual_qa/local_widget_mobile_390x844_phase_9ab.png`
 - `docs/deployment/visual_qa/local_widget_mobile_375x667_phase_9ab.png`
+
+Live Netlify visual QA: PASS.
+
+- Desktop `1440x900`: PASS; Georgian encoding check PASS; `hasMojibake=false`.
+- Mobile `430x932`: PASS; Georgian encoding check PASS; `hasMojibake=false`; `sidebarVisible=false`.
+- Mobile `390x844`: PASS; `sidebarVisible=false`.
+- Mobile `375x667`: PASS; `sidebarVisible=false`.
+
+Live screenshots:
+
+- `docs/deployment/visual_qa/netlify_widget_desktop_1440x900_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_430x932_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_390x844_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_375x667_phase_9ab.png`
 
 ## Safety
 
@@ -174,9 +191,9 @@ Local screenshots:
 
 ## Remaining
 
-1. Commit and push the fix to the active branch.
-2. Ensure Netlify deploy source (`master`) receives the same frontend/static fix if production Netlify still deploys from `master`.
-3. Trigger/confirm Netlify redeploy.
-4. Verify live `/variants/pro-v2-chat.jsx` no longer contains `áƒ`.
-5. Rerun `python -m app.scripts.visual_qa_netlify_widget`.
-6. Update this result to the passed/pending-privacy-and-embed status only after live Netlify visual QA passes.
+1. Privacy URL approval.
+2. Contact-flow approval.
+3. Final asset URL/upload approval.
+4. Staged real-site embed approval.
+5. Real-domain smoke after approved embed.
+6. Final public launch approval.

@@ -1,6 +1,6 @@
 {
   "status": "PASSED",
-  "url": "http://127.0.0.1:5179/join.html",
+  "url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
   "checks": [
     {
       "label": "desktop_1440x900",
@@ -9,7 +9,7 @@
         "height": 900
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_desktop_1440x900_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_desktop_1440x900_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 1440,
@@ -51,7 +51,7 @@
         "height": 932
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_430x932_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_430x932_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 430,
@@ -93,7 +93,7 @@
         "height": 844
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_390x844_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_390x844_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 390,
@@ -128,7 +128,7 @@
         "height": 667
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_375x667_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_375x667_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 375,
