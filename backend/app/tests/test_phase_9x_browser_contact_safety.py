@@ -275,3 +275,28 @@ def test_normal_academic_answer_is_not_rewritten():
     chat_service.sanitize_premature_contact_request(analysis)
 
     assert analysis.reply == "Bachelor programs are listed in the official program catalog."
+
+
+def test_georgian_soft_phone_email_operator_phrase_is_sanitized():
+    analysis = AIAnalysisResult(
+        reply=(
+            "გესმით! მოგიმართავთ ოპერატორს. თუ გსურთ უფრო სწრაფი კონტაქტი, "
+            "შეგიძლიათ გაუზიაროთ ოპერატორს თქვენი საკონტაქტო ინფორმაცია - ტელეფონის ნომერი ან ელ-ფოსტა."
+        ),
+        language="ka",
+        intent="human_request",
+        confidence=0.9,
+        should_create_lead=False,
+        should_handover=True,
+        department="Admissions",
+        missing_fields=[],
+        extracted_contact=ExtractedContact(),
+        source_domain="join.alte.edu.ge",
+        conversation_summary="User requested operator.",
+    )
+
+    chat_service.sanitize_premature_contact_request(analysis)
+
+    assert "ტელეფონის ნომერი ან ელ-ფოსტა" not in analysis.reply
+    assert "თუ გსურთ უფრო სწრაფი კონტაქტი" not in analysis.reply
+    assert "საკონტაქტო ინფორმაციის გაზიარება მხოლოდ თქვენი მკაფიო თანხმობის შემდეგ უნდა მოხდეს." in analysis.reply
