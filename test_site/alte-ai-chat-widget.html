@@ -160,7 +160,7 @@
     reset: window.AlteChatBridge._reset,
     requestHandover: async function (context) {
       await ensureSession(normalizeLang(context && context.language));
-      if (context && context.message) {
+      if (context && context.message && context.mode !== "waiting_for_operator") {
         await fetch(BACKEND + "/chat/message", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -181,7 +181,16 @@
       var response = await fetch(BACKEND + "/chat/handover/" + encodeURIComponent(_convId), {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ session_id: _sessId }),
+        body: JSON.stringify({
+          session_id: _sessId,
+          selected_department: normalizeDepartment(context && context.selected_department),
+          selected_topic: (context && context.selected_topic) || "operator",
+          source_domain: SOURCE_DOMAIN,
+          language: normalizeLang(context && context.language),
+          reason: (context && context.reason) || "wait_for_operator",
+          mode: (context && context.mode) || "waiting_for_operator",
+          message: (context && context.message) || null,
+        }),
       });
       if (!response.ok) throw new Error("Handover failed (" + response.status + ")");
       return response.json();
@@ -201,6 +210,7 @@
           selected_topic: data.selected_topic || null,
           source_domain: SOURCE_DOMAIN,
           language: normalizeLang(data.language),
+          message: data.message || data.question || data.note || null,
           consent: data.consent === true,
         }),
       });

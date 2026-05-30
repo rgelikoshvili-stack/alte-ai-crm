@@ -7,7 +7,7 @@
   var containerId = config.containerId || "alte-ai-chat-widget-container";
   var requiredBackendEndpoints = ["/chat/session/start", "/chat/message"];
   var sessionStartPayloadFields = ["source_domain", "language", "channel", "widget_variant"];
-  var messagePayloadFields = ["selected_department", "selected_topic", "reset", "expand", "fullscreen", "close", "operator", "handover", "source card renderer", "keyboard Enter handling", "Alte AI Assistant", "Alte AI ასისტენტი", "KA", "EN"];
+  var messagePayloadFields = ["selected_department", "selected_topic", "message", "question", "note", "wait_for_operator", "reset", "expand", "fullscreen", "close", "operator", "handover", "source card renderer", "keyboard Enter handling", "Alte AI Assistant", "Alte AI ასისტენტი", "KA", "EN"];
 
   function publicConfigScript() {
     var publicConfig = {
