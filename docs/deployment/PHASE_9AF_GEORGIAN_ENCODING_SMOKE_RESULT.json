@@ -1,0 +1,32 @@
+{
+  "status": "PASSED",
+  "backend_url": "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  "origin": "https://nimble-croissant-2f66e8.netlify.app",
+  "question": "როგორ ჩავაბარო ბაკალავრიატზე?",
+  "checks": {
+    "session_start_ok": true,
+    "message_ok": true,
+    "session_content_type_json": true,
+    "message_content_type_json": true,
+    "raw_response_no_mojibake": true,
+    "reply_no_mojibake": true,
+    "raw_response_contains_georgian": true,
+    "reply_contains_georgian": true,
+    "question_preserved_locally": true,
+    "no_created_lead": true,
+    "no_created_task": true,
+    "no_created_customer": true,
+    "no_create_lead_flag": true
+  },
+  "session_status": 200,
+  "message_status": 200,
+  "session_content_type": "application/json",
+  "message_content_type": "application/json",
+  "answer_source_status": "answered_from_approved_source",
+  "route_department": "Programs",
+  "department_key": "programs",
+  "reply_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.\n\nწყარო: page 22; მუხლი 22. საგანმანათლებლო პროგრამის დასრულება და კურსდამთავრებულისათვის, page 9; შეფასების რუკა. 11. სასწავლო კომპონენტის ავტორი და/ან განმახორციელებლი არ იზღუდება, სილაბუსში განათავსოს დამატებითი ინფო.",
+  "contact_details_sent": false,
+  "lead_task_customer_created": false,
+  "public_launch": "NO-GO"
+}
