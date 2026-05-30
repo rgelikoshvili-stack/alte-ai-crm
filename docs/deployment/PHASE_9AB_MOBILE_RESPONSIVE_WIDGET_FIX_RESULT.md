@@ -1,6 +1,6 @@
 # Phase 9AB Mobile Responsive Widget Fix Result
 
-PHASE_9AB_MOBILE_RESPONSIVE_STATUS=FIXED_PENDING_NETLIFY_REDEPLOY_AND_VISUAL_QA
+PHASE_9AB_MOBILE_RESPONSIVE_STATUS=BLOCKED_NETLIFY_REDEPLOY_REQUIRED
 
 Decision state:
 
@@ -113,6 +113,8 @@ Netlify visual QA:
 - `mobile_375x667`: FAIL on strict mobile layout criteria.
 - Page-level horizontal scroll is no longer present on Netlify, but the deployed Netlify asset is stale and still shows the desktop sidebar on mobile.
 - Current deployed Netlify `variants/pro-v2-chat.jsx` does not include the local `@media (max-width: 1024px)` responsive guard.
+- Netlify redeploy is currently blocked in this environment because Netlify CLI is not authenticated and no Netlify auth token/site linkage is available.
+- Attempted deploy command returned: `Unauthorized: could not retrieve project`.
 - Netlify redeploy is needed before marking `PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL`.
 - Do not mark Netlify mobile visual QA passed until the redeployed `https://nimble-croissant-2f66e8.netlify.app/join.html` is rechecked and mobile `sidebarVisible=false`.
 
