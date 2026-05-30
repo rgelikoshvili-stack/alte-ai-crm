@@ -1,4 +1,4 @@
-// PRO V2 — interactive chat widget with real Claude responses.
+﻿// PRO V2 â€” interactive chat widget with real Claude responses.
 // All CSS lives in a single injected stylesheet using CSS variables tweaked by the host.
 
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -213,9 +213,80 @@ const proV2Css = `
 
 /* Action confirm tooltip */
 .cw-toast{ position:absolute; bottom:78px; left:50%; transform:translateX(-50%); background:var(--alte-teal-deep); color:#fff; padding:6px 12px; border-radius:7px; font-size:11px; font-weight:600; box-shadow:0 6px 16px rgba(0,0,0,0.15); z-index:25; pointer-events:none; }
+
+@media (max-width: 1024px){
+  .cw{ width:100%; max-width:100vw; overflow-x:hidden; }
+  .cw-win,
+  .cw-win.expanded{
+    left:8px; right:8px; top:8px; bottom:8px;
+    width:auto; max-width:calc(100vw - 16px);
+    height:auto; max-height:calc(100vh - 16px);
+    transform:none; border-radius:16px;
+  }
+  .cw-backdrop{ display:none; }
+  .cw-shell{ width:100%; min-width:0; overflow:hidden; }
+  .cw-win.expanded .cw-side,
+  .cw-side{ display:none; }
+  .cw-main{ width:100%; min-width:0; max-width:100%; }
+  .cw-hdr{ padding:10px 10px; gap:8px; min-width:0; }
+  .cw-hdr .av{ flex-shrink:0; }
+  .cw-hdr > div:nth-child(2){ min-width:0; flex:1; }
+  .cw-hdr .nm,
+  .cw-hdr .stt{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cw-hdr .acts{ gap:4px; flex-shrink:0; }
+  .cw-hdr .ic{ width:26px; height:26px; }
+  .cw-hdr .lang{ height:26px; }
+  .cw-hdr .lang button{ padding:0 7px; }
+  .cw-trust{ padding:6px 10px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cw-msgs{ padding:12px 10px 8px; overflow-x:hidden; }
+  .cw-row{ max-width:100%; min-width:0; }
+  .cw-bub-wrap{ max-width:calc(100% - 34px); min-width:0; }
+  .cw-bub{ max-width:100%; }
+  .cw-srcs{ width:100%; min-width:0; }
+  .cw-src{ max-width:100%; min-width:0; }
+  .cw-src .u{ max-width:calc(100vw - 92px); }
+  .cw-feat{ align-items:flex-start; }
+  .cw-feat > div:nth-child(2){ min-width:0; }
+  .cw-feat .ttl,
+  .cw-feat .desc,
+  .cw-greet p{ overflow-wrap:anywhere; }
+  .cw-feat .arrow{ display:none; }
+  .cw-chips{ display:grid; grid-template-columns:1fr; gap:6px; }
+  .cw-chip{ width:100%; min-width:0; }
+  .cw-handover{ max-width:100%; }
+  .cw-handover .acts{ flex-wrap:wrap; }
+  .cw-btn-p,
+  .cw-btn-s{ flex:1 1 130px; min-width:0; }
+  .cw-file .inner{ min-width:0; }
+  .cw-file .name{ max-width:100%; min-width:0; }
+  .cw-comp{ padding:8px 8px 9px; }
+  .cw-comp .box{ gap:4px; padding-left:7px; padding-right:42px; position:relative; }
+  .cw-comp .tool{ display:none; }
+  .cw-comp .send{ position:absolute; right:5px; bottom:5px; width:30px; height:30px; }
+  .cw-comp .hint{ font-size:9px; flex-wrap:wrap; line-height:1.35; }
+  .cw-attach-menu{ left:8px; right:8px; min-width:0; }
+}
+
+@media (max-width: 480px){
+  .cw-win,
+  .cw-win.expanded{
+    left:6px; right:6px; top:6px; bottom:6px;
+    max-width:calc(100vw - 12px);
+    max-height:calc(100vh - 12px);
+  }
+  .cw-hdr{ padding:9px 8px; gap:7px; }
+  .cw-hdr .acts button.ic{ display:none; }
+  .cw-hdr .acts button.ic.danger{ display:flex; }
+  .cw-hdr .lang button{ padding:0 6px; }
+  .cw-greet h2{ font-size:20px; }
+  .cw-greet p{ font-size:12px; }
+  .cw-feat{ padding:10px; gap:9px; }
+  .cw-feat .ic{ width:30px; height:30px; }
+  .cw-chip{ padding:8px 10px; }
+}
 `;
 
-// Mini markdown → JSX. Supports # headers, **bold**, *italic*, [link](url), `code`, • bullets, line breaks.
+// Mini markdown â†’ JSX. Supports # headers, **bold**, *italic*, [link](url), `code`, â€¢ bullets, line breaks.
 function md(text){
   if (!text) return null;
   const lines = text.split('\n');
@@ -228,7 +299,7 @@ function md(text){
     }
   };
   lines.forEach((ln, i) => {
-    const m = ln.match(/^\s*[•\-\*]\s+(.*)$/);
+    const m = ln.match(/^\s*[â€¢\-\*]\s+(.*)$/);
     if (m){ buf.push(m[1]); return; }
     const nm = ln.match(/^\s*(\d+)\.\s+(.*)$/);
     if (nm){ buf.push(nm[2]); return; }
@@ -370,13 +441,13 @@ function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
   return (
     <div className={"cw-row "+(isUser?'u':'')}>
       <div className={"cw-av "+(isUser?'u':isOperator?'op':'')}>
-        {isUser ? (S.you||'ნ')[0] : isOperator ? <I name="headset" size={14} sw={2.3}/> : <AlteMark size={26}/>}
+        {isUser ? (S.you||'áƒœ')[0] : isOperator ? <I name="headset" size={14} sw={2.3}/> : <AlteMark size={26}/>}
       </div>
       <div className="cw-bub-wrap">
         {isOperator && (
           <div className="cw-dept" style={{background:'#fff3e0',color:'#c2410c'}}>
             <span className="dot"></span>
-            {lang==='KA' ? 'ოპერატორი' : 'Operator'}
+            {lang==='KA' ? 'áƒáƒžáƒ”áƒ áƒáƒ¢áƒáƒ áƒ˜' : 'Operator'}
           </div>
         )}
         {!isUser && dept && (
@@ -551,7 +622,7 @@ function TrustBar({ S }){
 }
 
 // =====================================================================
-// MAIN WIDGET — stateful root
+// MAIN WIDGET â€” stateful root
 // =====================================================================
 function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }){
   useEffect(()=>{
@@ -625,7 +696,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   // Detect intent: handover request, lead request
   const detectIntent = (text) => {
     const t = text.toLowerCase();
-    const handoverKw = ['ოპერატორ','live operator','human','agent','ცოცხალ','რეალურ','დაკავშირ','contact me','speak to'];
+    const handoverKw = ['áƒáƒžáƒ”áƒ áƒáƒ¢áƒáƒ ','live operator','human','agent','áƒªáƒáƒªáƒ®áƒáƒš','áƒ áƒ”áƒáƒšáƒ£áƒ ','áƒ“áƒáƒ™áƒáƒ•áƒ¨áƒ˜áƒ ','contact me','speak to'];
     if (handoverKw.some(k=>t.includes(k))) return 'handover';
     return null;
   };
@@ -649,7 +720,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     const userMsg = {
       id: 'u'+Date.now(),
       role:'user',
-      text: text || (lang==='KA'?'ჩემი ფაილია':'My file'),
+      text: text || (lang==='KA'?'áƒ©áƒ”áƒ›áƒ˜ áƒ¤áƒáƒ˜áƒšáƒ˜áƒ':'My file'),
       file: attaching || null,
     };
     setMessages(m => [...m, userMsg]);
@@ -657,31 +728,18 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     const wasAttaching = attaching;
     setAttaching(null);
 
-    // Handover intent?
+    // Handover intent: show the operator card, but do not call
+    // /chat/handover automatically from a normal typed message.
     if (detectIntent(text) === 'handover'){
-      setTyping(true);
-      try {
-        await requestBackendHandover(currentDept, text);
-        setTyping(false);
-        setMessages(m => [...m, {
-          id:'a'+Date.now(),
-          role:'assistant',
-          kind:'handover',
-          deptId:currentDept,
-          text: lang==='KA' ? 'გესმის — გადაგრთავ **მიღების** გუნდის ცოცხალ ოპერატორთან.' : "I'll connect you with a live operator from **Admissions**.",
-        }]);
-      } catch (err) {
-        setTyping(false);
-        setMessages(m => [...m, {
-          id:'a'+Date.now(),
-          role:'assistant',
-          text: lang==='KA' ? 'ოპერატორთან გადართვა ვერ მოხერხდა. სცადე მოგვიანებით.' : 'Could not request an operator right now. Please try again later.',
-          deptId:currentDept,
-        }]);
-      }
+      setMessages(m => [...m, {
+        id:'a'+Date.now(),
+        role:'assistant',
+        kind:'handover',
+        deptId:currentDept,
+        text: lang==='KA' ? 'ოპერატორთან დაკავშირება შესაძლებელია ღილაკით. თუ გსურს, დააჭირე ოპერატორის მოთხოვნას.' : 'You can request an operator from the button below.',
+      }]);
       return;
     }
-
     setTyping(true);
     try {
       const built = buildHistory(text + (wasAttaching?` [attached: ${wasAttaching.name}]`:''));
@@ -710,7 +768,8 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       setMessages(m => [...m, {
         id:'a'+Date.now(),
         role:'assistant',
-        text: lang==='KA' ? '😔 ბოდიში, ვერ ვუპასუხე. სცადე ისევ ან გადადი **ცოცხალ ოპერატორზე**.' : "😔 Sorry, couldn't reach the model. Try again or **talk to a live operator**.",
+        kind:'error',
+        text: lang==='KA' ? 'ვერ მივიღე პასუხი. სცადეთ თავიდან ან მიმართეთ ოპერატორს.' : 'Could not get an answer. Please try again or contact an operator.',
         deptId: currentDept,
       }]);
     }
@@ -718,7 +777,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
 
   // Voting + copy + regen
   const vote = (id, v) => setMessages(m => m.map(x => x.id===id ? {...x, vote: x.vote===v?null:v} : x));
-  const copy = (m) => { navigator.clipboard?.writeText(m.text||''); flashToast(lang==='KA'?'დაკოპირდა':'Copied'); };
+  const copy = (m) => { navigator.clipboard?.writeText(m.text||''); flashToast(lang==='KA'?'áƒ“áƒáƒ™áƒáƒžáƒ˜áƒ áƒ“áƒ':'Copied'); };
   const regen = async (m) => {
     const idx = messages.findIndex(x=>x.id===m.id);
     if (idx<0) return;
@@ -736,11 +795,11 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     } catch (e){ setTyping(false); }
   };
 
-  // File pick (mocked — actual upload not supported in sandbox)
+  // File pick (mocked â€” actual upload not supported in sandbox)
   const pickFile = (kind) => {
     const fake = {
-      pdf: { name:'atestati_2024.pdf', size:'456 KB · 2 '+ (lang==='KA'?'გვერდი':'pages'), kind:'pdf' },
-      img: { name:'transcript-photo.jpg', size:'1.2 MB · IMG', kind:'img' },
+      pdf: { name:'atestati_2024.pdf', size:'456 KB Â· 2 '+ (lang==='KA'?'áƒ’áƒ•áƒ”áƒ áƒ“áƒ˜':'pages'), kind:'pdf' },
+      img: { name:'transcript-photo.jpg', size:'1.2 MB Â· IMG', kind:'img' },
     };
     setAttaching(fake[kind]);
   };
@@ -757,13 +816,13 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     if (!d) return;
     // If there's an open chat, drop a system context line; otherwise just set context
     if (messages.length > 0){
-      const note = (lang==='KA'?'მზად ვარ ':'Switched to ')+d[lang.toLowerCase()]+'.';
+      const note = (lang==='KA'?'áƒ›áƒ–áƒáƒ“ áƒ•áƒáƒ  ':'Switched to ')+d[lang.toLowerCase()]+'.';
       setMessages(m => [...m, { id:'sys'+Date.now(), role:'assistant', text:note, deptId:id, sources:[] }]);
     }
   };
 
   const startHandover = () => {
-    const requestText = lang==='KA' ? 'გადამამისამართე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
+    const requestText = lang==='KA' ? 'áƒ’áƒáƒ“áƒáƒ›áƒáƒ›áƒ˜áƒ¡áƒáƒ›áƒáƒ áƒ—áƒ” áƒªáƒáƒªáƒ®áƒáƒš áƒáƒžáƒ”áƒ áƒáƒ¢áƒáƒ áƒ—áƒáƒœ' : 'Connect me with a live operator';
     setMessages(m => [...m, {
       id:'u'+Date.now(),
       role:'user',
@@ -775,14 +834,14 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         role:'assistant',
         kind:'handover',
         deptId:currentDept,
-        text: lang==='KA' ? 'გესმის — გადაგრთავ **მიღების** გუნდის ცოცხალ ოპერატორთან.' : "I'll connect you with a live operator from **Admissions**.",
+        text: lang==='KA' ? 'áƒ’áƒ”áƒ¡áƒ›áƒ˜áƒ¡ â€” áƒ’áƒáƒ“áƒáƒ’áƒ áƒ—áƒáƒ• **áƒ›áƒ˜áƒ¦áƒ”áƒ‘áƒ˜áƒ¡** áƒ’áƒ£áƒœáƒ“áƒ˜áƒ¡ áƒªáƒáƒªáƒ®áƒáƒš áƒáƒžáƒ”áƒ áƒáƒ¢áƒáƒ áƒ—áƒáƒœ.' : "I'll connect you with a live operator from **Admissions**.",
       }]);
     });
   };
 
   const newChat = () => {
     if (messages.length === 0) return;
-    if (confirm(lang==='KA'?'საუბრის წაშლა?':'Clear conversation?')){
+    if (confirm(lang==='KA'?'áƒ¡áƒáƒ£áƒ‘áƒ áƒ˜áƒ¡ áƒ¬áƒáƒ¨áƒšáƒ?':'Clear conversation?')){
       setMessages([]);
       window.AlteChatBackend?.reset?.();
       seenOperatorMessageIds.current = new Set();
@@ -808,7 +867,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       setMessages(m => [...m, {
         id:'a'+Date.now(),
         role:'assistant',
-        text: lang==='KA' ? 'კონტაქტის გაგზავნა ვერ მოხერხდა. გადაამოწმე ველები და სცადე თავიდან.' : 'Could not send your contact request. Check the fields and try again.',
+        text: lang==='KA' ? 'áƒ™áƒáƒœáƒ¢áƒáƒ¥áƒ¢áƒ˜áƒ¡ áƒ’áƒáƒ’áƒ–áƒáƒ•áƒœáƒ áƒ•áƒ”áƒ  áƒ›áƒáƒ®áƒ”áƒ áƒ®áƒ“áƒ. áƒ’áƒáƒ“áƒáƒáƒ›áƒáƒ¬áƒ›áƒ” áƒ•áƒ”áƒšáƒ”áƒ‘áƒ˜ áƒ“áƒ áƒ¡áƒªáƒáƒ“áƒ” áƒ—áƒáƒ•áƒ˜áƒ“áƒáƒœ.' : 'Could not send your contact request. Check the fields and try again.',
         deptId:currentDept,
       }]);
     }
@@ -830,7 +889,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         text:row.text,
       })),
     ]);
-    flashToast(lang==='KA' ? 'ოპერატორის პასუხი მოვიდა' : 'Operator replied');
+    flashToast(lang==='KA' ? 'áƒáƒžáƒ”áƒ áƒáƒ¢áƒáƒ áƒ˜áƒ¡ áƒžáƒáƒ¡áƒ£áƒ®áƒ˜ áƒ›áƒáƒ•áƒ˜áƒ“áƒ' : 'Operator replied');
   }, [currentDept, lang]);
 
   useEffect(() => {
