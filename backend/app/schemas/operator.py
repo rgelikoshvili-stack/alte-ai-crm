@@ -35,6 +35,8 @@ class InboxListItem(BaseModel):
     lead_id: str | None = None
     lead_status: str | None = None
     lead_priority: str | None = None
+    selected_department: str | None = None
+    waiting_status: str | None = None
     last_message_text: str | None = None
     last_message_sender_type: str | None = None
     last_message_at: datetime | None = None
@@ -49,6 +51,8 @@ class ConversationDetail(BaseModel):
     summary: str | None = None
     human_handover: bool
     ai_handled: bool
+    selected_department: str | None = None
+    waiting_status: str | None = None
 
 
 class LeadListItem(BaseModel):

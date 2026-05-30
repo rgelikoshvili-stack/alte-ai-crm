@@ -11,6 +11,7 @@ PROJECT_ROOT = BACKEND_ROOT.parent
 VISUAL_QA_DIR = PROJECT_ROOT / "docs" / "deployment" / "visual_qa"
 DEFAULT_URL = "https://nimble-croissant-2f66e8.netlify.app/join.html"
 GEORGIAN_TEST_QUESTION = "როგორ ჩავაბარო ბაკალავრიატზე?"
+MOJIBAKE_SENTINEL = "\u00e1" + "\u0192"
 
 
 def _safe_name(label: str) -> str:
@@ -133,7 +134,7 @@ def _run_georgian_encoding_check(page: Any) -> dict[str, Any]:
             }
             """
         )
-        has_mojibake = "áƒ" in text
+        has_mojibake = MOJIBAKE_SENTINEL in text
         georgian_count = len([ch for ch in text if "\u10a0" <= ch <= "\u10ff"])
         return {
             "ran": True,
@@ -142,6 +143,80 @@ def _run_georgian_encoding_check(page: Any) -> dict[str, Any]:
             "georgianCharacterCount": georgian_count,
             "containsQuestion": GEORGIAN_TEST_QUESTION in text,
             "visibleTextExcerpt": text[:500],
+        }
+    except Exception as exc:  # pragma: no cover - browser/runtime dependent
+        return {
+            "ran": True,
+            "passed": False,
+            "error": str(exc)[:240],
+        }
+
+
+def _run_phase_9ah_contact_wait_ui_check(page: Any) -> dict[str, Any]:
+    try:
+        page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const human = doc && doc.querySelector('.item.human');
+              if (!human) throw new Error('human_operator_button_not_found');
+              human.click();
+            }
+            """
+        )
+        page.wait_for_function(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const text = doc && doc.body ? doc.body.innerText || '' : '';
+              return text.includes('დატოვე კონტაქტი') && text.includes('დაელოდე ოპერატორს');
+            }
+            """,
+            timeout=10_000,
+        )
+        page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const buttons = Array.from(doc.querySelectorAll('button'));
+              const contact = buttons.find((button) => (button.innerText || '').includes('დატოვე კონტაქტი'));
+              if (!contact) throw new Error('leave_contact_button_not_found');
+              contact.click();
+            }
+            """
+        )
+        page.wait_for_function(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const text = doc && doc.body ? doc.body.innerText || '' : '';
+              const textareas = doc ? Array.from(doc.querySelectorAll('textarea')) : [];
+              return text.includes('თქვენი კითხვა / შეტყობინება')
+                && textareas.some((textarea) => (textarea.placeholder || '').includes('დაწერეთ თქვენი კითხვა'));
+            }
+            """,
+            timeout=10_000,
+        )
+        text = page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              return doc && doc.body ? doc.body.innerText || '' : '';
+            }
+            """
+        )
+        return {
+            "ran": True,
+            "passed": MOJIBAKE_SENTINEL not in text,
+            "hasMojibake": MOJIBAKE_SENTINEL in text,
+            "leaveContactVisible": "დატოვე კონტაქტი" in text,
+            "waitForOperatorVisible": "დაელოდე ოპერატორს" in text,
+            "messageTextareaVisible": "თქვენი კითხვა / შეტყობინება" in text,
         }
     except Exception as exc:  # pragma: no cover - browser/runtime dependent
         return {
@@ -220,9 +295,14 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                 encoding_check = None
                 if label in {"desktop_1440x900", "mobile_430x932"}:
                     encoding_check = _run_georgian_encoding_check(page)
+                phase_9ah_ui_check = None
+                if label == "desktop_1440x900":
+                    phase_9ah_ui_check = _run_phase_9ah_contact_wait_ui_check(page)
                 passed = _mobile_passes(metrics) if label.startswith("mobile_") else _passes(metrics)
                 if encoding_check is not None:
                     passed = passed and encoding_check.get("passed") is True
+                if phase_9ah_ui_check is not None:
+                    passed = passed and phase_9ah_ui_check.get("passed") is True
                 result["checks"].append(
                     {
                         "label": label,
@@ -231,6 +311,7 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                         "screenshot": str(screenshot.relative_to(PROJECT_ROOT)),
                         "metrics": metrics,
                         "georgianEncodingCheck": encoding_check,
+                        "phase9ahContactWaitUiCheck": phase_9ah_ui_check,
                     }
                 )
                 page.close()

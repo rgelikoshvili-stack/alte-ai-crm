@@ -75,7 +75,8 @@ def test_chat_does_not_answer_unsupported_tuition_exactly(client):
     data = response.json()
     assert data["intent"] == "finance_question"
     assert data["answer_source_status"] == "no_approved_source_found"
-    assert "verified information" in data["reply"]
+    assert "approved official sources" in data["reply"]
+    assert "relevant operator" in data["reply"]
 
 
 def test_chat_marks_no_approved_source_found_for_scholarship(client):

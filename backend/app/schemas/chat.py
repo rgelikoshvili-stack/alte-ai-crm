@@ -67,6 +67,15 @@ class ChatMessageRequest(BaseModel):
 
 class ChatHandoverRequest(BaseModel):
     session_id: str | None = None
+    selected_department: str | None = None
+    selected_topic: str | None = None
+    source_domain: str | None = "alte.edu.ge"
+    language: Language | None = None
+    reason: str | None = None
+    mode: str | None = None
+    message: str | None = None
+    question: str | None = None
+    note: str | None = None
 
 
 class ChatContactRequest(BaseModel):
@@ -81,6 +90,9 @@ class ChatContactRequest(BaseModel):
     selected_topic: str | None = None
     source_domain: str | None = "alte.edu.ge"
     language: Language | None = None
+    message: str | None = None
+    question: str | None = None
+    note: str | None = None
     consent: bool = False
 
 

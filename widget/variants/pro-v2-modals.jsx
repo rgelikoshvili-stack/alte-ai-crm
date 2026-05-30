@@ -15,6 +15,7 @@ const modalCss = `
 .cw-modal .field .inp{ width:100%; padding:10px 12px; border:1px solid var(--alte-line); border-radius:9px; font-size:13px; color:var(--alte-ink); background:var(--alte-panel); font-family:inherit; outline:0; transition:.15s; }
 .cw-modal .field .inp:focus{ border-color:var(--alte-teal); box-shadow:0 0 0 3px rgba(7,64,69,0.08); }
 .cw-modal .field .inp::placeholder{ color:#9aa5a8; }
+.cw-modal .field textarea.inp{ min-height:82px; resize:vertical; line-height:1.45; }
 .cw-modal .field-row{ display:flex; gap:8px; }
 .cw-modal .field-row .f1{ flex:1.6; }
 .cw-modal .field-row .f2{ flex:1; }
@@ -142,12 +143,13 @@ function SettingsModal({ S, lang, setLang, state, setState, onClear, onClose }){
   );
 }
 
-function LeadModal({ S, lang, onClose, onSubmit }){
+function LeadModal({ S, lang, initialMessage='', onClose, onSubmit }){
   React.useEffect(ensureModalCss,[]);
   const [name, setName] = useState2('');
   const [phone, setPhone] = useState2('');
   const [email, setEmail] = useState2('');
   const [interest, setInterest] = useState2('md');
+  const [message, setMessage] = useState2(initialMessage || '');
   const [consent, setConsent] = useState2(true);
   const valid = name.trim().length>1 && phone.trim().length>6 && consent;
   const items = [
@@ -194,7 +196,17 @@ function LeadModal({ S, lang, onClose, onSubmit }){
               ))}
             </div>
           </div>
-          <button className="submit" disabled={!valid} onClick={()=>onSubmit({ full_name:name, phone, email, interest, consent })}>
+          <div className="field">
+            <label>{S.leadMessage}</label>
+            <textarea
+              className="inp"
+              value={message}
+              onChange={e=>setMessage(e.target.value)}
+              placeholder={S.leadMessagePh}
+              rows={3}
+            />
+          </div>
+          <button className="submit" disabled={!valid} onClick={()=>onSubmit({ full_name:name, phone, email, interest, message, consent })}>
             <I name="send" size={13} sw={2.4}/>
             {S.leadSubmit}
           </button>

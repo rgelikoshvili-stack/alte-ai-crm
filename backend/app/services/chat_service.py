@@ -10,6 +10,7 @@ from app.schemas.chat import (
     AIAnalysisResult,
     ChatContactRequest,
     ChatContactResponse,
+    ChatHandoverRequest,
     ChatMessageRequest,
     ChatMessageResponse,
     ChatSessionStartRequest,
@@ -318,24 +319,67 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     )
 
 
-async def request_handover(db: AsyncSession, conversation_id: str, *, session_id: str | None = None) -> dict[str, str | None]:
+async def request_handover(
+    db: AsyncSession,
+    conversation_id: str,
+    *,
+    payload: ChatHandoverRequest | None = None,
+) -> dict[str, str | None]:
     conversation = await db.get(Conversation, conversation_id)
     if conversation is None:
         raise ValueError("Conversation not found")
+    session_id = payload.session_id if payload else None
     if not await handover_session_matches(db, conversation_id, session_id):
         raise PermissionError("Valid conversation session required")
     conversation.human_handover = True
+    conversation.status = "waiting_for_operator"
+    handover_message = handover_payload_message(payload)
+    if handover_message:
+        latest_user_message = await db.scalar(
+            select(Message)
+            .where(Message.conversation_id == conversation.id, Message.sender_type == "user")
+            .order_by(Message.created_at.desc())
+            .limit(1)
+        )
+        if latest_user_message is None or latest_user_message.text.strip() != handover_message.strip():
+            db.add(
+                Message(
+                    conversation_id=conversation.id,
+                    sender_type="user",
+                    text=handover_message.strip(),
+                    metadata_json={
+                        "session_id": session_id,
+                        "handover_request": True,
+                        "handover_mode": payload.mode if payload else None,
+                        "handover_reason": payload.reason if payload else None,
+                        "selected_department": payload.selected_department if payload else None,
+                        "selected_topic": payload.selected_topic if payload else None,
+                        "source_domain": payload.source_domain if payload else None,
+                    },
+                )
+            )
+            await db.flush()
     if not conversation.customer_id and not conversation.lead_id:
         await audit_event(
             db,
-            action="handover_contact_required",
+            action="handover_waiting_for_operator",
             entity_type="conversation",
             entity_id=conversation.id,
-            metadata_json={"reason": "missing_customer_or_lead"},
+            metadata_json={
+                "status": "waiting_for_operator",
+                "reason": (payload.reason if payload else None) or "wait_for_operator",
+                "selected_department": payload.selected_department if payload else None,
+                "selected_topic": payload.selected_topic if payload else None,
+                "source_domain": payload.source_domain if payload else None,
+                "language": payload.language if payload else None,
+                "message": handover_message,
+                "customer_or_lead_created": False,
+                "task_created": False,
+            },
         )
         await db.commit()
         return {
-            "status": "contact_required",
+            "status": "waiting_for_operator",
             "conversation_id": conversation.id,
             "task_id": None,
         }
@@ -362,7 +406,14 @@ async def request_handover(db: AsyncSession, conversation_id: str, *, session_id
         action="handover_requested",
         entity_type="conversation",
         entity_id=conversation.id,
-        metadata_json={"task_id": task.id},
+        metadata_json={
+            "task_id": task.id,
+            "status": "waiting_for_operator",
+            "reason": (payload.reason if payload else None) or "wait_for_operator",
+            "selected_department": payload.selected_department if payload else None,
+            "selected_topic": payload.selected_topic if payload else None,
+            "message": handover_message,
+        },
     )
     await db.commit()
     return {"status": "handover_requested", "conversation_id": conversation.id, "task_id": task.id}
@@ -382,6 +433,23 @@ async def submit_chat_contact(
         raise PermissionError("Consent is required before contact handover")
     if not (payload.phone or payload.email):
         raise ValueError("Phone or email is required")
+    contact_message = contact_payload_message(payload)
+    if contact_message:
+        db.add(
+            Message(
+                conversation_id=conversation.id,
+                sender_type="user",
+                text=contact_message.strip(),
+                metadata_json={
+                    "session_id": payload.session_id,
+                    "contact_form_message": True,
+                    "selected_department": payload.selected_department,
+                    "selected_topic": payload.selected_topic,
+                    "source_domain": payload.source_domain,
+                },
+            )
+        )
+        await db.flush()
 
     first_name, last_name = split_contact_name(payload)
     customer = await create_or_update_customer(
@@ -426,7 +494,8 @@ async def submit_chat_contact(
                 title="Human handover requested",
                 description=(
                     "Website chat visitor left contact details for operator follow-up. "
-                    f"Interest: {payload.interest_area or payload.selected_topic or 'not specified'}."
+                    f"Interest: {payload.interest_area or payload.selected_topic or 'not specified'}. "
+                    f"Message: {contact_message or 'not provided'}."
                 ),
                 due_date=datetime.now(UTC) + timedelta(hours=4),
                 priority="high" if payload.selected_department in {"international", "medicine"} else "normal",
@@ -446,6 +515,7 @@ async def submit_chat_contact(
             "task_id": task_id,
             "selected_department": payload.selected_department,
             "selected_topic": payload.selected_topic,
+            "message": contact_message,
         },
     )
     return ChatContactResponse(
@@ -518,6 +588,23 @@ def split_contact_name(payload: ChatContactRequest) -> tuple[str | None, str | N
     if not parts:
         return None, None
     return parts[0], " ".join(parts[1:]) or None
+
+
+def handover_payload_message(payload: ChatHandoverRequest | None) -> str | None:
+    if payload is None:
+        return None
+    return first_non_empty(payload.message, payload.question, payload.note)
+
+
+def contact_payload_message(payload: ChatContactRequest) -> str | None:
+    return first_non_empty(payload.message, payload.question, payload.note)
+
+
+def first_non_empty(*values: str | None) -> str | None:
+    for value in values:
+        if value and value.strip():
+            return value.strip()
+    return None
 
 
 def department_name_from_selection(selected_department: str | None) -> str:
@@ -1340,8 +1427,14 @@ def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[s
 
 def build_no_source_reply(analysis: AIAnalysisResult) -> str:
     if analysis.language == "en":
-        return "I do not see verified information for this in approved sources. An operator or official channel should confirm it before you rely on an answer."
-    return "დამტკიცებულ წყაროებში ეს ინფორმაცია არ ჩანს. ზუსტ ინფორმაციას ოპერატორი ან ოფიციალური არხი დაგიდასტურებთ."
+        return (
+            "I couldn't find an exact answer in the approved official sources. "
+            "I can connect you with the relevant operator so your question is routed to the correct department."
+        )
+    return (
+        "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. "
+        "შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    )
 
 
 def is_ambiguous_program_question(message: str, analysis: AIAnalysisResult) -> bool:

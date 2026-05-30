@@ -45,7 +45,7 @@ async def request_chat_handover(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        return await request_handover(db, conversation_id, session_id=payload.session_id if payload else None)
+        return await request_handover(db, conversation_id, payload=payload)
     except PermissionError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:

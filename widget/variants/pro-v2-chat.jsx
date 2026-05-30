@@ -433,8 +433,10 @@ function MsgActions({ S, onCopy, onRegen, onGood, onBad, vote }){
 }
 
 // ============ Single message ============
-function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
-  if (msg.kind === 'handover') return <HandoverCard msg={msg} S={S} lang={lang} onYes={onHandover}/>;
+function Message({ msg, S, lang, onCopy, onRegen, onVote, onContactHandover, onWaitHandover }){
+  if (msg.kind === 'handover') {
+    return <HandoverCard msg={msg} S={S} lang={lang} onContact={onContactHandover} onWait={onWaitHandover}/>;
+  }
   const isUser = msg.role === 'user';
   const isOperator = msg.role === 'operator' || msg.kind === 'operator';
   const dept = msg.deptId ? DEPTS.find(d=>d.id===msg.deptId) : null;
@@ -483,7 +485,7 @@ function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
   );
 }
 
-function HandoverCard({ msg, S, lang, onYes }){
+function HandoverCard({ msg, S, lang, onContact, onWait }){
   return (
     <div className="cw-row">
       <div className="cw-av"><AlteMark size={26}/></div>
@@ -502,8 +504,8 @@ function HandoverCard({ msg, S, lang, onYes }){
             {S.handoverHours}<strong>{S.handoverHoursVal}</strong>. {S.handoverWait}
           </div>
           <div className="acts">
-            <button className="cw-btn-p" onClick={onYes}>{S.handoverYes}</button>
-            <button className="cw-btn-s">{S.handoverNo}</button>
+            <button className="cw-btn-p" onClick={onContact}>{S.handoverYes}</button>
+            <button className="cw-btn-s" onClick={onWait}>{S.handoverNo}</button>
           </div>
         </div>
       </div>
@@ -639,6 +641,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showLead, setShowLead] = useState(false);
+  const [leadMessageDraft, setLeadMessageDraft] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [toast, setToast] = useState(null);
   const seenOperatorMessageIds = useRef(new Set());
@@ -708,8 +711,17 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       selected_department: deptId,
       selected_topic: deptId,
       message: messageText,
+      reason: 'wait_for_operator',
+      mode: 'waiting_for_operator',
     });
   }, [currentDept, lang]);
+
+  const latestUserText = useCallback(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user' && messages[i].text) return messages[i].text;
+    }
+    return '';
+  }, [messages]);
 
   // SEND
   const send = useCallback(async (overrideText) => {
@@ -821,22 +833,41 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     }
   };
 
+  const waitForOperator = useCallback((deptId=currentDept, messageText=latestUserText()) => {
+    const textForOperator = messageText || (lang==='KA' ? 'მინდა ოპერატორთან დაკავშირება' : 'I want to speak with an operator');
+    requestBackendHandover(deptId, textForOperator).catch(()=>null).finally(()=>{
+      setMessages(m => [...m, {
+        id:'a'+Date.now(),
+        role:'assistant',
+        deptId,
+        text: lang==='KA'
+          ? 'თქვენი მოთხოვნა გადაეცა ოპერატორს. გთხოვთ დაელოდოთ — ოპერატორი მალე დაგიკავშირდებათ ამ ჩატში.'
+          : 'Your request has been sent to an operator. Please wait — an operator will join this chat soon.',
+      }]);
+    });
+  }, [currentDept, lang, latestUserText, requestBackendHandover]);
+
+  const openContactForm = useCallback((messageText=latestUserText()) => {
+    setLeadMessageDraft(messageText || '');
+    setShowLead(true);
+  }, [latestUserText]);
+
   const startHandover = () => {
     const requestText = lang==='KA' ? 'დამაკავშირე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
+    // Previous wiring called requestBackendHandover(currentDept, requestText) here.
+    // Phase 9AH keeps the typed/sidebar request local until the user chooses "Wait for operator".
     setMessages(m => [...m, {
       id:'u'+Date.now(),
       role:'user',
       text: requestText,
     }]);
-    requestBackendHandover(currentDept, requestText).catch(()=>null).finally(()=>{
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        kind:'handover',
-        deptId:currentDept,
-        text: lang==='KA' ? 'გასაგებია - გადაგრთავთ **მიღების** გუნდის ცოცხალ ოპერატორთან.' : "I'll connect you with a live operator from **Admissions**.",
-      }]);
-    });
+    setMessages(m => [...m, {
+      id:'a'+Date.now(),
+      role:'assistant',
+      kind:'handover',
+      deptId:currentDept,
+      text: lang==='KA' ? 'შემიძლია დაგაკავშიროთ ოპერატორთან ამ ჩატში ან დატოვოთ საკონტაქტო ინფორმაცია.' : 'I can connect you with an operator in this chat, or you can leave contact details.',
+    }]);
   };
 
   const newChat = () => {
@@ -855,6 +886,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         language: lang,
         selected_department: currentDept,
         selected_topic: contact?.interest || currentDept,
+        message: contact?.message || leadMessageDraft || latestUserText(),
       });
       setShowLead(false);
       setMessages(m => [...m, {
@@ -928,7 +960,8 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
             {messages.map(m => (
               <Message key={m.id} msg={m} S={S} lang={lang}
                 onCopy={copy} onRegen={regen} onVote={vote}
-                onHandover={()=>setShowLead(true)}/>
+                onContactHandover={()=>openContactForm(m.text || latestUserText())}
+                onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
             ))}
             {typing && (
               <div className="cw-row">
@@ -957,7 +990,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         state={settingsState} setState={setSettingsState}
         onClear={()=>{ setMessages([]); setShowSettings(false); }}
         onClose={()=>setShowSettings(false)}/>}
-      {showLead && <LeadModal S={S} lang={lang} onClose={()=>setShowLead(false)} onSubmit={onLeadSubmit}/>}
+      {showLead && <LeadModal S={S} lang={lang} initialMessage={leadMessageDraft} onClose={()=>setShowLead(false)} onSubmit={onLeadSubmit}/>}
     </div>
     </>
   );

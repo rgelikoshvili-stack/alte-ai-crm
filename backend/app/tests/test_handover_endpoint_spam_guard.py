@@ -22,13 +22,16 @@ def test_repeated_handover_without_contact_creates_no_tasks(client, session_fact
 
     assert first.status_code == 200
     assert second.status_code == 200
-    assert first.json()["status"] == "contact_required"
-    assert second.json()["status"] == "contact_required"
+    assert first.json()["status"] == "waiting_for_operator"
+    assert second.json()["status"] == "waiting_for_operator"
     assert first.json()["task_id"] is None
     assert second.json()["task_id"] is None
     assert fetch_all(session_factory, select(Customer)) == []
     assert fetch_all(session_factory, select(Lead)) == []
     assert fetch_all(session_factory, select(Task)) == []
+    conversations = fetch_all(session_factory, select(Conversation))
+    assert conversations[0].status == "waiting_for_operator"
+    assert conversations[0].human_handover is True
 
 
 def test_invalid_handover_conversation_is_rejected(client):

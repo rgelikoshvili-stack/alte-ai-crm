@@ -1,0 +1,51 @@
+{
+  "status": "PASSED",
+  "backend_url": "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  "origin": "https://nimble-croissant-2f66e8.netlify.app",
+  "triggered_wait_for_operator": true,
+  "wait_handover_write_scope": "conversation.status and human_handover metadata only; no lead/customer/task expected",
+  "checks": [
+    {
+      "name": "chat_message_200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "unsupported_status",
+      "passed": true,
+      "detail": "no_approved_source_found"
+    },
+    {
+      "name": "operator_offer_present",
+      "passed": true,
+      "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    },
+    {
+      "name": "no_direct_contact_request",
+      "passed": true,
+      "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    },
+    {
+      "name": "no_invented_scholarship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "wait_handover_200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "wait_status_no_task",
+      "passed": true,
+      "detail": "{\"status\": \"waiting_for_operator\", \"conversation_id\": \"7e2ba6cb-ce59-4116-a264-a41b2660bf26\", \"task_id\": null}"
+    },
+    {
+      "name": "no_lead_task_customer_created_by_response",
+      "passed": true,
+      "detail": "lead=None task=None"
+    }
+  ],
+  "conversation_id": "7e2ba6cb-ce59-4116-a264-a41b2660bf26",
+  "sanitized": true
+}

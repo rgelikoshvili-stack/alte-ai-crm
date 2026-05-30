@@ -8,6 +8,7 @@ from app.models import Conversation, Message
 from app.schemas.crm import ConversationCreate, ConversationRead, MessageCreate, MessageRead
 from app.schemas.operator import ConversationDetail
 from app.services.conversation_service import create_conversation, create_message
+from app.services.operator_service import infer_conversation_department
 
 router = APIRouter(prefix="/conversations", tags=["conversations"])
 
@@ -42,6 +43,8 @@ async def get_conversation_detail(conversation_id: str, db: AsyncSession = Depen
         summary=conversation.summary,
         human_handover=conversation.human_handover,
         ai_handled=conversation.ai_handled,
+        selected_department=await infer_conversation_department(db, conversation_id),
+        waiting_status="waiting_for_operator" if conversation.status == "waiting_for_operator" else None,
     )
 
 
