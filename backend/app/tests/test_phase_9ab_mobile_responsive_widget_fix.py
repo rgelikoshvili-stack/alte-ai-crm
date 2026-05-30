@@ -7,6 +7,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 RESULT_DOC = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9AB_MOBILE_RESPONSIVE_WIDGET_FIX_RESULT.md"
 PUBLIC_LAUNCH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9P_PUBLIC_LAUNCH_DECISION.md"
+PHASE_9AD_RESULT = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9AD_INTEGRATED_ROUTING_FIX_RESULT.md"
 TEST_JS = PROJECT_ROOT / "test_site" / "alte-ai-chat-widget.js"
 TEST_CHAT = PROJECT_ROOT / "test_site" / "variants" / "pro-v2-chat.jsx"
 WIDGET_CHAT = PROJECT_ROOT / "widget" / "variants" / "pro-v2-chat.jsx"
@@ -56,6 +57,14 @@ def test_public_launch_not_complete_and_real_site_not_modified() -> None:
     assert "public launch: no-go" in text or "public launch remains no-go" in text
     assert "real alte site modified: no" in text
     assert "real join.alte.edu.ge modified: no" in text
+
+
+def test_integrated_qa_state_not_downgraded() -> None:
+    text = read(PHASE_9AD_RESULT) + "\n" + read(RESULT_DOC)
+    assert (
+        "BACKEND_DEPLOYED_INTEGRATED_CHAT_ROUTING_QA_PASSED_PENDING_FINAL_APPROVALS" in text
+        or "18/18 passed" in text
+    )
 
 
 def test_responsive_css_contains_mobile_guard() -> None:

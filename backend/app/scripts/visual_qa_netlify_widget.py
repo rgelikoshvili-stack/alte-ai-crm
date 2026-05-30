@@ -25,10 +25,17 @@ def _load_playwright():
 
 
 def _write_result(result: dict[str, Any]) -> None:
-    target = VISUAL_QA_DIR / "phase_9ab_visual_qa_result.json"
+    url = str(result.get("url") or "")
+    stem = "phase_9ab_visual_qa_result_local" if "127.0.0.1" in url or "localhost" in url else "phase_9ab_visual_qa_result_netlify"
+    target = VISUAL_QA_DIR / f"{stem}.json"
+    latest = VISUAL_QA_DIR / "phase_9ab_visual_qa_result.json"
     try:
-        target.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    except PermissionError as exc:  # pragma: no cover - local environment dependent
+        payload = json.dumps(result, indent=2)
+        for path in [target, latest]:
+            tmp = path.with_suffix(".json.tmp")
+            tmp.write_text(payload, encoding="utf-8")
+            tmp.replace(path)
+    except OSError as exc:  # pragma: no cover - local environment dependent
         result["artifact_write_status"] = "FAILED_PERMISSION_DENIED"
         result["artifact_write_error"] = str(exc)
 
@@ -55,13 +62,27 @@ def _evaluate_page(page: Any) -> dict[str, Any]:
             const doc = iframe && iframe.contentDocument;
             const win = iframe && iframe.contentWindow;
             const modal = doc && doc.querySelector('.cw-win');
+            const sidebar = doc && doc.querySelector('.cw-side');
+            const header = doc && doc.querySelector('.cw-hdr');
+            const composer = doc && doc.querySelector('.cw-comp');
             const launcher = doc && doc.querySelector('.alte-launcher, .cw-win');
+            const sidebarStyle = sidebar ? win.getComputedStyle(sidebar) : null;
             inner = {
               windowInnerWidth: win ? win.innerWidth : null,
+              windowInnerHeight: win ? win.innerHeight : null,
               documentScrollWidth: doc ? doc.documentElement.scrollWidth : null,
               bodyScrollWidth: doc && doc.body ? doc.body.scrollWidth : null,
               modalVisible: modal ? modal.getBoundingClientRect().width > 0 : false,
               modalWidth: modal ? modal.getBoundingClientRect().width : null,
+              modalRight: modal ? modal.getBoundingClientRect().right : null,
+              modalLeft: modal ? modal.getBoundingClientRect().left : null,
+              sidebarVisible: sidebar
+                ? sidebarStyle.display !== 'none'
+                  && sidebarStyle.visibility !== 'hidden'
+                  && sidebar.getBoundingClientRect().width > 1
+                : false,
+              headerVisible: header ? header.getBoundingClientRect().height > 0 : false,
+              composerVisible: composer ? composer.getBoundingClientRect().height > 0 : false,
               launcherOrModalVisible: launcher ? launcher.getBoundingClientRect().width > 0 : false,
             };
           } catch (err) {
@@ -83,12 +104,23 @@ def _passes(metrics: dict[str, Any]) -> bool:
         and outer.get("iframeVisible") is True
     )
     inner_width = inner.get("windowInnerWidth") or outer_width
+    modal_right = inner.get("modalRight")
+    modal_left = inner.get("modalLeft")
     inner_ok = (
         inner.get("documentScrollWidth", 999999) <= inner_width + 1
         and inner.get("bodyScrollWidth", 999999) <= inner_width + 1
         and inner.get("launcherOrModalVisible") is True
+        and inner.get("headerVisible") is True
+        and inner.get("composerVisible") is True
+        and (modal_left is None or modal_left >= -1)
+        and (modal_right is None or modal_right <= inner_width + 1)
     )
     return bool(outer_ok and inner_ok)
+
+
+def _mobile_passes(metrics: dict[str, Any]) -> bool:
+    inner = metrics.get("inner") or {}
+    return _passes(metrics) and inner.get("sidebarVisible") is False
 
 
 def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
@@ -112,7 +144,10 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
     viewports = [
         ("desktop_1440x900", 1440, 900),
         ("mobile_430x932", 430, 932),
+        ("mobile_390x844", 390, 844),
+        ("mobile_375x667", 375, 667),
     ]
+    artifact_prefix = "local_widget" if "127.0.0.1" in url or "localhost" in url else "netlify_widget"
     result: dict[str, Any] = {"status": "PASSED", "url": url, "checks": []}
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -122,10 +157,10 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                 page.goto(url, wait_until="networkidle", timeout=60_000)
                 page.wait_for_selector("iframe[title='Alte AI Chatbot']", timeout=30_000)
                 page.wait_for_timeout(3_000)
-                screenshot = VISUAL_QA_DIR / f"netlify_widget_{_safe_name(label)}_phase_9ab.png"
+                screenshot = VISUAL_QA_DIR / f"{artifact_prefix}_{_safe_name(label)}_phase_9ab.png"
                 page.screenshot(path=str(screenshot), full_page=True)
                 metrics = _evaluate_page(page)
-                passed = _passes(metrics)
+                passed = _mobile_passes(metrics) if label.startswith("mobile_") else _passes(metrics)
                 result["checks"].append(
                     {
                         "label": label,

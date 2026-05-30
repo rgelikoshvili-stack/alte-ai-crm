@@ -12,7 +12,7 @@ BACKEND_DEPLOYED_WIDGET_MOBILE_RESPONSIVE_FIXED_PENDING_NETLIFY_REDEPLOY
 
 - Netlify test page: `https://nimble-croissant-2f66e8.netlify.app/join.html`
 - Local test URL used for fixed assets: `http://127.0.0.1:5179/join.html`
-- Production backend revision remains: `alte-ai-crm-backend-00030-td7`
+- Production backend revision remains: `alte-ai-crm-backend-00032-lzq`
 - Real Alte site modified: NO
 - Real join.alte.edu.ge modified: NO
 - Backend behavior changed: NO
@@ -107,9 +107,26 @@ Screenshots:
 
 Netlify visual QA:
 
-- Current Netlify deployment is not updated yet from this local branch state.
+- `desktop_1440x900`: PASS.
+- `mobile_430x932`: FAIL on strict mobile layout criteria.
+- `mobile_390x844`: FAIL on strict mobile layout criteria.
+- `mobile_375x667`: FAIL on strict mobile layout criteria.
+- Page-level horizontal scroll is no longer present on Netlify, but the deployed Netlify asset is stale and still shows the desktop sidebar on mobile.
+- Current deployed Netlify `variants/pro-v2-chat.jsx` does not include the local `@media (max-width: 1024px)` responsive guard.
 - Netlify redeploy is needed before marking `PASSED_PENDING_PRIVACY_AND_EMBED_APPROVAL`.
-- Do not mark Netlify mobile visual QA passed until the redeployed `https://nimble-croissant-2f66e8.netlify.app/join.html` is rechecked.
+- Do not mark Netlify mobile visual QA passed until the redeployed `https://nimble-croissant-2f66e8.netlify.app/join.html` is rechecked and mobile `sidebarVisible=false`.
+
+Netlify screenshots from strict QA:
+
+- `docs/deployment/visual_qa/netlify_widget_desktop_1440x900_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_430x932_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_390x844_phase_9ab.png`
+- `docs/deployment/visual_qa/netlify_widget_mobile_375x667_phase_9ab.png`
+
+Automation JSON:
+
+- `docs/deployment/visual_qa/phase_9ab_visual_qa_result_netlify.json`
+- `docs/deployment/visual_qa/phase_9ab_visual_qa_result_local.json`
 
 ## Automation
 
@@ -120,6 +137,16 @@ Added:
 - `backend/app/tests/test_phase_9ab_mobile_responsive_widget_fix.py`
 
 `visual_qa_netlify_widget.py` uses Playwright when available. If Playwright is unavailable, it records `PLAYWRIGHT_UNAVAILABLE` and manual QA steps instead of faking a pass.
+
+The script now checks:
+
+- `document.documentElement.scrollWidth <= window.innerWidth + 1`
+- `document.body.scrollWidth <= window.innerWidth + 1`
+- widget iframe visible
+- chat window visible and contained within viewport
+- header visible
+- composer visible
+- mobile sidebar hidden/collapsed (`sidebarVisible=false`)
 
 ## Official KB Guardrails
 

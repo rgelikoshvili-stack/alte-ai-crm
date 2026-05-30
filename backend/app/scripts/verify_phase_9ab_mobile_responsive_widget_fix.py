@@ -25,6 +25,7 @@ DOC_FILES = [
     RESULT_DOC,
     PROJECT_ROOT / "docs" / "deployment" / "FINAL_LAUNCH_READINESS_AND_SITE_EMBED_APPROVAL_PACKAGE.md",
     PROJECT_ROOT / "docs" / "deployment" / "FULL_PROJECT_AUDIT_2026_05_30.md",
+    PROJECT_ROOT / "docs" / "deployment" / "PHASE_9AD_INTEGRATED_ROUTING_FIX_RESULT.md",
 ]
 
 VALID_STATUSES = {
@@ -122,6 +123,15 @@ def official_facts_documented() -> Check:
     return Check("Official KB facts remain documented", not missing, ", ".join(missing))
 
 
+def integrated_qa_state_not_downgraded() -> Check:
+    text = "\n".join(read(path) for path in DOC_FILES)
+    return Check(
+        "Integrated QA state not downgraded",
+        "BACKEND_DEPLOYED_INTEGRATED_CHAT_ROUTING_QA_PASSED_PENDING_FINAL_APPROVALS" in text
+        or "18/18 passed" in text,
+    )
+
+
 def responsive_css_present() -> Check:
     text = "\n".join(read(path) for path in [TEST_SITE_FILES[-1], WIDGET_FILES[0]])
     breakpoint = (
@@ -145,6 +155,7 @@ def run_checks() -> list[Check]:
         public_launch_no_go(),
         real_site_not_modified(),
         official_facts_documented(),
+        integrated_qa_state_not_downgraded(),
         responsive_css_present(),
     ]
 

@@ -1,6 +1,6 @@
 {
-  "status": "PASSED",
-  "url": "http://127.0.0.1:5179/join.html",
+  "status": "FAILED",
+  "url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
   "checks": [
     {
       "label": "desktop_1440x900",
@@ -9,7 +9,7 @@
         "height": 900
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_desktop_1440x900_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_desktop_1440x900_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 1440,
@@ -42,8 +42,8 @@
         "width": 430,
         "height": 932
       },
-      "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_430x932_phase_9ab.png",
+      "passed": false,
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_430x932_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 430,
@@ -60,10 +60,10 @@
           "documentScrollWidth": 430,
           "bodyScrollWidth": 430,
           "modalVisible": true,
-          "modalWidth": 418,
-          "modalRight": 424,
-          "modalLeft": 6,
-          "sidebarVisible": false,
+          "modalWidth": 412.796875,
+          "modalRight": 421.3984375,
+          "modalLeft": 8.6015625,
+          "sidebarVisible": true,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
@@ -76,8 +76,8 @@
         "width": 390,
         "height": 844
       },
-      "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_390x844_phase_9ab.png",
+      "passed": false,
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_390x844_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 390,
@@ -94,10 +94,10 @@
           "documentScrollWidth": 390,
           "bodyScrollWidth": 390,
           "modalVisible": true,
-          "modalWidth": 378,
-          "modalRight": 384,
-          "modalLeft": 6,
-          "sidebarVisible": false,
+          "modalWidth": 374.390625,
+          "modalRight": 382.1953125,
+          "modalLeft": 7.8046875,
+          "sidebarVisible": true,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
@@ -110,8 +110,8 @@
         "width": 375,
         "height": 667
       },
-      "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_375x667_phase_9ab.png",
+      "passed": false,
+      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_375x667_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 375,
@@ -128,10 +128,10 @@
           "documentScrollWidth": 375,
           "bodyScrollWidth": 375,
           "modalVisible": true,
-          "modalWidth": 363,
-          "modalRight": 369,
-          "modalLeft": 6,
-          "sidebarVisible": false,
+          "modalWidth": 360,
+          "modalRight": 367.5,
+          "modalLeft": 7.5,
+          "sidebarVisible": true,
           "headerVisible": true,
           "composerVisible": true,
           "launcherOrModalVisible": true
