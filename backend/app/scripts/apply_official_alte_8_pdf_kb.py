@@ -27,7 +27,7 @@ def summarize(rows: list[dict]) -> dict:
     }
 
 
-async def apply_rows(rows: list[dict]) -> dict:
+async def apply_rows(rows: list[dict], *, approve_for_chatbot: bool = False) -> dict:
     from sqlalchemy import select
 
     from app.core.database import AsyncSessionLocal
@@ -40,12 +40,13 @@ async def apply_rows(rows: list[dict]) -> dict:
         for row in rows:
             source_key = row["source_id"]
             source = await db.scalar(select(KnowledgeSource).where(KnowledgeSource.source_key == source_key))
+            status = "approved" if approve_for_chatbot or not row["review_required"] else "draft"
             if source is None:
                 source = KnowledgeSource(
                     source_key=source_key,
                     title=f"{row['document_title']} p.{row['page_start']}",
                     source_type="pdf",
-                    status="draft" if row["review_required"] else "approved",
+                    status=status,
                     language=row["language"],
                     source_url=None,
                     source_domain="official_alte_pdf_kb",
@@ -57,6 +58,16 @@ async def apply_rows(rows: list[dict]) -> dict:
                 db.add(source)
                 await db.flush()
                 created_sources += 1
+            else:
+                source.title = f"{row['document_title']} p.{row['page_start']}"
+                source.source_type = "pdf"
+                source.status = status
+                source.language = row["language"]
+                source.source_domain = "official_alte_pdf_kb"
+                source.category = row["topic"]
+                source.sensitivity = row["sensitivity"]
+                source.review_required = row["review_required"]
+                source.owner = "official_alte_8_pdf_kb"
             content_hash = sha256(row["content"].encode("utf-8")).hexdigest()
             snippet = await db.scalar(select(KnowledgeSnippet).where(KnowledgeSnippet.source_key == source_key))
             if snippet is None:
@@ -73,22 +84,30 @@ async def apply_rows(rows: list[dict]) -> dict:
                     content_hash=content_hash,
                     program_name=None,
                     keywords=",".join(row.get("keywords") or []),
-                    status="draft" if row["review_required"] else "approved",
+                    status=status,
                     language=row["language"],
                 )
                 db.add(snippet)
                 created_snippets += 1
             else:
+                snippet.title = f"{row['document_title']} p.{row['page_start']} c.{row['chunk_index']}"
                 snippet.content = row["content"]
+                snippet.category = row["topic"]
+                snippet.source_domain = "official_alte_pdf_kb"
+                snippet.sensitivity = row["sensitivity"]
+                snippet.stale_after_days = 365
                 snippet.content_hash = content_hash
                 snippet.review_required = row["review_required"]
-                snippet.status = "draft" if row["review_required"] else "approved"
+                snippet.keywords = ",".join(row.get("keywords") or [])
+                snippet.status = status
+                snippet.language = row["language"]
                 updated_snippets += 1
         await db.commit()
     return {
         "created_sources": created_sources,
         "created_snippets": created_snippets,
         "updated_snippets": updated_snippets,
+        "approve_for_chatbot": approve_for_chatbot,
     }
 
 
@@ -96,16 +115,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Prepare or apply the official Alte 8 PDF knowledge base.")
     parser.add_argument("--apply", action="store_true", help="Write to Knowledge Base tables. Omit for dry-run.")
     parser.add_argument("--dry-run", action="store_true", help="Dry-run only. This is the default.")
+    parser.add_argument(
+        "--approve-for-chatbot",
+        action="store_true",
+        help="Mark snippets/sources approved for chatbot retrieval while preserving review_required metadata.",
+    )
     args = parser.parse_args()
     rows = load_rows()
     summary = summarize(rows)
     if not args.apply:
         print(json.dumps({"mode": "dry-run", "would_write": False, **summary}, ensure_ascii=False, indent=2))
         return
-    result = asyncio.run(apply_rows(rows))
+    result = asyncio.run(apply_rows(rows, approve_for_chatbot=args.approve_for_chatbot))
     print(json.dumps({"mode": "apply", "would_write": True, **summary, **result}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

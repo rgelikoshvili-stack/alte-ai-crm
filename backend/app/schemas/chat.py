@@ -43,6 +43,8 @@ class ChatSessionStartRequest(BaseModel):
     channel: Literal["website_chat"] = "website_chat"
     source_domain: str | None = "alte.edu.ge"
     language: Language = "unknown"
+    widget_variant: str | None = None
+    metadata: dict | None = None
 
 
 class ChatSessionStartResponse(BaseModel):

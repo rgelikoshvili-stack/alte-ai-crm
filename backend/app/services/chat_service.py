@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -31,6 +32,82 @@ CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "int
 CONTACT_FIELD = "phone_or_email"
 INFO_ONLY_NO_CONTACT_INTENTS = {"finance_question", "deadline_question"}
 INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS = {"tuition_fee", "scholarship", "schedule"}
+SAFE_CONTACT_CONSENT_EN = (
+    'If you would like an operator to follow up, click "Yes, contact". '
+    "Contact details should only be shared after your explicit consent."
+)
+SAFE_CONTACT_CONSENT_KA = (
+    "თუ გსურთ ოპერატორთან დაკავშირება, დააჭირეთ „დიახ, კონტაქტი“-ს. "
+    "საკონტაქტო ინფორმაციის გაზიარება მხოლოდ თქვენი მკაფიო თანხმობის შემდეგ უნდა მოხდეს."
+)
+
+OFFICIAL_ALTE_PDF_SOURCE_DOMAIN = "official_alte_pdf_kb"
+
+GEORGIAN_RETRIEVAL_ALIASES = [
+    (
+        ["რამდენი კრედიტია ბაკალავრიატი", "ბაკალავრიატის დასრულებისთვის", "საბაკალავრო", "ბაკალავრიატ"],
+        "ბაკალავრიატი საბაკალავრო ECTS კრედიტი 240 bachelor completion",
+    ),
+    (
+        ["რამდენი კრედიტია სამაგისტრო", "სამაგისტრო პროგრამა", "მაგისტრატურა", "მაგისტრატურის"],
+        "მაგისტრატურა სამაგისტრო ECTS კრედიტი 120 master",
+    ),
+    (
+        ["სტატუსი რამდენ ხანს", "სტატუსის შეჩერ", "შევიჩერო", "სტატუსი შევიჩერო"],
+        "სტუდენტის სტატუსის შეჩერება 5 წელი status suspension",
+    ),
+    (
+        ["საბუთებია მაგისტრატურაზე", "საბუთები მაგისტრატურაზე", "მაგისტრატურაზე", "ჩასარიცხად"],
+        "მაგისტრატურა ჩარიცხვის საბუთები დოკუმენტები ID CV 3x4 სამხედრო ნოტარიული დიპლომის დანართი",
+    ),
+    (
+        ["ფინანსური დახმარება", "ფინანსური მხარდაჭერა", "დაფინანსება არსებობს"],
+        "ფინანსური მხარდაჭერის მექანიზმები დაფინანსების წესი funding rule financial support",
+    ),
+    (
+        ["ai-ის გამოყენ", "ai-ს გამოყენ", "ai გამოყენ", "ხელოვნური ინტელექტის გამოყენ"],
+        "გენერაციული AI ხელოვნური ინტელექტის გამოყენების პოლიტიკა AI policy",
+    ),
+]
+CONTACT_REQUEST_MARKERS = [
+    "please confirm your contact details",
+    "contact details (name, phone, email)",
+    "please share your name and phone number or email",
+    "please share your name, phone, or email",
+    "please share your phone or email",
+    "please provide your phone",
+    "please provide your email",
+    "provide phone or email",
+    "phone or email so",
+    "name, phone, email",
+    "name and phone",
+    "share your name",
+    "share your phone",
+    "share your email",
+    "გთხოვთ მოგვწეროთ სახელი",
+    "გთხოვთ მომწეროთ სახელი",
+    "ტელეფონი ან ელფოსტა",
+    "ტელეფონი ან ელ.ფოსტა",
+    "ტელეფონი ან ელ-ფოსტა",
+    "თუ გსურთ უფრო სწრაფი კონტაქტი",
+    "ტელეფონის ნომერი ან ელ-ფოსტა",
+    "მიუთითოთ საკონტაქტო ინფორმაცია",
+    "მიუთითეთ საკონტაქტო ინფორმაცია",
+    "საკონტაქტო ინფორმაცია (სახელი",
+    "სახელი, ტელეფონი ან ელ. ფოსტა",
+    "გთხოვთ, მომაწოდოთ თქვენი",
+    "გთხოვთ მომაწოდოთ თქვენი",
+    "გთხოვთ, მოგვაწოდოთ თქვენი",
+    "გთხოვთ მოგვაწოდოთ თქვენი",
+    "დატოვოთ საკონტაქტო ინფორმაცია",
+    "დატოვეთ საკონტაქტო ინფორმაცია",
+]
+
+CONTACT_REQUEST_REGEXES = [
+    "გთხოვთ.{0,80}(სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი)",
+    "(მიუთითოთ|მიუთითეთ|შეიყვანოთ|შეიყვანეთ|დატოვოთ|დატოვეთ|მომაწოდოთ|მომაწოდეთ|მოგვაწოდოთ|მოგვაწოდეთ).{0,80}(თქვენი|საკონტაქტო|სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი)",
+    "(სახელი|ტელეფონი|ელფოსტა|ელ\\. ფოსტა|მეილი).{0,80}(მიუთითოთ|მიუთითეთ|შეიყვანოთ|შეიყვანეთ|დატოვოთ|დატოვეთ|მომაწოდოთ|მომაწოდეთ|მოგვაწოდოთ|მოგვაწოდეთ)",
+]
 
 
 async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> ChatSessionStartResponse:
@@ -43,7 +120,12 @@ async def start_session(db: AsyncSession, payload: ChatSessionStartRequest) -> C
         action="chat_session_started",
         entity_type="conversation",
         entity_id=conversation.id,
-        metadata_json={"source_domain": payload.source_domain, "session_id": session_id},
+        metadata_json={
+            "source_domain": payload.source_domain,
+            "session_id": session_id,
+            "widget_variant": payload.widget_variant,
+            "metadata": payload.metadata or {},
+        },
     )
     await db.commit()
     await db.refresh(conversation)
@@ -109,17 +191,36 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
-    knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
+    unsupported_official_question = is_clearly_unsupported_official_question(payload.message)
+    if unsupported_official_question:
+        knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    else:
+        knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
+        official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
+            payload.message, analysis.language
+        )
+        if official_reply:
+            analysis.reply = official_reply
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif should_require_knowledge(analysis):
+    elif (
+        unsupported_official_question
+        or should_require_knowledge(analysis)
+        or is_official_academic_rules_text(payload.message)
+        or is_selected_official_document_text(payload.message)
+    ):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
-        analysis.reply = build_no_source_reply(analysis)
+        if is_ambiguous_program_question(payload.message, analysis):
+            analysis.reply = build_ambiguous_program_reply(analysis)
+        else:
+            analysis.reply = build_no_source_reply(analysis)
+    sanitize_premature_contact_request(analysis)
     apply_no_contact_lead_guard(analysis)
     apply_info_only_no_contact_guard(analysis)
     routing = apply_department_routing(analysis, payload, knowledge)
+    sanitize_premature_contact_request(analysis)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -711,29 +812,49 @@ def should_prompt_for_contact(analysis: AIAnalysisResult) -> bool:
 
 
 def ensure_contact_request_reply(analysis: AIAnalysisResult) -> str:
+    reply = strip_contact_request_sentence(analysis.reply)
+    consent = safe_contact_consent_text(analysis.language)
+    if not reply:
+        return consent
+    if consent in reply:
+        return reply
+    return f"{reply} {consent}"
+
+
+def sanitize_premature_contact_request(analysis: AIAnalysisResult) -> None:
+    if has_contact(analysis):
+        return
     if reply_requests_contact(analysis.reply):
-        return analysis.reply
-    if analysis.language == "en":
-        return (
-            f"{analysis.reply} Please share your name and phone number or email so an admissions consultant can follow up."
-        )
-    return f"{analysis.reply} გთხოვთ მოგვწეროთ სახელი და ტელეფონი ან ელფოსტა, რომ კონსულტანტი დაგიკავშირდეთ."
+        analysis.reply = ensure_contact_request_reply(analysis)
+
+
+def safe_contact_consent_text(language: str) -> str:
+    return SAFE_CONTACT_CONSENT_EN if language == "en" else SAFE_CONTACT_CONSENT_KA
+
+
+def strip_contact_request_sentence(reply: str) -> str:
+    cleaned = (reply or "").strip()
+    lowered = cleaned.lower()
+    for marker in CONTACT_REQUEST_MARKERS:
+        index = lowered.find(marker.lower())
+        if index >= 0:
+            cleaned = cleaned[:index].strip()
+            break
+    else:
+        for pattern in CONTACT_REQUEST_REGEXES:
+            match = re.search(pattern, lowered)
+            if match:
+                cleaned = cleaned[: match.start()].strip()
+                break
+    if cleaned and cleaned[-1] not in ".!?":
+        cleaned = cleaned.rstrip(" .,!?:;") + "."
+    return cleaned
 
 
 def reply_requests_contact(reply: str) -> bool:
     lowered = reply.lower()
-    return any(
-        token in lowered
-        for token in [
-            "phone",
-            "email",
-            "contact",
-            "name",
-            "ტელეფ",
-            "ელფოსტ",
-            "საკონტაქტ",
-            "სახელი",
-        ]
+    return any(marker.lower() in lowered for marker in CONTACT_REQUEST_MARKERS) or any(
+        re.search(pattern, lowered) for pattern in CONTACT_REQUEST_REGEXES
     )
 
 
@@ -747,19 +868,156 @@ def mentions_relocation(analysis: AIAnalysisResult) -> bool:
     return "visa" in haystack or "relocation" in haystack
 
 
-async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
-    if not should_use_knowledge(analysis):
-        return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
-    category = category_for_analysis(analysis)
-    results = await search_knowledge_snippets(
-        db,
-        query=message,
-        language=analysis.language if analysis.language in {"ka", "en"} else None,
-        category=category,
-        source_domain=analysis.source_domain if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"} else None,
-        program_name=analysis.program,
-        approved_only=True,
+def official_academic_rules_regression_reply(message: str, language: str | None) -> str | None:
+    haystack = (message or "").lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
+    asks_credit = any(marker in haystack for marker in ["ects", "კრედიტ"])
+
+    if is_master_admission_documents_question(haystack):
+        if is_ka:
+            return (
+                "მაგისტრატურაზე ჩასარიცხად საჭიროა: პირადობის დამადასტურებელი დოკუმენტის ასლი; CV; "
+                "3x4 ფოტოსურათი ბეჭდური და ელექტრონული ფორმით; სამხედრო აღრიცხვაზე ყოფნის დამადასტურებელი "
+                "დოკუმენტის ასლი მამაკაცი აპლიკანტებისთვის; ნოტარიულად დამოწმებული დიპლომის ასლი; "
+                "დიპლომის დანართის ასლი."
+            )
+        return (
+            "For master's admission, the required documents are: ID copy; CV; 3x4 photo in printed and electronic form; "
+            "copy of military registration certificate for male applicants; notarized diploma copy; diploma supplement copy."
+        )
+
+    if asks_credit and any(marker in haystack for marker in ["ბაკალავრ", "bachelor"]):
+        if is_ka:
+            return (
+                "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. "
+                "ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECTS."
+            )
+        return (
+            "A bachelor program requires at least 240 ECTS credits. "
+            "One-cycle programs are separate: Medicine requires at least 360 ECTS and Dentistry at least 300 ECTS."
+        )
+
+    if asks_credit and any(marker in haystack for marker in ["მაგისტრატ", "სამაგისტრო", "master"]):
+        if is_ka:
+            return "სამაგისტრო პროგრამისთვის საჭიროა არანაკლებ 120 ECTS კრედიტის დაგროვება."
+        return "A master program requires at least 120 ECTS credits."
+
+    if any(marker in haystack for marker in ["სწავლების ენა", "რა ენაზე", "teaching language", "language of instruction"]):
+        if is_ka:
+            return "უნივერსიტეტში სწავლების ენა არის ქართული. ცალკეულ პროგრამებზე სწავლება ხორციელდება ინგლისურ ენაზე."
+        return "The university's teaching language is Georgian. Some programs are taught in English."
+
+    if any(marker in haystack for marker in ["სტატუსის შეჩერ", "სტატუსი რამდენ ხანს", "შევიჩერო", "status suspension", "suspend student status"]):
+        if is_ka:
+            return "სტუდენტის სტატუსის შეჩერების საერთო ვადა არ უნდა აღემატებოდეს 5 წელს."
+        return "The total student status suspension period must not exceed 5 years."
+
+    return None
+
+
+def selected_official_document_regression_reply(message: str, language: str | None) -> str | None:
+    haystack = (message or "").lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
+
+    if any(marker in haystack for marker in ["ფინანსური დახმარ", "ფინანსური მხარდაჭერ", "დაფინანსება არსებობს", "financial support"]):
+        if is_ka:
+            return (
+                "ალტე უნივერსიტეტში ფინანსური მხარდაჭერის საკითხები უნდა გადამოწმდეს დამტკიცებული ფინანსური მხარდაჭერის "
+                "მექანიზმებისა და დაფინანსების წესის მიხედვით. თანხები, პროცენტები ან მიმდინარე შეთავაზებები უნდა ითქვას "
+                "მხოლოდ მაშინ, როცა ისინი ოფიციალურ წყაროში ზუსტად წერია."
+            )
+        return (
+            "Financial support at Alte University should be checked against the approved financial support mechanisms "
+            "and funding rules. Amounts, percentages, or current offers should be stated only when an official source says them exactly."
+        )
+
+    if any(marker in haystack for marker in ["ai-ის გამოყენ", "ai-ს გამოყენ", "ai გამოყენ", "ხელოვნური ინტელექტის გამოყენ", "ai policy"]):
+        if is_ka:
+            return (
+                "AI-ის გამოყენება არ არის უნივერსალურად დაშვებული ან აკრძალული. ის დამოკიდებულია კონკრეტული დავალების წესზე, "
+                "ლექტორის/კურსის მითითებაზე და აკადემიური კეთილსინდისიერების მოთხოვნებზე."
+            )
+        return (
+            "AI use is not universally allowed or forbidden. It depends on the specific assignment rules, course or instructor guidance, "
+            "and academic integrity requirements."
+        )
+
+    return None
+
+
+def normalize_chat_retrieval_query(message: str) -> str:
+    haystack = (message or "").lower()
+    aliases = [alias for markers, alias in GEORGIAN_RETRIEVAL_ALIASES if any(marker in haystack for marker in markers)]
+    if not aliases:
+        return message
+    return f"{message} {' '.join(aliases)}"
+
+
+def is_master_admission_documents_question(haystack: str) -> bool:
+    has_master = any(marker in haystack for marker in ["მაგისტრატურ", "სამაგისტრო", "master"])
+    has_documents = any(
+        marker in haystack
+        for marker in [
+            "საბუთ",
+            "დოკუმენტ",
+            "ჩასარიცხ",
+            "ჩარიცხვისთვის",
+            "admission document",
+            "required document",
+            "documents",
+        ]
     )
+    return has_master and has_documents
+
+
+async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
+    academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
+    selected_official_document_question = is_selected_official_document_text(message)
+    if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis):
+        return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
+    category = None if academic_rules_question else category_for_analysis(analysis)
+    language = analysis.language if analysis.language in {"ka", "en"} else None
+    retrieval_query = normalize_chat_retrieval_query(message)
+    if academic_rules_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=None,
+            source_domain="official_academic_rules",
+            program_name=analysis.program,
+            approved_only=True,
+        )
+    else:
+        results = []
+    if not results and selected_official_document_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=category,
+            source_domain=OFFICIAL_ALTE_PDF_SOURCE_DOMAIN,
+            program_name=analysis.program,
+            approved_only=True,
+        )
+    if not results and (academic_rules_question or selected_official_document_question):
+        return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    if not results:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=category,
+            source_domain=(
+                None
+                if selected_official_document_question
+                else analysis.source_domain
+                if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"}
+                else None
+            ),
+            program_name=analysis.program,
+            approved_only=True,
+        )
     if not results:
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     if any(item.source_status == "source_stale" for item in results):
@@ -774,13 +1032,39 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
 
 
 async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> list[dict]:
-    results = await search_knowledge_snippets(
-        db,
-        query=message,
-        approved_only=True,
-        include_stale=False,
-        limit=3,
-    )
+    academic_rules_question = is_official_academic_rules_text(message)
+    selected_official_document_question = is_selected_official_document_text(message)
+    retrieval_query = normalize_chat_retrieval_query(message)
+    if academic_rules_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            source_domain="official_academic_rules",
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
+    else:
+        results = []
+    if not results and selected_official_document_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            source_domain=OFFICIAL_ALTE_PDF_SOURCE_DOMAIN,
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
+    if not results and (academic_rules_question or selected_official_document_question):
+        return []
+    if not results:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
     return [
         {
             "id": item.snippet.id,
@@ -839,14 +1123,14 @@ async def persist_ai_interaction(
 
 
 def should_use_knowledge(analysis: AIAnalysisResult) -> bool:
-    return analysis.intent in {"admission_interest", "international_admission", "finance_question"} or (
+    return is_official_academic_rules_question(analysis) or analysis.intent in {"admission_interest", "international_admission", "finance_question"} or (
         analysis.qualification.intent
         in {"program_info", "admission_requirements", "tuition_fee", "scholarship", "application"}
     )
 
 
 def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
-    return analysis.intent == "finance_question" or analysis.qualification.intent in {
+    return is_official_academic_rules_question(analysis) or analysis.intent == "finance_question" or analysis.qualification.intent in {
         "tuition_fee",
         "scholarship",
         "admission_requirements",
@@ -854,6 +1138,8 @@ def should_require_knowledge(analysis: AIAnalysisResult) -> bool:
 
 
 def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
+    if is_official_academic_rules_question(analysis):
+        return None
     if analysis.qualification.intent == "tuition_fee":
         return "finance"
     if analysis.qualification.intent == "scholarship":
@@ -863,6 +1149,179 @@ def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
     if analysis.program:
         return "programs"
     return None
+
+
+def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:
+    haystack = " ".join(
+        [
+            analysis.reply or "",
+            analysis.conversation_summary or "",
+            analysis.program or "",
+            analysis.interest_area or "",
+            analysis.qualification.intent or "",
+        ]
+    ).lower()
+    markers = [
+        "academic calendar",
+        "registration",
+        "midterm",
+        "final exam",
+        "retake",
+        "ects",
+        "gpa",
+        "fx",
+        "mobility",
+        "status suspension",
+        "status termination",
+        "teaching language",
+        "how many credits",
+        "რა ენაზე",
+        "სწავლება",
+        "master admission",
+        "bachelor admission",
+        "program catalog",
+        "educational program",
+        "educational programme",
+        "პროგრამ",
+        "საგანმანათლებლო პროგრამ",
+        "ეროვნული გამოცდ",
+        "რეგისტრაცი",
+        "შუალედურ",
+        "დასკვნით",
+        "კრედიტ",
+        "რამდენი კრედიტია",
+        "სტატუს",
+        "შევიჩერო",
+        "მობილობ",
+        "მაგისტრატურ",
+        "ბაკალავრიატ",
+        "სწავლების ენა",
+    ]
+    return any(marker in haystack for marker in markers)
+
+
+def is_official_academic_rules_text(text: str) -> bool:
+    haystack = (text or "").lower()
+    markers = [
+        "academic calendar",
+        "registration",
+        "midterm",
+        "final exam",
+        "retake",
+        "ects",
+        "gpa",
+        "fx",
+        "mobility",
+        "status suspension",
+        "status termination",
+        "teaching language",
+        "how many credits",
+        "რა ენაზე",
+        "სწავლება",
+        "master admission",
+        "bachelor admission",
+        "program catalog",
+        "educational program",
+        "educational programme",
+        "პროგრამ",
+        "საგანმანათლებლო პროგრამ",
+        "ეროვნული გამოცდ",
+        "რეგისტრაცი",
+        "შუალედურ",
+        "დასკვნით",
+        "კრედიტ",
+        "რამდენი კრედიტია",
+        "სტატუს",
+        "შევიჩერო",
+        "მობილობ",
+        "მაგისტრატურ",
+        "ბაკალავრიატ",
+        "სწავლების ენა",
+    ]
+    return any(marker in haystack for marker in markers)
+
+
+def is_clearly_unsupported_official_question(text: str) -> bool:
+    haystack = (text or "").lower()
+    unsupported_markers = [
+        "space campus",
+        "cosmic campus",
+        "კოსმოსური კამპუს",
+        "კოსმოსურ კამპუს",
+        "current tuition",
+        "current price",
+        "current fee",
+        "today's promotion",
+        "today promotion",
+        "მიმდინარე სწავლის ფასი",
+        "მიმდინარე ფასი",
+        "დღევანდელი აქცია",
+        "დღევანდელი ფასდაკლება",
+        "კონკრეტული კონსულტანტის ტელეფონი",
+        "კონსულტანტის ტელეფონი",
+    ]
+    future_year_markers = ["2031", "2032", "2033", "2034", "2035"]
+    return any(marker in haystack for marker in unsupported_markers) or (
+        any(year in haystack for year in future_year_markers)
+        and any(marker in haystack for marker in ["სტიპენდ", "scholarship", "კამპუს", "campus"])
+    )
+
+
+def is_selected_official_document_text(text: str) -> bool:
+    haystack = (text or "").lower()
+    markers = [
+        "ai policy",
+        "artificial intelligence",
+        "generative artificial",
+        "examination regulations",
+        "plagiarism",
+        "ethics code",
+        "ombudsman",
+        "library",
+        "career development",
+        "alumni",
+        "special needs",
+        "individual study plan",
+        "electronic learning",
+        "dean's list",
+        "dean",
+        "iro policy",
+        "sustainability",
+        "edi policy",
+        "research component",
+        "student rights",
+        "self-government",
+        "school council",
+        "funding rule",
+        "financial support",
+        "გენერაციული",
+        "ai-ის",
+        "ai-ს გამოყენ",
+        "ai გამოყენ",
+        "ხელოვნური ინტელექტ",
+        "გამოცდების ჩატარ",
+        "პლაგიატ",
+        "ეთიკის კოდექს",
+        "ომბუდსმენ",
+        "ბიბლიოთეკ",
+        "კარიერული",
+        "კურსდამთავრებულ",
+        "სპეციალური საჭირო",
+        "სსმ",
+        "ინდივიდუალური სასწავლო",
+        "ელექტრონული სწავლ",
+        "დეკანის გრანტ",
+        "დაფინანსების წესი",
+        "ფინანსური დახმარ",
+        "ფინანსური მხარდაჭერ",
+        "სტუდენტთა უფლებ",
+        "თვითმმართველ",
+        "სკოლის საბჭ",
+        "მდგრადი განვითარების",
+        "კვლევითი კომპონენტ",
+        "ინფორმაციული ტექნოლოგი",
+    ]
+    return any(marker in haystack for marker in markers)
 
 
 def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[str]) -> str:
@@ -881,8 +1340,27 @@ def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[s
 
 def build_no_source_reply(analysis: AIAnalysisResult) -> str:
     if analysis.language == "en":
-        return "I need verified information from admissions before giving an exact answer. A consultant can confirm this for you."
-    return "ზუსტი პასუხისთვის მჭირდება დადასტურებული ინფორმაცია admissions/კონსულტანტისგან. კონსულტანტი დაგიდასტურებთ დეტალებს."
+        return "I do not see verified information for this in approved sources. An operator or official channel should confirm it before you rely on an answer."
+    return "დამტკიცებულ წყაროებში ეს ინფორმაცია არ ჩანს. ზუსტ ინფორმაციას ოპერატორი ან ოფიციალური არხი დაგიდასტურებთ."
+
+
+def is_ambiguous_program_question(message: str, analysis: AIAnalysisResult) -> bool:
+    haystack = (message or "").lower()
+    mentions_program = any(marker in haystack for marker in ["პროგრამ", "program", "კრედიტ", "credits", "ects"])
+    known_level = any(marker in haystack for marker in ["ბაკალავრ", "bachelor", "მაგისტრ", "master", "მედიცინ", "medicine", "სტომატოლოგ", "dentistry"])
+    return mentions_program and not known_level and not analysis.program
+
+
+def build_ambiguous_program_reply(analysis: AIAnalysisResult) -> str:
+    if analysis.language == "en":
+        return (
+            "To answer accurately, I need one clarification: which program do you mean? "
+            "General bachelor programs require 240 ECTS and master programs require 120 ECTS, but program-specific details must be checked in the official program catalog."
+        )
+    return (
+        "ზუსტად რომ გიპასუხოთ, მჭირდება დაზუსტება: რომელ პროგრამას გულისხმობთ? "
+        "ზოგადად, ბაკალავრიატი არის 240 ECTS, მაგისტრატურა - 120 ECTS, მაგრამ კონკრეტული პროგრამის დეტალი ოფიციალურ პროგრამების კატალოგში უნდა გადამოწმდეს."
+    )
 
 
 def should_convert_contact_followup_to_admission(

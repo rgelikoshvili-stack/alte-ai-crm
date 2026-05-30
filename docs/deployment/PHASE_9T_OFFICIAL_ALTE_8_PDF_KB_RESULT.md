@@ -1,10 +1,10 @@
 # Phase 9T Official Alte 8 PDF Knowledge Base Result
 
-PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_STATUS=READY_PENDING_HUMAN_REVIEW_AND_DB_APPLY
+PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_STATUS=APPLIED_TO_PRODUCTION_KB_SINGLE_SMOKE_PASSED
 
 ## Scope
 
-Prepared a production-safe local Knowledge Base package from 8 official Alte PDF files. This phase does not write to production DB and does not make the chatbot use the package in production yet.
+Prepared and applied a production-safe Knowledge Base package from 8 official Alte PDF files. The package is now present in the production Knowledge Base for chatbot retrieval. Public launch remains `NO-GO`.
 
 ## Evidence
 
@@ -86,8 +86,8 @@ Result:
 
 ## Safety
 
-- Production DB modified: NO
-- `--apply` run: NO
+- Production DB modified: YES, Knowledge Base source/snippet records only
+- `--apply` run: YES, with `--approve-for-chatbot`
 - Migrations run: NO
 - Seed production DB: NO
 - Secret Manager changed: NO
@@ -97,23 +97,29 @@ Result:
 - Lead/task/customer created: NO
 - Public launch: NO-GO
 
-## Next Required Approval
+## Production Apply Result
 
-Before the chatbot can use this package in production:
+Detailed apply result:
 
-1. Human reviewer must review `backend/reports/official_alte_8_pdf_kb_reviewer_queue.csv`.
-2. Engineering/product owner must approve applying the Knowledge Base package.
-3. Run only after explicit approval:
+```text
+docs/deployment/PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_APPLY_RESULT.md
+```
 
-   ```powershell
-   python -m app.scripts.apply_official_alte_8_pdf_kb --apply
-   ```
+Production Knowledge Base result:
 
-Until then, this package is prepared but not applied to production.
+- Sources created: `273`
+- Sources updated: `0`
+- Snippets created: `273`
+- Snippets updated: `0`
+- Production source count for this package: `273`
+- Production snippet count for this package: `273`
+- Production approved snippet count for this package: `273`
+- Review-required metadata preserved: `56`
+
+The initial direct local socket-style apply path failed before database writes on Windows. The completed apply used a Cloud SQL connector path and did not print credentials, tokens, hashes, or connection-string values.
 
 Decision state:
 
 ```text
-BACKEND_DEPLOYED_OFFICIAL_ALTE_8_PDF_KB_PREPARED_PENDING_REVIEW_AND_APPLY
+BACKEND_PRODUCTION_KB_OFFICIAL_ALTE_8_PDF_KB_APPLIED_SINGLE_SMOKE_PASSED_PENDING_BROADER_QA
 ```
-

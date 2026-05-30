@@ -5,9 +5,12 @@ from dataclasses import dataclass
 
 DEPARTMENT_LABELS = {
     "admissions": "Admissions",
+    "programs": "Programs",
     "international": "International Admissions",
     "finance": "Finance",
     "medicine": "Medicine / MD",
+    "library": "Library",
+    "study_process": "Study Process",
     "student_services": "Student Services",
     "it_support": "IT Support",
     "general": "General / Operator",
@@ -16,11 +19,18 @@ DEPARTMENT_LABELS = {
 SELECTED_DEPARTMENT_ALIASES = {
     "admission": "admissions",
     "admissions": "admissions",
-    "programs": "admissions",
-    "program": "admissions",
+    "programs": "programs",
+    "program": "programs",
+    "study_process": "study_process",
+    "academic": "study_process",
+    "exams": "study_process",
+    "ects": "study_process",
+    "mobility": "study_process",
+    "status": "study_process",
     "finance": "finance",
     "tuition": "finance",
     "funding": "finance",
+    "library": "library",
     "international": "international",
     "international_admissions": "international",
     "join": "international",
@@ -101,9 +111,6 @@ KEYWORDS = {
         "apply",
         "application",
         "enrollment",
-        "bachelor",
-        "master",
-        "program",
         "deadline",
         "intake",
         "calendar",
@@ -114,15 +121,79 @@ KEYWORDS = {
         "მიღება",
         "ჩარიცხვა",
         "აბიტურიენტი",
-        "ბაკალავრი",
-        "მაგისტრი",
-        "პროგრამა",
         "ვადა",
         "კალენდარი",
         "რეგისტრაცია",
         "საბუთი",
         "საბუთები",
         "დოკუმენტი",
+    ],
+    "programs": [
+        "program",
+        "programs",
+        "bachelor",
+        "master",
+        "credits",
+        "qualification",
+        "curriculum",
+        "learning outcomes",
+        "language of instruction",
+        "პროგრამა",
+        "პროგრამები",
+        "ბაკალავრი",
+        "მაგისტრი",
+        "ერთსაფეხურ",
+        "კრედიტ",
+        "კვალიფიკაცია",
+        "სასწავლო გეგმა",
+        "სწავლის შედეგ",
+        "სწავლების ენა",
+    ],
+    "study_process": [
+        "study process",
+        "academic calendar",
+        "exam",
+        "exams",
+        "assessment",
+        "grade",
+        "gpa",
+        "fx",
+        "retake",
+        "ects",
+        "mobility",
+        "recognition",
+        "student status",
+        "status suspension",
+        "status termination",
+        "plagiarism",
+        "ethics",
+        "ethics code",
+        "ai policy",
+        "generative ai",
+        "artificial intelligence",
+        "სასწავლო პროცესი",
+        "აკადემიური კალენდარი",
+        "გამოცდა",
+        "გამოცდები",
+        "შეფასება",
+        "ქულა",
+        "შუალედურ",
+        "დასკვნით",
+        "დამატებით გამოცდა",
+        "კრედიტ",
+        "მობილობა",
+        "აღიარება",
+        "სტატუსი",
+        "სტატუსის შეჩერ",
+        "სტატუსის შეწყვეტ",
+        "პლაგიატ",
+        "ეთიკა",
+        "ეთიკის",
+        "ეთიკის კოდექს",
+        "ai-ის",
+        "ai-ს",
+        "ხელოვნური ინტელექტ",
+        "გენერაციული",
     ],
     "student_services": [
         "library",
@@ -132,12 +203,27 @@ KEYWORDS = {
         "ombudsman",
         "mentor",
         "student life",
+        "student rights",
+        "special needs",
+        "accessibility",
         "ბიბლიოთეკა",
         "კარიერა",
         "კლუბი",
         "ომბუდსმენი",
         "მენტორი",
         "სტუდენტური",
+        "უფლებები",
+        "სპეციალური საჭირო",
+        "სსმ",
+    ],
+    "library": [
+        "library",
+        "library resources",
+        "library service",
+        "library services",
+        "ბიბლიოთეკ",
+        "ბიბლიოთეკის რესურს",
+        "ბიბლიოთეკით",
     ],
     "it_support": [
         "portal",
@@ -155,15 +241,36 @@ KEYWORDS = {
     ],
 }
 
+EXPLICIT_GEORGIAN_ROUTE_ALIASES = {
+    "admissions": [
+        "ჩავირიცხ",
+        "ჩარიცხვ",
+        "ჩასარიცხ",
+        "ჩაბარ",
+        "აბიტურიენტ",
+    ],
+    "finance": [
+        "ფინანსურ",
+        "ფინანსებ",
+        "საფასურ",
+        "გადახდ",
+        "სტიპენდ",
+        "დაფინანს",
+    ],
+    "library": [
+        "ბიბლიოთეკ",
+    ],
+}
+
 KEYWORDS["international"].extend(
     ["საერთაშორისო", "უცხოელი", "ვიზა", "რელოკაცია", "ინდოეთი", "ნიგერია", "პაკისტანი", "ნეპალი", "ბანგლადეში"]
 )
 KEYWORDS["medicine"].extend(["მედიცინა", "სამედიცინო", "ექიმი", "სტომატოლოგია", "კლინიკური"])
 KEYWORDS["finance"].extend(["ფასი", "ღირს", "საფასური", "სწავლა", "გადახდა", "სტიპენდია", "გრანტი", "დაფინანსება", "სესხი"])
-KEYWORDS["admissions"].extend(
-    ["მიღება", "ჩარიცხვა", "აბიტურიენტი", "ბაკალავრი", "მაგისტრი", "პროგრამა", "ვადა", "კალენდარი", "რეგისტრაცია", "საბუთი", "საბუთები", "დოკუმენტი"]
-)
-KEYWORDS["student_services"].extend(["ბიბლიოთეკა", "კარიერა", "კლუბი", "ომბუდსმენი", "მენტორი", "სტუდენტური"])
+KEYWORDS["admissions"].extend(["მიღება", "ჩარიცხვა", "აბიტურიენტი", "ვადა", "კალენდარი", "რეგისტრაცია", "საბუთი", "საბუთები", "დოკუმენტი"])
+KEYWORDS["programs"].extend(["პროგრამა", "პროგრამები", "ბაკალავრი", "მაგისტრი", "ერთსაფეხურ", "კრედიტ", "კვალიფიკაცია", "სასწავლო გეგმა", "სწავლის შედეგ", "სწავლების ენა"])
+KEYWORDS["study_process"].extend(["სასწავლო პროცესი", "აკადემიური კალენდარი", "გამოცდა", "გამოცდები", "შეფასება", "ქულა", "შუალედურ", "დასკვნით", "დამატებით გამოცდა", "კრედიტ", "მობილობა", "აღიარება", "სტატუსი", "სტატუსის შეჩერ", "სტატუსის შეწყვეტ", "პლაგიატ", "ეთიკა", "ეთიკის", "ეთიკის კოდექს", "ai-ის", "ai-ს", "ხელოვნური ინტელექტ", "გენერაციული"])
+KEYWORDS["student_services"].extend(["ბიბლიოთეკა", "კარიერა", "კლუბი", "ომბუდსმენი", "მენტორი", "სტუდენტური", "უფლებები", "სპეციალური საჭირო", "სსმ"])
 KEYWORDS["it_support"].extend(["პორტალი", "პორტალ", "ტექნიკური", "შესვლა", "შევდივარ", "პაროლი", "საიტი"])
 
 INTENT_TO_DEPARTMENT = {
@@ -172,7 +279,7 @@ INTENT_TO_DEPARTMENT = {
     "international_admission": "international",
     "medicine_admission": "medicine",
     "finance_question": "finance",
-    "deadline_question": "admissions",
+    "deadline_question": "study_process",
     "student_service": "student_services",
     "technical_support": "it_support",
     "human_request": "general",
@@ -187,6 +294,13 @@ SENSITIVE_TERMS = [
     "deadline",
     "document",
     "requirement",
+    "exam",
+    "gpa",
+    "fx",
+    "mobility",
+    "student status",
+    "plagiarism",
+    "special needs",
     "medicine",
     "md",
     "international",
@@ -200,6 +314,13 @@ SENSITIVE_TERMS = [
     "ვადა",
     "საბუთ",
     "მოთხოვნ",
+    "გამოცდ",
+    "შეფას",
+    "მობილობ",
+    "სტატუს",
+    "პლაგიატ",
+    "სპეციალური საჭირო",
+    "სსმ",
     "მედიცინ",
     "საერთაშორისო",
     "ვიზა",
@@ -207,7 +328,7 @@ SENSITIVE_TERMS = [
 ]
 
 SENSITIVE_TERMS.extend(
-    ["საფასური", "ფასი", "სტიპენდია", "გრანტი", "ვადა", "საბუთ", "მოთხოვნ", "მედიცინ", "საერთაშორისო", "ვიზა", "რელოკაცია"]
+    ["საფასური", "ფასი", "სტიპენდია", "გრანტი", "ვადა", "საბუთ", "მოთხოვნ", "გამოცდ", "შეფას", "მობილობ", "სტატუს", "პლაგიატ", "სპეციალური საჭირო", "სსმ", "მედიცინ", "საერთაშორისო", "ვიზა", "რელოკაცია"]
 )
 
 UNKNOWN_TERMS = [
@@ -278,15 +399,16 @@ def resolve_department(
         if item
     ).lower()
     selected_key = normalize_selected_department(selected_department)
+    message_context = (message_text or "").lower()
     message_only_context = " ".join(item for item in [message_text or "", source_domain or ""] if item).lower()
     if selected_key == "international" and mentions_documents_or_admission(message_only_context):
         keyword_key = "international"
-    elif any(keyword.lower() in message_only_context for keyword in KEYWORDS["medicine"]) and has_international_context(
+    elif any(keyword.lower() in message_context for keyword in KEYWORDS["medicine"]) and has_international_context(
         message_only_context, source_domain
     ):
         keyword_key = "medicine"
     else:
-        keyword_key = keyword_department(message_only_context)
+        keyword_key = keyword_department(message_context)
     intent_key = INTENT_TO_DEPARTMENT.get((ai_intent or "").lower())
     ambiguous_message = is_ambiguous_message(message_text, language) and keyword_key is None
 
@@ -312,7 +434,12 @@ def resolve_department(
         department_key = "admissions"
         reason = "default_admissions"
 
-    if department_key == "admissions" and source_domain == "join.alte.edu.ge" and mentions_documents_or_admission(routing_context):
+    if (
+        department_key == "admissions"
+        and source_domain == "join.alte.edu.ge"
+        and mentions_documents_or_admission(routing_context)
+        and has_explicit_international_text(message_context)
+    ):
         department_key = "international"
         reason = "join_domain_admissions_context"
     if department_key == "medicine" and has_international_context(routing_context, source_domain):
@@ -356,6 +483,9 @@ def normalize_selected_department(value: str | None) -> str | None:
 
 
 def keyword_department(text: str) -> str | None:
+    explicit_key = explicit_georgian_route_alias(text)
+    if explicit_key:
+        return explicit_key
     matches: dict[str, int] = {}
     for key, keywords in KEYWORDS.items():
         score = sum(1 for keyword in keywords if keyword.lower() in text)
@@ -363,8 +493,26 @@ def keyword_department(text: str) -> str | None:
             matches[key] = score
     if not matches:
         return None
-    priority = ["finance", "medicine", "international", "it_support", "student_services", "admissions"]
+    priority = [
+        "finance",
+        "medicine",
+        "international",
+        "it_support",
+        "study_process",
+        "library",
+        "student_services",
+        "programs",
+        "admissions",
+    ]
     return sorted(matches, key=lambda key: (-matches[key], priority.index(key) if key in priority else 99))[0]
+
+
+def explicit_georgian_route_alias(text: str) -> str | None:
+    lowered = (text or "").lower()
+    for key in ["finance", "library", "admissions"]:
+        if any(alias in lowered for alias in EXPLICIT_GEORGIAN_ROUTE_ALIASES[key]):
+            return key
+    return None
 
 
 def is_ambiguous_message(message_text: str | None, language: str | None = None) -> bool:
@@ -399,6 +547,10 @@ def is_unknown(text: str, risk_flags: list[str] | None) -> bool:
 
 def has_international_context(text: str, source_domain: str | None) -> bool:
     return source_domain == "join.alte.edu.ge" or any(term in text for term in KEYWORDS["international"])
+
+
+def has_explicit_international_text(text: str) -> bool:
+    return any(term in (text or "") for term in KEYWORDS["international"] if term != "join.alte")
 
 
 def mentions_documents_or_admission(text: str) -> bool:

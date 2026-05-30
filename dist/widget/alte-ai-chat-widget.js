@@ -25,6 +25,9 @@
     var container = existing || document.createElement("div");
     container.id = containerId;
     container.setAttribute("data-alte-widget-variant", config.widgetVariant || "pro_v2_safe");
+    container.style.width = config.containerWidth || "100%";
+    container.style.maxWidth = "100vw";
+    container.style.overflowX = "hidden";
     if (!existing) {
       document.body.appendChild(container);
     }
@@ -36,7 +39,9 @@
     var iframe = document.createElement("iframe");
     iframe.title = "Alte AI Chatbot";
     iframe.loading = "lazy";
-    iframe.style.width = config.width || "100vw";
+    iframe.style.display = "block";
+    iframe.style.width = config.width || "100%";
+    iframe.style.maxWidth = "100vw";
     iframe.style.height = config.height || "100vh";
     iframe.style.border = "0";
     iframe.style.background = "transparent";

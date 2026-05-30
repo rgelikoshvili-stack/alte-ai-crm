@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse
 
 from app.core.config import get_settings
 from app.services.permission_service import is_public_path, permission_for_request, role_has_permission
@@ -16,6 +17,16 @@ async def correlation_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Correlation-ID"] = correlation_id
     return response
+
+
+async def safe_error_response_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception:
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error"},
+        )
 
 
 async def auth_rbac_middleware(request: Request, call_next):

@@ -1,0 +1,11 @@
+# Official Academic Rules Manifest
+
+Public launch: NO-GO
+
+| Original filename | Normalized filename | Document title | Language | Pages | Document type | Topics covered | Public answer allowed | Official source | Requires exact citation | Stale | Production DB imported |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ბაკალავრიატის დებულება 2(3).pdf | `bakalavriatis_debuleba_2.pdf` | ბაკალავრიატის დებულება | ka | preserved in extracted text | bachelor regulation | bachelor admission; ECTS; admission without national exams; English program requirements; mobility; program rules | YES, conservative | YES | YES | false | NO for this local code update; previous approved DB import is documented separately |
+| სასწავლო პროცესის მარეგულირებელი წესი(3).pdf | `sastsavlo_procesis_maregulirebeli_wesi.pdf` | სასწავლო პროცესის მარეგულირებელი წესი | ka | preserved in extracted text | academic process rule | teaching language; student status; assessment; GPA; FX/F; mobility; credit recognition; final exams | YES, conservative | YES | YES | false | NO for this local code update; previous approved DB import is documented separately |
+| მაგისტრატურის დებულება(3).pdf | `magistraturis_debuleba.pdf` | მაგისტრატურის დებულება | ka | preserved in extracted text | master regulation | master admission; master documents; internal exams; master ECTS; program approval; thesis if explicitly present | YES, conservative | YES | YES | false | NO for this local code update; previous approved DB import is documented separately |
+| აკადემიური კალენდარი GEO(3).pdf | `academic_calendar_geo_2025_2026.pdf` | აკადემიური კალენდარი 2025-2026 GEO | ka | preserved in extracted text | academic calendar | registration dates; semester start dates; midterm exams; final exams; retakes; holidays | YES, conservative | YES | YES | false | NO for this local code update; previous approved DB import is documented separately |
+| აკადემიური კალენდარი ENG(3).pdf | `academic_calendar_eng_2025_2026.pdf` | Academic Calendar 2025-2026 ENG | en | preserved in extracted text | academic calendar | registration dates; semester start dates; midterm exams; final exams; retakes; holidays | YES, conservative | YES | YES | false | NO for this local code update; previous approved DB import is documented separately |

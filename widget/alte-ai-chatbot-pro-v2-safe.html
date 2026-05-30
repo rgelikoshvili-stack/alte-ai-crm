@@ -634,8 +634,8 @@
               source_domain: sourceDomain,
               selected_department: sourceDept(activeDept),
               selected_topic: activeTopic,
-              widget_variant: widgetVariant,
-              metadata: { mode: cfg.mode || "test_site", page_url: window.location.href }
+              page_url: window.location.href,
+              widget_variant: widgetVariant
             })
           });
           if (!response.ok) {
@@ -652,7 +652,7 @@
         } catch (err) {
           console.warn("Alte chat response unavailable", { type: err && err.name ? err.name : "unknown" });
           removeTyping();
-          addAssistant(S().replyError);
+          addAssistant(lang === "KA" ? "ვერ მივიღე პასუხი. სცადეთ თავიდან ან მიმართეთ ოპერატორს." : "Could not get an answer. Please try again or contact an operator.");
         } finally {
           typing = false;
           el.send.disabled = false;
