@@ -27,6 +27,17 @@ BACKEND_DEPLOYED_OFFICIAL_KB_BROWSER_VERIFIED_PENDING_FINAL_SITE_EMBED_APPROVAL
 
 ## Result Summary
 
+- Routing specification retest: `2026-05-30`
+- Routing specification image: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-routing-spec-source-priority2`
+- Routing specification Cloud Build ID: `8f899f2a-a0d6-4c19-b41b-c59093767d64`
+- Routing specification Cloud Run revision: `alte-ai-crm-backend-00029-x8t`
+- Routing specification Netlify-origin smoke result: `17 passed`, `0 failed`
+- Routing specification no contact details sent: YES
+- Routing specification lead/task/customer intentionally created: NO
+- Latest controlled retest: `2026-05-30 15:35:23 +04:00`
+- Latest retest command: `.\.venv\Scripts\python.exe -m app.scripts.production_phase_9u_official_kb_browser_origin_smoke`
+- Latest retest mode: browser-origin HTTP requests after in-app browser runtime startup failed in this environment.
+- Latest retest result: `8 passed`, `0 failed`
 - Total official KB/contact-safety checks: `8`
 - Passed: `8`
 - Failed: `0`
@@ -48,6 +59,16 @@ BACKEND_DEPLOYED_OFFICIAL_KB_BROWSER_VERIFIED_PENDING_FINAL_SITE_EMBED_APPROVAL
 | Master's admission documents | PASS, returned official checklist |
 | Unsupported 2031 space-campus scholarship | PASS, returned `no_approved_source_found` / no approved-source style fallback |
 | Operator contact request safety | PASS, no direct request to type name, phone, email, or contact details; no lead/task/customer created |
+
+## Latest Retest Notes
+
+- Bachelor completion answer included `240` ECTS and did not include `180`.
+- Master ECTS answer included `120`.
+- Teaching-language answer stated Georgian and mentioned English-language programs without inventing planned programs.
+- Student-status suspension answer included maximum total `5` years.
+- Computer Science spring registration answer included `9-14 March`; spring semester starts `30 March`.
+- Unsupported `2031` space-campus scholarship returned `no_approved_source_found` and did not invent eligibility or deadlines.
+- Operator contact request returned handover-safe copy; no phone/email/name values were sent and no lead/task/customer was created.
 
 ## Master's Admission Checklist Verified
 

@@ -5,9 +5,11 @@ from dataclasses import dataclass
 
 DEPARTMENT_LABELS = {
     "admissions": "Admissions",
+    "programs": "Programs",
     "international": "International Admissions",
     "finance": "Finance",
     "medicine": "Medicine / MD",
+    "study_process": "Study Process",
     "student_services": "Student Services",
     "it_support": "IT Support",
     "general": "General / Operator",
@@ -16,8 +18,14 @@ DEPARTMENT_LABELS = {
 SELECTED_DEPARTMENT_ALIASES = {
     "admission": "admissions",
     "admissions": "admissions",
-    "programs": "admissions",
-    "program": "admissions",
+    "programs": "programs",
+    "program": "programs",
+    "study_process": "study_process",
+    "academic": "study_process",
+    "exams": "study_process",
+    "ects": "study_process",
+    "mobility": "study_process",
+    "status": "study_process",
     "finance": "finance",
     "tuition": "finance",
     "funding": "finance",
@@ -101,9 +109,6 @@ KEYWORDS = {
         "apply",
         "application",
         "enrollment",
-        "bachelor",
-        "master",
-        "program",
         "deadline",
         "intake",
         "calendar",
@@ -114,15 +119,79 @@ KEYWORDS = {
         "მიღება",
         "ჩარიცხვა",
         "აბიტურიენტი",
-        "ბაკალავრი",
-        "მაგისტრი",
-        "პროგრამა",
         "ვადა",
         "კალენდარი",
         "რეგისტრაცია",
         "საბუთი",
         "საბუთები",
         "დოკუმენტი",
+    ],
+    "programs": [
+        "program",
+        "programs",
+        "bachelor",
+        "master",
+        "credits",
+        "qualification",
+        "curriculum",
+        "learning outcomes",
+        "language of instruction",
+        "პროგრამა",
+        "პროგრამები",
+        "ბაკალავრი",
+        "მაგისტრი",
+        "ერთსაფეხურ",
+        "კრედიტ",
+        "კვალიფიკაცია",
+        "სასწავლო გეგმა",
+        "სწავლის შედეგ",
+        "სწავლების ენა",
+    ],
+    "study_process": [
+        "study process",
+        "academic calendar",
+        "exam",
+        "exams",
+        "assessment",
+        "grade",
+        "gpa",
+        "fx",
+        "retake",
+        "ects",
+        "mobility",
+        "recognition",
+        "student status",
+        "status suspension",
+        "status termination",
+        "plagiarism",
+        "ethics",
+        "ethics code",
+        "ai policy",
+        "generative ai",
+        "artificial intelligence",
+        "სასწავლო პროცესი",
+        "აკადემიური კალენდარი",
+        "გამოცდა",
+        "გამოცდები",
+        "შეფასება",
+        "ქულა",
+        "შუალედურ",
+        "დასკვნით",
+        "დამატებით გამოცდა",
+        "კრედიტ",
+        "მობილობა",
+        "აღიარება",
+        "სტატუსი",
+        "სტატუსის შეჩერ",
+        "სტატუსის შეწყვეტ",
+        "პლაგიატ",
+        "ეთიკა",
+        "ეთიკის",
+        "ეთიკის კოდექს",
+        "ai-ის",
+        "ai-ს",
+        "ხელოვნური ინტელექტ",
+        "გენერაციული",
     ],
     "student_services": [
         "library",
@@ -132,12 +201,18 @@ KEYWORDS = {
         "ombudsman",
         "mentor",
         "student life",
+        "student rights",
+        "special needs",
+        "accessibility",
         "ბიბლიოთეკა",
         "კარიერა",
         "კლუბი",
         "ომბუდსმენი",
         "მენტორი",
         "სტუდენტური",
+        "უფლებები",
+        "სპეციალური საჭირო",
+        "სსმ",
     ],
     "it_support": [
         "portal",
@@ -160,10 +235,10 @@ KEYWORDS["international"].extend(
 )
 KEYWORDS["medicine"].extend(["მედიცინა", "სამედიცინო", "ექიმი", "სტომატოლოგია", "კლინიკური"])
 KEYWORDS["finance"].extend(["ფასი", "ღირს", "საფასური", "სწავლა", "გადახდა", "სტიპენდია", "გრანტი", "დაფინანსება", "სესხი"])
-KEYWORDS["admissions"].extend(
-    ["მიღება", "ჩარიცხვა", "აბიტურიენტი", "ბაკალავრი", "მაგისტრი", "პროგრამა", "ვადა", "კალენდარი", "რეგისტრაცია", "საბუთი", "საბუთები", "დოკუმენტი"]
-)
-KEYWORDS["student_services"].extend(["ბიბლიოთეკა", "კარიერა", "კლუბი", "ომბუდსმენი", "მენტორი", "სტუდენტური"])
+KEYWORDS["admissions"].extend(["მიღება", "ჩარიცხვა", "აბიტურიენტი", "ვადა", "კალენდარი", "რეგისტრაცია", "საბუთი", "საბუთები", "დოკუმენტი"])
+KEYWORDS["programs"].extend(["პროგრამა", "პროგრამები", "ბაკალავრი", "მაგისტრი", "ერთსაფეხურ", "კრედიტ", "კვალიფიკაცია", "სასწავლო გეგმა", "სწავლის შედეგ", "სწავლების ენა"])
+KEYWORDS["study_process"].extend(["სასწავლო პროცესი", "აკადემიური კალენდარი", "გამოცდა", "გამოცდები", "შეფასება", "ქულა", "შუალედურ", "დასკვნით", "დამატებით გამოცდა", "კრედიტ", "მობილობა", "აღიარება", "სტატუსი", "სტატუსის შეჩერ", "სტატუსის შეწყვეტ", "პლაგიატ", "ეთიკა", "ეთიკის", "ეთიკის კოდექს", "ai-ის", "ai-ს", "ხელოვნური ინტელექტ", "გენერაციული"])
+KEYWORDS["student_services"].extend(["ბიბლიოთეკა", "კარიერა", "კლუბი", "ომბუდსმენი", "მენტორი", "სტუდენტური", "უფლებები", "სპეციალური საჭირო", "სსმ"])
 KEYWORDS["it_support"].extend(["პორტალი", "პორტალ", "ტექნიკური", "შესვლა", "შევდივარ", "პაროლი", "საიტი"])
 
 INTENT_TO_DEPARTMENT = {
@@ -172,7 +247,7 @@ INTENT_TO_DEPARTMENT = {
     "international_admission": "international",
     "medicine_admission": "medicine",
     "finance_question": "finance",
-    "deadline_question": "admissions",
+    "deadline_question": "study_process",
     "student_service": "student_services",
     "technical_support": "it_support",
     "human_request": "general",
@@ -187,6 +262,13 @@ SENSITIVE_TERMS = [
     "deadline",
     "document",
     "requirement",
+    "exam",
+    "gpa",
+    "fx",
+    "mobility",
+    "student status",
+    "plagiarism",
+    "special needs",
     "medicine",
     "md",
     "international",
@@ -200,6 +282,13 @@ SENSITIVE_TERMS = [
     "ვადა",
     "საბუთ",
     "მოთხოვნ",
+    "გამოცდ",
+    "შეფას",
+    "მობილობ",
+    "სტატუს",
+    "პლაგიატ",
+    "სპეციალური საჭირო",
+    "სსმ",
     "მედიცინ",
     "საერთაშორისო",
     "ვიზა",
@@ -207,7 +296,7 @@ SENSITIVE_TERMS = [
 ]
 
 SENSITIVE_TERMS.extend(
-    ["საფასური", "ფასი", "სტიპენდია", "გრანტი", "ვადა", "საბუთ", "მოთხოვნ", "მედიცინ", "საერთაშორისო", "ვიზა", "რელოკაცია"]
+    ["საფასური", "ფასი", "სტიპენდია", "გრანტი", "ვადა", "საბუთ", "მოთხოვნ", "გამოცდ", "შეფას", "მობილობ", "სტატუს", "პლაგიატ", "სპეციალური საჭირო", "სსმ", "მედიცინ", "საერთაშორისო", "ვიზა", "რელოკაცია"]
 )
 
 UNKNOWN_TERMS = [
@@ -363,7 +452,7 @@ def keyword_department(text: str) -> str | None:
             matches[key] = score
     if not matches:
         return None
-    priority = ["finance", "medicine", "international", "it_support", "student_services", "admissions"]
+    priority = ["finance", "medicine", "international", "it_support", "study_process", "student_services", "programs", "admissions"]
     return sorted(matches, key=lambda key: (-matches[key], priority.index(key) if key in priority else 99))[0]
 
 

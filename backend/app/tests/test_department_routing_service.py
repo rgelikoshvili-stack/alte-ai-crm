@@ -136,3 +136,141 @@ def test_student_services_question_routes_to_student_services():
     )
 
     assert result.department_key == "student_services"
+
+
+def test_spec_program_question_routes_to_programs():
+    result = resolve_department(
+        message_text="რომელი პროგრამები აქვს ალტე უნივერსიტეტს?",
+        ai_intent="general_info",
+        ai_confidence=0.9,
+        source_domain="alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_alte_pdf_kb"],
+        language="ka",
+    )
+
+    assert result.department_key == "programs"
+    assert result.department == "Programs"
+
+
+def test_spec_admission_documents_route_to_admissions():
+    result = resolve_department(
+        message_text="რა საბუთებია ჩარიცხვისთვის საჭირო?",
+        ai_intent="admission_interest",
+        ai_confidence=0.9,
+        source_domain="alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_academic_rules"],
+        language="ka",
+    )
+
+    assert result.department_key == "admissions"
+
+
+def test_spec_international_student_route():
+    result = resolve_department(
+        message_text="I am a foreign student and need visa admission information",
+        ai_intent="international_admission",
+        ai_confidence=0.9,
+        source_domain="join.alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_alte_pdf_kb"],
+        language="en",
+    )
+
+    assert result.department_key == "international"
+
+
+def test_spec_medicine_md_route():
+    result = resolve_department(
+        message_text="Medicine MD program admission",
+        ai_intent="admission_interest",
+        ai_confidence=0.9,
+        source_domain="alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["official_alte_pdf_kb"],
+        language="en",
+    )
+
+    assert result.department_key == "medicine"
+
+
+def test_spec_library_and_career_route_to_student_services():
+    for message in ["ბიბლიოთეკის წესები მაინტერესებს", "კარიერული მხარდაჭერა არსებობს?"]:
+        result = resolve_department(
+            message_text=message,
+            ai_intent="student_service",
+            ai_confidence=0.9,
+            source_domain="alte.edu.ge",
+            selected_department=None,
+            selected_topic=None,
+            risk_flags=[],
+            used_sources=["official_alte_pdf_kb"],
+            language="ka",
+        )
+
+        assert result.department_key == "student_services"
+
+
+def test_spec_study_process_exam_ects_status_routes():
+    for message in [
+        "FX შეფასების შემდეგ დამატებით გამოცდაზე გასვლა შეიძლება?",
+        "ECTS კრედიტების აღიარება როგორ ხდება?",
+        "სტუდენტის სტატუსის შეჩერება რამდენი წლით შეიძლება?",
+    ]:
+        result = resolve_department(
+            message_text=message,
+            ai_intent="general_info",
+            ai_confidence=0.9,
+            source_domain="alte.edu.ge",
+            selected_department=None,
+            selected_topic=None,
+            risk_flags=[],
+            used_sources=["official_academic_rules"],
+            language="ka",
+        )
+
+        assert result.department_key == "study_process"
+        assert result.department == "Study Process"
+
+
+def test_spec_ombudsman_rights_and_special_needs_route_to_student_services():
+    for message in ["ომბუდსმენის მექანიზმი როგორ მუშაობს?", "სპეციალური საჭიროებების მხარდაჭერა მაინტერესებს"]:
+        result = resolve_department(
+            message_text=message,
+            ai_intent="student_service",
+            ai_confidence=0.9,
+            source_domain="alte.edu.ge",
+            selected_department=None,
+            selected_topic=None,
+            risk_flags=[],
+            used_sources=["official_alte_pdf_kb"],
+            language="ka",
+        )
+
+        assert result.department_key == "student_services"
+
+
+def test_spec_ai_policy_plagiarism_ethics_route_to_study_process():
+    for message in ["AI-ის გამოყენება შეიძლება?", "პლაგიატის წესი მაინტერესებს", "ეთიკის კოდექსი რას ამბობს?"]:
+        result = resolve_department(
+            message_text=message,
+            ai_intent="general_info",
+            ai_confidence=0.9,
+            source_domain="alte.edu.ge",
+            selected_department=None,
+            selected_topic=None,
+            risk_flags=[],
+            used_sources=["official_alte_pdf_kb"],
+            language="ka",
+        )
+
+        assert result.department_key == "study_process"
