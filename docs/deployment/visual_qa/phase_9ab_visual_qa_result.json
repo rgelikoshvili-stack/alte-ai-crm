@@ -1,6 +1,6 @@
 {
   "status": "PASSED",
-  "url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
+  "url": "http://127.0.0.1:5179/join.html",
   "checks": [
     {
       "label": "desktop_1440x900",
@@ -9,7 +9,7 @@
         "height": 900
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_desktop_1440x900_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\local_widget_desktop_1440x900_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 1440,
@@ -34,6 +34,14 @@
           "composerVisible": true,
           "launcherOrModalVisible": true
         }
+      },
+      "georgianEncodingCheck": {
+        "ran": true,
+        "passed": true,
+        "hasMojibake": false,
+        "georgianCharacterCount": 888,
+        "containsQuestion": true,
+        "visibleTextExcerpt": "alte\nUNIVERSITY\n\u10e9\u10d5\u10d4\u10dc \u10e8\u10d4\u10e1\u10d0\u10ee\u10d4\u10d1\n\u10db\u10d8\u10e6\u10d4\u10d1\u10d0\n\u10e1\u10ec\u10d0\u10d5\u10da\u10d0\n\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1\n\u10d0\u10d1\u10d8\u10e2\u10e3\u10e0\u10d8\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1\nEN\n/\nKA\n\u10d0\u10de\u10da\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0\n\u10db\u10d8\u10e6\u10d4\u10d1\u10d0 2026\n\u10d0\u10e6\u10db\u10dd\u10d0\u10e9\u10d8\u10dc\u10d4 \u10e8\u10d4\u10dc\u10d8 \u10db\u10dd\u10db\u10d0\u10d5\u10d0\u10da\u10d8 \u10d0\u10da\u10e2\u10d4\u10e8\u10d8.\n\n24 \u10ec\u10da\u10d8\u10e1 \u10d2\u10d0\u10db\u10dd\u10ea\u10d3\u10d8\u10da\u10d4\u10d1\u10d0. 4 \u10e1\u10d9\u10dd\u10da\u10d0 \u2014 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10d8, \u10e1\u10d0\u10db\u10d0\u10e0\u10d7\u10d0\u10da\u10d8, \u10e1\u10d0\u10d4\u10e0\u10d7. \u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0, IT. \u10e1\u10e0\u10e3\u10da\u10d0\u10d3 \u10d0\u10d5\u10e2\u10dd\u10e0\u10d8\u10d6\u10d4\u10d1\u10e3\u10da\u10d8.\n\n\u10d0\u10de\u10da\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0\n\u10e1\u10ec\u10d0\u10d5\u10da\u10d0\n2,500+\n\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\n45\n\u10e5\u10d5\u10d4\u10e7\u10d0\u10dc\u10d0\n4\n\u10e1\u10d9\u10dd\u10da\u10d0\nWHO \u00b7 NCEQE \u10d0\u10e6\u10d8\u10d0\u10e0\u10d4\u10d1\u10e3\u10da\u10d8\n\u201e\u10d0\u10da\u10e2\u10d4\u10e8\u10d8 \u10db\u10d4 \u10d5\u10d8\u10e1\u10ec\u10d0\u10d5\u10da\u10d4 \u2014 \u10e0\u10dd\u10d2\u10dd\u10e0 \u10d5\u10d8\u10e1\u10ec\u10d0\u10d5\u10da\u10dd. \u10d4\u10e1 \u10ea\u10ee\u10dd\u10d5\u10e0\u10d4\u10d1\u10d8\u10e1\u10d4\u10e3\u10da\u10d8 \u10e3\u10dc\u10d0\u10e0\u10d8\u10d0.\"\n\u10da\n\u2014 \u10da\u10e3\u10d9\u10d0, MD \u10d9\u10e3\u10e0\u10e1\u10d3\u10d0\u10db\u10d7\u10d0\u10d5\u10e0\u10d4\u10d1\u10e3\u10da\u10d8 2024\n\u00a9 2026 Alte University\n\u10d9\u10dd\u10dc\u10e4\u10d8\u10d3\u10d4\u10dc\u10ea\u10d8\u10d0\u10da\u10e3\u10e0\u10dd\u10d1\u10d8\u10e1 \u10de\u10dd\u10da\u10d8\u10e2\u10d8\u10d9\u10d0\u10e1\n\u10ec\u10d4\u10e1\u10d4\u10d1\u10d8\nWHO \u00b7 NCEQE \u10d0\u10e6\u10d8\u10d0\u10e0\u10d4\u10d1\u10e3\u10da\u10d8\nAlte AI A"
       }
     },
     {
@@ -43,7 +51,7 @@
         "height": 932
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_430x932_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_430x932_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 430,
@@ -68,6 +76,14 @@
           "composerVisible": true,
           "launcherOrModalVisible": true
         }
+      },
+      "georgianEncodingCheck": {
+        "ran": true,
+        "passed": true,
+        "hasMojibake": false,
+        "georgianCharacterCount": 756,
+        "containsQuestion": true,
+        "visibleTextExcerpt": "alte\nUNIVERSITY\n\u10e9\u10d5\u10d4\u10dc \u10e8\u10d4\u10e1\u10d0\u10ee\u10d4\u10d1\n\u10db\u10d8\u10e6\u10d4\u10d1\u10d0\n\u10e1\u10ec\u10d0\u10d5\u10da\u10d0\n\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1\n\u10d0\u10d1\u10d8\u10e2\u10e3\u10e0\u10d8\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1\nEN\n/\nKA\n\u10d0\u10de\u10da\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0\n\u10db\u10d8\u10e6\u10d4\u10d1\u10d0 2026\n\u10d0\u10e6\u10db\u10dd\u10d0\u10e9\u10d8\u10dc\u10d4 \u10e8\u10d4\u10dc\u10d8 \u10db\u10dd\u10db\u10d0\u10d5\u10d0\u10da\u10d8 \u10d0\u10da\u10e2\u10d4\u10e8\u10d8.\n\n24 \u10ec\u10da\u10d8\u10e1 \u10d2\u10d0\u10db\u10dd\u10ea\u10d3\u10d8\u10da\u10d4\u10d1\u10d0. 4 \u10e1\u10d9\u10dd\u10da\u10d0 \u2014 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10d8, \u10e1\u10d0\u10db\u10d0\u10e0\u10d7\u10d0\u10da\u10d8, \u10e1\u10d0\u10d4\u10e0\u10d7. \u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0, IT. \u10e1\u10e0\u10e3\u10da\u10d0\u10d3 \u10d0\u10d5\u10e2\u10dd\u10e0\u10d8\u10d6\u10d4\u10d1\u10e3\u10da\u10d8.\n\n\u10d0\u10de\u10da\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0\n\u10e1\u10ec\u10d0\u10d5\u10da\u10d0\n2,500+\n\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\n45\n\u10e5\u10d5\u10d4\u10e7\u10d0\u10dc\u10d0\n4\n\u10e1\u10d9\u10dd\u10da\u10d0\nWHO \u00b7 NCEQE \u10d0\u10e6\u10d8\u10d0\u10e0\u10d4\u10d1\u10e3\u10da\u10d8\n\u201e\u10d0\u10da\u10e2\u10d4\u10e8\u10d8 \u10db\u10d4 \u10d5\u10d8\u10e1\u10ec\u10d0\u10d5\u10da\u10d4 \u2014 \u10e0\u10dd\u10d2\u10dd\u10e0 \u10d5\u10d8\u10e1\u10ec\u10d0\u10d5\u10da\u10dd. \u10d4\u10e1 \u10ea\u10ee\u10dd\u10d5\u10e0\u10d4\u10d1\u10d8\u10e1\u10d4\u10e3\u10da\u10d8 \u10e3\u10dc\u10d0\u10e0\u10d8\u10d0.\"\n\u10da\n\u2014 \u10da\u10e3\u10d9\u10d0, MD \u10d9\u10e3\u10e0\u10e1\u10d3\u10d0\u10db\u10d7\u10d0\u10d5\u10e0\u10d4\u10d1\u10e3\u10da\u10d8 2024\n\u00a9 2026 Alte University\n\u10d9\u10dd\u10dc\u10e4\u10d8\u10d3\u10d4\u10dc\u10ea\u10d8\u10d0\u10da\u10e3\u10e0\u10dd\u10d1\u10d8\u10e1 \u10de\u10dd\u10da\u10d8\u10e2\u10d8\u10d9\u10d0\u10e1\n\u10ec\u10d4\u10e1\u10d4\u10d1\u10d8\nWHO \u00b7 NCEQE \u10d0\u10e6\u10d8\u10d0\u10e0\u10d4\u10d1\u10e3\u10da\u10d8\nAlte AI A"
       }
     },
     {
@@ -77,7 +93,7 @@
         "height": 844
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_390x844_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_390x844_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 390,
@@ -102,7 +118,8 @@
           "composerVisible": true,
           "launcherOrModalVisible": true
         }
-      }
+      },
+      "georgianEncodingCheck": null
     },
     {
       "label": "mobile_375x667",
@@ -111,7 +128,7 @@
         "height": 667
       },
       "passed": true,
-      "screenshot": "docs\\deployment\\visual_qa\\netlify_widget_mobile_375x667_phase_9ab.png",
+      "screenshot": "docs\\deployment\\visual_qa\\local_widget_mobile_375x667_phase_9ab.png",
       "metrics": {
         "outer": {
           "windowInnerWidth": 375,
@@ -136,7 +153,8 @@
           "composerVisible": true,
           "launcherOrModalVisible": true
         }
-      }
+      },
+      "georgianEncodingCheck": null
     }
   ]
 }

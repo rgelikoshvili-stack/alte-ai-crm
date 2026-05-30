@@ -10,6 +10,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_ROOT = BACKEND_ROOT.parent
 VISUAL_QA_DIR = PROJECT_ROOT / "docs" / "deployment" / "visual_qa"
 DEFAULT_URL = "https://nimble-croissant-2f66e8.netlify.app/join.html"
+GEORGIAN_TEST_QUESTION = "როგორ ჩავაბარო ბაკალავრიატზე?"
 
 
 def _safe_name(label: str) -> str:
@@ -94,6 +95,62 @@ def _evaluate_page(page: Any) -> dict[str, Any]:
     )
 
 
+def _run_georgian_encoding_check(page: Any) -> dict[str, Any]:
+    try:
+        page.evaluate(
+            """
+            (question) => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const textarea = doc && doc.querySelector('textarea');
+              const send = doc && doc.querySelector('button.send');
+              if (!textarea || !send) throw new Error('composer_not_found');
+              textarea.focus();
+              textarea.value = question;
+              textarea.dispatchEvent(new Event('input', { bubbles: true }));
+              send.click();
+            }
+            """,
+            GEORGIAN_TEST_QUESTION,
+        )
+        page.wait_for_function(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const text = doc && doc.body ? doc.body.innerText || '' : '';
+              return text.includes('როგორ') && (text.match(/[\u10A0-\u10FF]/g) || []).length >= 10;
+            }
+            """,
+            timeout=45_000,
+        )
+        text = page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              return doc && doc.body ? doc.body.innerText || '' : '';
+            }
+            """
+        )
+        has_mojibake = "áƒ" in text
+        georgian_count = len([ch for ch in text if "\u10a0" <= ch <= "\u10ff"])
+        return {
+            "ran": True,
+            "passed": not has_mojibake and georgian_count >= 10,
+            "hasMojibake": has_mojibake,
+            "georgianCharacterCount": georgian_count,
+            "containsQuestion": GEORGIAN_TEST_QUESTION in text,
+            "visibleTextExcerpt": text[:500],
+        }
+    except Exception as exc:  # pragma: no cover - browser/runtime dependent
+        return {
+            "ran": True,
+            "passed": False,
+            "error": str(exc)[:240],
+        }
+
+
 def _passes(metrics: dict[str, Any]) -> bool:
     outer = metrics.get("outer") or {}
     inner = metrics.get("inner") or {}
@@ -160,7 +217,12 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                 screenshot = VISUAL_QA_DIR / f"{artifact_prefix}_{_safe_name(label)}_phase_9ab.png"
                 page.screenshot(path=str(screenshot), full_page=True)
                 metrics = _evaluate_page(page)
+                encoding_check = None
+                if label in {"desktop_1440x900", "mobile_430x932"}:
+                    encoding_check = _run_georgian_encoding_check(page)
                 passed = _mobile_passes(metrics) if label.startswith("mobile_") else _passes(metrics)
+                if encoding_check is not None:
+                    passed = passed and encoding_check.get("passed") is True
                 result["checks"].append(
                     {
                         "label": label,
@@ -168,6 +230,7 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                         "passed": passed,
                         "screenshot": str(screenshot.relative_to(PROJECT_ROOT)),
                         "metrics": metrics,
+                        "georgianEncodingCheck": encoding_check,
                     }
                 )
                 page.close()
