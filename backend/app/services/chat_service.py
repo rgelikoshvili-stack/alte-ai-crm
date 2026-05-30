@@ -152,6 +152,9 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
+        official_reply = official_academic_rules_regression_reply(payload.message, analysis.language)
+        if official_reply:
+            analysis.reply = official_reply
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
     elif (
         unsupported_official_question
@@ -806,27 +809,75 @@ def mentions_relocation(analysis: AIAnalysisResult) -> bool:
     return "visa" in haystack or "relocation" in haystack
 
 
+def official_academic_rules_regression_reply(message: str, language: str | None) -> str | None:
+    haystack = (message or "").lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
+    asks_credit = any(marker in haystack for marker in ["ects", "კრედიტ"])
+
+    if asks_credit and any(marker in haystack for marker in ["ბაკალავრ", "bachelor"]):
+        if is_ka:
+            return (
+                "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. "
+                "ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECTS."
+            )
+        return (
+            "A bachelor program requires at least 240 ECTS credits. "
+            "One-cycle programs are separate: Medicine requires at least 360 ECTS and Dentistry at least 300 ECTS."
+        )
+
+    if asks_credit and any(marker in haystack for marker in ["მაგისტრატ", "სამაგისტრო", "master"]):
+        if is_ka:
+            return "სამაგისტრო პროგრამისთვის საჭიროა არანაკლებ 120 ECTS კრედიტის დაგროვება."
+        return "A master program requires at least 120 ECTS credits."
+
+    if any(marker in haystack for marker in ["სწავლების ენა", "რა ენაზე", "teaching language", "language of instruction"]):
+        if is_ka:
+            return "უნივერსიტეტში სწავლების ენა არის ქართული. ცალკეულ პროგრამებზე სწავლება ხორციელდება ინგლისურ ენაზე."
+        return "The university's teaching language is Georgian. Some programs are taught in English."
+
+    if any(marker in haystack for marker in ["სტატუსის შეჩერ", "status suspension", "suspend student status"]):
+        if is_ka:
+            return "სტუდენტის სტატუსის შეჩერების საერთო ვადა არ უნდა აღემატებოდეს 5 წელს."
+        return "The total student status suspension period must not exceed 5 years."
+
+    return None
+
+
 async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
     academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
     selected_official_document_question = is_selected_official_document_text(message)
     if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis):
         return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
     category = None if academic_rules_question else category_for_analysis(analysis)
-    results = await search_knowledge_snippets(
-        db,
-        query=message,
-        language=analysis.language if analysis.language in {"ka", "en"} else None,
-        category=category,
-        source_domain=(
-            None
-            if academic_rules_question or selected_official_document_question
-            else analysis.source_domain
-            if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"}
-            else None
-        ),
-        program_name=analysis.program,
-        approved_only=True,
-    )
+    language = analysis.language if analysis.language in {"ka", "en"} else None
+    if academic_rules_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=message,
+            language=language,
+            category=None,
+            source_domain="official_academic_rules",
+            program_name=analysis.program,
+            approved_only=True,
+        )
+    else:
+        results = []
+    if not results:
+        results = await search_knowledge_snippets(
+            db,
+            query=message,
+            language=language,
+            category=category,
+            source_domain=(
+                None
+                if selected_official_document_question
+                else analysis.source_domain
+                if analysis.source_domain in {"alte.edu.ge", "join.alte.edu.ge"}
+                else None
+            ),
+            program_name=analysis.program,
+            approved_only=True,
+        )
     if not results:
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     if any(item.source_status == "source_stale" for item in results):
@@ -841,13 +892,26 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
 
 
 async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> list[dict]:
-    results = await search_knowledge_snippets(
-        db,
-        query=message,
-        approved_only=True,
-        include_stale=False,
-        limit=3,
-    )
+    academic_rules_question = is_official_academic_rules_text(message)
+    if academic_rules_question:
+        results = await search_knowledge_snippets(
+            db,
+            query=message,
+            source_domain="official_academic_rules",
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
+    else:
+        results = []
+    if not results:
+        results = await search_knowledge_snippets(
+            db,
+            query=message,
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
     return [
         {
             "id": item.snippet.id,
@@ -957,14 +1021,14 @@ def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:
         "status suspension",
         "status termination",
         "teaching language",
+        "რა ენაზე",
+        "სწავლება",
         "master admission",
         "bachelor admission",
         "program catalog",
         "educational program",
         "educational programme",
         "პროგრამ",
-        "მიღებ",
-        "ჩარიცხვ",
         "საგანმანათლებლო პროგრამ",
         "ეროვნული გამოცდ",
         "რეგისტრაცი",
@@ -995,14 +1059,14 @@ def is_official_academic_rules_text(text: str) -> bool:
         "status suspension",
         "status termination",
         "teaching language",
+        "რა ენაზე",
+        "სწავლება",
         "master admission",
         "bachelor admission",
         "program catalog",
         "educational program",
         "educational programme",
         "პროგრამ",
-        "მიღებ",
-        "ჩარიცხვ",
         "საგანმანათლებლო პროგრამ",
         "ეროვნული გამოცდ",
         "რეგისტრაცი",

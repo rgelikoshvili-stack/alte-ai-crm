@@ -37,6 +37,12 @@ Final score: 30/30
 | Q29 | PARTIALLY_ANSWERABLE | PASS | bakalavriatis_debuleba_2.pdf | bakalavriatis_debuleba_2.pdf | none | none |
 | Q30 | PARTIALLY_ANSWERABLE | PASS | magistraturis_debuleba.pdf | magistraturis_debuleba.pdf | none | none |
 
+## Regression Guard
+
+- Q05 bachelor ECTS expected value: `240 ECTS`
+- Q05 forbidden wrong values: `180 ECTS`, `180 კრედიტ`, `3-year program`, `3-წლიანი`
+- Expected official source: `bakalavriatis_debuleba_2.pdf`
+
 ## Safety
 
 - Production DB modified by this evaluator: NO

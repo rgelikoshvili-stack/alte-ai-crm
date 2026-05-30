@@ -10,7 +10,7 @@
     "expected_source_pages_or_articles": [
       "official source page/article reference required"
     ],
-    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "expected_answer_summary": "Bachelor completion requires 240 ECTS from the official bachelor regulation. Do not answer 180 ECTS or describe a 3-year bachelor unless a specific officially sourced exception is being asked about.",
     "required_exact_values": [
       "17-22 November",
       "24-29 November",
@@ -22,7 +22,11 @@
       "unsupported deadlines",
       "unsupported contact process",
       "phone/email request",
-      "lead/task/customer creation"
+      "lead/task/customer creation",
+      "180 ECTS",
+      "180 კრედიტ",
+      "3-year program",
+      "3-წლიანი"
     ],
     "should_handover_if_uncertain": true,
     "must_not_request_contact_details": true
@@ -113,7 +117,7 @@
     "expected_source_pages_or_articles": [
       "official source page/article reference required"
     ],
-    "expected_answer_summary": "Answer conservatively from the cited official academic rules/calendar source. If the exact sub-rule is not explicit, state the supported part and require additional official confirmation.",
+    "expected_answer_summary": "Bachelor completion requires 240 ECTS from the official bachelor regulation. Do not answer 180 ECTS or describe a 3-year bachelor unless a specific officially sourced exception is being asked about.",
     "required_exact_values": [
       "240 ECTS"
     ],
@@ -122,7 +126,11 @@
       "unsupported deadlines",
       "unsupported contact process",
       "phone/email request",
-      "lead/task/customer creation"
+      "lead/task/customer creation",
+      "180 ECTS",
+      "180 კრედიტ",
+      "3-year program",
+      "3-წლიანი"
     ],
     "should_handover_if_uncertain": true,
     "must_not_request_contact_details": true

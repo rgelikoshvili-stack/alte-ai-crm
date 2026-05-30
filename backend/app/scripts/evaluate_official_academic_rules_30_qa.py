@@ -138,6 +138,12 @@ def write_report(results: list[EvalResult]) -> None:
     lines.extend(
         [
             "",
+            "## Regression Guard",
+            "",
+            "- Q05 bachelor ECTS expected value: `240 ECTS`",
+            "- Q05 forbidden wrong values: `180 ECTS`, `180 კრედიტ`, `3-year program`, `3-წლიანი`",
+            "- Expected official source: `bakalavriatis_debuleba_2.pdf`",
+            "",
             "## Safety",
             "",
             "- Production DB modified by this evaluator: NO",

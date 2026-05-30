@@ -22,7 +22,11 @@ RESULT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_IM
 KNOWLEDGE_RESULT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_KNOWLEDGE_IMPORT_RESULT.md"
 DB_IMPORT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_DB_IMPORT_RESULT.md"
 DB_APPROVAL_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_DB_IMPORT_APPROVAL_REQUIRED.md"
+REGRESSION_RESULT_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ACADEMIC_RULES_REGRESSION_FIX_RESULT.md"
+DEPLOY_APPROVAL_DOC = ROOT / "docs" / "deployment" / "PHASE_9T_DEPLOY_APPROVAL_REQUIRED.md"
 APPLY_SCRIPT = ROOT / "backend" / "app" / "scripts" / "apply_official_academic_rules_knowledge.py"
+REGRESSION_TEST = ROOT / "backend" / "app" / "tests" / "test_phase_9t_official_academic_rules_regression.py"
+PRODUCTION_SMOKE = ROOT / "backend" / "app" / "scripts" / "production_official_academic_rules_chat_smoke.py"
 
 EVIDENCE_FILES = [
     "sastsavlo_procesis_maregulirebeli_wesi.pdf",
@@ -111,7 +115,11 @@ def main() -> None:
         KNOWLEDGE_RESULT_DOC,
         DB_IMPORT_DOC,
         DB_APPROVAL_DOC,
+        REGRESSION_RESULT_DOC,
+        DEPLOY_APPROVAL_DOC,
         APPLY_SCRIPT,
+        REGRESSION_TEST,
+        PRODUCTION_SMOKE,
     ]:
         if not path.exists():
             raise AssertionError(f"Missing required artifact: {path.relative_to(ROOT)}")
@@ -155,6 +163,15 @@ def main() -> None:
             raise AssertionError(f"Unexpected 30-QA status: {item.get('id')}")
         if item["must_not_request_contact_details"] is not True:
             raise AssertionError(f"30-QA item must forbid contact detail requests: {item.get('id')}")
+    q05 = next((item for item in qa_30 if item.get("id") == "Q05"), None)
+    if not q05:
+        raise AssertionError("Q05 bachelor ECTS regression item missing")
+    if "240 ECTS" not in q05.get("required_exact_values", []):
+        raise AssertionError("Q05 must require 240 ECTS")
+    q05_forbidden = " ".join(q05.get("forbidden_hallucinations", []))
+    for forbidden in ["180 ECTS", "180 კრედიტ", "3-year program", "3-წლიანი"]:
+        if forbidden not in q05_forbidden:
+            raise AssertionError(f"Q05 must forbid {forbidden}")
 
     knowledge = load_json(KNOWLEDGE_PATH)
     if not knowledge:
@@ -178,6 +195,11 @@ def main() -> None:
         if row.get("official") is not True or row.get("requires_exact_source") is not True:
             raise AssertionError(f"Full chunk lacks official flags: {row.get('source_id')}")
     structured = load_json(STRUCTURED_2025_PATH)
+    structured_text = json.dumps(structured, ensure_ascii=False)
+    if "240" not in structured_text or "ECTS" not in structured_text:
+        raise AssertionError("Structured official KB must contain 240 ECTS")
+    if "180 ECTS კრედიტი (3-წლიანი პროგრამა)" in structured_text:
+        raise AssertionError("Structured official KB must not use 180 ECTS as the bachelor completion rule")
     if len(structured) < 30:
         raise AssertionError("Structured 2025-2026 KB must contain topic and QA support rows")
     for row in structured:
@@ -238,6 +260,8 @@ def main() -> None:
             KNOWLEDGE_RESULT_DOC,
             DB_IMPORT_DOC,
             DB_APPROVAL_DOC,
+            REGRESSION_RESULT_DOC,
+            DEPLOY_APPROVAL_DOC,
         ]
     )
     if "PUBLIC_LAUNCH_DECISION=GO" in docs_text or "PUBLIC_LAUNCH_STATUS=COMPLETE" in docs_text:
