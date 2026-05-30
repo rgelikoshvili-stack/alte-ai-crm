@@ -17,6 +17,7 @@ def test_official_alte_8_pdf_script_importability():
     assert hasattr(importlib.import_module("app.scripts.build_official_alte_8_pdf_kb"), "main")
     assert hasattr(importlib.import_module("app.scripts.verify_official_alte_8_pdf_kb"), "run_checks")
     assert hasattr(importlib.import_module("app.scripts.apply_official_alte_8_pdf_kb"), "main")
+    assert hasattr(importlib.import_module("app.scripts.apply_official_alte_8_pdf_kb_cloudsql"), "main")
 
 
 def test_official_alte_8_pdf_normalized_jsonl_exists_and_has_8_sources():
@@ -59,6 +60,9 @@ def test_official_alte_8_pdf_policy_files_exist():
     assert (KB_DIR / "official_alte_8_pdf_answer_policy.json").exists()
     assert (PROJECT_ROOT / "backend" / "reports" / "official_alte_8_pdf_kb_reviewer_queue.csv").exists()
     assert (PROJECT_ROOT / "docs" / "knowledge_evidence" / "official_alte_8_pdf_kb" / "OFFICIAL_ALTE_8_PDF_SOURCE_MANIFEST.md").exists()
+    apply_result = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_APPLY_RESULT.md"
+    assert apply_result.exists()
+    assert "PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_APPLY_STATUS=APPLIED_TO_PRODUCTION_KB_SINGLE_SMOKE_PASSED" in apply_result.read_text(encoding="utf-8")
 
 
 def test_official_alte_8_pdf_generated_files_have_no_secrets():
@@ -73,4 +77,3 @@ def test_official_alte_8_pdf_generated_files_have_no_secrets():
     )
     for forbidden in ["ANTHROPIC_API_KEY", "sk" + "-ant", "api.anthropic.com"]:
         assert forbidden not in text
-
