@@ -194,6 +194,38 @@ def test_georgian_contact_information_instruction_is_rewritten(client, session_f
     assert_no_crm_side_effects(result, session_factory)
 
 
+def test_georgian_partial_contact_request_fragment_is_removed(client, session_factory, monkeypatch):
+    patch_analysis(
+        monkeypatch,
+        AIAnalysisResult(
+            reply="გესაუბრებით! გთხოვთ, მომაწოდოთ თქვენი საკონტაქტო ინფორმაცია, რათა ოპერატორი დაგიკავშირდეთ.",
+            language="ka",
+            intent="human_request",
+            confidence=0.95,
+            should_create_lead=False,
+            should_handover=True,
+            department="Admissions",
+            missing_fields=["phone_or_email"],
+            extracted_contact=ExtractedContact(),
+            source_domain="join.alte.edu.ge",
+            conversation_summary="User requested operator.",
+        ),
+    )
+    session = start_session(client, source_domain="join.alte.edu.ge", language="ka")
+
+    result = send_message(
+        client,
+        session,
+        "მინდა ოპერატორთან დაკავშირება",
+        source_domain="join.alte.edu.ge",
+        language="ka",
+    )
+
+    assert "გთხოვთ, მომაწოდოთ თქვენი" not in result["reply"]
+    assert "საკონტაქტო ინფორმაციის გაზიარება მხოლოდ თქვენი მკაფიო თანხმობის შემდეგ უნდა მოხდეს." in result["reply"]
+    assert_no_crm_side_effects(result, session_factory)
+
+
 def test_normal_academic_answer_is_not_rewritten():
     analysis = AIAnalysisResult(
         reply="Bachelor programs are listed in the official program catalog.",
