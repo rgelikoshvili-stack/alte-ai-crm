@@ -1320,6 +1320,10 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     source_group = route_decision.primary_source_group if route_decision else None
 
+    if source_group == "student_status_and_mobility":
+        return grounded_student_status_reply(haystack, is_ka)
+    if source_group == "exams_and_assessment":
+        return grounded_exam_assessment_reply(haystack, is_ka)
     if source_group == "academic_calendar_2025_2026" or (is_calendar_text(haystack) and not is_exam_rule_text(haystack)):
         return grounded_calendar_reply(haystack, is_ka)
     if source_group == "admissions_rules" or is_admissions_text(haystack):
@@ -1359,6 +1363,50 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     if any(marker in haystack for marker in ["career", "internship", "employment", "job", "კარიერ", "სტაჟირ", "დასაქმ"]):
         return "The approved career sources cover career development, internship, employment, and alumni support topics. For a specific placement request, the relevant career operator can help." if not is_ka else "დამტკიცებული კარიერის წყაროები მოიცავს კარიერულ განვითარებას, სტაჟირებას, დასაქმებასა და კურსდამთავრებულთა მხარდაჭერას. კონკრეტული შესაძლებლობისთვის შესაბამისი კარიერის ოპერატორი დაგეხმარებათ."
     return None
+
+
+def grounded_student_status_reply(haystack: str, is_ka: bool) -> str:
+    if any(marker in haystack for marker in ["credit recognition", "recognition of credit", "კრედიტების აღიარ", "კრედიტის აღიარ"]):
+        if is_ka:
+            return "კრედიტების აღიარება რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამოკიდებულია წარმოდგენილ სწავლის შედეგებსა და კრედიტებზე."
+        return "Credit recognition is regulated by the official study process rules and depends on the submitted learning outcomes and credits."
+    if any(marker in haystack for marker in ["mobility", "მობილ"]):
+        if is_ka:
+            return "მობილობა და შიდა მობილობა რეგულირდება სასწავლო პროცესის ოფიციალური წესით; კონკრეტული შემთხვევა უნდა შემოწმდეს მობილობის ზუსტ პროცედურასთან."
+        return "Mobility and internal mobility are regulated by the official study process rules; individual cases should be checked against the exact mobility procedure."
+    if any(marker in haystack for marker in ["restoration", "აღდგენ"]):
+        if is_ka:
+            return "სტუდენტის სტატუსის აღდგენა რეგულირდება სასწავლო პროცესის ოფიციალური წესით და უნდა შემოწმდეს სტატუსის აღდგენის შესაბამის პროცედურასთან."
+        return "Student status restoration is regulated by the official study process rules and must be checked against the applicable restoration procedure."
+    if any(marker in haystack for marker in ["termination", "შეწყვეტ"]):
+        if is_ka:
+            return "სტუდენტის სტატუსის შეწყვეტა რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამოკიდებულია წესში ჩამოთვლილ საფუძვლებზე."
+        return "Student status termination is regulated by the official study process rules and depends on the grounds listed in those rules."
+    if is_ka:
+        return "სტუდენტის სტატუსის შეჩერება შესაძლებელია მაქსიმუმ 5 წლით, სასწავლო პროცესის ოფიციალური წესით განსაზღვრული პირობებით."
+    return "Student status suspension can be granted for a maximum of 5 years under the official study process rules."
+
+
+def grounded_exam_assessment_reply(haystack: str, is_ka: bool) -> str:
+    if "gpa" in haystack:
+        if is_ka:
+            return "ოფიციალური შეფასების წესები განსაზღვრავს GPA-ს გამოთვლას; FX და F GPA-ს გამოთვლაში ითვლება 0-ად."
+        return "The official assessment rules define GPA calculation. FX and F are counted as 0 in the GPA calculation."
+    if "fx" in haystack or re.search(r"\bf\b", haystack):
+        if is_ka:
+            return "FX ნიშნავს 41-50 ქულას და სტუდენტს აძლევს დამატებით გამოცდაზე ერთხელ გასვლის უფლებას; F არის უარყოფითი შეფასება და ითვლება 0-ად."
+        return "FX means 41-50 points and gives the right to take an additional exam once; F is a failing grade and counts as 0."
+    if any(marker in haystack for marker in ["final exam", "დასკვნით"]):
+        if is_ka:
+            return "დასკვნით გამოცდაზე დაშვება რეგულირდება სასწავლო პროცესისა და შეფასების ოფიციალური წესებით."
+        return "Final exam admission is regulated by the official study process and assessment rules."
+    if any(marker in haystack for marker in ["retake", "make-up", "გადაბარ", "დამატებით"]):
+        if is_ka:
+            return "გადაბარებისა და დამატებითი გამოცდის წესები რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამტკიცებული აკადემიური კალენდრით."
+        return "Retake and make-up exams are regulated by the official study process rules and the approved academic calendar."
+    if is_ka:
+        return "გამოცდებისა და შეფასების საკითხები რეგულირდება სასწავლო პროცესისა და შეფასების ოფიციალური წესებით."
+    return "Exam and assessment questions are regulated by the official study process and assessment rules."
 
 
 def is_calendar_text(haystack: str) -> bool:
@@ -1404,7 +1452,7 @@ def grounded_calendar_reply(haystack: str, is_ka: bool) -> str:
     if any(marker in haystack for marker in ["final", "დასკვნით"]):
         return "The approved 2025-2026 calendar lists final exams by program category; one-cycle programs include 9-21 February 2026 and 20-31 July 2026." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი დასკვნით გამოცდებს პროგრამის კატეგორიის მიხედვით უთითებს; ერთსაფეხურიანი პროგრამებისთვის მითითებულია 9-21 თებერვალი 2026 და 20-31 ივლისი 2026."
     if any(marker in haystack for marker in ["retake", "გადაბარ"]):
-        return "The approved 2025-2026 calendar lists retake periods by program category, including 16-21 February 2026 for bachelor/master final retakes where that category applies." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი გადაბარების პერიოდებს პროგრამის კატეგორიის მიხედვით უთითებს, მათ შორის ბაკალავრიატისა და მაგისტრატურისთვის 16-21 თებერვალი 2026, როცა ეს კატეგორია ვრცელდება."
+        return "The approved 2025-2026 calendar lists retake exam periods by program category, including 16-21 February 2026 for bachelor/master final exam retakes where that category applies." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი გადაბარების გამოცდების პერიოდებს პროგრამის კატეგორიის მიხედვით უთითებს, მათ შორის ბაკალავრიატისა და მაგისტრატურისთვის 16-21 თებერვალი 2026, როცა ეს კატეგორია ვრცელდება."
     if any(marker in haystack for marker in ["holiday", "არდადეგ"]):
         return "The approved 2025-2026 academic calendar includes holiday rows; answer should be checked against the exact calendar category." if not is_ka else "დამტკიცებულ 2025-2026 აკადემიურ კალენდარში არდადეგების/დასვენების პერიოდები მოცემულია კალენდრის შესაბამის რიგებში; ზუსტი თარიღი უნდა შემოწმდეს კონკრეტული კატეგორიის მიხედვით."
     if any(marker in haystack for marker in ["spring", "გაზაფხულ"]):
@@ -1422,7 +1470,7 @@ def grounded_admissions_reply(haystack: str, is_ka: bool) -> str:
     if any(marker in haystack for marker in ["foreign education", "recognition", "უცხოეთში მიღებული განათლება", "აღიარ"]):
         return "Recognition of foreign education is handled under the official admission rules and Georgian legal procedure before enrollment can be finalized." if not is_ka else "უცხოეთში მიღებული განათლების აღიარება ხორციელდება ოფიციალური მიღების წესებისა და საქართველოს კანონმდებლობით დადგენილი პროცედურის მიხედვით, ჩარიცხვის საბოლოო გაფორმებამდე."
     if any(marker in haystack for marker in ["foreign applicant", "foreign", "international", "უცხოელ"]):
-        return "Foreign applicants are routed through the official foreign applicant admission procedure; exact document and recognition requirements must be checked in the approved admissions source." if not is_ka else "უცხოელი აპლიკანტები გადიან უცხოელი აპლიკანტების ოფიციალურ მიღების პროცედურას; დოკუმენტებისა და აღიარების ზუსტი მოთხოვნები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში."
+        return "International and foreign applicants are routed through the official foreign applicant admission procedure; exact document and recognition requirements must be checked in the approved admissions source." if not is_ka else "საერთაშორისო და უცხოელი აპლიკანტები გადიან უცხოელი აპლიკანტების ოფიციალურ მიღების პროცედურას; დოკუმენტებისა და აღიარების ზუსტი მოთხოვნები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში."
     if any(marker in haystack for marker in ["without national", "national exam", "ეროვნული გამოცდ"]):
         return "Admission without national exams is possible only in cases allowed by Georgian legislation and the university's official admission rules." if not is_ka else "ეროვნული გამოცდების გარეშე ჩარიცხვა შესაძლებელია მხოლოდ საქართველოს კანონმდებლობითა და უნივერსიტეტის ოფიციალური მიღების წესებით დაშვებულ შემთხვევებში."
     return "Bachelor admission documents must be checked against the approved admissions source; typical official requirements include identity and education/admission documents required by the enrollment procedure." if not is_ka else "ბაკალავრიატზე ჩასაბარებელი საბუთები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში; ოფიციალური პროცედურა მოითხოვს პირადობისა და ჩარიცხვისთვის საჭირო განათლების/მიღების დოკუმენტებს."
@@ -2186,6 +2234,16 @@ def build_operator_request_reply(language: str | None, department_label: str | N
     department = department_label or "the relevant department"
     if language == "en":
         return f"I can route this to {department}. You can wait for an operator in this chat or leave contact details if you choose."
+    ka_departments = {
+        "Finance": "დაფინანსება / Finance",
+        "Admissions": "მიღება / Admissions",
+        "Library": "ბიბლიოთეკა / Library",
+        "IT Support": "IT დახმარება / IT Support",
+        "Medicine / MD": "მედიცინა / MD",
+        "International Admissions": "საერთაშორისო მიღება / International Admissions",
+        "Human Operator": "ცოცხალი ოპერატორი",
+    }
+    department = ka_departments.get(department, department)
     return (
         f"შემიძლია ეს მოთხოვნა გადავცე შესაბამის გუნდს: {department}. "
         "შეგიძლიათ დაელოდოთ ოპერატორს ამ ჩატში ან სურვილის შემთხვევაში დატოვოთ კონტაქტი."

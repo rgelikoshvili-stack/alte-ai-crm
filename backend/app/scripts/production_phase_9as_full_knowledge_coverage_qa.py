@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 import re
@@ -200,6 +200,8 @@ def no_crm_created(response: dict[str, Any], detail: dict[str, Any]) -> bool:
 
 
 def reply_body_for_token_checks(reply: str) -> str:
+    if "\n\nწყარო:" in reply:
+        return reply.split("\n\nწყარო:", 1)[0]
     for marker in ["\n\nSource:", "\n\náƒ¬áƒ§áƒáƒ áƒ:"]:
         if marker in reply:
             return reply.split(marker, 1)[0]

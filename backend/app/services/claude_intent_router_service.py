@@ -91,7 +91,7 @@ BROAD_QUESTIONS = {
     ),
     "დახმარება მინდა": (
         "admissions",
-        "გთხოვთ დააზუსტოთ, რა სახის დახმარება გჭირდებათ: მიღება, პროგრამები, ფინანსები, IT დახმარება თუ ოპერატორთან დაკავშირება?",
+        "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ, რა სახის დახმარება გჭირდებათ: მიღება, პროგრამები, ფინანსები, IT დახმარება თუ ოპერატორთან დაკავშირება?",
         ["მიღება", "პროგრამები", "ფინანსები", "IT დახმარება", "ოპერატორი"],
     ),
     "i need information about studying": (
@@ -302,6 +302,11 @@ def validate_router_payload(payload: dict[str, Any], *, message: str) -> ClaudeI
     override = deterministic_override_for_message(lowered, language)
     if override:
         return override
+    if validation_status == "valid":
+        source_groups = specialize_source_groups_for_message(lowered, source_groups)
+    if source_groups:
+        department = department_for_specialized_route(lowered, source_groups, department)
+        label = PUBLIC_DEPARTMENT_LABELS.get(department, label)
     return route.model_copy(
         update={
             "language": language,
@@ -483,11 +488,14 @@ def fallback_intent_route(
 
     decision = classify_knowledge_route(message, selected_department=selected_department, source_domain=source_domain)
     source_groups = [] if unsupported_likely else [group for group in decision.source_groups if group in allowed_source_group_ids()]
+    if source_groups:
+        source_groups = specialize_source_groups_for_message(lowered, source_groups)
+    department = department_for_specialized_route(lowered, source_groups, decision.department_id) if source_groups else decision.department_id
     return ClaudeIntentRoute(
         intent="information_request",
         language=decision.language,
-        department=decision.department_id,
-        public_department_label=decision.department_label,
+        department=department,
+        public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department, decision.department_label),
         topic=decision.reason,
         needs_clarification=decision.clarification_required,
         clarification_question=decision.clarification_question,
@@ -621,6 +629,75 @@ def known_broad_question(lowered: str):
             ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0 / MD", "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10db\u10d8\u10e6\u10d4\u10d1\u10d0"],
         )
     return BROAD_QUESTIONS.get(lowered)
+
+
+def specialize_source_groups_for_message(lowered: str, source_groups: list[str]) -> list[str]:
+    specialized = forced_source_group(lowered)
+    if specialized:
+        return [specialized]
+    if "official_academic_rules" not in source_groups:
+        return source_groups
+    if any(
+        marker in lowered
+        for marker in [
+            "student status",
+            "status suspension",
+            "status restoration",
+            "status termination",
+            "mobility",
+            "credit recognition",
+            "სტატუს",
+            "მობილ",
+            "კრედიტების აღიარ",
+            "კრედიტის აღიარ",
+        ]
+    ):
+        return ["student_status_and_mobility"]
+    if is_exam_calendar_date_question(lowered):
+        return ["academic_calendar_2025_2026"]
+    if any(
+        marker in lowered
+        for marker in [
+            "gpa",
+            "fx",
+            "retake",
+            "make-up",
+            "final exam admission",
+            "დასკვნით",
+            "გამოცდ",
+            "დაშვებ",
+            "გადაბარ",
+            "დამატებით",
+            "დამატებითი",
+            "შუალედურ",
+            "შეფასებ",
+            "ქულა",
+        ]
+    ):
+        return ["exams_and_assessment"]
+    if any(marker in lowered for marker in ["foreign applicant", "foreign education", "international student", "english-language program", "english program requirements"]):
+        return ["international_admissions_sources"]
+    return source_groups
+
+
+def is_exam_calendar_date_question(lowered: str) -> bool:
+    exam_markers = ["exam", "retake", "midterm", "final", "გამოცდ", "გადაბარ", "შუალედურ", "დასკვნით"]
+    date_markers = ["when", "date", "schedule", "calendar", "როდის", "თარიღ", "კალენდ", "პერიოდ", "გრაფიკ"]
+    rule_markers = ["rule", "admission", "allowed", "mean", "means", "წესი", "დაშვებ", "ნიშნავს", "შეფასებ", "ქულა"]
+    return (
+        any(marker in lowered for marker in exam_markers)
+        and any(marker in lowered for marker in date_markers)
+        and not any(marker in lowered for marker in rule_markers)
+    )
+
+
+def department_for_specialized_route(lowered: str, source_groups: list[str], current_department: str) -> str:
+    primary = source_groups[0] if source_groups else None
+    if primary == "international_admissions_sources" and ("medicine" in lowered or " md" in lowered or "md " in lowered):
+        return "medicine_md"
+    if primary:
+        return department_for_source_group(primary)
+    return current_department
 
 
 def has_unsupported_marker(lowered: str) -> bool:

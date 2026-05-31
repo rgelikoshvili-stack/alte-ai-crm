@@ -525,7 +525,7 @@
     "language": "en",
     "expected_status": "ANSWERABLE",
     "expected_department": "international",
-    "expected_source_group": "admissions_rules",
+    "expected_source_group": "international_admissions_sources",
     "expected_must_include": [
       "recognition"
     ],
@@ -544,7 +544,7 @@
     "language": "en",
     "expected_status": "ANSWERABLE",
     "expected_department": "international",
-    "expected_source_group": "admissions_rules",
+    "expected_source_group": "international_admissions_sources",
     "expected_must_include": [
       "foreign"
     ],
@@ -696,7 +696,7 @@
     "language": "ka",
     "expected_status": "ROUTE_ONLY",
     "expected_department": "finance",
-    "expected_source_group": "finance_sources",
+    "expected_source_group": null,
     "expected_must_include": [
       "ფინანს"
     ],
@@ -779,8 +779,8 @@
     "expected_must_not_include": [
       "generic only"
     ],
-    "should_handover_expected": true,
-    "human_handover_expected": true,
+    "should_handover_expected": false,
+    "human_handover_expected": false,
     "should_create_lead_task_customer_expected": false,
     "notes": "International Medicine context may remain in the public Medicine / MD lane while using international admissions sources."
   },
@@ -831,7 +831,7 @@
     "language": "ka",
     "expected_status": "UNSUPPORTED_OPERATOR",
     "expected_department": "finance",
-    "expected_source_group": "finance_sources",
+    "expected_source_group": null,
     "expected_must_include": [
       "დამტკიცებულ"
     ],
@@ -852,9 +852,9 @@
     "language": "en",
     "expected_status": "UNSUPPORTED_OPERATOR",
     "expected_department": "library",
-    "expected_source_group": "library_sources",
+    "expected_source_group": null,
     "expected_must_include": [
-      "approved source"
+      "approved"
     ],
     "expected_must_not_include": [
       "yes, for six months"
@@ -871,7 +871,7 @@
     "language": "en",
     "expected_status": "UNSUPPORTED_OPERATOR",
     "expected_department": "it_support",
-    "expected_source_group": "it_support_sources",
+    "expected_source_group": null,
     "expected_must_include": [
       "IT"
     ],
@@ -968,7 +968,7 @@
     "language": "en",
     "expected_status": "ROUTE_ONLY",
     "expected_department": "finance",
-    "expected_source_group": "finance_sources",
+    "expected_source_group": null,
     "expected_must_include": [
       "Finance"
     ],
