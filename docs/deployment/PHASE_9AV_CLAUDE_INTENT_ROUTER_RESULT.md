@@ -216,3 +216,11 @@ Verifier status:
 Expected improvement is strongest in cases where manual keyword routing selected the wrong source group or failed to distinguish broad, unsupported, calendar, admissions, library, IT, finance, international, and policy questions.
 
 Production verification is still pending because this phase is not deployed.
+
+## Production Deployment Follow-up
+
+The production deployment and post-deploy QA record is maintained separately:
+
+`docs/deployment/PHASE_9AV_PRODUCTION_DEPLOY_AND_QA_RESULT.md`
+
+This implementation document intentionally retains the original code-ready status marker (`NOT_DEPLOYED_PENDING_APPROVAL`) for the Phase 9AV implementation verifier. The deploy record contains the current Cloud Run revision, production QA status, and final deployment decision state.
