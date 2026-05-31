@@ -2,15 +2,24 @@
 
 Date: 2026-06-01
 
-PHASE_9AW_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY
+PHASE_9AW_STATUS=DEPLOYED_PRODUCTION_QA_FAILED_PENDING_FIXES
 
-Decision state: `BACKEND_CODE_9AV_FAILURE_TUNING_READY_PENDING_DEPLOY`
+Decision state: `BACKEND_DEPLOYED_9AV_FAILURE_TUNING_QA_FAILED_PENDING_FIXES`
 
 Public launch: NO-GO
 
-Production status: `PENDING_BACKEND_DEPLOY`
+Production status: `DEPLOYED_AND_PRODUCTION_QA_EXECUTED`
 
-Deploy status: `NOT_DEPLOYED_PENDING_APPROVAL`
+Deploy status: `DEPLOYED`
+
+## Pre-Deploy Baseline
+
+Before the approved backend deploy, this phase was verified locally with:
+
+- `PHASE_9AW_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY`
+- Decision state: `BACKEND_CODE_9AV_FAILURE_TUNING_READY_PENDING_DEPLOY`
+- Production status: `PENDING_BACKEND_DEPLOY`
+- Deploy status: `NOT_DEPLOYED_PENDING_APPROVAL`
 
 ## Scope
 
@@ -68,6 +77,65 @@ Verifier result: `PASS`
 
 Expected production retest result: full 9AS should improve from `32/53 PASS` after backend deploy. Focused 9AT and operator alignment should remain passing.
 
+## Production Deploy
+
+- Code commit: `a6ed854` (`phase 9aw: tune 9av knowledge coverage failures`)
+- Branch pushed: `origin/phase-9s-agent-preview-cors-note`
+- Backend image tag: `v0.9-phase-9aw-9av-failure-tuning`
+- Backend image: `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-phase-9aw-9av-failure-tuning`
+- Cloud Run service: `alte-ai-crm-backend`
+- Cloud Run region: `europe-west1`
+- New revision: `alte-ai-crm-backend-00043-x9s`
+- Traffic split: `alte-ai-crm-backend-00043-x9s=100%`
+- Deploy method: Cloud Build image build followed by Cloud Run image-only deploy to the existing service.
+
+The deploy changed the backend container image only. No DB schema change, migration, seed, DB import, Secret Manager change, CORS change, Bridge Hub change, frontend/Netlify change, real-site upload, or real-site embed was performed.
+
+## Production Verification
+
+Focused Phase 9AT production QA:
+
+- Status: `PASSED`
+- Result: `7/7 PASS`
+- Contact flow executed: NO
+- Lead/task/customer created: NO
+
+Full Phase 9AS production QA:
+
+- Status: `FAILED`
+- Result: `51/53 PASS`, `2 FAIL`
+- Improvement from Phase 9AV baseline: `32/53 PASS` -> `51/53 PASS`
+- Academic calendar: `9/9 PASS`
+- Official academic facts: `17/17 PASS`
+- Clarification: `6/6 PASS`
+- Routing: `6/6 PASS`
+- Unsupported: `4/4 PASS`
+- Operator handover: `5/5 PASS`
+- Admissions: `4/6 PASS`
+
+Remaining full 9AS failures:
+
+- `admission_without_exams_ka`: expected admissions source group, observed `exams_and_assessment`.
+- `english_program_requirements_en`: expected International Admissions route, observed `programs / Programs`.
+
+Operator alignment production QA:
+
+- Status: `PASSED`
+- Result: `7/7 PASS`
+- Operator API auth: `AUTH_OK`
+- Contact flow executed: NO
+- Lead/task/customer created: NO
+
+## Production Decision
+
+`PHASE_9AW_DEPLOY_STATUS=FAILED_PENDING_FIXES`
+
+Decision state: `BACKEND_DEPLOYED_9AV_FAILURE_TUNING_QA_FAILED_PENDING_FIXES`
+
+Public launch remains `NO-GO`.
+
+The 9AW deploy substantially improved production full knowledge coverage, but two admissions routing/source-group failures remain. These are not approved-source gaps; they require a targeted follow-up routing/source-selection fix before approval.
+
 ## Safety Confirmation
 
 - Real Alte site modified: NO
@@ -78,5 +146,5 @@ Expected production retest result: full 9AS should improve from `32/53 PASS` aft
 - DB schema change: NO
 - Secret Manager/CORS/Bridge Hub changes: NO
 - Frontend/Netlify changed: NO
-- Production deploy: NO
+- Production deploy: YES, backend only
 - Public launch: NO-GO
