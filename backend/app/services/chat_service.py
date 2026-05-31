@@ -19,7 +19,8 @@ from app.schemas.chat import (
 )
 from app.schemas.crm import CustomerCreate, LeadCreate, LeadUpdate, TaskCreate
 from app.services.audit_service import audit_event
-from app.services.ai_service import analyze_with_ai
+from app.services.ai_service import analyze_with_ai, generate_source_grounded_answer
+from app.services.claude_intent_router_service import route_decision_from_intent, route_with_claude_intent
 from app.services.customer_service import create_or_update_customer
 from app.services.department_routing_service import DepartmentRoutingResult, resolve_department
 from app.services.knowledge_routing_service import (
@@ -171,23 +172,53 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         metadata_json={"conversation_id": conversation.id},
     )
 
-    route_decision = classify_knowledge_route(
+    history = await conversation_history(db, conversation.id)
+    deterministic_route_decision = classify_knowledge_route(
         payload.message,
         selected_department=payload.selected_department,
         source_domain=payload.source_domain,
     )
+    intent_route, intent_router_meta = route_with_claude_intent(
+        payload.message,
+        selected_department=payload.selected_department,
+        source_domain=payload.source_domain,
+        language_hint=payload.language or conversation.language,
+        conversation_history=history,
+    )
+    route_decision = route_decision_from_intent(intent_route, deterministic_route_decision)
     if route_decision.clarification_required:
         return await handle_clarification_response(db, conversation, user_message, route_decision)
 
     initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message, route_decision)
-    history = await conversation_history(db, conversation.id)
-    analysis, ai_meta = analyze_with_ai(
-        payload.message,
-        source_domain=payload.source_domain,
-        language_hint=conversation.language,
-        conversation_history=history,
-        knowledge_context=initial_knowledge_context,
-    )
+    knowledge = {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
+    legacy_ai_needed = should_use_legacy_ai_analysis(intent_route)
+    if legacy_ai_needed:
+        analysis, ai_meta = analyze_with_ai(
+            payload.message,
+            source_domain=payload.source_domain,
+            language_hint=conversation.language,
+            conversation_history=history,
+            knowledge_context=initial_knowledge_context,
+        )
+    else:
+        analysis = analysis_from_intent_route(payload.message, payload.source_domain, intent_route)
+        ai_meta = {
+            "provider": "deterministic",
+            "model": "phase_9av_router_metadata",
+            "raw_response": None,
+            "fallback": False,
+            "legacy_ai_analysis_skipped": True,
+        }
+    if intent_route.operator_needed:
+        analysis.intent = "human_request"
+        analysis.should_create_lead = False
+        analysis.should_handover = True
+        analysis.department = intent_route.public_department_label
+        analysis.confidence = max(analysis.confidence, intent_route.confidence)
+        if not analysis.reply or is_generic_ai_fallback_reply(analysis.reply):
+            analysis.reply = build_operator_request_reply(analysis.language, intent_route.public_department_label)
+        if "claude_intent_operator_needed" not in analysis.risk_flags:
+            analysis.risk_flags.append("claude_intent_operator_needed")
     if not has_contact(analysis) and conversation.customer_id:
         customer = await db.get(Customer, conversation.customer_id)
         if customer:
@@ -206,7 +237,11 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
-    unsupported_official_question = is_clearly_unsupported_official_question(payload.message)
+    unsupported_official_question = (
+        is_clearly_unsupported_official_question(payload.message)
+        or intent_route.unsupported_likely
+        or intent_route.router_validation_status in {"invalid_source_groups", "empty_source_groups"}
+    )
     if unsupported_official_question:
         knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     else:
@@ -220,10 +255,25 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             official_reply = grounded_source_backed_reply(payload.message, analysis.language, route_decision)
         if official_reply:
             analysis.reply = official_reply
+        elif knowledge.get("source_excerpts"):
+            grounded_reply, grounded_meta = generate_source_grounded_answer(
+                payload.message,
+                language=analysis.language,
+                approved_excerpts=knowledge.get("source_excerpts") or [],
+                route_metadata={
+                    "department": route_decision.department_label,
+                    "source_group": route_decision.primary_source_group,
+                    "intent_router": intent_router_meta,
+                },
+            )
+            if grounded_reply:
+                analysis.reply = grounded_reply
+                ai_meta.setdefault("grounded_answer", grounded_meta)
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif (
+    elif "ai_provider_error" not in analysis.risk_flags and (
         unsupported_official_question
         or should_require_knowledge(analysis)
+        or bool(route_decision.primary_source_group)
         or is_official_academic_rules_text(payload.message)
         or is_selected_official_document_text(payload.message)
     ):
@@ -231,6 +281,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         analysis.should_handover = True
         if is_ambiguous_program_question(payload.message, analysis) and not is_clearly_unsupported_official_question(payload.message):
             analysis.reply = build_ambiguous_program_reply(analysis)
+        elif reply_requests_contact(analysis.reply):
+            pass
         else:
             analysis.reply = build_no_source_reply(analysis)
     sanitize_premature_contact_request(analysis)
@@ -258,6 +310,14 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "route_department": routing.department,
             "department_key": routing.department_key,
             "source_group": route_decision.primary_source_group,
+            "intent_router_provider": intent_router_meta.get("provider"),
+            "intent_router_fallback": intent_router_meta.get("fallback"),
+            "router_validation_status": intent_route.router_validation_status,
+            "deterministic_override_applied": intent_route.deterministic_override_applied,
+            "deterministic_override_reason": intent_route.deterministic_override_reason,
+            "used_claude_intent_router": intent_router_meta.get("provider") == "claude",
+            "used_legacy_ai_analysis": legacy_ai_needed,
+            "used_grounded_answer_generator": bool(ai_meta.get("grounded_answer")),
         },
     )
     await db.commit()
@@ -305,6 +365,19 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "handover_reason": routing.confidence_reason if analysis.should_handover else None,
             "source_group": route_decision.primary_source_group,
             "source_groups": route_decision.source_groups,
+            "intent_router": {
+                "provider": intent_router_meta.get("provider"),
+                "fallback": intent_router_meta.get("fallback"),
+                "department": intent_route.department,
+                "topic": intent_route.topic,
+                "source_groups_to_search": intent_route.source_groups_to_search,
+                "unsupported_likely": intent_route.unsupported_likely,
+                "router_validation_status": intent_route.router_validation_status,
+                "deterministic_override_applied": intent_route.deterministic_override_applied,
+                "deterministic_override_reason": intent_route.deterministic_override_reason,
+                "used_legacy_ai_analysis": legacy_ai_needed,
+                "used_grounded_answer_generator": bool(ai_meta.get("grounded_answer")),
+            },
             "clarification_needed": False,
         },
     )
@@ -346,6 +419,39 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         source_group=route_decision.primary_source_group,
         clarification_needed=False,
         clarification_options=[],
+    )
+
+
+def should_use_legacy_ai_analysis(intent_route) -> bool:
+    if intent_route.needs_clarification:
+        return False
+    if intent_route.operator_needed:
+        return True
+    if intent_route.unsupported_likely:
+        return False
+    if intent_route.router_validation_status in {"invalid_source_groups", "empty_source_groups"}:
+        return False
+    if intent_route.fallback_used:
+        return True
+    if intent_route.source_groups_to_search:
+        return False
+    return True
+
+
+def analysis_from_intent_route(message: str, source_domain: str | None, intent_route) -> AIAnalysisResult:
+    language = intent_route.language if intent_route.language in {"ka", "en"} else ("ka" if any("\u10a0" <= char <= "\u10ff" for char in message) else "en")
+    return AIAnalysisResult(
+        reply="I am checking the approved sources for this question." if language == "en" else "ვამოწმებ დამტკიცებულ წყაროებს ამ საკითხზე.",
+        language=language,  # type: ignore[arg-type]
+        intent="human_request" if intent_route.operator_needed else "general_info",
+        confidence=intent_route.confidence,
+        should_create_lead=False,
+        should_handover=bool(intent_route.operator_needed),
+        department=intent_route.public_department_label,
+        source_domain=source_domain,
+        conversation_summary=f"Phase 9AV routed topic: {intent_route.topic}",
+        used_sources=[],
+        risk_flags=[f"router_validation_{intent_route.router_validation_status}"],
     )
 
 
@@ -1472,6 +1578,23 @@ async def retrieve_chat_knowledge(
     if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     results = []
+    if (
+        route_decision
+        and route_decision.primary_source_group
+        and route_decision.source_groups
+        and route_decision.reason == "claude_intent_router"
+    ):
+        results = await search_approved_sources_for_groups(
+            db,
+            query=retrieval_query,
+            source_group_ids=route_decision.source_groups,
+            language=language,
+            program_name=analysis.program,
+            limit=10,
+        )
+        if not results:
+            return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+        return knowledge_payload_from_results(results)
     if selected_official_document_question and selected_document_category and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
@@ -1544,6 +1667,83 @@ async def retrieve_chat_knowledge(
         )
     if not results:
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    return knowledge_payload_from_results(results)
+
+
+async def search_approved_sources_for_groups(
+    db: AsyncSession,
+    *,
+    query: str,
+    source_group_ids: list[str],
+    language: str | None,
+    program_name: str | None,
+    limit: int = 10,
+) -> list:
+    merged = []
+    seen: set[str] = set()
+    for group_id in source_group_ids:
+        config = source_group_config(group_id)
+        if not config or not config.get("exact_answer_allowed", True):
+            continue
+        source_domain = config.get("source_domain") if isinstance(config.get("source_domain"), str) else None
+        candidates = await search_knowledge_snippets(
+            db,
+            query=query,
+            language=language,
+            category=None,
+            source_domain=source_domain,
+            program_name=program_name,
+            approved_only=True,
+            limit=max(limit * 4, 20),
+        )
+        for item in candidates:
+            if not retrieval_result_belongs_to_source_group(item, group_id, config):
+                continue
+            if item.snippet.id in seen:
+                continue
+            seen.add(item.snippet.id)
+            merged.append(item)
+    return sorted(merged, key=lambda item: item.score, reverse=True)[:limit]
+
+
+def retrieval_result_belongs_to_source_group(item, source_group_id: str, config: dict) -> bool:
+    source_identity = normalize_source_group_text(
+        " ".join(
+            str(value or "")
+            for value in [
+                getattr(item.snippet, "source_key", None),
+                getattr(item.source, "source_key", None),
+                getattr(item.source, "title", None),
+                getattr(item.snippet, "title", None),
+                getattr(item.source, "source_path", None),
+                getattr(item.snippet, "source_path", None),
+                getattr(item.source, "document_id", None),
+                getattr(item.snippet, "document_id", None),
+            ]
+        )
+    )
+    source_files = [normalize_source_group_text(str(value)) for value in config.get("source_files", []) if value]
+    source_keys = [normalize_source_group_text(str(value)) for value in config.get("source_keys", []) if value]
+    document_ids = [normalize_source_group_text(str(value)) for value in config.get("document_ids", []) if value]
+    allowed_identity = source_files + source_keys + document_ids
+    if any(value and (value in source_identity or source_identity in value) for value in allowed_identity):
+        return True
+    category = normalize_source_group_text(item.snippet.category or item.source.category or "")
+    if not config.get("allow_category_fallback", False):
+        return False
+    allowed_categories = {
+        normalize_source_group_text(str(value))
+        for value in config.get("allowed_categories", [])
+        if value
+    }
+    return bool(category and category in allowed_categories)
+
+
+def normalize_source_group_text(value: str) -> str:
+    return " ".join((value or "").lower().replace("_", " ").replace("-", " ").split())
+
+
+def knowledge_payload_from_results(results: list) -> dict:
     if any(item.source_status == "source_stale" for item in results):
         status = "source_stale"
     else:
@@ -1552,6 +1752,19 @@ async def retrieve_chat_knowledge(
         "answer_source_status": status,
         "used_sources": [item.source.source_key or item.source.title for item in results],
         "snippet_titles": [item.snippet.title for item in results],
+        "source_excerpts": [
+            {
+                "id": item.snippet.id,
+                "title": item.snippet.title,
+                "content": item.snippet.content,
+                "category": item.snippet.category,
+                "source_key": item.source.source_key,
+                "source_title": item.source.title,
+                "source_domain": item.source.source_domain,
+                "score": item.score,
+            }
+            for item in results[:5]
+        ],
     }
 
 
@@ -1966,6 +2179,16 @@ def build_no_source_reply(analysis: AIAnalysisResult) -> str:
     return (
         "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. "
         "შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    )
+
+
+def build_operator_request_reply(language: str | None, department_label: str | None) -> str:
+    department = department_label or "the relevant department"
+    if language == "en":
+        return f"I can route this to {department}. You can wait for an operator in this chat or leave contact details if you choose."
+    return (
+        f"შემიძლია ეს მოთხოვნა გადავცე შესაბამის გუნდს: {department}. "
+        "შეგიძლიათ დაელოდოთ ოპერატორს ამ ჩატში ან სურვილის შემთხვევაში დატოვოთ კონტაქტი."
     )
 
 

@@ -1,0 +1,104 @@
+{
+  "source_groups": [
+    {
+      "id": "official_academic_rules",
+      "description_ka": "ოფიციალური აკადემიური წესები: ECTS, საბაკალავრო/სამაგისტრო კრედიტები, სწავლების ენა, ზოგადი აკადემიური რეგულაციები და პროგრამის მოცულობა.",
+      "description_en": "Official academic rules: ECTS, bachelor/master credits, teaching language, general academic regulations, and program volume.",
+      "good_for": ["ECTS", "bachelor credits", "master credits", "teaching language", "academic rules", "program volume"],
+      "not_good_for": ["current tuition amounts", "operator-only requests", "unapproved program marketing claims"],
+      "fallback_department": "Programs",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "academic_calendar_2025_2026",
+      "description_ka": "2025-2026 აკადემიური კალენდარი: რეგისტრაცია, სემესტრის დაწყება, შუალედური, დასკვნითი, გადაბარება და არდადეგები.",
+      "description_en": "2025-2026 academic calendar: registration, semester starts, midterms, final exams, retakes, and holidays.",
+      "good_for": ["registration dates", "semester start", "Computer Science spring registration", "midterms", "final exams", "retakes", "holidays"],
+      "not_good_for": ["exam rule interpretation", "admission documents", "tuition price"],
+      "fallback_department": "Study Process",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "admissions_rules",
+      "description_ka": "მიღების წესები: საბაკალავრო/სამაგისტრო მიღება, საბუთები, ჩარიცხვა, ეროვნული გამოცდების გარეშე მიღება და უცხოეთში მიღებული განათლების აღიარება.",
+      "description_en": "Admissions rules: bachelor/master admission, documents, enrollment, admission without national exams, and foreign education recognition.",
+      "good_for": ["bachelor admission", "master admission", "admission documents", "enrollment", "admission without national exams", "foreign education recognition"],
+      "not_good_for": ["semester dates", "exam grading rules", "current financial offers"],
+      "fallback_department": "Admissions",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "student_status_and_mobility",
+      "description_ka": "სტუდენტის სტატუსი და მობილობა: შეჩერება, აღდგენა, შეწყვეტა, მობილობა, შიდა მობილობა და კრედიტების აღიარება.",
+      "description_en": "Student status and mobility: suspension, restoration, termination, mobility, internal mobility, and credit recognition.",
+      "good_for": ["status suspension", "status restoration", "status termination", "mobility", "internal mobility", "credit recognition"],
+      "not_good_for": ["admission documents", "calendar dates", "library resources"],
+      "fallback_department": "Study Process",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "exams_and_assessment",
+      "description_ka": "გამოცდები და შეფასება: დასკვნით გამოცდაზე დაშვება, FX/F, გადაბარება, შუალედური/დასკვნითი შეფასება, GPA და შეფასების წესები.",
+      "description_en": "Exams and assessment: final exam admission, FX/F, retakes, midterm/final assessment, GPA, and grading rules.",
+      "good_for": ["final exam admission", "FX", "F grade", "retake", "make-up exam", "GPA", "grading rules"],
+      "not_good_for": ["calendar date lookup unless asking date only", "admission documents", "operator-only request"],
+      "fallback_department": "Study Process",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "finance_sources",
+      "description_ka": "ფინანსური წყაროები: სწავლის საფასური მხოლოდ დამტკიცებული წყაროს არსებობისას, გადახდის გრაფიკი, ფინანსური დეპარტამენტი, სტიპენდიები, სახელმწიფო/სოციალური გრანტები და Dean's List.",
+      "description_en": "Finance sources: tuition only when approved source exists, payment schedule, finance department, scholarships, state/social grants, and Dean's List.",
+      "good_for": ["tuition", "payment schedule", "finance department", "scholarships", "state grants", "Dean's List", "financial support"],
+      "not_good_for": ["inventing current prices", "future fake scholarships", "academic status rules"],
+      "fallback_department": "Finance",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "library_sources",
+      "description_ka": "ბიბლიოთეკა: რესურსები, წიგნები, ბაზები, ელექტრონული რესურსები და ბიბლიოთეკის წესები მხოლოდ დამტკიცებული წყაროს ფარგლებში.",
+      "description_en": "Library: resources, books, databases, electronic resources, and library rules only within approved sources.",
+      "good_for": ["library resources", "books", "databases", "electronic resources", "library services"],
+      "not_good_for": ["rare manuscript rules unless approved", "IT login", "career services"],
+      "fallback_department": "Library",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "it_support_sources",
+      "description_ka": "IT მხარდაჭერა: EMIS, პორტალი, შესვლის ან წვდომის პრობლემა, პაროლი და ტექნიკური დახმარება მხოლოდ დამტკიცებული წყაროს ფარგლებში.",
+      "description_en": "IT support: EMIS, portal, login/access problems, password/access support, and technical help only within approved sources.",
+      "good_for": ["EMIS", "student portal", "login issue", "access problem", "password support", "technical support"],
+      "not_good_for": ["inventing password reset steps", "admission rules", "finance questions"],
+      "fallback_department": "IT Support",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "international_admissions_sources",
+      "description_ka": "საერთაშორისო მიღება: უცხოელი აპლიკანტები, უცხოეთში მიღებული განათლების აღიარება, ინგლისურენოვანი მოთხოვნები, Medicine-ის საერთაშორისო კონტექსტი და IRO.",
+      "description_en": "International admissions: international applicants, foreign education recognition, English-language requirements, Medicine with international context, and IRO.",
+      "good_for": ["international applicants", "foreign students", "foreign education recognition", "English-language requirements", "Medicine international flow", "IRO"],
+      "not_good_for": ["generic local admissions without foreign context", "general Medicine ECTS only", "finance prices"],
+      "fallback_department": "International Admissions",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "career_sources",
+      "description_ka": "კარიერა: კარიერული მხარდაჭერა, სტაჟირება, დასაქმება და კურსდამთავრებულთა მხარდაჭერა დამტკიცებული წყაროების ფარგლებში.",
+      "description_en": "Career: career support, internships, employment, and alumni support within approved sources.",
+      "good_for": ["career support", "internships", "employment", "student career services", "alumni support"],
+      "not_good_for": ["admission documents", "library services", "IT access"],
+      "fallback_department": "Career",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    }
+  ]
+}
