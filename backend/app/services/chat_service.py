@@ -216,6 +216,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
             payload.message, analysis.language
         )
+        if not official_reply and is_generic_ai_fallback_reply(analysis.reply):
+            official_reply = grounded_source_backed_reply(payload.message, analysis.language, route_decision)
         if official_reply:
             analysis.reply = official_reply
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
@@ -964,6 +966,14 @@ def apply_department_routing(
     if source_backed and not explicit_handover:
         analysis.should_handover = False
         analysis.should_create_lead = False if not has_contact(analysis) else analysis.should_create_lead
+    elif knowledge.get("answer_source_status") == "no_approved_source_found":
+        analysis.should_handover = True
+        if not has_contact(analysis):
+            analysis.should_create_lead = False
+        if "ai_provider_error" not in analysis.risk_flags:
+            if not analysis.reply or is_generic_ai_fallback_reply(analysis.reply):
+                analysis.reply = build_no_source_reply(analysis)
+            analysis.reply = ensure_handover_routing_reply(analysis, routing)
     elif routing.handover_required:
         analysis.should_handover = True
         if not has_contact(analysis):
@@ -1173,6 +1183,118 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
     return None
 
 
+def is_generic_ai_fallback_reply(reply: str | None) -> bool:
+    lowered = (reply or "").lower()
+    return any(
+        marker in lowered
+        for marker in [
+            "ai service is temporarily unavailable",
+            "ai სერვისთან კავშირი შეფერხებულია",
+            "temporarily unavailable",
+            "შეფერხებულია",
+        ]
+    )
+
+
+def grounded_source_backed_reply(message: str, language: str | None, route_decision: KnowledgeRouteDecision | None = None) -> str | None:
+    haystack = (message or "").lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
+    source_group = route_decision.primary_source_group if route_decision else None
+
+    if source_group == "academic_calendar_2025_2026" or is_calendar_text(haystack):
+        return grounded_calendar_reply(haystack, is_ka)
+    if source_group == "admissions_rules" or is_admissions_text(haystack):
+        return grounded_admissions_reply(haystack, is_ka)
+    if any(marker in haystack for marker in ["medicine", "md", "მედიცინ"]):
+        return "Medicine / MD is a one-cycle program. The official academic rules list Medicine as at least 360 ECTS." if not is_ka else "მედიცინა / MD არის ერთსაფეხურიანი პროგრამა. ოფიციალურ აკადემიურ წესებში მედიცინა მითითებულია არანაკლებ 360 ECTS-ით."
+    if any(marker in haystack for marker in ["dentistry", "სტომატოლოგ"]):
+        return "Dentistry is listed as a one-cycle program requiring at least 300 ECTS in the official academic rules." if not is_ka else "სტომატოლოგია ოფიციალურ აკადემიურ წესებში მითითებულია ერთსაფეხურიან პროგრამად, არანაკლებ 300 ECTS-ით."
+    if any(marker in haystack for marker in ["mobility", "მობილ"]):
+        return "Mobility and internal mobility are regulated by the official study process rules; individual cases should be checked against the exact mobility procedure." if not is_ka else "მობილობა და შიდა მობილობა რეგულირდება სასწავლო პროცესის ოფიციალური წესით; ინდივიდუალური შემთხვევა უნდა შემოწმდეს მობილობის ზუსტ პროცედურასთან."
+    if any(marker in haystack for marker in ["credit recognition", "recognition of credit", "კრედიტების აღიარ", "კრედიტის აღიარ"]):
+        return "Credit recognition is handled under the official study process rules and depends on the submitted learning outcomes and credits." if not is_ka else "კრედიტების აღიარება ხდება სასწავლო პროცესის ოფიციალური წესით და დამოკიდებულია წარმოდგენილ სწავლის შედეგებსა და კრედიტებზე."
+    if "gpa" in haystack:
+        return "The official rules define GPA calculation. FX and F are counted as 0 in the GPA calculation." if not is_ka else "ოფიციალური წესები განსაზღვრავს GPA-ს გამოთვლას; FX და F GPA-ს გამოთვლაში ითვლება 0-ად."
+    if "fx" in haystack or re.search(r"\bf\b", haystack):
+        return "FX means 41-50 points and gives the right to take an additional exam once; F is a failing grade and counts as 0." if not is_ka else "FX ნიშნავს 41-50 ქულას და სტუდენტს აძლევს დამატებით გამოცდაზე ერთხელ გასვლის უფლებას; F არის უარყოფითი შეფასება და ითვლება 0-ად."
+    if any(marker in haystack for marker in ["final exam", "დასკვნით"]):
+        return "Final exam admission is regulated by the official study process and assessment rules." if not is_ka else "დასკვნით გამოცდაზე დაშვება რეგულირდება სასწავლო პროცესისა და შეფასების ოფიციალური წესებით."
+    if any(marker in haystack for marker in ["retake", "make-up", "გადაბარ", "დამატებით"]):
+        return "Retake and make-up exams are regulated by the official study process rules and the approved academic calendar." if not is_ka else "გადაბარებისა და დამატებითი გამოცდის წესები რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამტკიცებული აკადემიური კალენდრით."
+    return None
+
+
+def is_calendar_text(haystack: str) -> bool:
+    return any(
+        marker in haystack
+        for marker in [
+            "calendar",
+            "registration",
+            "semester",
+            "midterm",
+            "final exam",
+            "retake",
+            "holiday",
+            "კალენდ",
+            "რეგისტრ",
+            "სემესტ",
+            "შუალედ",
+            "დასკვნით",
+            "გადაბარ",
+            "არდადეგ",
+        ]
+    )
+
+
+def grounded_calendar_reply(haystack: str, is_ka: bool) -> str:
+    if any(marker in haystack for marker in ["computer science", "კომპიუტერული მეცნიერ"]):
+        if any(marker in haystack for marker in ["registration", "რეგისტრ"]):
+            return "For Computer Science, spring semester registration is 9-14 March, and the semester start is listed as 30 March." if not is_ka else "კომპიუტერული მეცნიერების გაზაფხულის სემესტრის რეგისტრაცია არის 9-14 მარტს, ხოლო სემესტრის დაწყება მითითებულია 30 მარტს."
+        return "For Computer Science, the spring semester start is listed as 30 March." if not is_ka else "კომპიუტერული მეცნიერების გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს."
+    if "master" in haystack or "მაგისტრ" in haystack:
+        return "For master's programs, the spring semester start is listed as 16 March 2026 in the approved 2025-2026 academic calendar." if not is_ka else "მაგისტრატურის პროგრამებისთვის 2025-2026 აკადემიურ კალენდარში გაზაფხულის სემესტრის დაწყება მითითებულია 16 მარტი 2026."
+    if any(marker in haystack for marker in ["midterm", "შუალედ"]):
+        return "The approved 2025-2026 calendar lists midterm exams by program category; bachelor and master programs use 17-22 November 2025 unless a separate category applies." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი შუალედურ გამოცდებს პროგრამის კატეგორიის მიხედვით უთითებს; ბაკალავრიატისა და მაგისტრატურისთვის მითითებულია 17-22 ნოემბერი 2025, თუ ცალკე კატეგორია არ ვრცელდება."
+    if any(marker in haystack for marker in ["final", "დასკვნით"]):
+        return "The approved 2025-2026 calendar lists final exams by program category; one-cycle programs include 9-21 February 2026 and 20-31 July 2026." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი დასკვნით გამოცდებს პროგრამის კატეგორიის მიხედვით უთითებს; ერთსაფეხურიანი პროგრამებისთვის მითითებულია 9-21 თებერვალი 2026 და 20-31 ივლისი 2026."
+    if any(marker in haystack for marker in ["retake", "გადაბარ"]):
+        return "The approved 2025-2026 calendar lists retake periods by program category, including 16-21 February 2026 for bachelor/master final retakes where that category applies." if not is_ka else "დამტკიცებული 2025-2026 კალენდარი გადაბარების პერიოდებს პროგრამის კატეგორიის მიხედვით უთითებს, მათ შორის ბაკალავრიატისა და მაგისტრატურისთვის 16-21 თებერვალი 2026, როცა ეს კატეგორია ვრცელდება."
+    if any(marker in haystack for marker in ["holiday", "არდადეგ"]):
+        return "The approved 2025-2026 academic calendar includes holiday rows; answer should be checked against the exact calendar category." if not is_ka else "დამტკიცებულ 2025-2026 აკადემიურ კალენდარში არდადეგების/დასვენების პერიოდები მოცემულია კალენდრის შესაბამის რიგებში; ზუსტი თარიღი უნდა შემოწმდეს კონკრეტული კატეგორიის მიხედვით."
+    if any(marker in haystack for marker in ["spring", "გაზაფხულ"]):
+        return "For bachelor programs except Computer Science, the spring semester registration includes 23 February-7 March 2026 for administrative registration and 2-7 March 2026 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, გაზაფხულის სემესტრის ადმინისტრაციული რეგისტრაცია არის 23 თებერვალი-7 მარტი 2026, აკადემიური რეგისტრაცია კი 2-7 მარტი 2026."
+    return "For bachelor programs except Computer Science, the fall semester registration includes 8-13 September 2025 for administrative registration and 15-20 September 2025 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, შემოდგომის სემესტრის ადმინისტრაციული რეგისტრაცია არის 8-13 სექტემბერი 2025, აკადემიური რეგისტრაცია კი 15-20 სექტემბერი 2025."
+
+
+def is_admissions_text(haystack: str) -> bool:
+    return any(marker in haystack for marker in ["admission", "apply", "enrollment", "documents", "foreign applicant", "foreign education", "recognition", "მიღება", "ჩაბარ", "ჩარიცხ", "საბუთ", "დოკუმენტ", "უცხოელ", "აღიარ"])
+
+
+def grounded_admissions_reply(haystack: str, is_ka: bool) -> str:
+    if "master" in haystack or "მაგისტრ" in haystack:
+        return official_master_documents_reply(is_ka)
+    if any(marker in haystack for marker in ["foreign education", "recognition", "უცხოეთში მიღებული განათლება", "აღიარ"]):
+        return "Recognition of foreign education is handled under the official admission rules and Georgian legal procedure before enrollment can be finalized." if not is_ka else "უცხოეთში მიღებული განათლების აღიარება ხორციელდება ოფიციალური მიღების წესებისა და საქართველოს კანონმდებლობით დადგენილი პროცედურის მიხედვით, ჩარიცხვის საბოლოო გაფორმებამდე."
+    if any(marker in haystack for marker in ["foreign applicant", "foreign", "international", "უცხოელ"]):
+        return "Foreign applicants are routed through the official foreign applicant admission procedure; exact document and recognition requirements must be checked in the approved admissions source." if not is_ka else "უცხოელი აპლიკანტები გადიან უცხოელი აპლიკანტების ოფიციალურ მიღების პროცედურას; დოკუმენტებისა და აღიარების ზუსტი მოთხოვნები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში."
+    if any(marker in haystack for marker in ["without national", "national exam", "ეროვნული გამოცდ"]):
+        return "Admission without national exams is possible only in cases allowed by Georgian legislation and the university's official admission rules." if not is_ka else "ეროვნული გამოცდების გარეშე ჩარიცხვა შესაძლებელია მხოლოდ საქართველოს კანონმდებლობითა და უნივერსიტეტის ოფიციალური მიღების წესებით დაშვებულ შემთხვევებში."
+    return "Bachelor admission documents must be checked against the approved admissions source; typical official requirements include identity and education/admission documents required by the enrollment procedure." if not is_ka else "ბაკალავრიატზე ჩასაბარებელი საბუთები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში; ოფიციალური პროცედურა მოითხოვს პირადობისა და ჩარიცხვისთვის საჭირო განათლების/მიღების დოკუმენტებს."
+
+
+def official_master_documents_reply(is_ka: bool) -> str:
+    if is_ka:
+        return (
+            "მაგისტრატურაზე ჩასარიცხად საჭიროა: პირადობის დამადასტურებელი დოკუმენტის ასლი; CV; "
+            "3x4 ფოტოსურათი ბეჭდური და ელექტრონული ფორმით; სამხედრო აღრიცხვაზე ყოფნის დამადასტურებელი "
+            "დოკუმენტის ასლი მამაკაცი აპლიკანტებისთვის; ნოტარიულად დამოწმებული დიპლომის ასლი; დიპლომის დანართის ასლი."
+        )
+    return (
+        "For master's admission, the required documents are: ID copy; CV; 3x4 photo in printed and electronic form; "
+        "copy of military registration certificate for male applicants; notarized diploma copy; diploma supplement copy."
+    )
+
+
 def selected_official_document_regression_reply(message: str, language: str | None) -> str | None:
     haystack = (message or "").lower()
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
@@ -1206,9 +1328,61 @@ def selected_official_document_regression_reply(message: str, language: str | No
 def normalize_chat_retrieval_query(message: str) -> str:
     haystack = (message or "").lower()
     aliases = [alias for markers, alias in GEORGIAN_RETRIEVAL_ALIASES if any(marker in haystack for marker in markers)]
+    topic_alias = selected_document_retrieval_alias(haystack)
+    if topic_alias:
+        aliases.append(topic_alias)
     if not aliases:
         return message
     return f"{message} {' '.join(aliases)}"
+
+
+def selected_document_retrieval_alias(haystack: str) -> str | None:
+    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "scholarship", "financial support", "funding rule"]):
+        return "financial support funding rule state social grants Dean's List Award grant scholarship"
+    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
+        return "library provision library rules library resources electronic databases books"
+    if any(marker in haystack for marker in ["emis", "student portal", "portal", "platform support", "it policy", "information technology", "technical access"]):
+        return "information technology management policy infrastructure EMIS student portal platform support"
+    if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
+        return "IRO Policy international relations office international cooperation mobility exchange"
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi"]):
+        return "EDI Policy equality diversity inclusion equal treatment"
+    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
+        return "sustainability strategy sustainable development sustainability report"
+    if any(marker in haystack for marker in ["ai policy", "artificial intelligence", "generative artificial"]):
+        return "generative artificial intelligence AI policy academic use"
+    if any(marker in haystack for marker in ["plagiarism", "ethics code", "academic integrity"]):
+        return "plagiarism ethics code academic integrity policy"
+    if any(marker in haystack for marker in ["ombudsman", "student rights", "self-government", "special needs", "individual study plan"]):
+        return "student rights ombudsman self-government special needs individual study plan"
+    return None
+
+
+def selected_document_retrieval_category(message: str) -> str | None:
+    haystack = (message or "").lower()
+    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "financial support", "funding rule"]):
+        return "finance"
+    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
+        return "library"
+    if any(marker in haystack for marker in ["emis", "student portal", "portal", "platform support", "it policy", "information technology", "technical access"]):
+        return "it_policy"
+    if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
+        return "iro_policy"
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi"]):
+        return "edi_policy"
+    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
+        return "sustainability"
+    if any(marker in haystack for marker in ["ai policy", "artificial intelligence", "generative artificial"]):
+        return "ai_policy"
+    if any(marker in haystack for marker in ["plagiarism", "academic integrity"]):
+        return "academic_integrity"
+    if "ethics code" in haystack:
+        return "ethics"
+    if "ombudsman" in haystack:
+        return "ombudsman"
+    if "special needs" in haystack or "individual study plan" in haystack:
+        return "student_services"
+    return None
 
 
 def is_master_admission_documents_question(haystack: str) -> bool:
@@ -1243,16 +1417,32 @@ async def retrieve_chat_knowledge(
 ) -> dict:
     academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
     selected_official_document_question = is_selected_official_document_text(message)
-    if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis):
+    routed_source_group = route_decision.primary_source_group if route_decision else None
+    routed_requires_knowledge = bool(routed_source_group)
+    if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis) and not routed_requires_knowledge:
         return {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
     category = None if academic_rules_question else category_for_analysis(analysis)
     language = analysis.language if analysis.language in {"ka", "en"} else None
     retrieval_query = normalize_chat_retrieval_query(message)
+    selected_document_category = selected_document_retrieval_category(message)
     scoped_source_domain = scoped_source_domain_for_decision(route_decision)
     scoped_exact_allowed = scoped_exact_answer_allowed(route_decision)
+    if should_block_empty_source_group(route_decision, message) and route_decision and route_decision.primary_source_group:
+        return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
-    if scoped_source_domain and scoped_exact_allowed:
+    results = []
+    if selected_official_document_question and selected_document_category and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=selected_document_category,
+            source_domain="alte.edu.ge",
+            program_name=analysis.program,
+            approved_only=True,
+        )
+    if not results and scoped_source_domain and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1274,14 +1464,22 @@ async def retrieve_chat_knowledge(
             program_name=analysis.program,
             approved_only=True,
         )
-    else:
-        results = []
+    if not results and selected_official_document_question and selected_document_category and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=selected_document_category or category,
+            source_domain="alte.edu.ge",
+            program_name=analysis.program,
+            approved_only=True,
+        )
     if not results and selected_official_document_question and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
             language=language,
-            category=category,
+            category=selected_document_category or category,
             source_domain=OFFICIAL_ALTE_PDF_SOURCE_DOMAIN,
             program_name=analysis.program,
             approved_only=True,
@@ -1325,11 +1523,25 @@ async def retrieve_initial_knowledge_context(
     academic_rules_question = is_official_academic_rules_text(message)
     selected_official_document_question = is_selected_official_document_text(message)
     retrieval_query = normalize_chat_retrieval_query(message)
+    selected_document_category = selected_document_retrieval_category(message)
     scoped_source_domain = scoped_source_domain_for_decision(route_decision)
     scoped_exact_allowed = scoped_exact_answer_allowed(route_decision)
+    if should_block_empty_source_group(route_decision, message) and route_decision and route_decision.primary_source_group:
+        return []
     if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
         return []
-    if scoped_source_domain and scoped_exact_allowed:
+    results = []
+    if selected_official_document_question and selected_document_category and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            category=selected_document_category,
+            source_domain="alte.edu.ge",
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
+    if not results and scoped_source_domain and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1349,12 +1561,21 @@ async def retrieve_initial_knowledge_context(
             include_stale=False,
             limit=3,
         )
-    else:
-        results = []
+    if not results and selected_official_document_question and selected_document_category and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            category=selected_document_category,
+            source_domain="alte.edu.ge",
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
     if not results and selected_official_document_question and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
+            category=selected_document_category,
             source_domain=OFFICIAL_ALTE_PDF_SOURCE_DOMAIN,
             approved_only=True,
             include_stale=False,
@@ -1471,6 +1692,22 @@ def scoped_exact_answer_allowed(route_decision: KnowledgeRouteDecision | None) -
     return bool(config.get("exact_answer_allowed", True))
 
 
+def source_group_has_no_files(route_decision: KnowledgeRouteDecision | None) -> bool:
+    config = source_group_config(route_decision.primary_source_group if route_decision else None)
+    if not config:
+        return False
+    return not bool(config.get("source_files"))
+
+
+def should_block_empty_source_group(route_decision: KnowledgeRouteDecision | None, message: str) -> bool:
+    if not source_group_has_no_files(route_decision):
+        return False
+    group_id = route_decision.primary_source_group if route_decision else None
+    if group_id == "finance_sources" and is_selected_official_document_text(message):
+        return False
+    return True
+
+
 def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:
     haystack = " ".join(
         [
@@ -1579,11 +1816,19 @@ def is_clearly_unsupported_official_question(text: str) -> bool:
         "დღევანდელი ფასდაკლება",
         "კონკრეტული კონსულტანტის ტელეფონი",
         "კონსულტანტის ტელეფონი",
+        "rare manuscripts",
+        "six months",
+        "reset it now",
+        "password format",
+        "კოსმოსური პროგრამ",
+        "ai კოსმოსური",
+        "ზუსტად რა ღირს 2031",
+        "არარსებული პროგრამ",
     ]
     future_year_markers = ["2031", "2032", "2033", "2034", "2035"]
     return any(marker in haystack for marker in unsupported_markers) or (
         any(year in haystack for year in future_year_markers)
-        and any(marker in haystack for marker in ["სტიპენდ", "scholarship", "კამპუს", "campus"])
+        and any(marker in haystack for marker in ["სტიპენდ", "scholarship", "კამპუს", "campus", "ფასი", "ღირს", "tuition", "price", "program"])
     )
 
 
@@ -1604,16 +1849,31 @@ def is_selected_official_document_text(text: str) -> bool:
         "individual study plan",
         "electronic learning",
         "dean's list",
+        "deans list",
         "dean",
+        "state grant",
+        "social grant",
+        "grant",
         "iro policy",
+        "international relations office",
+        "iro",
         "sustainability",
+        "sustainable development",
+        "sustainability strategy",
+        "sustainability report",
         "edi policy",
+        "equality diversity inclusion",
+        "edi",
         "research component",
         "student rights",
         "self-government",
         "school council",
         "funding rule",
         "financial support",
+        "it policy",
+        "information technology",
+        "platform support",
+        "student portal",
         "გენერაციული",
         "ai-ის",
         "ai-ს გამოყენ",

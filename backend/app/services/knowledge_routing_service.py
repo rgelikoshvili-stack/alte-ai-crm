@@ -287,8 +287,30 @@ def score_departments(lowered: str) -> dict[str, int]:
     if is_computer_science_spring_calendar_question(lowered):
         scores["academic_calendar"] = scores.get("academic_calendar", 0) + 8
         scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
+    if is_calendar_question(lowered):
+        scores["academic_calendar"] = scores.get("academic_calendar", 0) + 6
+        scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
+        scores["programs"] = max(0, scores.get("programs", 0) - 2)
+    if is_admissions_question(lowered):
+        scores["admissions"] = scores.get("admissions", 0) + 6
+        scores["programs"] = max(0, scores.get("programs", 0) - 2)
+    if is_it_support_question(lowered):
+        scores["it_support"] = scores.get("it_support", 0) + 8
+    if is_career_question(lowered):
+        scores["career"] = scores.get("career", 0) + 8
+    if is_grants_or_finance_policy_question(lowered):
+        scores["finance"] = scores.get("finance", 0) + 8
+    if is_library_question(lowered):
+        scores["library"] = scores.get("library", 0) + 8
+    if is_iro_policy_question(lowered):
+        scores["international_admissions"] = scores.get("international_admissions", 0) + 8
+    if is_edi_or_sustainability_policy_question(lowered):
+        scores["student_services"] = scores.get("student_services", 0) + 8
     if has_explicit_international_context(lowered):
-        scores["international_admissions"] = scores.get("international_admissions", 0) + 3
+        scores["international_admissions"] = scores.get("international_admissions", 0) + 8
+        scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
+    if any(marker in lowered for marker in ["medicine", "medical", "md", "მედიც", "სამედიცინო"]):
+        scores["medicine_md"] = scores.get("medicine_md", 0) + 5
     return scores
 
 
@@ -327,6 +349,116 @@ def is_computer_science_spring_calendar_question(lowered: str) -> bool:
     has_spring = any(marker in lowered for marker in ["გაზაფხულის სემესტ", "spring semester"])
     has_calendar_action = any(marker in lowered for marker in ["რეგისტრ", "სემესტრის დაწყ", "registration", "semester start"])
     return has_program and has_spring and has_calendar_action
+
+
+def is_calendar_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "კალენდ",
+            "რეგისტრ",
+            "სემესტ",
+            "შუალედ",
+            "დასკვნით",
+            "გადაბარ",
+            "არდადეგ",
+            "calendar",
+            "registration",
+            "semester",
+            "midterm",
+            "final exam",
+            "retake",
+            "holiday",
+        ]
+    )
+
+
+def is_admissions_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "მიღება",
+            "ჩაბარ",
+            "ჩარიცხ",
+            "საბუთ",
+            "დოკუმენტ",
+            "ეროვნული გამოცდ",
+            "უცხოეთში მიღებული განათლება",
+            "უცხოელი",
+            "admission",
+            "apply",
+            "application",
+            "enrollment",
+            "required document",
+            "documents",
+            "national exam",
+            "foreign applicant",
+            "foreign education",
+            "recognition",
+        ]
+    )
+
+
+def is_career_question(lowered: str) -> bool:
+    return any(marker in lowered for marker in ["კარიერ", "სტაჟირ", "დასაქმ", "career", "internship", "employment", "job"])
+
+
+def is_grants_or_finance_policy_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "scholarship",
+            "funding rule",
+            "financial support",
+        ]
+    )
+
+
+def is_library_question(lowered: str) -> bool:
+    return any(marker in lowered for marker in ["library", "library resources", "database", "catalog", "books"])
+
+
+def is_iro_policy_question(lowered: str) -> bool:
+    return any(marker in lowered for marker in ["iro policy", "international relations office", "iro"])
+
+
+def is_edi_or_sustainability_policy_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "edi policy",
+            "equality diversity inclusion",
+            "sustainability",
+            "sustainable development",
+            "sustainability strategy",
+            "sustainability report",
+        ]
+    )
+
+
+def is_it_support_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "emis",
+            "login",
+            "password",
+            "portal",
+            "student portal",
+            "it policy",
+            "information technology",
+            "platform support",
+            "technical access",
+            "áƒžáƒáƒ áƒ¢áƒáƒš",
+            "áƒžáƒáƒ áƒáƒš",
+            "áƒ•áƒ”áƒ  áƒ¨áƒ”áƒ•áƒ“áƒ˜áƒ•áƒáƒ ",
+        ]
+    )
 
 
 def department_entry(department_id: str) -> dict:

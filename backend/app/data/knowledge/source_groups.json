@@ -68,8 +68,15 @@
     {
       "id": "finance_sources",
       "label": "Finance sources",
-      "source_files": [],
-      "allowed_topics": ["tuition", "payment schedule", "scholarships"],
+      "source_files": [
+        "selected_alte_45_doc_32_114_d87loza1tj",
+        "selected_alte_45_doc_33_096_au4xeq3rlj",
+        "selected_alte_45_doc_34_097_jtv38r4nf8",
+        "financial_support_mechanisms",
+        "state_social_grants",
+        "deans_list"
+      ],
+      "allowed_topics": ["tuition", "payment schedule", "scholarships", "state grants", "Dean's List", "financial support"],
       "confidence_threshold": 0.85,
       "fallback_behavior": "finance operator",
       "clarification_required_when_ambiguous": true,
@@ -81,54 +88,76 @@
     {
       "id": "library_sources",
       "label": "Library sources",
-      "source_files": [],
-      "allowed_topics": ["library resources", "databases", "books"],
+      "source_files": [
+        "selected_alte_45_doc_24_068_trphmmn9xg",
+        "selected_alte_45_doc_25_086_e1y852yo2t",
+        "selected_alte_45_doc_26_087_ulr992q8e0",
+        "library_provision",
+        "library_rules",
+        "library_catalog"
+      ],
+      "allowed_topics": ["library resources", "databases", "books", "library service", "electronic resources"],
       "confidence_threshold": 0.85,
       "fallback_behavior": "library operator",
       "clarification_required_when_ambiguous": true,
       "official_only": true,
       "stale_allowed": false,
-      "exact_answer_allowed": false,
-      "source_domain": null
+      "exact_answer_allowed": true,
+      "source_domain": "alte.edu.ge"
     },
     {
       "id": "it_support_sources",
       "label": "IT support sources",
-      "source_files": [],
-      "allowed_topics": ["EMIS login", "student portal", "technical access"],
+      "source_files": [
+        "selected_alte_45_doc_38_106_3cvbwtpgx5",
+        "information_technology_management_policy",
+        "emis",
+        "student_portal"
+      ],
+      "allowed_topics": ["EMIS login", "student portal", "technical access", "platform support", "IT management policy"],
       "confidence_threshold": 0.85,
       "fallback_behavior": "IT operator",
       "clarification_required_when_ambiguous": true,
       "official_only": true,
       "stale_allowed": false,
-      "exact_answer_allowed": false,
-      "source_domain": null
+      "exact_answer_allowed": true,
+      "source_domain": "alte.edu.ge"
     },
     {
       "id": "career_sources",
       "label": "Career sources",
-      "source_files": [],
+      "source_files": [
+        "selected_alte_45_doc_27_046_pdr3su2se7",
+        "selected_alte_45_doc_28_083_y9mt3s2la4",
+        "career_development",
+        "alumni"
+      ],
       "allowed_topics": ["career support", "internships", "employment"],
       "confidence_threshold": 0.85,
       "fallback_behavior": "career operator",
       "clarification_required_when_ambiguous": true,
       "official_only": true,
       "stale_allowed": false,
-      "exact_answer_allowed": false,
-      "source_domain": null
+      "exact_answer_allowed": true,
+      "source_domain": "alte.edu.ge"
     },
     {
       "id": "international_admissions_sources",
       "label": "International admissions sources",
-      "source_files": [],
-      "allowed_topics": ["foreign applicants", "foreign education recognition", "English-language program requirements", "international admission"],
+      "source_files": [
+        "selected_alte_45_doc_39_115_c8hejj7ftx",
+        "selected_alte_45_doc_40_116_iz3giyvdlf",
+        "iro_policy",
+        "international_relations_office"
+      ],
+      "allowed_topics": ["foreign applicants", "foreign education recognition", "English-language program requirements", "international admission", "IRO policy", "international relations"],
       "confidence_threshold": 0.8,
       "fallback_behavior": "international admissions operator",
       "clarification_required_when_ambiguous": true,
       "official_only": true,
       "stale_allowed": false,
       "exact_answer_allowed": true,
-      "source_domain": "official_academic_rules"
+      "source_domain": "alte.edu.ge"
     }
   ]
 }

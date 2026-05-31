@@ -486,6 +486,24 @@ def keyword_department(text: str) -> str | None:
     explicit_key = explicit_georgian_route_alias(text)
     if explicit_key:
         return explicit_key
+    if is_it_support_question(text):
+        return "it_support"
+    if is_grants_or_finance_policy_question(text):
+        return "finance"
+    if is_library_policy_question(text) and not is_career_question(text) and "club" not in text:
+        return "library"
+    if is_iro_policy_question(text):
+        return "international"
+    if is_edi_or_sustainability_policy_question(text):
+        return "student_services"
+    if is_career_question(text):
+        return "student_services"
+    if any(keyword.lower() in text for keyword in KEYWORDS["medicine"]):
+        return "medicine"
+    if is_calendar_question(text):
+        return "study_process"
+    if is_admissions_document_question(text):
+        return "admissions"
     if is_degree_credit_completion_question(text):
         return "programs"
     matches: dict[str, int] = {}
@@ -538,6 +556,124 @@ def is_degree_credit_completion_question(text: str) -> bool:
         ]
     )
     return asks_credits and asks_degree_level
+
+
+def is_calendar_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(
+        term in lowered
+        for term in [
+            "კალენდ",
+            "რეგისტრ",
+            "სემესტ",
+            "შუალედ",
+            "დასკვნით",
+            "გადაბარ",
+            "არდადეგ",
+            "calendar",
+            "registration",
+            "semester",
+            "midterm",
+            "final exam",
+            "retake",
+            "holiday",
+        ]
+    )
+
+
+def is_admissions_document_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(
+        term in lowered
+        for term in [
+            "მიღება",
+            "ჩაბარ",
+            "ჩარიცხ",
+            "საბუთ",
+            "დოკუმენტ",
+            "ეროვნული გამოცდ",
+            "უცხოეთში მიღებული განათლება",
+            "უცხოელი",
+            "admission",
+            "apply",
+            "application",
+            "enrollment",
+            "required document",
+            "documents",
+            "national exam",
+            "foreign applicant",
+            "foreign education",
+            "recognition",
+        ]
+    )
+
+
+def is_career_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(term in lowered for term in ["კარიერ", "სტაჟირ", "დასაქმ", "career", "internship", "employment", "job"])
+
+
+def is_it_support_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(
+        term in lowered
+        for term in [
+            "emis",
+            "login",
+            "password",
+            "portal",
+            "student portal",
+            "it policy",
+            "information technology",
+            "platform support",
+            "technical access",
+            "áƒžáƒáƒ áƒ¢áƒáƒš",
+            "áƒžáƒáƒ áƒáƒš",
+            "áƒ•áƒ”áƒ  áƒ¨áƒ”áƒ•áƒ“áƒ˜áƒ•áƒáƒ ",
+        ]
+    )
+
+
+def is_grants_or_finance_policy_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(
+        term in lowered
+        for term in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "scholarship",
+            "funding rule",
+            "financial support",
+        ]
+    )
+
+
+def is_library_policy_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(term in lowered for term in ["library", "library resources", "database", "catalog", "books"])
+
+
+def is_iro_policy_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(term in lowered for term in ["iro policy", "international relations office", "iro"])
+
+
+def is_edi_or_sustainability_policy_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    return any(
+        term in lowered
+        for term in [
+            "edi policy",
+            "equality diversity inclusion",
+            "sustainability",
+            "sustainable development",
+            "sustainability strategy",
+            "sustainability report",
+        ]
+    )
 
 
 def is_ambiguous_message(message_text: str | None, language: str | None = None) -> bool:
