@@ -1004,6 +1004,10 @@ def reply_mentions_department(reply: str, routing: DepartmentRoutingResult) -> b
 def is_it_access_support_request(message: str | None, routing: DepartmentRoutingResult) -> bool:
     if routing.department_key != "it_support":
         return False
+    return is_it_access_support_text(message)
+
+
+def is_it_access_support_text(message: str | None) -> bool:
     haystack = (message or "").lower()
     return any(marker in haystack for marker in ["login", "password", "can't", "cannot", "ვერ", "შევდივარ", "პაროლ"])
 
@@ -1055,6 +1059,8 @@ def should_persist_human_handover(analysis: AIAnalysisResult, knowledge: dict, p
     if not analysis.should_handover:
         return False
     if knowledge.get("answer_source_status") == "no_approved_source_found":
+        return True
+    if is_it_access_support_text(payload.message):
         return True
     return has_explicit_handover_request(payload.message, analysis.intent)
 
