@@ -229,7 +229,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     ):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
-        if is_ambiguous_program_question(payload.message, analysis):
+        if is_ambiguous_program_question(payload.message, analysis) and not is_clearly_unsupported_official_question(payload.message):
             analysis.reply = build_ambiguous_program_reply(analysis)
         else:
             analysis.reply = build_no_source_reply(analysis)
@@ -964,7 +964,7 @@ def apply_department_routing(
     )
     analysis.department = routing.department
     if source_backed and not explicit_handover:
-        analysis.should_handover = False
+        analysis.should_handover = is_it_access_support_request(payload.message, routing)
         analysis.should_create_lead = False if not has_contact(analysis) else analysis.should_create_lead
     elif knowledge.get("answer_source_status") == "no_approved_source_found":
         analysis.should_handover = True
@@ -999,6 +999,13 @@ def ensure_handover_routing_reply(analysis: AIAnalysisResult, routing: Departmen
 def reply_mentions_department(reply: str, routing: DepartmentRoutingResult) -> bool:
     lowered = reply.lower()
     return routing.department.lower() in lowered or routing.department_key.replace("_", " ") in lowered
+
+
+def is_it_access_support_request(message: str | None, routing: DepartmentRoutingResult) -> bool:
+    if routing.department_key != "it_support":
+        return False
+    haystack = (message or "").lower()
+    return any(marker in haystack for marker in ["login", "password", "can't", "cannot", "ვერ", "შევდივარ", "პაროლ"])
 
 
 def has_explicit_handover_request(message: str | None, intent: str | None = None) -> bool:
@@ -1221,6 +1228,20 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
         return "Final exam admission is regulated by the official study process and assessment rules." if not is_ka else "დასკვნით გამოცდაზე დაშვება რეგულირდება სასწავლო პროცესისა და შეფასების ოფიციალური წესებით."
     if any(marker in haystack for marker in ["retake", "make-up", "გადაბარ", "დამატებით"]):
         return "Retake and make-up exams are regulated by the official study process rules and the approved academic calendar." if not is_ka else "გადაბარებისა და დამატებითი გამოცდის წესები რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამტკიცებული აკადემიური კალენდრით."
+    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "scholarship", "financial support", "funding rule"]):
+        return "The approved finance and grant sources cover financial support mechanisms, state/social grants, and Dean's List Award rules. Exact eligibility depends on the specific approved grant rule." if not is_ka else "დამტკიცებული ფინანსური და საგრანტო წყაროები მოიცავს ფინანსური მხარდაჭერის მექანიზმებს, სახელმწიფო/სოციალურ გრანტებს და Dean's List Award-ის წესებს. ზუსტი უფლებამოსილება დამოკიდებულია კონკრეტულ დამტკიცებულ წესზე."
+    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
+        return "The approved library sources describe library services, use rules, books, and electronic resources. For an exact operational request, the library operator can confirm the current process." if not is_ka else "დამტკიცებული ბიბლიოთეკის წყაროები აღწერს ბიბლიოთეკის სერვისებს, სარგებლობის წესებს, წიგნებსა და ელექტრონულ რესურსებს. ზუსტი ოპერაციული საკითხისთვის ბიბლიოთეკის ოპერატორი დაადასტურებს მიმდინარე პროცესს."
+    if any(marker in haystack for marker in ["emis", "student portal", "portal", "platform support", "it policy", "information technology", "technical access"]):
+        return "The approved IT policy source covers information technology management, infrastructure, platform support, and technical access routing. For a specific EMIS login failure, contact IT Support through the operator handover." if not is_ka else "დამტკიცებული IT პოლიტიკის წყარო მოიცავს ინფორმაციული ტექნოლოგიების მართვას, ინფრასტრუქტურას, პლატფორმების მხარდაჭერას და ტექნიკური წვდომის მარშრუტირებას. კონკრეტული EMIS შესვლის პრობლემისთვის დაუკავშირდით IT დახმარებას ოპერატორის გადაცემით."
+    if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
+        return "The approved IRO Policy sources cover the International Relations Office, international cooperation, exchange, and mobility coordination." if not is_ka else "დამტკიცებული IRO Policy წყაროები მოიცავს საერთაშორისო ურთიერთობების ოფისს, საერთაშორისო თანამშრომლობას, გაცვლით პროგრამებსა და მობილობის კოორდინაციას."
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion"]):
+        return "The approved EDI Policy source covers equality, diversity, inclusion, and equal treatment principles." if not is_ka else "დამტკიცებული EDI Policy წყარო მოიცავს თანასწორობის, მრავალფეროვნების, ინკლუზიისა და თანაბარი მოპყრობის პრინციპებს."
+    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
+        return "The approved sustainability sources cover Alte's sustainable development strategy, sustainability priorities, and sustainability reporting." if not is_ka else "დამტკიცებული მდგრადობის წყაროები მოიცავს ალტეს მდგრადი განვითარების სტრატეგიას, პრიორიტეტებსა და მდგრადობის ანგარიშგებას."
+    if any(marker in haystack for marker in ["career", "internship", "employment", "job", "კარიერ", "სტაჟირ", "დასაქმ"]):
+        return "The approved career sources cover career development, internship, employment, and alumni support topics. For a specific placement request, the relevant career operator can help." if not is_ka else "დამტკიცებული კარიერის წყაროები მოიცავს კარიერულ განვითარებას, სტაჟირებას, დასაქმებასა და კურსდამთავრებულთა მხარდაჭერას. კონკრეტული შესაძლებლობისთვის შესაბამისი კარიერის ოპერატორი დაგეხმარებათ."
     return None
 
 

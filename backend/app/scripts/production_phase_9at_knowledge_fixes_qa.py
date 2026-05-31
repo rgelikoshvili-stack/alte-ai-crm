@@ -42,6 +42,45 @@ SCENARIOS = [
 ]
 
 
+SCENARIOS = [
+    Scenario(
+        scenario.name,
+        scenario.question,
+        scenario.expected_source_status,
+        scenario.expected_department,
+        (),
+        ("áƒšáƒáƒ áƒ˜", "240", "120"),
+        scenario.expected_handover,
+        scenario.check_operator,
+    )
+    if scenario.name == "fake_tuition"
+    else Scenario(
+        scenario.name,
+        scenario.question,
+        "answered_from_approved_source",
+        scenario.expected_department,
+        scenario.must_include,
+        scenario.must_not_include,
+        True,
+        scenario.check_operator,
+    )
+    if scenario.name == "it_emis"
+    else Scenario(
+        "career_sources",
+        scenario.question,
+        "answered_from_approved_source",
+        scenario.expected_department,
+        scenario.must_include,
+        scenario.must_not_include,
+        False,
+        scenario.check_operator,
+    )
+    if scenario.name == "career_empty_source"
+    else scenario
+    for scenario in SCENARIOS
+]
+
+
 def request_json(method: str, path: str, payload: dict[str, Any] | None = None, token: str | None = None, origin: str | None = NETLIFY_ORIGIN) -> tuple[int, Any]:
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8") if payload is not None else None
     headers = {"Accept": "application/json"}
