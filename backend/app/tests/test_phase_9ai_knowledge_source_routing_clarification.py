@@ -20,6 +20,7 @@ TEST_STRINGS = PROJECT_ROOT / "test_site" / "variants" / "pro-v2-strings.jsx"
 TEST_MODALS = PROJECT_ROOT / "test_site" / "variants" / "pro-v2-modals.jsx"
 WIDGET_STRINGS = PROJECT_ROOT / "widget" / "variants" / "pro-v2-strings.jsx"
 PUBLIC_LAUNCH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9P_PUBLIC_LAUNCH_DECISION.md"
+MOJIBAKE_MARKER = "\u00e1\u0192"
 
 
 def read(path: Path) -> str:
@@ -229,7 +230,7 @@ def test_phase_9ai_safety_public_launch_no_go_no_mojibake_and_no_secret_frontend
             PUBLIC_LAUNCH,
         ]
     )
-    assert "áƒ" not in text
+    assert MOJIBAKE_MARKER not in text
     assert "api.anthropic.com" not in text
     assert "ANTHROPIC_API_KEY" not in text
     assert "sk-ant" not in text

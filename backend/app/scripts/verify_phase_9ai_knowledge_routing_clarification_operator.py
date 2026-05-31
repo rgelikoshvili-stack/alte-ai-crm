@@ -19,6 +19,7 @@ PUBLIC_LAUNCH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9P_PUBLIC_LAUNCH_D
 CHAT_SERVICE = PROJECT_ROOT / "backend" / "app" / "services" / "chat_service.py"
 BRIDGE = PROJECT_ROOT / "test_site" / "alte-ai-chat-widget.html"
 BRIDGE_JS = PROJECT_ROOT / "test_site" / "alte-ai-chat-widget.js"
+MOJIBAKE_MARKER = "\u00e1\u0192"
 
 
 def read(path: Path) -> str:
@@ -67,7 +68,7 @@ def run_checks() -> list[tuple[str, bool, str]]:
             "Your question / message",
         ])),
         check("wait_for_operator labels exist", all(value in frontend_text for value in ["დაელოდე ოპერატორს", "Wait for operator"])),
-        check("no mojibake in 9AI/static evidence", "áƒ" not in docs_text + frontend_text),
+        check("no mojibake in 9AI/static evidence", MOJIBAKE_MARKER not in docs_text + frontend_text),
         check("unsupported answer copy does not ask direct contact details", all(value not in chat_text[chat_text.index("def build_no_source_reply") : chat_text.index("def is_ambiguous_program_question")].lower() for value in [
             "phone",
             "email",

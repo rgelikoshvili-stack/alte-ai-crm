@@ -12,6 +12,7 @@ BACKEND_URL = "https://alte-ai-crm-backend-226875230147.europe-west1.run.app"
 ORIGIN = "https://nimble-croissant-2f66e8.netlify.app"
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 REPORT_PATH = PROJECT_ROOT / "docs" / "evaluation" / "PHASE_9AI_CLARIFICATION_ROUTING_QA_RESULT.md"
+MOJIBAKE_MARKER = "\u00e1\u0192"
 
 
 CASES = [
@@ -148,7 +149,7 @@ def evaluate(case: dict[str, Any], response: dict[str, Any]) -> list[dict[str, A
         checks.append({"name": f"excludes:{value}", "passed": value not in reply})
     checks.append({"name": "no_lead_created", "passed": response.get("created_lead_id") is None})
     checks.append({"name": "no_task_created", "passed": response.get("created_task_id") is None})
-    checks.append({"name": "no_mojibake", "passed": "áƒ" not in reply})
+    checks.append({"name": "no_mojibake", "passed": MOJIBAKE_MARKER not in reply})
     return checks
 
 
