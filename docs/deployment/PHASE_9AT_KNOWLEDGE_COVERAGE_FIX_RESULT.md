@@ -1,9 +1,9 @@
 # Phase 9AT Knowledge Coverage Fix Result
 
-PHASE_9AT_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY
+PHASE_9AT_STATUS=FAILED_PENDING_FURTHER_KB_FIXES
 
 Decision state:
-BACKEND_DEPLOYED_FULL_KNOWLEDGE_COVERAGE_CODE_READY_PENDING_BACKEND_DEPLOY
+BACKEND_DEPLOYED_FULL_KNOWLEDGE_COVERAGE_STILL_FAILING_PENDING_FIXES
 
 Public launch: NO-GO
 
@@ -56,9 +56,7 @@ Local regression coverage: PASS
 - Computer Science semester start returns 30 March.
 - Calendar prompts route to `academic_calendar_2025_2026`.
 
-Production coverage: PENDING_BACKEND_DEPLOY
-
-The production backend still runs the pre-9AT revision until deployment is approved.
+Production coverage after deploy: IMPROVED, 8/9 calendar checks passed in full 9AS rerun.
 
 ## Admissions Coverage Result
 
@@ -68,7 +66,7 @@ Local regression coverage: PASS
 - Master admission document prompts route to `admissions_rules`.
 - Master document answer no longer falls back to generic AI-service text when an approved source is found.
 
-Production coverage: PENDING_BACKEND_DEPLOY
+Production coverage after deploy: IMPROVED, 5/6 admissions checks passed in full 9AS rerun.
 
 ## Unsupported False-Positive Result
 
@@ -78,7 +76,7 @@ Local regression coverage: PASS
 - Unsupported exact tuition for a fake 2031 AI space program returns `no_approved_source_found`.
 - Unsupported prompts do not create lead/task/customer.
 
-Production coverage: PENDING_BACKEND_DEPLOY
+Production coverage after deploy: IMPROVED, focused 9AT false-positive checks passed; full 9AS still has 2 unsupported-category failures needing follow-up.
 
 ## IT/EMIS Handover Persistence Result
 
@@ -90,7 +88,7 @@ Local regression coverage: PASS
 - Conversation persists `human_handover=true`.
 - No lead/customer/task is created.
 
-Production coverage: PENDING_BACKEND_DEPLOY
+Production coverage after deploy: PASS in focused 9AT QA. EMIS/IT access routes to IT Support and persists `human_handover=true` without lead/customer/task creation.
 
 ## Tests Run
 
@@ -127,11 +125,68 @@ python -m app.scripts.production_phase_9as_full_knowledge_coverage_qa
 
 python -m app.scripts.production_phase_9as_operator_alignment_qa
 7 scenarios: 6 passed, 1 failed against the current live pre-9AT backend
+
+Pre-deploy gate:
+python -m compileall app
+PASS
+
+python -m pytest --basetemp .pytest_tmp_9at_predeploy
+941 passed
+
+python -m app.scripts.verify_phase_9at_knowledge_coverage_fixes
+PASS
+
+Code commit:
+dc54c7a phase 9at: fix knowledge coverage routing
+
+Follow-up production patches:
+1026e62 phase 9at: tighten production knowledge qa routing
+060ac27 phase 9at: persist it access handover
+
+Backend image tag:
+v0.9-phase-9at-knowledge-coverage-fix
+
+Final Cloud Run revision:
+alte-ai-crm-backend-00040-8qr
+
+python -m app.scripts.production_phase_9at_knowledge_fixes_qa
+7 checks: 7 passed, 0 failed
+
+python -m app.scripts.production_phase_9as_full_knowledge_coverage_qa
+53 questions: 33 passed, 20 failed
+Calendar: 8 passed, 1 failed
+Admissions: 5 passed, 1 failed
+
+python -m app.scripts.production_phase_9as_operator_alignment_qa
+7 scenarios: 6 passed, 1 failed
 ```
 
 The first full pytest attempt hit Windows temp-directory cleanup errors against `.pytest_tmp_9at_knowledge_fixes` after 894 tests had passed. The temp directory was removed inside the backend workspace and pytest was rerun with `.pytest_tmp_9at_knowledge_fixes_rerun`, which passed 940/940.
 
-Focused production QA still reflects the old live backend because Phase 9AT has not been deployed. No production deploy was performed in this phase.
+Production deploy was performed for Phase 9AT only. No DB schema change, migration, seed, Secret Manager change, CORS change, real-site change, asset upload, or contact-flow execution was performed.
+
+## Production Verification Summary
+
+- Commit SHA for deployed code path: `060ac27`
+- Image tag: `v0.9-phase-9at-knowledge-coverage-fix`
+- Cloud Run revision: `alte-ai-crm-backend-00040-8qr`
+- Focused 9AT production QA: PASS, 7/7.
+- Full 9AS production QA: IMPROVED but FAILED, 33/53 passed.
+- Operator alignment QA: IMPROVED/UNCHANGED but FAILED, 6/7 passed.
+- Calendar coverage: 8/9 passed, improved from 0/9.
+- Admissions coverage: 5/6 passed, improved from 0/6.
+- Unsupported false positives: focused 9AT checks passed; full 9AS still reports 2 unsupported failures.
+- IT/EMIS handover: PASS in focused 9AT QA, `human_handover=true` persisted with no lead/customer/task.
+
+## Remaining Production Failures
+
+Full 9AS still reports 20 failures after deployment. The main remaining buckets are:
+
+- Some official academic fact expectations still fail due source group/routing mismatch or strict token checks.
+- Some clarification/operator-handover scenarios still rely on `/chat/message` prompts that behave differently from widget button flows.
+- Library and career now retrieve approved selected sources, so older fallback expectations need review.
+- International Medicine and a few policy-adjacent questions still need tighter relevance controls to avoid unrelated selected-policy snippets.
+- Unsupported tuition/library cases still need another relevance pass or expectation correction depending on approved-source availability.
 
 ## Safety
 
@@ -152,22 +207,16 @@ Focused production QA still reflects the old live backend because Phase 9AT has 
 
 ## Remaining Gaps
 
-- Production Cloud Run has not been redeployed with 9AT code.
-- Production KB weak-route retest is pending deploy approval for grants/library/IT/IRO/EDI/sustainability and policy-topic relevance.
-- Focused production 9AT QA still fails 5/7 checks on the current live backend because it has not received the 9AT backend changes.
-- Full Phase 9AS production rerun still reports the pre-9AT baseline of 11/53 passed because the live backend has not received the local fix.
-- Operator alignment production rerun still reports the pre-9AT baseline of 6/7 passed because the live backend has not received the local fix.
-- Some broad QA expectations may still require tuning after production rerun, especially contact-form-open prompts that are better validated by browser UI QA than `/chat/message`.
+- Production is deployed with 9AT code, but full 9AS remains failed at 33/53.
+- Focused weak-route checks pass, but broad full-coverage QA still shows 20 remaining failures.
+- Operator alignment still has one failed scenario: `library_operator_fallback`, likely because library now has approved selected sources and no longer follows the old empty-source fallback expectation.
+- Some broad QA expectations still require tuning, especially contact-form-open and wait/operator prompts that are better validated by browser UI actions than `/chat/message`.
+- Further KB relevance work is needed for remaining official academic facts, international medicine routing, unsupported tuition/library cases, and policy-adjacent source selection.
 
 ## Final Recommendation
 
-Phase 9AT code status: CODE_READY_PENDING_BACKEND_DEPLOY
+Phase 9AT production status: FAILED_PENDING_FURTHER_KB_FIXES
 
 Recommended next action:
 
-Request explicit approval to deploy the 9AT backend fix to Cloud Run. After deploy, rerun:
-
-- `python -m app.scripts.production_phase_9at_knowledge_fixes_qa`
-- `python -m app.scripts.production_phase_9as_full_knowledge_coverage_qa`
-- `python -m app.scripts.production_phase_9as_operator_alignment_qa`
-- Retest live weak-route cases: Dean's List/state grants, library resources, EMIS/platform support, IRO Policy, EDI Policy, sustainability strategy/report, AI/policy-topic false positives, and unsupported future/fake scholarship.
+Start a follow-up KB relevance phase focused on the 20 remaining full 9AS failures. Keep public launch blocked.
