@@ -128,7 +128,7 @@ def test_phase_9ai_programs_question_asks_program_level_clarification(client):
 
     assert result["clarification_needed"] is True
     assert "რომელ პროგრამაზე" in result["reply"]
-    assert {"ბაკალავრიატი", "მაგისტრატურა", "მედიცინა/MD", "საერთაშორისო მიღება"}.issubset(
+    assert {"ბაკალავრიატი", "მაგისტრატურა", "მედიცინა / MD", "საერთაშორისო მიღება"}.issubset(
         set(result["clarification_options"])
     )
 

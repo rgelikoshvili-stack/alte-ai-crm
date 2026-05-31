@@ -1,0 +1,90 @@
+{
+  "status": "PASSED",
+  "backend_url": "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  "origin": "https://nimble-croissant-2f66e8.netlify.app",
+  "checks": [
+    {
+      "name": "cs_http_200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "cs_source_backed",
+      "passed": true,
+      "detail": "answered_from_approved_source"
+    },
+    {
+      "name": "cs_calendar_source_group",
+      "passed": true,
+      "detail": "academic_calendar_2025_2026"
+    },
+    {
+      "name": "cs_includes_9_14_march",
+      "passed": true,
+      "detail": "კომპიუტერული მეცნიერების პროგრამებისთვის გაზაფხულის სემესტრის აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტს. გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს.\n\nწყარო: pag"
+    },
+    {
+      "name": "cs_includes_30_march",
+      "passed": true,
+      "detail": "კომპიუტერული მეცნიერების პროგრამებისთვის გაზაფხულის სემესტრის აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტს. გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს.\n\nწყარო: pag"
+    },
+    {
+      "name": "cs_no_generic_ai_fallback",
+      "passed": true,
+      "detail": "კომპიუტერული მეცნიერების პროგრამებისთვის გაზაფხულის სემესტრის აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტს. გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს.\n\nწყარო: pag"
+    },
+    {
+      "name": "cs_no_crm_records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cs_no_direct_contact_request",
+      "passed": true,
+      "detail": "კომპიუტერული მეცნიერების პროგრამებისთვის გაზაფხულის სემესტრის აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტს. გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს.\n\nწყარო: pag"
+    },
+    {
+      "name": "clarification_needed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "clarification_options",
+      "passed": true,
+      "detail": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენტის სტატუსი"
+    },
+    {
+      "name": "clarification_no_crm_records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "unsupported_no_source",
+      "passed": true,
+      "detail": "no_approved_source_found"
+    },
+    {
+      "name": "unsupported_no_hallucination",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "unsupported_operator_offer",
+      "passed": true,
+      "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    },
+    {
+      "name": "unsupported_no_crm_records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "unsupported_no_direct_contact_request",
+      "passed": true,
+      "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    }
+  ],
+  "sanitized": true,
+  "real_contact_data_sent": false,
+  "lead_task_customer_created_intentionally": false
+}

@@ -57,7 +57,7 @@ def test_phase_9ai_chatgpt_style_broad_questions_ask_clarification():
     assert generic.clarification_required is True
     assert {"მიღება", "პროგრამები", "სწავლის საფასური", "სტუდენტის სტატუსი"}.issubset(set(generic.clarification_options))
     assert programs.clarification_required is True
-    assert {"ბაკალავრიატი", "მაგისტრატურა", "მედიცინა/MD", "საერთაშორისო მიღება"}.issubset(set(programs.clarification_options))
+    assert {"ბაკალავრიატი", "მაგისტრატურა", "მედიცინა / MD", "საერთაშორისო მიღება"}.issubset(set(programs.clarification_options))
     assert finance.clarification_required is True
     assert finance.department_id == "finance"
     assert status.clarification_required is True

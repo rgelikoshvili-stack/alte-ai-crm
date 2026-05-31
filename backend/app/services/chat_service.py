@@ -1056,6 +1056,18 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     asks_credit = any(marker in haystack for marker in ["ects", "კრედიტ"])
 
+    if is_computer_science_spring_registration_question(haystack):
+        if is_ka:
+            return (
+                "კომპიუტერული მეცნიერების პროგრამებისთვის გაზაფხულის სემესტრის "
+                "აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტს. "
+                "გაზაფხულის სემესტრის დაწყება მითითებულია 30 მარტს."
+            )
+        return (
+            "For Computer Science programs, spring semester academic/administrative registration is 9-14 March. "
+            "The spring semester start is listed as 30 March."
+        )
+
     if is_master_admission_documents_question(haystack):
         if is_ka:
             return (
@@ -1151,6 +1163,13 @@ def is_master_admission_documents_question(haystack: str) -> bool:
         ]
     )
     return has_master and has_documents
+
+
+def is_computer_science_spring_registration_question(haystack: str) -> bool:
+    has_program = any(marker in haystack for marker in ["კომპიუტერული მეცნიერ", "computer science"])
+    has_spring = any(marker in haystack for marker in ["გაზაფხულის სემესტ", "spring semester"])
+    has_registration_or_start = any(marker in haystack for marker in ["რეგისტრ", "სემესტრის დაწყ", "registration", "semester start"])
+    return has_program and has_spring and has_registration_or_start
 
 
 async def retrieve_chat_knowledge(

@@ -960,7 +960,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
             {messages.map(m => (
               <Message key={m.id} msg={m} S={S} lang={lang}
                 onCopy={copy} onRegen={regen} onVote={vote}
-                onContactHandover={()=>openContactForm(m.text || latestUserText())}
+                onContactHandover={()=>openContactForm(latestUserText() || m.text)}
                 onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
             ))}
             {typing && (

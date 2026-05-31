@@ -72,6 +72,22 @@ EXPLICIT_INTERNATIONAL_MARKERS = [
     "ინდოეთი",
 ]
 
+CS_SPRING_CALENDAR_MARKERS_KA = [
+    "კომპიუტერული მეცნიერება",
+    "კომპიუტერული მეცნიერების",
+    "გაზაფხულის სემესტრი",
+    "გაზაფხულის სემესტრის",
+    "რეგისტრაცია",
+    "რეგისტრაციის",
+    "სემესტრის დაწყება",
+]
+CS_SPRING_CALENDAR_MARKERS_EN = [
+    "computer science",
+    "spring semester",
+    "registration",
+    "semester start",
+]
+
 
 @dataclass(frozen=True)
 class KnowledgeRouteDecision:
@@ -212,7 +228,7 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
         return (
             "programs",
             PROGRAMS_CLARIFICATION_KA if language == "ka" else PROGRAMS_CLARIFICATION_EN,
-            ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა/MD", "საერთაშორისო მიღება"]
+            ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა / MD", "საერთაშორისო მიღება"]
             if language == "ka"
             else ["Bachelor", "Master", "Medicine / MD", "International admissions"],
         )
@@ -268,6 +284,9 @@ def score_departments(lowered: str) -> dict[str, int]:
         scores["human_operator"] = scores.get("human_operator", 0) + 4
     if "finance" in lowered or "ფინანსურ" in lowered or "სწავლის საფასურ" in lowered:
         scores["finance"] = scores.get("finance", 0) + 5
+    if is_computer_science_spring_calendar_question(lowered):
+        scores["academic_calendar"] = scores.get("academic_calendar", 0) + 8
+        scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
     if has_explicit_international_context(lowered):
         scores["international_admissions"] = scores.get("international_admissions", 0) + 3
     return scores
@@ -301,6 +320,13 @@ def is_generic_short_question(lowered: str) -> bool:
 
 def has_explicit_international_context(lowered: str) -> bool:
     return any(marker in lowered for marker in EXPLICIT_INTERNATIONAL_MARKERS)
+
+
+def is_computer_science_spring_calendar_question(lowered: str) -> bool:
+    has_program = any(marker in lowered for marker in ["კომპიუტერული მეცნიერ", "computer science"])
+    has_spring = any(marker in lowered for marker in ["გაზაფხულის სემესტ", "spring semester"])
+    has_calendar_action = any(marker in lowered for marker in ["რეგისტრ", "სემესტრის დაწყ", "registration", "semester start"])
+    return has_program and has_spring and has_calendar_action
 
 
 def department_entry(department_id: str) -> dict:

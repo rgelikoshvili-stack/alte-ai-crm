@@ -39,7 +39,7 @@ CASES = [
     {
         "name": "programs_clarification",
         "question": "პროგრამები მაინტერესებს",
-        "expect": {"clarification": True, "contains": ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა/MD", "საერთაშორისო მიღება"]},
+        "expect": {"clarification": True, "contains": ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა / MD", "საერთაშორისო მიღება"]},
     },
     {
         "name": "finance_clarification",

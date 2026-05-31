@@ -19,7 +19,7 @@ const DEPTS = [
     kaShort:'საერთ.', enShort:'Intl.',
     kaTopics:['ვიზა','საცხოვრებელი','ენა'], enTopics:['Visa','Housing','Language'] },
   { id:'medicine', icon:'heart', color:'#c2410c',
-    ka:'მედიცინა · MD', en:'Medicine · MD',
+    ka:'მედიცინა / MD', en:'Medicine / MD',
     kaShort:'მედიცინა', enShort:'Medicine',
     kaTopics:['6-წლიანი MD','კლინიკები','აღიარება'], enTopics:['6-year MD','Clinicals','Recognition'] },
   { id:'library', icon:'book', color:'#5a6c6d',
