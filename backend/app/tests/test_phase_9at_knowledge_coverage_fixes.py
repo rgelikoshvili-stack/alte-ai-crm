@@ -8,11 +8,13 @@ from sqlalchemy import select
 from app.models import Conversation, Customer, KnowledgeSnippet, KnowledgeSource, Lead, Task
 from app.schemas.chat import AIAnalysisResult, ExtractedContact
 from app.services import chat_service
+from app.services.department_routing_service import resolve_department
 from app.services.knowledge_routing_service import classify_knowledge_route, source_group_config
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 PUBLIC_LAUNCH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9P_PUBLIC_LAUNCH_DECISION.md"
+QA_DATASET = PROJECT_ROOT / "backend" / "app" / "data" / "evaluation" / "phase_9as_full_knowledge_qa.json"
 
 
 def fetch_all(session_factory, query):
@@ -180,6 +182,13 @@ def conversation_by_id(session_factory, conversation_id: str) -> Conversation:
     return rows[0]
 
 
+def qa_question(question_id: str) -> str:
+    import json
+
+    items = json.loads(QA_DATASET.read_text(encoding="utf-8"))
+    return next(item["question"] for item in items if item["id"] == question_id)
+
+
 def test_phase_9at_source_group_configs_have_active_files():
     assert source_group_config("academic_calendar_2025_2026")["source_files"]
     assert source_group_config("admissions_rules")["source_files"]
@@ -197,6 +206,52 @@ def test_phase_9at_calendar_and_admissions_route_to_expected_source_groups():
 
     assert calendar.primary_source_group == "academic_calendar_2025_2026"
     assert admissions.primary_source_group == "admissions_rules"
+
+
+def test_phase_9at_followup_relevance_routes_repaired_9as_failures():
+    exam = classify_knowledge_route(qa_question("final_exam_admission_ka"))
+    retake = classify_knowledge_route(qa_question("retake_exam_ka"))
+    credit = classify_knowledge_route(qa_question("credit_recognition_ka"))
+    teaching_language = classify_knowledge_route(qa_question("academic_teaching_language_ka"))
+    english_program = classify_knowledge_route(qa_question("english_program_requirements_en"))
+    international_medicine = classify_knowledge_route(qa_question("routing_international_medicine_en"))
+    finance_handover = classify_knowledge_route(qa_question("operator_finance_handover_en"))
+
+    assert exam.primary_source_group == "exams_and_assessment"
+    assert retake.primary_source_group == "exams_and_assessment"
+    assert credit.primary_source_group == "student_status_and_mobility"
+    assert teaching_language.primary_source_group == "official_academic_rules"
+    assert english_program.primary_source_group == "international_admissions_sources"
+    assert international_medicine.primary_source_group == "international_admissions_sources"
+    assert finance_handover.primary_source_group == "finance_sources"
+
+
+def test_phase_9at_followup_department_alignment_for_finance_and_international_medicine():
+    finance = resolve_department(
+        message_text="Please connect me with the finance department.",
+        ai_intent="human_request",
+        ai_confidence=0.9,
+        source_domain="join.alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=[],
+        language="en",
+    )
+    international_medicine = resolve_department(
+        message_text="I am an international student and want to apply to Medicine",
+        ai_intent="international_admission",
+        ai_confidence=0.9,
+        source_domain="join.alte.edu.ge",
+        selected_department=None,
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=[],
+        language="en",
+    )
+
+    assert finance.department_key == "finance"
+    assert international_medicine.department_key == "medicine"
 
 
 def test_phase_9at_cs_spring_registration_source_backed_no_generic_fallback(client, session_factory, monkeypatch):
@@ -325,6 +380,28 @@ def test_phase_9at_unsupported_fake_scholarship_and_tuition_do_not_match_sources
     assert tuition["should_handover"] is True
     assert "70%" not in scholarship["reply"]
     assert "ლარი" not in tuition["reply"]
+    assert_no_crm_records(session_factory)
+
+
+def test_phase_9at_followup_unsupported_library_specific_rule_does_not_match_general_library_source(client, session_factory, monkeypatch):
+    seed_selected_source(
+        client,
+        source_key="selected_alte_45_doc_24_068_trphmmn9xg",
+        title="Library provision",
+        category="library",
+        content="The library provision describes library services, resources, books, and electronic databases.",
+        keywords="library provision library resources books electronic databases catalog",
+    )
+    patch_ai(monkeypatch, intent="general_info", language="en")
+    session = start_session(client, language="en")
+
+    payload = send_message(client, session, "Can I borrow rare manuscripts from Alte library for six months?", language="en")
+
+    assert payload["answer_source_status"] == "no_approved_source_found"
+    assert payload["department_key"] == "library"
+    assert payload["should_handover"] is True
+    assert "yes, for six months" not in payload["reply"].lower()
+    assert conversation_by_id(session_factory, session["conversation_id"]).human_handover is True
     assert_no_crm_records(session_factory)
 
 

@@ -248,6 +248,13 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
             if language == "ka"
             else ["Suspension", "Restoration", "Termination", "Mobility"],
         )
+    if is_admissions_question(lowered) and is_generic_short_question(lowered):
+        department = department_entry("admissions")
+        return (
+            "admissions",
+            GENERIC_CLARIFICATION_KA if language == "ka" else GENERIC_CLARIFICATION_EN,
+            list(department.get("clarification_options_ka" if language == "ka" else "clarification_options_en", [])),
+        )
     if lowered in BROAD_GENERIC_KA or lowered in BROAD_GENERIC_EN:
         question, options = generic_clarification(language)
         return ("admissions", question, options)
@@ -284,6 +291,18 @@ def score_departments(lowered: str) -> dict[str, int]:
         scores["human_operator"] = scores.get("human_operator", 0) + 4
     if "finance" in lowered or "ფინანსურ" in lowered or "სწავლის საფასურ" in lowered:
         scores["finance"] = scores.get("finance", 0) + 5
+    if is_exam_rule_question(lowered):
+        scores["study_process"] = scores.get("study_process", 0) + 10
+        scores["academic_calendar"] = max(0, scores.get("academic_calendar", 0) - 4)
+    if is_credit_recognition_question(lowered):
+        scores["study_process"] = scores.get("study_process", 0) + 10
+        scores["admissions"] = max(0, scores.get("admissions", 0) - 4)
+    if is_teaching_language_question(lowered):
+        scores["programs"] = scores.get("programs", 0) + 8
+        scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
+    if is_english_program_requirements_question(lowered):
+        scores["international_admissions"] = scores.get("international_admissions", 0) + 10
+        scores["programs"] = max(0, scores.get("programs", 0) - 2)
     if is_computer_science_spring_calendar_question(lowered):
         scores["academic_calendar"] = scores.get("academic_calendar", 0) + 8
         scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
@@ -309,6 +328,7 @@ def score_departments(lowered: str) -> dict[str, int]:
     if has_explicit_international_context(lowered):
         scores["international_admissions"] = scores.get("international_admissions", 0) + 8
         scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
+        scores["medicine_md"] = max(0, scores.get("medicine_md", 0) - 2)
     if any(marker in lowered for marker in ["medicine", "medical", "md", "მედიც", "სამედიცინო"]):
         scores["medicine_md"] = scores.get("medicine_md", 0) + 5
     return scores
@@ -351,7 +371,61 @@ def is_computer_science_spring_calendar_question(lowered: str) -> bool:
     return has_program and has_spring and has_calendar_action
 
 
+def is_exam_rule_question(lowered: str) -> bool:
+    has_exam = any(marker in lowered for marker in ["exam", "retake", "make-up", "make up", "assessment"])
+    has_rule = any(marker in lowered for marker in ["rule", "admission", "handled", "works", "how"])
+    georgian_exam = any(marker in lowered for marker in ["გამოცდ", "გადაბარ", "დასკვნით"])
+    georgian_rule = any(marker in lowered for marker in ["წეს", "დაშვ", "როგორ"])
+    asks_when = any(marker in lowered for marker in ["when", "date", "calendar", "როდის", "áƒ áƒáƒ“áƒ˜áƒ¡"])
+    return ((has_exam and has_rule) or (georgian_exam and georgian_rule)) and not asks_when
+
+
+def is_credit_recognition_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "credit recognition",
+            "recognition of credit",
+            "recognized credits",
+            "კრედიტების აღიარ",
+            "კრედიტის აღიარ",
+            "áƒ™áƒ áƒ”áƒ“áƒ˜áƒ¢áƒ”áƒ‘áƒ˜áƒ¡ áƒáƒ¦áƒ˜áƒáƒ ",
+            "áƒ™áƒ áƒ”áƒ“áƒ˜áƒ¢áƒ˜áƒ¡ áƒáƒ¦áƒ˜áƒáƒ ",
+        ]
+    )
+
+
+def is_teaching_language_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "teaching language",
+            "language of instruction",
+            "program language",
+            "სწავლების ენა",
+            "რა ენაზე",
+            "áƒ¡áƒ¬áƒáƒ•áƒšáƒ”áƒ‘áƒ˜áƒ¡ áƒ”áƒœáƒ",
+            "áƒ áƒ áƒ”áƒœáƒáƒ–áƒ”",
+        ]
+    )
+
+
+def is_english_program_requirements_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "english-language program",
+            "english language program",
+            "english program requirements",
+            "english-language admission",
+            "english language admission",
+        ]
+    )
+
+
 def is_calendar_question(lowered: str) -> bool:
+    if is_exam_rule_question(lowered):
+        return False
     return any(
         marker in lowered
         for marker in [
@@ -374,6 +448,8 @@ def is_calendar_question(lowered: str) -> bool:
 
 
 def is_admissions_question(lowered: str) -> bool:
+    if is_credit_recognition_question(lowered) or is_teaching_language_question(lowered):
+        return False
     return any(
         marker in lowered
         for marker in [
@@ -479,6 +555,16 @@ def first_source_group(department: dict) -> str | None:
 def choose_primary_source_group(department_id: str, lowered: str, source_groups: list[str]) -> str | None:
     if not source_groups:
         return None
+    if is_exam_rule_question(lowered):
+        return "exams_and_assessment" if "exams_and_assessment" in source_groups else source_groups[0]
+    if is_credit_recognition_question(lowered):
+        return "student_status_and_mobility" if "student_status_and_mobility" in source_groups else source_groups[0]
+    if is_teaching_language_question(lowered):
+        return "official_academic_rules" if "official_academic_rules" in source_groups else source_groups[0]
+    if is_english_program_requirements_question(lowered):
+        return "international_admissions_sources" if "international_admissions_sources" in source_groups else source_groups[0]
+    if department_id == "international_admissions" and any(marker in lowered for marker in ["medicine", "medical", "md", "english-language", "english language"]):
+        return "international_admissions_sources" if "international_admissions_sources" in source_groups else source_groups[0]
     if department_id == "academic_calendar" or any(token in lowered for token in ["კალენდ", "რეგისტრ", "სემესტ", "calendar", "semester"]):
         return "academic_calendar_2025_2026" if "academic_calendar_2025_2026" in source_groups else source_groups[0]
     if department_id == "study_process":

@@ -1214,10 +1214,14 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     source_group = route_decision.primary_source_group if route_decision else None
 
-    if source_group == "academic_calendar_2025_2026" or is_calendar_text(haystack):
+    if source_group == "academic_calendar_2025_2026" or (is_calendar_text(haystack) and not is_exam_rule_text(haystack)):
         return grounded_calendar_reply(haystack, is_ka)
     if source_group == "admissions_rules" or is_admissions_text(haystack):
         return grounded_admissions_reply(haystack, is_ka)
+    if any(marker in haystack for marker in ["teaching language", "language of instruction", "program language", "სწავლების ენა", "რა ენაზე"]):
+        return "A program's teaching language is defined in the approved educational program and official academic rules." if not is_ka else "სწავლების ენა განსაზღვრულია დამტკიცებულ საგანმანათლებლო პროგრამაში და ოფიციალურ აკადემიურ წესებში."
+    if any(marker in haystack for marker in ["english-language program", "english language program", "english program requirements", "english-language admission", "english language admission"]):
+        return "English-language program requirements must be checked in the approved international admissions source. The route is International Admissions, and exact English requirements should only be stated when the approved source lists them." if not is_ka else "ინგლისურენოვანი პროგრამის მოთხოვნები უნდა შემოწმდეს დამტკიცებულ საერთაშორისო მიღების წყაროში."
     if any(marker in haystack for marker in ["medicine", "md", "მედიცინ"]):
         return "Medicine / MD is a one-cycle program. The official academic rules list Medicine as at least 360 ECTS." if not is_ka else "მედიცინა / MD არის ერთსაფეხურიანი პროგრამა. ოფიციალურ აკადემიურ წესებში მედიცინა მითითებულია არანაკლებ 360 ECTS-ით."
     if any(marker in haystack for marker in ["dentistry", "სტომატოლოგ"]):
@@ -1271,6 +1275,15 @@ def is_calendar_text(haystack: str) -> bool:
             "არდადეგ",
         ]
     )
+
+
+def is_exam_rule_text(haystack: str) -> bool:
+    has_exam = any(marker in haystack for marker in ["exam", "retake", "make-up", "make up", "assessment"])
+    has_rule = any(marker in haystack for marker in ["rule", "admission", "handled", "works", "how"])
+    georgian_exam = any(marker in haystack for marker in ["გამოცდ", "გადაბარ", "დასკვნით"])
+    georgian_rule = any(marker in haystack for marker in ["წეს", "დაშვ", "როგორ"])
+    asks_when = any(marker in haystack for marker in ["when", "date", "calendar", "როდის"])
+    return ((has_exam and has_rule) or (georgian_exam and georgian_rule)) and not asks_when
 
 
 def grounded_calendar_reply(haystack: str, is_ka: bool) -> str:
@@ -1372,7 +1385,7 @@ def selected_document_retrieval_alias(haystack: str) -> str | None:
         return "information technology management policy infrastructure EMIS student portal platform support"
     if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
         return "IRO Policy international relations office international cooperation mobility exchange"
-    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi"]):
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion"]):
         return "EDI Policy equality diversity inclusion equal treatment"
     if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
         return "sustainability strategy sustainable development sustainability report"
@@ -1395,7 +1408,7 @@ def selected_document_retrieval_category(message: str) -> str | None:
         return "it_policy"
     if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
         return "iro_policy"
-    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi"]):
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion"]):
         return "edi_policy"
     if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
         return "sustainability"
@@ -1890,7 +1903,6 @@ def is_selected_official_document_text(text: str) -> bool:
         "sustainability report",
         "edi policy",
         "equality diversity inclusion",
-        "edi",
         "research component",
         "student rights",
         "self-government",

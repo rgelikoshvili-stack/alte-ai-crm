@@ -1,0 +1,1021 @@
+[
+  {
+    "id": "academic_bachelor_ects_ka",
+    "category": "official_academic_facts",
+    "question": "რამდენი ECTS კრედიტია საჭირო საბაკალავრო პროგრამის დასასრულებლად?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "programs",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "240"
+    ],
+    "expected_must_not_include": [
+      "180"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Bachelor completion must be 240 ECTS and informational only."
+  },
+  {
+    "id": "academic_master_ects_ka",
+    "category": "official_academic_facts",
+    "question": "რამდენი კრედიტია სამაგისტრო პროგრამა ალტე უნივერსიტეტში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "programs",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "120"
+    ],
+    "expected_must_not_include": [
+      "180",
+      "240"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Master completion must be 120 ECTS."
+  },
+  {
+    "id": "academic_medicine_ects_en",
+    "category": "official_academic_facts",
+    "question": "How many ECTS credits are required for the Medicine / MD one-cycle program if this is in the approved sources?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "medicine",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "ECTS"
+    ],
+    "expected_must_not_include": [
+      "guaranteed admission"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks Medicine/MD source-backed program volume if active."
+  },
+  {
+    "id": "academic_dentistry_ects_en",
+    "category": "official_academic_facts",
+    "question": "How many ECTS credits are required for Dentistry if the approved academic rules include it?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "medicine",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "ECTS"
+    ],
+    "expected_must_not_include": [
+      "guess",
+      "probably"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Dentistry is a one-cycle health program; Medicine / MD routing is acceptable for this approved academic-rules answer."
+  },
+  {
+    "id": "academic_teaching_language_ka",
+    "category": "official_academic_facts",
+    "question": "სასწავლო პროგრამებში სწავლების ენა სად არის განსაზღვრული?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "programs",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "ენა"
+    ],
+    "expected_must_not_include": [
+      "არაოფიციალურად"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Program teaching language should rely on official program/rules source."
+  },
+  {
+    "id": "status_suspension_ka",
+    "category": "official_academic_facts",
+    "question": "რამდენი წლით შეიძლება სტუდენტის სტატუსის შეჩერება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "5"
+    ],
+    "expected_must_not_include": [
+      "10"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Student status suspension max is 5 years."
+  },
+  {
+    "id": "status_restoration_ka",
+    "category": "official_academic_facts",
+    "question": "სტუდენტის სტატუსის აღდგენა როგორ ხდება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "სტატუს"
+    ],
+    "expected_must_not_include": [
+      "ავტომატურად ყოველთვის"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks status restoration official answer."
+  },
+  {
+    "id": "status_termination_ka",
+    "category": "official_academic_facts",
+    "question": "რა შემთხვევაში შეიძლება სტუდენტის სტატუსის შეწყვეტა?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "სტატუს"
+    ],
+    "expected_must_not_include": [
+      "პირადი ვარაუდით"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks status termination official answer."
+  },
+  {
+    "id": "mobility_ka",
+    "category": "official_academic_facts",
+    "question": "მობილობა როგორ რეგულირდება ალტე უნივერსიტეტში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "მობილ"
+    ],
+    "expected_must_not_include": [
+      "გარანტირებულია"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks mobility answer."
+  },
+  {
+    "id": "internal_mobility_ka",
+    "category": "official_academic_facts",
+    "question": "შიდა მობილობაზე რა წესებია?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "მობილ"
+    ],
+    "expected_must_not_include": [
+      "ნებისმიერ დროს"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks internal mobility official answer."
+  },
+  {
+    "id": "credit_recognition_ka",
+    "category": "official_academic_facts",
+    "question": "კრედიტების აღიარება როგორ ხდება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "student_status_and_mobility",
+    "expected_must_include": [
+      "კრედიტ"
+    ],
+    "expected_must_not_include": [
+      "ავტომატურად ყველა"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks credit recognition official answer."
+  },
+  {
+    "id": "gpa_en",
+    "category": "official_academic_facts",
+    "question": "How is GPA handled in the official study process rules?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "exams_and_assessment",
+    "expected_must_include": [
+      "GPA"
+    ],
+    "expected_must_not_include": [
+      "unofficial"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks GPA official answer."
+  },
+  {
+    "id": "fx_f_ka",
+    "category": "official_academic_facts",
+    "question": "FX და F შეფასებები რას ნიშნავს?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "exams_and_assessment",
+    "expected_must_include": [
+      "FX",
+      "F"
+    ],
+    "expected_must_not_include": [
+      "ერთნაირია"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks FX/F official assessment answer."
+  },
+  {
+    "id": "final_exam_admission_ka",
+    "category": "official_academic_facts",
+    "question": "დასკვნით გამოცდაზე დაშვების წესი როგორია?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "exams_and_assessment",
+    "expected_must_include": [
+      "გამოცდ"
+    ],
+    "expected_must_not_include": [
+      "ყოველთვის დაშვებულია"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks final exam admission official answer."
+  },
+  {
+    "id": "retake_exam_ka",
+    "category": "official_academic_facts",
+    "question": "დამატებით ან გადაბარების გამოცდაზე რა წესი მოქმედებს?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "study_process",
+    "expected_source_group": "exams_and_assessment",
+    "expected_must_include": [
+      "გამოცდ"
+    ],
+    "expected_must_not_include": [
+      "არასდროს"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks retake/make-up exam official answer."
+  },
+  {
+    "id": "calendar_bachelor_fall_registration_ka",
+    "category": "academic_calendar",
+    "question": "ბაკალავრიატის შემოდგომის სემესტრის რეგისტრაცია როდის არის 2025-2026 კალენდარში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "რეგისტრ"
+    ],
+    "expected_must_not_include": [
+      "2027"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks fall registration calendar retrieval."
+  },
+  {
+    "id": "calendar_bachelor_spring_registration_ka",
+    "category": "academic_calendar",
+    "question": "ბაკალავრიატის გაზაფხულის სემესტრის რეგისტრაცია როდის იწყება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "რეგისტრ"
+    ],
+    "expected_must_not_include": [
+      "2027"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks spring registration calendar retrieval."
+  },
+  {
+    "id": "calendar_cs_spring_registration_ka",
+    "category": "academic_calendar",
+    "question": "როდის იწყება კომპიუტერული მეცნიერების გაზაფხულის სემესტრის რეგისტრაცია?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "9",
+      "14"
+    ],
+    "expected_must_not_include": [
+      "180",
+      "fallback"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Known fixed 9AP calendar case."
+  },
+  {
+    "id": "calendar_cs_semester_start_ka",
+    "category": "academic_calendar",
+    "question": "კომპიუტერული მეცნიერების გაზაფხულის სემესტრი როდის იწყება?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "30"
+    ],
+    "expected_must_not_include": [
+      "9-14 მხოლოდ"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Expected semester start 30 March if available."
+  },
+  {
+    "id": "calendar_master_spring_start_en",
+    "category": "academic_calendar",
+    "question": "When does the Master's spring semester start in the 2025-2026 academic calendar?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "spring"
+    ],
+    "expected_must_not_include": [
+      "2031"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks Master spring semester date if loaded."
+  },
+  {
+    "id": "calendar_one_cycle_finals_ka",
+    "category": "academic_calendar",
+    "question": "ერთსაფეხურიანი პროგრამების დასკვნითი გამოცდები როდის არის?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "გამოცდ"
+    ],
+    "expected_must_not_include": [
+      "არ ვიცი მაგრამ"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks one-cycle final exam calendar."
+  },
+  {
+    "id": "calendar_midterms_ka",
+    "category": "academic_calendar",
+    "question": "შუალედური გამოცდები როდის არის აკადემიურ კალენდარში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "შუალედ"
+    ],
+    "expected_must_not_include": [
+      "2031"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks midterm calendar."
+  },
+  {
+    "id": "calendar_retakes_ka",
+    "category": "academic_calendar",
+    "question": "გადაბარებები როდის არის 2025-2026 აკადემიურ კალენდარში?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "გადაბარ",
+      "გამოცდ"
+    ],
+    "expected_must_not_include": [
+      "2031"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks retake calendar."
+  },
+  {
+    "id": "calendar_holidays_en",
+    "category": "academic_calendar",
+    "question": "Which holidays are listed in the 2025-2026 academic calendar?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "academic_calendar",
+    "expected_source_group": "academic_calendar_2025_2026",
+    "expected_must_include": [
+      "holiday"
+    ],
+    "expected_must_not_include": [
+      "2031"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks holiday calendar source."
+  },
+  {
+    "id": "admission_bachelor_documents_ka",
+    "category": "admissions",
+    "question": "ბაკალავრიატზე ჩასაბარებლად რა საბუთებია საჭირო?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "admissions",
+    "expected_source_group": "admissions_rules",
+    "expected_must_include": [
+      "საბუთ"
+    ],
+    "expected_must_not_include": [
+      "პასპორტი საკმარისია ყოველთვის"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks bachelor admission documents."
+  },
+  {
+    "id": "admission_master_documents_ka",
+    "category": "admissions",
+    "question": "მაგისტრატურაზე ჩასაბარებლად რა დოკუმენტებია საჭირო?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "admissions",
+    "expected_source_group": "admissions_rules",
+    "expected_must_include": [
+      "დოკუმენტ"
+    ],
+    "expected_must_not_include": [
+      "არაფერია საჭირო"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks master admission documents."
+  },
+  {
+    "id": "admission_without_exams_ka",
+    "category": "admissions",
+    "question": "ეროვნული გამოცდების გარეშე ჩარიცხვა შესაძლებელია?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "admissions",
+    "expected_source_group": "admissions_rules",
+    "expected_must_include": [
+      "გამოცდ"
+    ],
+    "expected_must_not_include": [
+      "ყველას შეუძლია"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks admission without national exams."
+  },
+  {
+    "id": "foreign_education_recognition_en",
+    "category": "admissions",
+    "question": "How is foreign education recognition handled for admission?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "international",
+    "expected_source_group": "admissions_rules",
+    "expected_must_include": [
+      "recognition"
+    ],
+    "expected_must_not_include": [
+      "visa guaranteed"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks foreign education recognition."
+  },
+  {
+    "id": "foreign_applicant_en",
+    "category": "admissions",
+    "question": "I am a foreign applicant. What official admission route applies to me?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "international",
+    "expected_source_group": "admissions_rules",
+    "expected_must_include": [
+      "foreign"
+    ],
+    "expected_must_not_include": [
+      "guaranteed visa"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Checks foreign applicant admission."
+  },
+  {
+    "id": "english_program_requirements_en",
+    "category": "admissions",
+    "question": "What are the English-language program requirements if they are in the approved source?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "international",
+    "expected_source_group": "international_admissions_sources",
+    "expected_must_include": [
+      "English"
+    ],
+    "expected_must_not_include": [
+      "I assume"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Expected to reveal whether international sources are active."
+  },
+  {
+    "id": "clarification_study_ka",
+    "category": "clarification",
+    "question": "სწავლა მაინტერესებს",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": null,
+    "expected_source_group": null,
+    "expected_must_include": [
+      "რომელ"
+    ],
+    "expected_must_not_include": [
+      "240 ECTS"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Broad study question should clarify."
+  },
+  {
+    "id": "clarification_programs_ka",
+    "category": "clarification",
+    "question": "პროგრამები მაინტერესებს",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": "programs",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "ბაკალავრი"
+    ],
+    "expected_must_not_include": [
+      "შემთხვევით"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Program broad question should clarify."
+  },
+  {
+    "id": "clarification_admissions_ka",
+    "category": "clarification",
+    "question": "მიღება მაინტერესებს",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": "admissions",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "ბაკალავრი"
+    ],
+    "expected_must_not_include": [
+      "ფინანსურ დეპარტამენტ"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Admission broad question should clarify."
+  },
+  {
+    "id": "clarification_payments_ka",
+    "category": "clarification",
+    "question": "გადახდებზე მაინტერესებს",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": "finance",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "გადახ"
+    ],
+    "expected_must_not_include": [
+      "International Admissions"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Payment broad question should clarify or route finance, not international."
+  },
+  {
+    "id": "clarification_status_ka",
+    "category": "clarification",
+    "question": "სტატუსზე მაქვს კითხვა",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": "study_process",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "სტატუს"
+    ],
+    "expected_must_not_include": [
+      "ფასი"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Status broad question should clarify."
+  },
+  {
+    "id": "clarification_help_ka",
+    "category": "clarification",
+    "question": "დახმარება მინდა",
+    "language": "ka",
+    "expected_status": "CLARIFICATION_REQUIRED",
+    "expected_department": null,
+    "expected_source_group": null,
+    "expected_must_include": [
+      "რომ"
+    ],
+    "expected_must_not_include": [
+      "კოსმოს"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Generic help should ask a clarification question and show topic options."
+  },
+  {
+    "id": "routing_finance_operator_ka",
+    "category": "routing",
+    "question": "მინდა ფინანსურ დეპარტამენტთან დაკავშირება",
+    "language": "ka",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "finance",
+    "expected_source_group": "finance_sources",
+    "expected_must_include": [
+      "ფინანს"
+    ],
+    "expected_must_not_include": [
+      "International Admissions"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Explicit finance handover."
+  },
+  {
+    "id": "routing_library_ka",
+    "category": "routing",
+    "question": "ბიბლიოთეკის რესურსები როგორ გამოვიყენო?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "library",
+    "expected_source_group": "library_sources",
+    "expected_must_include": [
+      "ბიბლიოთეკ"
+    ],
+    "expected_must_not_include": [
+      "International Admissions"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Library selected sources are approved and active, so a normal source-backed library answer is expected."
+  },
+  {
+    "id": "routing_it_emis_ka",
+    "category": "routing",
+    "question": "emis.alte.edu.ge-ში ვერ შევდივარ",
+    "language": "ka",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": "it_support",
+    "expected_source_group": "it_support_sources",
+    "expected_must_include": [
+      "IT"
+    ],
+    "expected_must_not_include": [
+      "International Admissions"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "IT source group is empty, so operator fallback is expected."
+  },
+  {
+    "id": "routing_medicine_md_ka",
+    "category": "routing",
+    "question": "MD პროგრამაზე ინფორმაცია მინდა",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "medicine",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "MD"
+    ],
+    "expected_must_not_include": [
+      "მედიცინა/MD"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Medicine route should use Medicine / MD label and approved sources if answerable."
+  },
+  {
+    "id": "routing_international_medicine_en",
+    "category": "routing",
+    "question": "I am an international student and want to apply to Medicine",
+    "language": "en",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "medicine",
+    "expected_source_group": "international_admissions_sources",
+    "expected_must_include": [
+      "international"
+    ],
+    "expected_must_not_include": [
+      "generic only"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "International Medicine context may remain in the public Medicine / MD lane while using international admissions sources."
+  },
+  {
+    "id": "routing_career_ka",
+    "category": "routing",
+    "question": "კარიერისა და სტაჟირების შესაძლებლობებზე ვის მივმართო?",
+    "language": "ka",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "career",
+    "expected_source_group": "career_sources",
+    "expected_must_include": [
+      "კარიერ"
+    ],
+    "expected_must_not_include": [
+      "გამოგონილ"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Career selected sources are approved and active, so a normal source-backed career answer is expected."
+  },
+  {
+    "id": "unsupported_space_campus_ka",
+    "category": "unsupported",
+    "question": "2031 წლის კოსმოსური კამპუსის სტიპენდია როგორ მივიღო?",
+    "language": "ka",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": null,
+    "expected_source_group": null,
+    "expected_must_include": [
+      "დამტკიცებულ"
+    ],
+    "expected_must_not_include": [
+      "70%",
+      "გარანტირებული",
+      "კოსმოსური კამპუსის სტიპენდია არის"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "No hallucination unsupported test."
+  },
+  {
+    "id": "unsupported_tuition_price_ka",
+    "category": "unsupported",
+    "question": "ზუსტად რა ღირს 2031 წლის AI კოსმოსური პროგრამის სწავლა?",
+    "language": "ka",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": "finance",
+    "expected_source_group": "finance_sources",
+    "expected_must_include": [
+      "დამტკიცებულ"
+    ],
+    "expected_must_not_include": [
+      "₾",
+      "ლარი",
+      "გარანტირებული ფასი"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Unsupported tuition price must not be invented."
+  },
+  {
+    "id": "unsupported_library_rules_en",
+    "category": "unsupported",
+    "question": "Can I borrow rare manuscripts from Alte library for six months?",
+    "language": "en",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": "library",
+    "expected_source_group": "library_sources",
+    "expected_must_include": [
+      "approved source"
+    ],
+    "expected_must_not_include": [
+      "yes, for six months"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Unsupported library rule must not be invented."
+  },
+  {
+    "id": "unsupported_it_details_en",
+    "category": "unsupported",
+    "question": "What is my EMIS password format and can you reset it now?",
+    "language": "en",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": "it_support",
+    "expected_source_group": "it_support_sources",
+    "expected_must_include": [
+      "IT"
+    ],
+    "expected_must_not_include": [
+      "password is",
+      "reset now"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Unsupported IT details must route to IT operator."
+  },
+  {
+    "id": "operator_explicit_ka",
+    "category": "operator_handover",
+    "question": "მინდა ოპერატორთან დაკავშირება",
+    "language": "ka",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "human_operator",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "ოპერატორ"
+    ],
+    "expected_must_not_include": [
+      "ტელეფონი მომწერეთ"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Explicit operator request."
+  },
+  {
+    "id": "operator_wait_ka",
+    "category": "operator_handover",
+    "question": "დაელოდე ოპერატორს",
+    "language": "ka",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "human_operator",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "ოპერატორ"
+    ],
+    "expected_must_not_include": [
+      "ელ.ფოსტა მომწერეთ"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "action": "wait_for_operator",
+    "notes": "Wait action is verified through handover endpoint."
+  },
+  {
+    "id": "operator_contact_form_open_ka",
+    "category": "operator_handover",
+    "question": "დატოვე კონტაქტი",
+    "language": "ka",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "human_operator",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "კონტაქტ"
+    ],
+    "expected_must_not_include": [
+      "გაგზავნილია"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Backend route only; contact form UI is verified by visual QA, not submitted."
+  },
+  {
+    "id": "operator_unsupported_handover_ka",
+    "category": "operator_handover",
+    "question": "არარსებული პროგრამის შესახებ დამაკავშირე შესაბამის ოპერატორს",
+    "language": "ka",
+    "expected_status": "UNSUPPORTED_OPERATOR",
+    "expected_department": "human_operator",
+    "expected_source_group": null,
+    "expected_must_include": [
+      "ოპერატორ"
+    ],
+    "expected_must_not_include": [
+      "არსებობს ასეთი პროგრამა"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Unsupported plus explicit operator handover."
+  },
+  {
+    "id": "operator_finance_handover_en",
+    "category": "operator_handover",
+    "question": "Please connect me with the finance department.",
+    "language": "en",
+    "expected_status": "ROUTE_ONLY",
+    "expected_department": "finance",
+    "expected_source_group": "finance_sources",
+    "expected_must_include": [
+      "Finance"
+    ],
+    "expected_must_not_include": [
+      "International Admissions"
+    ],
+    "should_handover_expected": true,
+    "human_handover_expected": true,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "Finance handover in English."
+  },
+  {
+    "id": "academic_bachelor_ects_en",
+    "category": "official_academic_facts",
+    "question": "How many ECTS credits are needed to complete a bachelor's program?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "programs",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "240"
+    ],
+    "expected_must_not_include": [
+      "180"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "English Bachelor ECTS regression."
+  },
+  {
+    "id": "academic_master_ects_en",
+    "category": "official_academic_facts",
+    "question": "How many ECTS credits are needed for a master's program at Alte University?",
+    "language": "en",
+    "expected_status": "ANSWERABLE",
+    "expected_department": "programs",
+    "expected_source_group": "official_academic_rules",
+    "expected_must_include": [
+      "120"
+    ],
+    "expected_must_not_include": [
+      "240"
+    ],
+    "should_handover_expected": false,
+    "human_handover_expected": false,
+    "should_create_lead_task_customer_expected": false,
+    "notes": "English Master ECTS regression."
+  }
+]

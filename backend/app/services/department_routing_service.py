@@ -85,6 +85,8 @@ KEYWORDS = {
         "კლინიკური",
     ],
     "finance": [
+        "finance",
+        "financial",
         "tuition",
         "study cost",
         "fee",
