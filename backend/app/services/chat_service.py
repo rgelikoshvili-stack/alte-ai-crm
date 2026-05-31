@@ -22,6 +22,12 @@ from app.services.audit_service import audit_event
 from app.services.ai_service import analyze_with_ai
 from app.services.customer_service import create_or_update_customer
 from app.services.department_routing_service import DepartmentRoutingResult, resolve_department
+from app.services.knowledge_routing_service import (
+    KnowledgeRouteDecision,
+    classify_knowledge_route,
+    format_clarification_reply,
+    source_group_config,
+)
 from app.services.lead_service import create_lead
 from app.services.lead_service import update_lead
 from app.services.qualification_service import apply_qualification_to_lead_create, build_qualification
@@ -165,7 +171,15 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         metadata_json={"conversation_id": conversation.id},
     )
 
-    initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message)
+    route_decision = classify_knowledge_route(
+        payload.message,
+        selected_department=payload.selected_department,
+        source_domain=payload.source_domain,
+    )
+    if route_decision.clarification_required:
+        return await handle_clarification_response(db, conversation, user_message, route_decision)
+
+    initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message, route_decision)
     history = await conversation_history(db, conversation.id)
     analysis, ai_meta = analyze_with_ai(
         payload.message,
@@ -196,7 +210,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     if unsupported_official_question:
         knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     else:
-        knowledge = await retrieve_chat_knowledge(db, payload.message, analysis)
+        knowledge = await retrieve_chat_knowledge(db, payload.message, analysis, route_decision)
     if knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
         official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
@@ -241,6 +255,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "risk_flags": analysis.risk_flags,
             "route_department": routing.department,
             "department_key": routing.department_key,
+            "source_group": route_decision.primary_source_group,
         },
     )
     await db.commit()
@@ -283,6 +298,9 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             "department_key": routing.department_key,
             "routing_reason": routing.reason,
             "handover_reason": routing.confidence_reason if analysis.should_handover else None,
+            "source_group": route_decision.primary_source_group,
+            "source_groups": route_decision.source_groups,
+            "clarification_needed": False,
         },
     )
     db.add(ai_reply)
@@ -316,6 +334,84 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         route_department=routing.department,
         department_key=routing.department_key,
         routing_reason=routing.reason,
+        source_group=route_decision.primary_source_group,
+        clarification_needed=False,
+        clarification_options=[],
+    )
+
+
+async def handle_clarification_response(
+    db: AsyncSession,
+    conversation: Conversation,
+    user_message: Message,
+    decision: KnowledgeRouteDecision,
+) -> ChatMessageResponse:
+    reply = format_clarification_reply(decision)
+    analysis = AIAnalysisResult(
+        reply=reply,
+        language=decision.language,  # type: ignore[arg-type]
+        intent="clarification",
+        confidence=decision.confidence,
+        should_create_lead=False,
+        should_handover=False,
+        department=decision.department_label,
+        risk_flags=["clarification_required"],
+    )
+    await persist_ai_interaction(
+        db,
+        conversation_id=conversation.id,
+        message_id=user_message.id,
+        analysis=analysis,
+        ai_meta={"provider": "deterministic_routing", "model": "phase_9ai_clarification", "raw_response": None},
+    )
+    ai_reply = Message(
+        conversation_id=conversation.id,
+        sender_type="ai",
+        text=reply,
+        metadata_json={
+            "intent": analysis.intent,
+            "confidence": analysis.confidence,
+            "risk_flags": analysis.risk_flags,
+            "answer_source_status": "clarification_needed",
+            "used_sources": [],
+            "route_department": decision.department_label,
+            "department_key": decision.department_id,
+            "routing_reason": decision.reason,
+            "source_group": decision.primary_source_group,
+            "source_groups": decision.source_groups,
+            "clarification_needed": True,
+            "clarification_options": decision.clarification_options,
+        },
+    )
+    db.add(ai_reply)
+    await db.flush()
+    await audit_event(
+        db,
+        action="ai_clarification_saved",
+        entity_type="message",
+        entity_id=ai_reply.id,
+        metadata_json={
+            "conversation_id": conversation.id,
+            "department_key": decision.department_id,
+            "source_group": decision.primary_source_group,
+        },
+    )
+    await db.commit()
+    return ChatMessageResponse(
+        conversation_id=conversation.id,
+        reply=reply,
+        intent=analysis.intent,
+        confidence=analysis.confidence,
+        should_create_lead=False,
+        should_handover=False,
+        answer_source_status="clarification_needed",
+        used_sources=[],
+        route_department=decision.department_label,
+        department_key=decision.department_id,
+        routing_reason=decision.reason,
+        source_group=decision.primary_source_group,
+        clarification_needed=True,
+        clarification_options=decision.clarification_options,
     )
 
 
@@ -1057,7 +1153,12 @@ def is_master_admission_documents_question(haystack: str) -> bool:
     return has_master and has_documents
 
 
-async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAnalysisResult) -> dict:
+async def retrieve_chat_knowledge(
+    db: AsyncSession,
+    message: str,
+    analysis: AIAnalysisResult,
+    route_decision: KnowledgeRouteDecision | None = None,
+) -> dict:
     academic_rules_question = is_official_academic_rules_text(message) or is_official_academic_rules_question(analysis)
     selected_official_document_question = is_selected_official_document_text(message)
     if not academic_rules_question and not selected_official_document_question and not should_use_knowledge(analysis):
@@ -1065,7 +1166,23 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
     category = None if academic_rules_question else category_for_analysis(analysis)
     language = analysis.language if analysis.language in {"ka", "en"} else None
     retrieval_query = normalize_chat_retrieval_query(message)
-    if academic_rules_question:
+    scoped_source_domain = scoped_source_domain_for_decision(route_decision)
+    scoped_exact_allowed = scoped_exact_answer_allowed(route_decision)
+    if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
+        return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
+    if scoped_source_domain and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            language=language,
+            category=None if scoped_source_domain == "official_academic_rules" else category,
+            source_domain=scoped_source_domain,
+            program_name=analysis.program,
+            approved_only=True,
+        )
+    elif scoped_source_domain and not scoped_exact_allowed:
+        results = []
+    elif academic_rules_question:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1077,7 +1194,7 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
         )
     else:
         results = []
-    if not results and selected_official_document_question:
+    if not results and selected_official_document_question and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1087,7 +1204,7 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
             program_name=analysis.program,
             approved_only=True,
         )
-    if not results and (academic_rules_question or selected_official_document_question):
+    if not results and (academic_rules_question or selected_official_document_question or scoped_source_domain):
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     if not results:
         results = await search_knowledge_snippets(
@@ -1118,11 +1235,30 @@ async def retrieve_chat_knowledge(db: AsyncSession, message: str, analysis: AIAn
     }
 
 
-async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> list[dict]:
+async def retrieve_initial_knowledge_context(
+    db: AsyncSession,
+    message: str,
+    route_decision: KnowledgeRouteDecision | None = None,
+) -> list[dict]:
     academic_rules_question = is_official_academic_rules_text(message)
     selected_official_document_question = is_selected_official_document_text(message)
     retrieval_query = normalize_chat_retrieval_query(message)
-    if academic_rules_question:
+    scoped_source_domain = scoped_source_domain_for_decision(route_decision)
+    scoped_exact_allowed = scoped_exact_answer_allowed(route_decision)
+    if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
+        return []
+    if scoped_source_domain and scoped_exact_allowed:
+        results = await search_knowledge_snippets(
+            db,
+            query=retrieval_query,
+            source_domain=scoped_source_domain,
+            approved_only=True,
+            include_stale=False,
+            limit=3,
+        )
+    elif scoped_source_domain and not scoped_exact_allowed:
+        results = []
+    elif academic_rules_question:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1133,7 +1269,7 @@ async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> 
         )
     else:
         results = []
-    if not results and selected_official_document_question:
+    if not results and selected_official_document_question and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,
             query=retrieval_query,
@@ -1142,7 +1278,7 @@ async def retrieve_initial_knowledge_context(db: AsyncSession, message: str) -> 
             include_stale=False,
             limit=3,
         )
-    if not results and (academic_rules_question or selected_official_document_question):
+    if not results and (academic_rules_question or selected_official_document_question or scoped_source_domain):
         return []
     if not results:
         results = await search_knowledge_snippets(
@@ -1236,6 +1372,21 @@ def category_for_analysis(analysis: AIAnalysisResult) -> str | None:
     if analysis.program:
         return "programs"
     return None
+
+
+def scoped_source_domain_for_decision(route_decision: KnowledgeRouteDecision | None) -> str | None:
+    config = source_group_config(route_decision.primary_source_group if route_decision else None)
+    if not config:
+        return None
+    value = config.get("source_domain")
+    return value if isinstance(value, str) and value else None
+
+
+def scoped_exact_answer_allowed(route_decision: KnowledgeRouteDecision | None) -> bool:
+    config = source_group_config(route_decision.primary_source_group if route_decision else None)
+    if not config:
+        return True
+    return bool(config.get("exact_answer_allowed", True))
 
 
 def is_official_academic_rules_question(analysis: AIAnalysisResult) -> bool:

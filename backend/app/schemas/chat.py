@@ -130,3 +130,6 @@ class ChatMessageResponse(BaseModel):
     route_department: str | None = None
     department_key: str | None = None
     routing_reason: str | None = None
+    source_group: str | None = None
+    clarification_needed: bool = False
+    clarification_options: list[str] = Field(default_factory=list)

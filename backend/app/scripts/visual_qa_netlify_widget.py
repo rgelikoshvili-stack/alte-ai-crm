@@ -107,7 +107,8 @@ def _run_georgian_encoding_check(page: Any) -> dict[str, Any]:
               const send = doc && doc.querySelector('button.send');
               if (!textarea || !send) throw new Error('composer_not_found');
               textarea.focus();
-              textarea.value = question;
+              const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+              setter.call(textarea, question);
               textarea.dispatchEvent(new Event('input', { bubbles: true }));
               send.click();
             }
@@ -145,10 +146,24 @@ def _run_georgian_encoding_check(page: Any) -> dict[str, Any]:
             "visibleTextExcerpt": text[:500],
         }
     except Exception as exc:  # pragma: no cover - browser/runtime dependent
+        text = ""
+        try:
+            text = page.evaluate(
+                """
+                () => {
+                  const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+                  const doc = iframe && iframe.contentDocument;
+                  return doc && doc.body ? doc.body.innerText || '' : '';
+                }
+                """
+            )
+        except Exception:
+            text = ""
         return {
             "ran": True,
             "passed": False,
             "error": str(exc)[:240],
+            "visibleTextExcerpt": text[-800:],
         }
 
 
@@ -219,10 +234,97 @@ def _run_phase_9ah_contact_wait_ui_check(page: Any) -> dict[str, Any]:
             "messageTextareaVisible": "თქვენი კითხვა / შეტყობინება" in text,
         }
     except Exception as exc:  # pragma: no cover - browser/runtime dependent
+        text = ""
+        try:
+            text = page.evaluate(
+                """
+                () => {
+                  const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+                  const doc = iframe && iframe.contentDocument;
+                  return doc && doc.body ? doc.body.innerText || '' : '';
+                }
+                """
+            )
+        except Exception:
+            text = ""
         return {
             "ran": True,
             "passed": False,
             "error": str(exc)[:240],
+            "visibleTextExcerpt": text[-800:],
+        }
+
+
+def _run_phase_9ai_clarification_ui_check(page: Any) -> dict[str, Any]:
+    try:
+        page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const close = doc && doc.querySelector('.cw-modal .close');
+              if (close) close.click();
+              const textarea = doc && doc.querySelector('textarea');
+              const send = doc && doc.querySelector('button.send');
+              if (!textarea || !send) throw new Error('composer_not_found');
+              textarea.focus();
+              const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+              setter.call(textarea, 'სწავლა მაინტერესებს');
+              textarea.dispatchEvent(new Event('input', { bubbles: true }));
+              send.click();
+            }
+            """
+        )
+        page.wait_for_function(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              const text = doc && doc.body ? doc.body.innerText || '' : '';
+              return text.includes('ზუსტად რომ გიპასუხოთ')
+                && text.includes('მიღება')
+                && text.includes('პროგრამები')
+                && text.includes('სწავლის საფასური')
+                && text.includes('სტუდენტის სტატუსი');
+            }
+            """,
+            timeout=45_000,
+        )
+        text = page.evaluate(
+            """
+            () => {
+              const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+              const doc = iframe && iframe.contentDocument;
+              return doc && doc.body ? doc.body.innerText || '' : '';
+            }
+            """
+        )
+        return {
+            "ran": True,
+            "passed": MOJIBAKE_SENTINEL not in text,
+            "hasMojibake": MOJIBAKE_SENTINEL in text,
+            "clarificationVisible": "ზუსტად რომ გიპასუხოთ" in text,
+            "optionsVisible": all(option in text for option in ["მიღება", "პროგრამები", "სწავლის საფასური", "სტუდენტის სტატუსი"]),
+        }
+    except Exception as exc:  # pragma: no cover - browser/runtime dependent
+        text = ""
+        try:
+            text = page.evaluate(
+                """
+                () => {
+                  const iframe = document.querySelector('iframe[title="Alte AI Chatbot"]');
+                  const doc = iframe && iframe.contentDocument;
+                  return doc && doc.body ? doc.body.innerText || '' : '';
+                }
+                """
+            )
+        except Exception:
+            text = ""
+        return {
+            "ran": True,
+            "passed": False,
+            "error": str(exc)[:240],
+            "visibleTextExcerpt": text[-800:],
         }
 
 
@@ -292,6 +394,9 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                 screenshot = VISUAL_QA_DIR / f"{artifact_prefix}_{_safe_name(label)}_phase_9ab.png"
                 page.screenshot(path=str(screenshot), full_page=True)
                 metrics = _evaluate_page(page)
+                phase_9ai_ui_check = None
+                if label == "desktop_1440x900":
+                    phase_9ai_ui_check = _run_phase_9ai_clarification_ui_check(page)
                 encoding_check = None
                 if label in {"desktop_1440x900", "mobile_430x932"}:
                     encoding_check = _run_georgian_encoding_check(page)
@@ -303,6 +408,8 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                     passed = passed and encoding_check.get("passed") is True
                 if phase_9ah_ui_check is not None:
                     passed = passed and phase_9ah_ui_check.get("passed") is True
+                if phase_9ai_ui_check is not None:
+                    passed = passed and phase_9ai_ui_check.get("passed") is True
                 result["checks"].append(
                     {
                         "label": label,
@@ -312,6 +419,7 @@ def run_visual_qa(url: str = DEFAULT_URL) -> dict[str, Any]:
                         "metrics": metrics,
                         "georgianEncodingCheck": encoding_check,
                         "phase9ahContactWaitUiCheck": phase_9ah_ui_check,
+                        "phase9aiClarificationUiCheck": phase_9ai_ui_check,
                     }
                 )
                 page.close()
