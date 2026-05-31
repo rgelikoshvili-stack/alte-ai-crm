@@ -271,7 +271,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     elif analysis.intent == "international_admission":
         if has_contact(analysis) and (analysis.should_create_lead or conversation.lead_id):
             created_lead_id, created_task_id = await create_international_flow(db, conversation, analysis)
-    elif analysis.intent == "human_request":
+    elif analysis.intent == "human_request" and has_explicit_handover_request(payload.message, analysis.intent):
         conversation.human_handover = True
         if has_contact(analysis):
             created_task_id = await create_handover_task(db, conversation, analysis)
@@ -281,6 +281,9 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     elif analysis.intent == "student_service":
         if analysis.should_handover and has_contact(analysis):
             created_task_id = await create_department_task(db, conversation, analysis, "Student Services")
+
+    if should_persist_human_handover(analysis, knowledge, payload):
+        conversation.human_handover = True
 
     ai_reply = Message(
         conversation_id=conversation.id,
@@ -327,7 +330,11 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         missing_fields=analysis.missing_fields,
         lead_score=analysis.qualification.lead_score,
         qualification_status=analysis.qualification.qualification_status,
-        handover_reason=analysis.qualification.handover_reason or (routing.confidence_reason if analysis.should_handover else None),
+        handover_reason=(
+            analysis.qualification.handover_reason or routing.confidence_reason
+            if analysis.should_handover
+            else None
+        ),
         recommended_next_action=analysis.qualification.recommended_next_action,
         answer_source_status=knowledge["answer_source_status"],
         used_sources=knowledge["used_sources"],
@@ -939,6 +946,8 @@ def apply_department_routing(
     payload: ChatMessageRequest,
     knowledge: dict,
 ) -> DepartmentRoutingResult:
+    source_backed = knowledge.get("answer_source_status") == "answered_from_approved_source"
+    explicit_handover = has_explicit_handover_request(payload.message, analysis.intent)
     routing = resolve_department(
         message_text=payload.message,
         ai_intent=analysis.intent,
@@ -952,7 +961,10 @@ def apply_department_routing(
         ai_department=analysis.department,
     )
     analysis.department = routing.department
-    if routing.handover_required:
+    if source_backed and not explicit_handover:
+        analysis.should_handover = False
+        analysis.should_create_lead = False if not has_contact(analysis) else analysis.should_create_lead
+    elif routing.handover_required:
         analysis.should_handover = True
         if not has_contact(analysis):
             analysis.should_create_lead = False
@@ -977,6 +989,57 @@ def ensure_handover_routing_reply(analysis: AIAnalysisResult, routing: Departmen
 def reply_mentions_department(reply: str, routing: DepartmentRoutingResult) -> bool:
     lowered = reply.lower()
     return routing.department.lower() in lowered or routing.department_key.replace("_", " ") in lowered
+
+
+def has_explicit_handover_request(message: str | None, intent: str | None = None) -> bool:
+    haystack = (message or "").lower()
+    if (intent or "").lower() == "human_request" and any(
+        marker in haystack
+        for marker in [
+            "operator",
+            "human",
+            "consultant",
+            "advisor",
+            "contact",
+            "connect",
+            "handover",
+            "დაკავშირ",
+            "ოპერატორ",
+            "ადამიან",
+            "კონსულტანტ",
+            "კონტაქტ",
+            "დამაკავშირ",
+        ]
+    ):
+        return True
+    return any(
+        marker in haystack
+        for marker in [
+            "operator",
+            "human",
+            "consultant",
+            "advisor",
+            "contact me",
+            "connect me",
+            "talk to",
+            "speak to",
+            "დამაკავშირ",
+            "დაკავშირება",
+            "დაკავშირ",
+            "ოპერატორ",
+            "ადამიან",
+            "კონსულტანტ",
+            "კონტაქტ",
+        ]
+    )
+
+
+def should_persist_human_handover(analysis: AIAnalysisResult, knowledge: dict, payload: ChatMessageRequest) -> bool:
+    if not analysis.should_handover:
+        return False
+    if knowledge.get("answer_source_status") == "no_approved_source_found":
+        return True
+    return has_explicit_handover_request(payload.message, analysis.intent)
 
 
 def is_info_only_no_contact_question(analysis: AIAnalysisResult) -> bool:

@@ -486,6 +486,8 @@ def keyword_department(text: str) -> str | None:
     explicit_key = explicit_georgian_route_alias(text)
     if explicit_key:
         return explicit_key
+    if is_degree_credit_completion_question(text):
+        return "programs"
     matches: dict[str, int] = {}
     for key, keywords in KEYWORDS.items():
         score = sum(1 for keyword in keywords if keyword.lower() in text)
@@ -513,6 +515,29 @@ def explicit_georgian_route_alias(text: str) -> str | None:
         if any(alias in lowered for alias in EXPLICIT_GEORGIAN_ROUTE_ALIASES[key]):
             return key
     return None
+
+
+def is_degree_credit_completion_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    asks_credits = any(term in lowered for term in ["ects", "credit", "credits", "კრედიტ"])
+    asks_degree_level = any(
+        term in lowered
+        for term in [
+            "bachelor",
+            "master",
+            "program",
+            "programs",
+            "completion",
+            "complete",
+            "საბაკალავრო",
+            "ბაკალავრ",
+            "სამაგისტრო",
+            "მაგისტრ",
+            "პროგრამ",
+            "დასრულ",
+        ]
+    )
+    return asks_credits and asks_degree_level
 
 
 def is_ambiguous_message(message_text: str | None, language: str | None = None) -> bool:
