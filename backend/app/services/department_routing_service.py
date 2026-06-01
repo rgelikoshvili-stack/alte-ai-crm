@@ -496,6 +496,8 @@ def keyword_department(text: str) -> str | None:
         return "library"
     if is_iro_policy_question(text):
         return "international"
+    if is_english_program_requirements_question(text):
+        return "international"
     if is_edi_or_sustainability_policy_question(text):
         return "student_services"
     if is_career_question(text):
@@ -608,6 +610,35 @@ def is_admissions_document_question(text: str) -> bool:
             "recognition",
         ]
     )
+
+
+def is_english_program_requirements_question(text: str) -> bool:
+    lowered = (text or "").lower()
+    english_program = any(
+        term in lowered
+        for term in [
+            "english-language program",
+            "english language program",
+            "english-taught program",
+            "english taught program",
+            "english program",
+        ]
+    )
+    requirements = any(
+        term in lowered
+        for term in [
+            "requirement",
+            "requirements",
+            "required",
+            "proof",
+            "proficiency",
+            "ielts",
+            "toefl",
+            "admission",
+            "applicant",
+        ]
+    )
+    return english_program and requirements
 
 
 def is_career_question(text: str) -> bool:

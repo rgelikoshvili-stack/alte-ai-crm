@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from app.services.department_routing_service import resolve_department
 from app.services.claude_intent_router_service import fallback_intent_route, forced_source_group, validate_router_payload
 
 
@@ -75,6 +76,23 @@ def test_english_program_requirements_routes_to_international_not_programs():
     assert route.source_groups_to_search[0] == "international_admissions_sources"
     assert route.department == "international_admissions"
     assert route.department != "programs"
+
+
+def test_english_program_requirements_department_resolver_routes_to_international():
+    routing = resolve_department(
+        message_text="What are the English-language program requirements if they are in the approved source?",
+        ai_intent="information_request",
+        ai_confidence=0.9,
+        source_domain="join.alte.edu.ge",
+        selected_department="international",
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["approved international admissions source"],
+        language="en",
+        ai_department="International Admissions",
+    )
+    assert routing.department_key == "international"
+    assert routing.department == "International Admissions"
 
 
 def test_english_program_requirements_variants_route_to_international():

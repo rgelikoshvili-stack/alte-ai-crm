@@ -24,7 +24,7 @@ Triage table: `docs/evaluation/PHASE_9AX_FINAL_TWO_FAILURES_TRIAGE.md`
 ## Root Causes
 
 - `admission_without_exams_ka`: the Georgian word for exams in `ეროვნული გამოცდების გარეშე` was caught by exam-rule routing before the phrase was recognized as admissions without national exams.
-- `english_program_requirements_en`: English-language requirement prompts were treated as generic Programs unless they also included international/applicant terms.
+- `english_program_requirements_en`: English-language requirement prompts were treated as generic Programs unless they also included international/applicant terms. The first 9AX production deploy fixed source selection but still left final department routing as Programs, so the final department resolver also needed the same targeted rule.
 
 ## Fixes Made
 
@@ -45,6 +45,7 @@ Triage table: `docs/evaluation/PHASE_9AX_FINAL_TWO_FAILURES_TRIAGE.md`
   - IELTS / TOEFL
   - international/foreign applicant English requirements
 - Routed these prompts to `international_admissions_sources` / International Admissions.
+- Added the same targeted English-language requirements rule to the final department resolver so the production response department is International Admissions, not Programs.
 - Preserved exam-rule routing to `exams_and_assessment`.
 - Preserved exam date/schedule routing to `academic_calendar_2025_2026`.
 - Preserved generic Programs routing/clarification for generic program questions.

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from app.services.department_routing_service import resolve_department
 from app.services.claude_intent_router_service import fallback_intent_route, forced_source_group, validate_router_payload
 
 
@@ -65,6 +66,19 @@ def main() -> int:
     )
     results.append(check("english_program_requirements_international", english_route.source_groups_to_search[:1] == ["international_admissions_sources"], str(english_route.source_groups_to_search)))
     results.append(check("english_program_department_international", english_route.department == "international_admissions", english_route.department))
+    english_routing = resolve_department(
+        message_text="What are the English-language program requirements if they are in the approved source?",
+        ai_intent="information_request",
+        ai_confidence=0.9,
+        source_domain="join.alte.edu.ge",
+        selected_department="international",
+        selected_topic=None,
+        risk_flags=[],
+        used_sources=["approved international admissions source"],
+        language="en",
+        ai_department="International Admissions",
+    )
+    results.append(check("english_program_department_resolver_international", english_routing.department_key == "international", english_routing.department_key))
 
     for name, question in [
         ("english_proficiency_international_applicants", "What English proficiency proof is required for international applicants?"),
