@@ -716,6 +716,11 @@ def has_unsupported_marker(lowered: str) -> bool:
 
 
 def forced_source_group(lowered: str) -> str | None:
+    lowered = " ".join((lowered or "").lower().split())
+    if is_admission_without_exams_question(lowered):
+        return "admissions_rules"
+    if is_english_program_requirements_question(lowered):
+        return "international_admissions_sources"
     if any(marker in lowered for marker in ["fx", "retake", "make-up exam", "gpa", "grading rule"]) and any(
         marker in lowered for marker in ["exam", "assessment", "grade", "student"]
     ):
@@ -739,6 +744,57 @@ def forced_source_group(lowered: str) -> str | None:
     if any(marker in lowered for marker in ["career", "internship", "employment", "job"]):
         return "career_sources"
     return None
+
+
+def is_admission_without_exams_question(lowered: str) -> bool:
+    without_markers = [
+        "without national exams",
+        "without exams",
+        "admission without exams",
+        "apply without exams",
+        "exam-free admission",
+        "გამოცდების გარეშე",
+        "ეროვნული გამოცდების გარეშე",
+    ]
+    admission_markers = [
+        "admission",
+        "apply",
+        "enroll",
+        "enrollment",
+        "ჩაბარ",
+        "მიღებ",
+        "ჩარიცხ",
+        "ჩავირიცხ",
+    ]
+    return any(marker in lowered for marker in without_markers) and any(marker in lowered for marker in admission_markers)
+
+
+def is_english_program_requirements_question(lowered: str) -> bool:
+    english_program_markers = [
+        "english-language program",
+        "english language program",
+        "english-taught program",
+        "english taught program",
+        "english program",
+    ]
+    requirement_markers = [
+        "requirement",
+        "requirements",
+        "required",
+        "proof",
+        "proficiency",
+        "ielts",
+        "toefl",
+        "admission",
+        "applicant",
+        "international",
+        "foreign",
+    ]
+    if any(marker in lowered for marker in english_program_markers) and any(marker in lowered for marker in requirement_markers):
+        return True
+    english_proficiency = any(marker in lowered for marker in ["english proficiency", "ielts", "toefl"])
+    international_context = any(marker in lowered for marker in ["international applicant", "international applicants", "foreign applicant", "foreign applicants", "english-taught", "english taught"])
+    return english_proficiency and international_context
 
 
 def department_for_source_group(source_group: str) -> str:
