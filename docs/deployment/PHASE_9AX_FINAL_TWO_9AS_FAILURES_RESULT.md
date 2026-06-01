@@ -2,15 +2,15 @@
 
 Date: 2026-06-01
 
-PHASE_9AX_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY
+PHASE_9AX_STATUS=DEPLOYED_PRODUCTION_QA_PASSED
 
-Decision state: `BACKEND_CODE_FINAL_9AS_FAILURES_FIXED_PENDING_DEPLOY`
+Decision state: `BACKEND_DEPLOYED_FULL_KNOWLEDGE_QA_PASSED_PENDING_APPROVALS`
 
 Public launch: NO-GO
 
-Deploy status: `NOT_DEPLOYED_PENDING_APPROVAL`
+Deploy status: `DEPLOYED`
 
-Production status: `PENDING_BACKEND_DEPLOY`
+Production status: `VERIFIED`
 
 ## Summary
 
@@ -20,6 +20,15 @@ Phase 9AX fixed the two remaining full 9AS production failures from Phase 9AW:
 - `english_program_requirements_en`
 
 Triage table: `docs/evaluation/PHASE_9AX_FINAL_TWO_FAILURES_TRIAGE.md`
+
+## Pre-Deploy Audit State
+
+Before deployment approval and production verification, this phase was recorded as:
+
+- `PHASE_9AX_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY`
+- Decision state: `BACKEND_CODE_FINAL_9AS_FAILURES_FIXED_PENDING_DEPLOY`
+- Deploy status: `NOT_DEPLOYED_PENDING_APPROVAL`
+- Production retest: `PENDING_BACKEND_DEPLOY`
 
 ## Root Causes
 
@@ -61,6 +70,53 @@ Expected production result after backend deploy:
 - Focused 9AT QA remains `7/7 PASS`.
 - Operator alignment QA remains `7/7 PASS`.
 - Full 9AS should improve from `51/53 PASS` to `53/53 PASS` if production behavior matches local routing.
+
+## Production Deploy
+
+- Code commit: `5638944` (`phase 9ax: fix final full knowledge routing failures`)
+- Follow-up routing commit: `4d1942c` (`phase 9ax: fix final department routing failure`)
+- Branch pushed: `origin/phase-9s-agent-preview-cors-note`
+- First image tag: `v0.9-phase-9ax-final-knowledge-routing-fix`
+- Final image tag: `v0.9-phase-9ax-final-knowledge-routing-fix2`
+- Final Cloud Run revision: `alte-ai-crm-backend-00045-dg2`
+- Traffic split: `alte-ai-crm-backend-00045-dg2=100%`
+
+The deploy changed the backend container image only. No DB schema change, migration, seed, DB import, Secret Manager change, CORS change, Bridge Hub change, frontend/Netlify change, real-site upload, or real-site embed was performed.
+
+## Production Verification
+
+Focused Phase 9AT production QA:
+
+- Status: `PASSED`
+- Result: `7/7 PASS`
+
+Full Phase 9AS production QA:
+
+- Status: `PASSED`
+- Result: `53/53 PASS`
+- Official academic facts: `17/17 PASS`
+- Academic calendar: `9/9 PASS`
+- Admissions: `6/6 PASS`
+- Clarification: `6/6 PASS`
+- Routing: `6/6 PASS`
+- Unsupported: `4/4 PASS`
+- Operator handover: `5/5 PASS`
+
+Operator alignment production QA:
+
+- Status: `PASSED`
+- Result: `7/7 PASS`
+- Operator API auth: `AUTH_OK`
+
+Remaining failures/gaps: NONE in the Phase 9AS production QA suite.
+
+## Production Decision
+
+`PHASE_9AX_DEPLOY_STATUS=PASSED_PENDING_APPROVALS`
+
+Decision state: `BACKEND_DEPLOYED_FULL_KNOWLEDGE_QA_PASSED_PENDING_APPROVALS`
+
+Public launch remains `NO-GO`.
 
 ## Safety Confirmation
 
