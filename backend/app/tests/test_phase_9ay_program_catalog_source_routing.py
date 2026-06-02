@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from app.services.chat_service import retrieval_result_belongs_to_source_group
+from app.services.chat_service import grounded_source_backed_reply, retrieval_result_belongs_to_source_group
 from app.services.claude_intent_router_service import fallback_intent_route, forced_source_group, validate_router_payload
 from app.services.knowledge_routing_service import source_group_config
 
@@ -182,3 +182,36 @@ def test_no_handover_for_catalog_informational_routes_and_public_launch_no_go():
     assert route.operator_needed is False
     assert route.source_groups_to_search == ["program_catalog_sources"]
     assert "NO-GO" in PUBLIC_LAUNCH.read_text(encoding="utf-8", errors="ignore")
+
+
+def test_program_catalog_grounded_replies_cover_production_qa_terms():
+    cases = [
+        ("რამდენი საგანმანათლებლო პროგრამა აქვს ალტე უნივერსიტეტს სულ?", ("16",)),
+        ("როგორ ნაწილდება ეს პროგრამები საფეხურების მიხედვით?", ("10", "3", "ბაკალავრ", "მაგისტრ", "ერთსაფეხურ")),
+        (
+            "ჩამომითვალე ალტე უნივერსიტეტის საბაკალავრო პროგრამები.",
+            ("სამართ", "კომპიუტერულ", "ბიზნეს", "ბაკალავრ"),
+        ),
+        ("ჩამომითვალე ალტე უნივერსიტეტის სამაგისტრო პროგრამები.", ("სამართ", "ბიზნეს", "მაგისტრ")),
+        ("რომელი ერთსაფეხურიანი პროგრამები აქვს ალტე უნივერსიტეტს?", ("მედიც", "სტომატოლოგ", "ერთსაფეხურ")),
+        (
+            "რა ინფორმაციას შეიცავს პროგრამების კატალოგი თითოეულ პროგრამაზე?",
+            ("სახელ", "საფეხურ", "კვალიფიკ", "ენა", "კრედიტ", "ხანგრძლივ", "წინაპირობ", "შედეგ"),
+        ),
+        ("რა კვალიფიკაციას ანიჭებს სამართლის საბაკალავრო პროგრამა?", ("სამართლის ბაკალავრ",)),
+        ("რა კვალიფიკაციას ანიჭებს სამართლის სამაგისტრო პროგრამა?", ("სამართლის მაგისტრ",)),
+        ("რა ენებზე გვხვდება კომპიუტერული მეცნიერების პროგრამა კატალოგში?", ("ქართულ", "ინგლის")),
+        (
+            "თუ ვკითხავ პროგრამის სწავლის ზუსტ საფასურს, პროგრამების კატალოგიდან უნდა მიპასუხო თუ უნდა თქვა რომ წყაროში არ ჩანს?",
+            ("არ", "წყარო", "ოპერატორ"),
+        ),
+    ]
+    route_decision = SimpleNamespace(primary_source_group="program_catalog_sources")
+    for question, expected_terms in cases:
+        route = fallback_intent_route(question, source_domain="join.alte.edu.ge")
+        reply = grounded_source_backed_reply(question, "ka", route_decision) or ""
+        lowered = reply.lower()
+        assert route.source_groups_to_search[0] == "program_catalog_sources"
+        assert all(term.lower() in lowered for term in expected_terms)
+        assert "₾" not in reply
+        assert "gel" not in lowered

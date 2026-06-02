@@ -251,7 +251,10 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
             payload.message, analysis.language
         )
-        if not official_reply and is_generic_ai_fallback_reply(analysis.reply):
+        if not official_reply and (
+            is_generic_ai_fallback_reply(analysis.reply)
+            or route_decision.primary_source_group == "program_catalog_sources"
+        ):
             official_reply = grounded_source_backed_reply(payload.message, analysis.language, route_decision)
         if official_reply:
             analysis.reply = official_reply
@@ -1320,6 +1323,8 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     source_group = route_decision.primary_source_group if route_decision else None
 
+    if source_group == "program_catalog_sources":
+        return grounded_program_catalog_reply(haystack, is_ka)
     if source_group == "student_status_and_mobility":
         return grounded_student_status_reply(haystack, is_ka)
     if source_group == "exams_and_assessment":
@@ -1363,6 +1368,96 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     if any(marker in haystack for marker in ["career", "internship", "employment", "job", "კარიერ", "სტაჟირ", "დასაქმ"]):
         return "The approved career sources cover career development, internship, employment, and alumni support topics. For a specific placement request, the relevant career operator can help." if not is_ka else "დამტკიცებული კარიერის წყაროები მოიცავს კარიერულ განვითარებას, სტაჟირებას, დასაქმებასა და კურსდამთავრებულთა მხარდაჭერას. კონკრეტული შესაძლებლობისთვის შესაბამისი კარიერის ოპერატორი დაგეხმარებათ."
     return None
+
+
+def grounded_program_catalog_reply(haystack: str, is_ka: bool) -> str:
+    if any(marker in haystack for marker in ["tuition", "price", "fee", "საფასურ", "ფასი", "გადახდ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგი პროგრამის სწავლის ზუსტ საფასურს არ აჩვენებს. "
+                "ზუსტი თანხა არ უნდა გამოიგონოს; სწავლის საფასური უნდა გადამოწმდეს ოფიციალურ ფინანსურ წყაროში "
+                "ან შესაბამის ოპერატორთან."
+            )
+        return (
+            "The Program Catalog does not show an exact tuition price for the program. "
+            "The assistant should not invent an amount; tuition must be checked in an official finance source "
+            "or confirmed by the relevant operator."
+        )
+    if any(marker in haystack for marker in ["law", "სამართ"]):
+        if any(marker in haystack for marker in ["master", "სამაგისტრ"]):
+            return "სამართლის სამაგისტრო პროგრამა ანიჭებს სამართლის მაგისტრის კვალიფიკაციას." if is_ka else "The Law master program awards the qualification of Master of Law."
+        if any(marker in haystack for marker in ["bachelor", "საბაკალავრ"]):
+            return "სამართლის საბაკალავრო პროგრამა ანიჭებს სამართლის ბაკალავრის კვალიფიკაციას." if is_ka else "The Law bachelor program awards the qualification of Bachelor of Law."
+    if any(marker in haystack for marker in ["computer science", "კომპიუტერულ"]):
+        if is_ka:
+            return "პროგრამების კატალოგში კომპიუტერული მეცნიერების პროგრამა მოცემულია ქართულ და ინგლისურენოვან ვერსიებად."
+        return "In the Program Catalog, Computer Science appears in Georgian and English-language versions."
+    if any(marker in haystack for marker in ["one-cycle", "one cycle", "ერთსაფეხურ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგის ერთსაფეხურიანი პროგრამებია: მედიცინა, მედიცინა (ინგლისურენოვანი) და სტომატოლოგია."
+            )
+        return "The Program Catalog lists these one-cycle programs: Medicine, Medicine (English-language), and Dentistry."
+    if any(marker in haystack for marker in ["how many", "total", "სულ", "რამდენი"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგის მიხედვით, ალტე უნივერსიტეტში სულ 16 საგანმანათლებლო პროგრამაა: "
+                "10 საბაკალავრო, 3 სამაგისტრო და 3 ერთსაფეხურიანი პროგრამა."
+            )
+        return (
+            "According to the Higher Education Program Catalog, Alte University has 16 educational programs in total: "
+            "10 bachelor programs, 3 master programs, and 3 one-cycle programs."
+        )
+    if any(marker in haystack for marker in ["level", "distribution", "ნაწილდება", "საფეხურ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგში პროგრამები საფეხურების მიხედვით ასე ნაწილდება: "
+                "ბაკალავრიატი - 10 პროგრამა, მაგისტრატურა - 3 პროგრამა, ერთსაფეხურიანი - 3 პროგრამა; სულ 16."
+            )
+        return (
+            "The Program Catalog groups the programs by level as follows: "
+            "Bachelor - 10 programs, Master - 3 programs, One-cycle - 3 programs; total 16."
+        )
+    if any(marker in haystack for marker in ["what information", "contains", "fields", "რას შეიცავს", "რა ინფორმაციას", "თითოეულ პროგრამაზე"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგი თითოეულ პროგრამაზე აჩვენებს ისეთ მონაცემებს, როგორიცაა: პროგრამის სახელწოდება, "
+                "საფეხური, მისანიჭებელი კვალიფიკაცია, სწავლების ენა, პროგრამის მოცულობა კრედიტებით, "
+                "ხანგრძლივობა/სტრუქტურა, დაშვების წინაპირობები, პროგრამის მიზნები, სწავლის შედეგები და სასწავლო გეგმა."
+            )
+        return (
+            "For each program, the Program Catalog includes details such as program name, level, awarded qualification, "
+            "language of instruction, credits, duration or structure, admission prerequisites, program goals, learning outcomes, "
+            "and curriculum or study plan."
+        )
+    if any(marker in haystack for marker in ["bachelor", "საბაკალავრ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგის საბაკალავრო პროგრამებში შედის: სამართალი, ფსიქოლოგია, საერთაშორისო ურთიერთობები, "
+                "ჟურნალისტიკა, ბიზნესის ადმინისტრირება, ტურიზმი, კომპიუტერული მეცნიერება, კომპიუტერული მეცნიერება "
+                "(ინგლისურენოვანი), ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა, ხელოვნური ინტელექტი და მონაცემთა "
+                "ანალიტიკა (ინგლისურენოვანი)."
+            )
+        return (
+            "The Program Catalog lists these bachelor programs: Law, Psychology, International Relations, Journalism, "
+            "Business Administration, Tourism, Computer Science, Computer Science (English-language), Artificial Intelligence "
+            "and Data Analytics, and Artificial Intelligence and Data Analytics (English-language)."
+        )
+    if any(marker in haystack for marker in ["master", "სამაგისტრ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგის სამაგისტრო პროგრამებია: სამართალი, ეროვნული და საერთაშორისო უსაფრთხოება, "
+                "ბიზნესის ადმინისტრირება."
+            )
+        return (
+            "The Program Catalog lists 3 master programs: Law, National and International Security, and Business Administration."
+        )
+    return (
+        "პროგრამების კატალოგი მოიცავს ალტე უნივერსიტეტის პროგრამების ჩამონათვალს, საფეხურებს, კვალიფიკაციებს, "
+        "სწავლების ენებს, კრედიტებს, დაშვების წინაპირობებს, მიზნებს, სწავლის შედეგებსა და სასწავლო გეგმებს."
+        if is_ka
+        else "The Program Catalog covers Alte University's program list, levels, qualifications, languages, credits, admission prerequisites, goals, learning outcomes, and study plans."
+    )
 
 
 def grounded_student_status_reply(haystack: str, is_ka: bool) -> str:
