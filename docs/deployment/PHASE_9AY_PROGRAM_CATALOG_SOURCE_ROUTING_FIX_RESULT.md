@@ -2,15 +2,36 @@
 
 Date: 2026-06-01
 
-PHASE_9AY_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY
+PHASE_9AY_DEPLOY_STATUS=PASSED_PENDING_APPROVALS
 
-Decision state: `BACKEND_CODE_PROGRAM_CATALOG_SOURCE_ROUTING_READY_PENDING_DEPLOY`
+Decision state: `BACKEND_DEPLOYED_PROGRAM_CATALOG_SOURCE_QA_PASSED_PENDING_APPROVALS`
+
+Historical local readiness marker: `PHASE_9AY_STATUS=CODE_READY_PENDING_BACKEND_DEPLOY`
+
+Historical local decision state: `BACKEND_CODE_PROGRAM_CATALOG_SOURCE_ROUTING_READY_PENDING_DEPLOY`
 
 Public launch: NO-GO
 
-Deploy status: `NOT_DEPLOYED_PENDING_APPROVAL`
+Deploy status: `DEPLOYED_BACKEND_ONLY`
 
-Production retest status: `PENDING_BACKEND_DEPLOY`
+Production retest status: `PASSED`
+
+## Production Deploy And QA Result
+
+- Code commit: `4765680` (`phase 9ay: route program catalog questions to catalog source`)
+- Academic routing preservation commit: `354507e` (`phase 9ay: preserve academic routing controls`)
+- Catalog grounded answer fallback commit: `09d8a75` (`phase 9ay: add catalog grounded answer fallback`)
+- Final backend image tag: `v0.9-phase-9ay-program-catalog-source-routing3`
+- Final Cloud Run revision: `alte-ai-crm-backend-00048-zk8`
+- Traffic: 100%
+- Program Catalog QA: 10/10 PASS
+- Focused 9AT QA: 7/7 PASS
+- Full 9AS QA: 53/53 PASS
+- Operator alignment QA: 7/7 PASS
+- Post-deploy backend pytest: `1029 passed`
+- Phase 9AY verifier: PASS
+- Remaining failures/gaps: none
+- Public launch: NO-GO
 
 ## Problem Summary
 
