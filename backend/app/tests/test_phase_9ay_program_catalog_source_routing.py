@@ -169,10 +169,12 @@ def test_program_catalog_strict_source_membership_accepts_catalog_only():
 def test_mandatory_existing_routes_are_preserved():
     assert forced_source_group("How many ECTS credits are required for bachelor completion?") == "official_academic_rules"
     assert forced_source_group("How many credits are required for a master program?") == "official_academic_rules"
+    assert forced_source_group("How many ECTS credits are required for Dentistry if the approved academic rules include it?") == "official_academic_rules"
     assert forced_source_group("ეროვნული გამოცდების გარეშე როგორ ჩავირიცხო?") == "admissions_rules"
     assert forced_source_group("What are the requirements for English-language programs?") == "international_admissions_sources"
     assert fallback_intent_route("დასკვნით გამოცდაზე დაშვების წესი როგორია?").source_groups_to_search[0] == "exams_and_assessment"
     assert fallback_intent_route("დასკვნითი გამოცდები როდის არის?").source_groups_to_search[0] == "academic_calendar_2025_2026"
+    assert fallback_intent_route("ერთსაფეხურიანი პროგრამების დასკვნითი გამოცდები როდის არის?").source_groups_to_search[0] == "academic_calendar_2025_2026"
 
 
 def test_no_handover_for_catalog_informational_routes_and_public_launch_no_go():

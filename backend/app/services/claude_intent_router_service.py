@@ -753,6 +753,8 @@ def forced_source_group(lowered: str) -> str | None:
 def is_program_catalog_question(lowered: str) -> bool:
     if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
         return False
+    if is_calendar_date_or_schedule_question(lowered):
+        return False
     if any(
         marker in lowered
         for marker in [
@@ -860,8 +862,31 @@ def is_program_catalog_question(lowered: str) -> bool:
 
 def is_credit_volume_question(lowered: str) -> bool:
     has_credit = any(marker in lowered for marker in ["ects", "how many credits", "credit", "credits", "კრედიტ"])
-    has_level = any(marker in lowered for marker in ["bachelor", "master", "საბაკალავრო", "ბაკალავრიატ", "სამაგისტრო", "მაგისტრატურ"])
+    has_level = any(
+        marker in lowered
+        for marker in [
+            "bachelor",
+            "master",
+            "medicine",
+            "dentistry",
+            "one-cycle",
+            "one cycle",
+            "საბაკალავრო",
+            "ბაკალავრიატ",
+            "სამაგისტრო",
+            "მაგისტრატურ",
+            "მედიცინ",
+            "სტომატოლოგ",
+            "ერთსაფეხურ",
+        ]
+    )
     return has_credit and has_level
+
+
+def is_calendar_date_or_schedule_question(lowered: str) -> bool:
+    has_time = any(marker in lowered for marker in ["when", "date", "schedule", "calendar", "როდის", "თარიღ", "განრიგ", "კალენდ"])
+    has_calendar_topic = any(marker in lowered for marker in ["exam", "final", "midterm", "retake", "გამოცდ", "დასკვნით", "შუალედ", "გადაბარ"])
+    return has_time and has_calendar_topic
 
 
 def is_teaching_language_question(lowered: str) -> bool:
