@@ -410,6 +410,103 @@ def is_teaching_language_question(lowered: str) -> bool:
     )
 
 
+def is_credit_volume_question(lowered: str) -> bool:
+    has_credit = any(marker in lowered for marker in ["ects", "credit", "credits", "კრედიტ"])
+    has_level = any(marker in lowered for marker in ["bachelor", "master", "საბაკალავრო", "ბაკალავრიატ", "სამაგისტრო", "მაგისტრატურ"])
+    return has_credit and has_level
+
+
+def is_program_catalog_question(lowered: str) -> bool:
+    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
+        return False
+    if any(
+        marker in lowered
+        for marker in [
+            "ბიბლიოთეკ",
+            "library",
+            "book",
+            "books",
+            "database",
+            "databases",
+            "electronic resource",
+            "მიღებ",
+            "საბუთ",
+            "ჩარიცხვ",
+            "admission",
+            "enrollment",
+            "document",
+            "გრანტ",
+            "დაფინანს",
+            "finance",
+            "financial",
+            "scholarship",
+            "grant",
+            "it დახმარ",
+            "emis",
+            "portal",
+            "technical support",
+        ]
+    ):
+        return False
+    if any(marker in lowered for marker in ["program catalog", "higher education program catalog", "პროგრამების კატალოგ"]):
+        return True
+    if "კატალოგ" in lowered and any(marker in lowered for marker in ["პროგრამ", "საგანმანათლებლო"]):
+        return True
+    if any(
+        marker in lowered
+        for marker in [
+            "how many programs",
+            "number of programs",
+            "programs in total",
+            "total programs",
+            "bachelor programs",
+            "master programs",
+            "one-cycle programs",
+            "program list",
+            "რამდენი საგანმანათლებლო პროგრამა",
+            "რამდენი პროგრამა",
+            "პროგრამები სულ",
+            "საბაკალავრო პროგრამები",
+            "სამაგისტრო პროგრამები",
+            "ერთსაფეხურიანი პროგრამები",
+        ]
+    ):
+        return True
+    if "ჩამომითვალე" in lowered and any(
+        marker in lowered
+        for marker in [
+            "პროგრამ",
+            "საგანმანათლებლო",
+            "საბაკალავრო",
+            "სამაგისტრო",
+            "ერთსაფეხურ",
+            "კვალიფიკაცია",
+            "სამართლის",
+            "კომპიუტერული მეცნიერების",
+        ]
+    ):
+        return True
+    if any(
+        marker in lowered
+        for marker in [
+            "program qualification",
+            "qualification does",
+            "law bachelor qualification",
+            "law master qualification",
+            "რა კვალიფიკაციას",
+            "სამართლის საბაკალავრო",
+            "სამართლის სამაგისტრო",
+            "პროგრამის კვალიფიკაცია",
+        ]
+    ):
+        return True
+    if any(marker in lowered for marker in ["computer science language", "computer science languages", "კომპიუტერული მეცნიერების პროგრამა"]) and any(
+        marker in lowered for marker in ["language", "languages", "ენა", "ენებზე", "geo", "eng"]
+    ):
+        return True
+    return any(marker in lowered for marker in ["distributed by level", "distribution by level", "levels distribution", "საფეხურების მიხედვით", "როგორ ნაწილდება"])
+
+
 def is_english_program_requirements_question(lowered: str) -> bool:
     return any(
         marker in lowered
@@ -559,8 +656,12 @@ def choose_primary_source_group(department_id: str, lowered: str, source_groups:
         return "exams_and_assessment" if "exams_and_assessment" in source_groups else source_groups[0]
     if is_credit_recognition_question(lowered):
         return "student_status_and_mobility" if "student_status_and_mobility" in source_groups else source_groups[0]
+    if is_credit_volume_question(lowered):
+        return "official_academic_rules" if "official_academic_rules" in source_groups else source_groups[0]
     if is_teaching_language_question(lowered):
         return "official_academic_rules" if "official_academic_rules" in source_groups else source_groups[0]
+    if is_program_catalog_question(lowered):
+        return "program_catalog_sources" if "program_catalog_sources" in source_groups else source_groups[0]
     if is_english_program_requirements_question(lowered):
         return "international_admissions_sources" if "international_admissions_sources" in source_groups else source_groups[0]
     if department_id == "international_admissions" and any(marker in lowered for marker in ["medicine", "medical", "md", "english-language", "english language"]):

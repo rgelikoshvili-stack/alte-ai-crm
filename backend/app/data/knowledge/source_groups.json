@@ -14,6 +14,41 @@
       "source_domain": "official_academic_rules"
     },
     {
+      "id": "program_catalog_sources",
+      "label": "Program catalog sources",
+      "source_files": [
+        "01_program_catalog.pdf",
+        "Higher Education Program Catalog",
+        "official_alte_8_pdf_kb_01_01_program_catalog",
+        "program_catalog"
+      ],
+      "source_keys": [
+        "official_alte_8_pdf_kb_01_01_program_catalog"
+      ],
+      "allowed_topics": [
+        "program catalog",
+        "program list",
+        "number of programs",
+        "bachelor programs",
+        "master programs",
+        "one-cycle programs",
+        "program qualifications",
+        "program language",
+        "program credits",
+        "program duration",
+        "admission prerequisites",
+        "learning outcomes",
+        "curriculum"
+      ],
+      "confidence_threshold": 0.8,
+      "fallback_behavior": "if no catalog match, say no approved catalog source and offer programs/admissions operator",
+      "clarification_required_when_ambiguous": true,
+      "official_only": true,
+      "stale_allowed": false,
+      "exact_answer_allowed": true,
+      "source_domain": "official_alte_pdf_kb"
+    },
+    {
       "id": "academic_calendar_2025_2026",
       "label": "Academic calendar 2025-2026",
       "source_files": ["academic_calendar_geo_2025_2026", "academic_calendar_eng_2025_2026"],

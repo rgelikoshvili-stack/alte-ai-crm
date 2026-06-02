@@ -5,7 +5,17 @@
       "description_ka": "ოფიციალური აკადემიური წესები: ECTS, საბაკალავრო/სამაგისტრო კრედიტები, სწავლების ენა, ზოგადი აკადემიური რეგულაციები და პროგრამის მოცულობა.",
       "description_en": "Official academic rules: ECTS, bachelor/master credits, teaching language, general academic regulations, and program volume.",
       "good_for": ["ECTS", "bachelor credits", "master credits", "teaching language", "academic rules", "program volume"],
-      "not_good_for": ["current tuition amounts", "operator-only requests", "unapproved program marketing claims"],
+      "not_good_for": ["program catalog lists/details", "current tuition amounts", "operator-only requests", "unapproved program marketing claims"],
+      "fallback_department": "Programs",
+      "exact_answer_allowed": true,
+      "needs_operator_if_missing_source": true
+    },
+    {
+      "id": "program_catalog_sources",
+      "description_ka": "პროგრამების კატალოგი: პროგრამების რაოდენობა, საბაკალავრო/სამაგისტრო/ერთსაფეხურიანი განაწილება, პროგრამების სახელები, კვალიფიკაციები, სწავლების ენა, კრედიტები, ხანგრძლივობა, დაშვების წინაპირობები, მიზნები, სწავლის შედეგები და სასწავლო გეგმა.",
+      "description_en": "Program catalog: program count, bachelor/master/one-cycle distribution, program names, qualifications, language of instruction, credits, duration, admission prerequisites, goals, learning outcomes, and curriculum/study plan.",
+      "good_for": ["program catalog", "Higher Education Program Catalog", "program list", "number of programs", "bachelor programs", "master programs", "one-cycle programs", "Law qualification", "Computer Science language", "Medicine and Dentistry programs"],
+      "not_good_for": ["general ECTS rules", "student status rules", "academic calendar dates", "current tuition amounts unless explicitly present in the catalog"],
       "fallback_department": "Programs",
       "exact_answer_allowed": true,
       "needs_operator_if_missing_source": true

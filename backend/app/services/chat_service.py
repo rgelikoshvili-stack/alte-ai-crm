@@ -1630,7 +1630,10 @@ async def retrieve_chat_knowledge(
         route_decision
         and route_decision.primary_source_group
         and route_decision.source_groups
-        and route_decision.reason == "claude_intent_router"
+        and (
+            route_decision.reason == "claude_intent_router"
+            or route_decision.primary_source_group == "program_catalog_sources"
+        )
     ):
         results = await search_approved_sources_for_groups(
             db,
@@ -1832,6 +1835,38 @@ async def retrieve_initial_knowledge_context(
     if route_decision and route_decision.primary_source_group and not scoped_exact_allowed:
         return []
     results = []
+    if (
+        route_decision
+        and route_decision.primary_source_group
+        and route_decision.source_groups
+        and (
+            route_decision.reason == "claude_intent_router"
+            or route_decision.primary_source_group == "program_catalog_sources"
+        )
+    ):
+        results = await search_approved_sources_for_groups(
+            db,
+            query=retrieval_query,
+            source_group_ids=route_decision.source_groups,
+            language=None,
+            program_name=None,
+            limit=3,
+        )
+        return [
+            {
+                "id": item.snippet.id,
+                "title": item.snippet.title,
+                "content": item.snippet.content,
+                "category": item.snippet.category,
+                "program_name": item.snippet.program_name,
+                "source_id": item.source.id,
+                "source_key": item.source.source_key,
+                "source_title": item.source.title,
+                "source_domain": item.source.source_domain,
+                "score": item.score,
+            }
+            for item in results
+        ]
     if selected_official_document_question and selected_document_category and scoped_exact_allowed:
         results = await search_knowledge_snippets(
             db,

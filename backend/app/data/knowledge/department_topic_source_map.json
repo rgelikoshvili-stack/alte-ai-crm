@@ -21,12 +21,12 @@
       "keywords_ka": ["პროგრამა", "პროგრამები", "ბაკალავრიატი", "მაგისტრატურა", "კრედიტი", "ECTS", "მედიცინა", "სტომატოლოგია"],
       "keywords_en": ["program", "programs", "bachelor", "master", "credits", "ECTS", "medicine", "dentistry"],
       "topics": ["bachelor programs", "master programs", "one-cycle programs", "Medicine / MD", "Dentistry", "ECTS volume"],
-      "source_groups": ["official_academic_rules", "approved_program_catalog_sources"],
+      "source_groups": ["program_catalog_sources", "official_academic_rules"],
       "clarification_options_ka": ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა/MD", "საერთაშორისო მიღება"],
       "clarification_options_en": ["Bachelor", "Master", "Medicine / MD", "International admissions"],
       "fallback_department": "programs/admissions operator",
       "handover_allowed": true,
-      "answer_policy": "Use official academic rules first; do not invent program-specific details outside approved catalog sources."
+      "answer_policy": "Use program catalog sources first for program lists, qualifications, languages, credits, duration, prerequisites, outcomes, and curriculum details. Use official academic rules for general academic rules and ECTS policy."
     },
     {
       "department_id": "finance",

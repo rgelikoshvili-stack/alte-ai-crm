@@ -635,6 +635,8 @@ def specialize_source_groups_for_message(lowered: str, source_groups: list[str])
     specialized = forced_source_group(lowered)
     if specialized:
         return [specialized]
+    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
+        return ["official_academic_rules"] if "official_academic_rules" in source_groups else source_groups
     if "official_academic_rules" not in source_groups:
         return source_groups
     if any(
@@ -717,6 +719,8 @@ def has_unsupported_marker(lowered: str) -> bool:
 
 def forced_source_group(lowered: str) -> str | None:
     lowered = " ".join((lowered or "").lower().split())
+    if is_program_catalog_question(lowered):
+        return "program_catalog_sources"
     if is_admission_without_exams_question(lowered):
         return "admissions_rules"
     if is_english_program_requirements_question(lowered):
@@ -729,21 +733,147 @@ def forced_source_group(lowered: str) -> str | None:
         return "academic_calendar_2025_2026"
     if any(marker in lowered for marker in ["bachelor admission", "master admission", "admission document", "enrollment"]):
         return "admissions_rules"
-    if any(marker in lowered for marker in ["ects", "how many credits", "teaching language", "language of instruction"]):
+    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
         return "official_academic_rules"
     if any(marker in lowered for marker in ["student status", "status suspension", "status restoration", "status termination", "mobility", "credit recognition"]):
         return "student_status_and_mobility"
-    if any(marker in lowered for marker in ["library", "databases", "books", "electronic resources"]):
+    if any(marker in lowered for marker in ["library", "ბიბლიოთეკ", "databases", "database", "books", "book", "electronic resources"]):
         return "library_sources"
-    if any(marker in lowered for marker in ["emis", "student portal", "login", "password", "technical access"]):
+    if any(marker in lowered for marker in ["emis", "student portal", "login", "password", "technical access", "it დახმარ"]):
         return "it_support_sources"
     if any(marker in lowered for marker in ["international student", "foreign applicant", "foreign education", "iro"]):
         return "international_admissions_sources"
-    if any(marker in lowered for marker in ["finance", "financial", "tuition", "payment", "scholarship", "grant", "dean's list"]):
+    if any(marker in lowered for marker in ["finance", "financial", "tuition", "payment", "scholarship", "grant", "dean's list", "გრანტ", "დაფინანს"]):
         return "finance_sources"
     if any(marker in lowered for marker in ["career", "internship", "employment", "job"]):
         return "career_sources"
     return None
+
+
+def is_program_catalog_question(lowered: str) -> bool:
+    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
+        return False
+    if any(
+        marker in lowered
+        for marker in [
+            "ბიბლიოთეკ",
+            "library",
+            "book",
+            "books",
+            "database",
+            "databases",
+            "electronic resource",
+            "მიღებ",
+            "საბუთ",
+            "ჩარიცხვ",
+            "admission",
+            "enrollment",
+            "document",
+            "გრანტ",
+            "დაფინანს",
+            "finance",
+            "financial",
+            "scholarship",
+            "grant",
+            "it დახმარ",
+            "emis",
+            "portal",
+            "technical support",
+        ]
+    ):
+        return False
+    catalog_markers = [
+        "program catalog",
+        "higher education program catalog",
+        "პროგრამების კატალოგ",
+    ]
+    if any(marker in lowered for marker in catalog_markers):
+        return True
+    if "კატალოგ" in lowered and any(marker in lowered for marker in ["პროგრამ", "საგანმანათლებლო"]):
+        return True
+    list_or_count_markers = [
+        "how many programs",
+        "number of programs",
+        "programs in total",
+        "total programs",
+        "bachelor programs",
+        "master programs",
+        "one-cycle programs",
+        "list bachelor",
+        "list master",
+        "program list",
+        "რამდენი საგანმანათლებლო პროგრამა",
+        "რამდენი პროგრამა",
+        "პროგრამები სულ",
+        "საბაკალავრო პროგრამები",
+        "სამაგისტრო პროგრამები",
+        "ერთსაფეხურიანი პროგრამები",
+    ]
+    if any(marker in lowered for marker in list_or_count_markers):
+        return True
+    if "ჩამომითვალე" in lowered and any(
+        marker in lowered
+        for marker in [
+            "პროგრამ",
+            "საგანმანათლებლო",
+            "საბაკალავრო",
+            "სამაგისტრო",
+            "ერთსაფეხურ",
+            "კვალიფიკაცია",
+            "სამართლის",
+            "კომპიუტერული მეცნიერების",
+        ]
+    ):
+        return True
+    qualification_markers = [
+        "program qualification",
+        "qualification does",
+        "law bachelor qualification",
+        "law master qualification",
+        "რა კვალიფიკაციას",
+        "სამართლის საბაკალავრო",
+        "სამართლის სამაგისტრო",
+        "პროგრამის კვალიფიკაცია",
+    ]
+    if any(marker in lowered for marker in qualification_markers):
+        return True
+    language_markers = [
+        "computer science geo eng",
+        "computer science language",
+        "computer science languages",
+        "languages is computer science",
+        "კომპიუტერული მეცნიერების პროგრამა",
+    ]
+    if any(marker in lowered for marker in language_markers) and any(
+        marker in lowered for marker in ["language", "languages", "ენა", "ენებზე", "geo", "eng"]
+    ):
+        return True
+    distribution_markers = [
+        "distributed by level",
+        "distribution by level",
+        "levels distribution",
+        "საფეხურების მიხედვით",
+        "როგორ ნაწილდება",
+    ]
+    return any(marker in lowered for marker in distribution_markers)
+
+
+def is_credit_volume_question(lowered: str) -> bool:
+    has_credit = any(marker in lowered for marker in ["ects", "how many credits", "credit", "credits", "კრედიტ"])
+    has_level = any(marker in lowered for marker in ["bachelor", "master", "საბაკალავრო", "ბაკალავრიატ", "სამაგისტრო", "მაგისტრატურ"])
+    return has_credit and has_level
+
+
+def is_teaching_language_question(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "teaching language",
+            "language of instruction",
+            "სწავლების ენა",
+            "რა ენაზე",
+        ]
+    )
 
 
 def is_admission_without_exams_question(lowered: str) -> bool:
@@ -800,6 +930,7 @@ def is_english_program_requirements_question(lowered: str) -> bool:
 def department_for_source_group(source_group: str) -> str:
     return {
         "official_academic_rules": "programs",
+        "program_catalog_sources": "programs",
         "academic_calendar_2025_2026": "academic_calendar",
         "admissions_rules": "admissions",
         "student_status_and_mobility": "study_process",
