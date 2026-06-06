@@ -1,50 +1,80 @@
-# Phase 9AY Production Deploy And QA Result
+# Phase 9AY Production Deploy and QA Result
 
-Date: 2026-06-02
+`PHASE_9AY_DEPLOY_STATUS=PASSED_PENDING_APPROVALS`
 
-PHASE_9AY_DEPLOY_STATUS=PASSED_PENDING_APPROVALS
+Decision state:
 
-Decision state: `BACKEND_DEPLOYED_PROGRAM_CATALOG_SOURCE_QA_PASSED_PENDING_APPROVALS`
+`BACKEND_DEPLOYED_FULL_KNOWLEDGE_AND_PUBLIC_ANSWER_CLEANUP_VERIFIED_PENDING_APPROVALS`
 
-Public launch: `NO-GO`
+Public launch:
+
+`NO-GO`
 
 ## Backend Deploy
 
 - Service: `alte-ai-crm-backend`
 - Region: `europe-west1`
-- Final Cloud Run revision: `alte-ai-crm-backend-00048-zk8`
-- Final image tag: `v0.9-phase-9ay-program-catalog-source-routing3`
+- Cloud Run revision: `alte-ai-crm-backend-00051-btg`
+- Image tag: `v0.9-phase-9ax-9ay-final-routing-cleanup3`
+- Image digest: `sha256:a2680fc7fb440b1b7f4dcad2b856bf63dd7c86aca82e4498c1e3171825a7c17f`
 - Traffic: 100%
 - Backend URL: `https://alte-ai-crm-backend-226875230147.europe-west1.run.app`
 
 ## Commits
 
-- `4765680` - `phase 9ay: route program catalog questions to catalog source`
-- `354507e` - `phase 9ay: preserve academic routing controls`
-- `09d8a75` - `phase 9ay: add catalog grounded answer fallback`
+- `7f0bff1` - `phase 9ay: clean public answers and source labels`
+- `170de19` - `phase 9ay: preserve admissions document wording`
+- `2342dda` - `phase 9ay: preserve status suspension grounds answer`
 
 ## Production QA
 
-- Program Catalog QA: 10/10 PASS
-- Focused 9AT QA: 7/7 PASS
-- Full 9AS QA: 53/53 PASS
-- Operator alignment QA: 7/7 PASS
-
-## Source-Backed Verification
-
-- Program Catalog source group: `program_catalog_sources`
-- Program Catalog source: `01_program_catalog.pdf` / Higher Education Program Catalog
-- Program Catalog source metadata exposed in production responses: YES
-- `official_academic_rules` is not the primary source group for Program Catalog questions.
-- Library catalog and non-program list prompt disambiguation remain protected by local tests.
-- Tuition question did not hallucinate a tuition amount.
+- Focused 9AT QA: `7/7 PASS`
+- Full 9AS QA: `53/53 PASS`
+- Operator alignment QA: `7/7 PASS`
+- Browser/API answer-cleanliness QA: `7/7 PASS`
 - Remaining failures/gaps: none
+
+## Answer-Cleanliness Verification
+
+Representative production answers were checked through the same `/chat/session/start` and `/chat/message` widget API path with the Netlify test origin.
+
+Verified clean answers:
+
+- Bachelor ECTS answer includes `240 ECTS`.
+- Master ECTS answer includes `120 ECTS`.
+- Student status suspension duration answer includes the 5-year maximum.
+- Student status suspension grounds answer lists grounds and is not the duration-only answer.
+- Computer Science spring calendar answer includes `9-14 March` and `30 March`.
+- Admission without national exams routes to the admissions answer.
+- English-language program requirements route to International Admissions.
+
+No checked public answer contained:
+
+- `official_academic_rules`
+- `chunk`
+- `page 22`
+- `p022_c050`
+- `Policy:`
+- `Reference:`
+- `Official source:`
+- `answer only from`
+- `handover if`
+- `source_group`
+
+No checked informational answer set handover metadata.
+
+## Program Catalog Status
+
+- Program Catalog QA remains previously verified at `10/10 PASS`.
+- Program Catalog source: `01_program_catalog.pdf` / Higher Education Program Catalog.
+- No hallucinated tuition amount was observed in Program Catalog QA.
 
 ## Post-Deploy Checks
 
 - Compileall: PASS
-- Backend pytest: `1029 passed`
-- Phase 9AY verifier: PASS
+- Backend pytest: `1046 passed`
+- Phase 9AX verifier: PASS
+- Phase 9AY cleanup tests: `15 passed`
 
 ## Safety Confirmation
 
