@@ -155,6 +155,16 @@ def test_suspension_grounds_and_duration_are_distinct_answers():
     assert_public_answer_is_clean(duration)
 
 
+def test_official_academic_status_shortcut_preserves_grounds_question():
+    answer = official_academic_rules_regression_reply("რა შემთხვევაში შეიძლება სტუდენტის სტატუსის შეჩერება?", "ka")
+
+    assert answer
+    assert "წერილობითი განცხადება" in answer
+    assert "ავადმყოფობა" in answer
+    assert "5 წელს" not in answer
+    assert_public_answer_is_clean(answer)
+
+
 def test_bachelor_admission_documents_returns_specific_document_list():
     answer = grounded_admissions_reply("ჩამომითვალე ბაკალავრიატზე მიღებისთვის საჭირო საბუთები", True)
     assert "საბუთ" in answer

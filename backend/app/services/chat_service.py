@@ -1298,9 +1298,7 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
         return "The university's teaching language is Georgian. Some programs are taught in English."
 
     if any(marker in haystack for marker in ["სტატუსის შეჩერ", "სტატუსი რამდენ ხანს", "შევიჩერო", "status suspension", "suspend student status"]):
-        if is_ka:
-            return "სტუდენტის სტატუსის შეჩერების საერთო ვადა არ უნდა აღემატებოდეს 5 წელს."
-        return "The total student status suspension period must not exceed 5 years."
+        return grounded_student_status_reply(haystack, is_ka)
 
     return None
 
