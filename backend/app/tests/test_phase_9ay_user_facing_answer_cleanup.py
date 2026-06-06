@@ -157,6 +157,7 @@ def test_suspension_grounds_and_duration_are_distinct_answers():
 
 def test_bachelor_admission_documents_returns_specific_document_list():
     answer = grounded_admissions_reply("ჩამომითვალე ბაკალავრიატზე მიღებისთვის საჭირო საბუთები", True)
+    assert "საბუთ" in answer
     assert "პირადობის" in answer
     assert "სრული ზოგადი განათლების" in answer
     assert "განცხადება" in answer
