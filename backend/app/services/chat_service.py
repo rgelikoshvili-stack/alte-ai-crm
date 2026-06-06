@@ -1433,15 +1433,30 @@ def grounded_program_catalog_reply(haystack: str, is_ka: bool) -> str:
     if any(marker in haystack for marker in ["bachelor", "საბაკალავრ"]):
         if is_ka:
             return (
-                "პროგრამების კატალოგის საბაკალავრო პროგრამებში შედის: სამართალი, ფსიქოლოგია, საერთაშორისო ურთიერთობები, "
-                "ჟურნალისტიკა, ბიზნესის ადმინისტრირება, ტურიზმი, კომპიუტერული მეცნიერება, კომპიუტერული მეცნიერება "
-                "(ინგლისურენოვანი), ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა, ხელოვნური ინტელექტი და მონაცემთა "
-                "ანალიტიკა (ინგლისურენოვანი)."
+                "პროგრამების კატალოგის მიხედვით, ალტე უნივერსიტეტის 10 საბაკალავრო პროგრამაა:\n"
+                "1. სამართალი\n"
+                "2. ფსიქოლოგია\n"
+                "3. საერთაშორისო ურთიერთობები\n"
+                "4. ჟურნალისტიკა\n"
+                "5. ბიზნესის ადმინისტრირება\n"
+                "6. ტურიზმი\n"
+                "7. კომპიუტერული მეცნიერება\n"
+                "8. კომპიუტერული მეცნიერება (ინგლისურენოვანი)\n"
+                "9. ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა\n"
+                "10. ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა (ინგლისურენოვანი)."
             )
         return (
-            "The Program Catalog lists these bachelor programs: Law, Psychology, International Relations, Journalism, "
-            "Business Administration, Tourism, Computer Science, Computer Science (English-language), Artificial Intelligence "
-            "and Data Analytics, and Artificial Intelligence and Data Analytics (English-language)."
+            "According to the Program Catalog, Alte University's 10 bachelor programs are:\n"
+            "1. Law\n"
+            "2. Psychology\n"
+            "3. International Relations\n"
+            "4. Journalism\n"
+            "5. Business Administration\n"
+            "6. Tourism\n"
+            "7. Computer Science\n"
+            "8. Computer Science (English-language)\n"
+            "9. Artificial Intelligence and Data Analytics\n"
+            "10. Artificial Intelligence and Data Analytics (English-language)."
         )
     if any(marker in haystack for marker in ["master", "სამაგისტრ"]):
         if is_ka:
@@ -1477,6 +1492,45 @@ def grounded_student_status_reply(haystack: str, is_ka: bool) -> str:
         if is_ka:
             return "სტუდენტის სტატუსის შეწყვეტა რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამოკიდებულია წესში ჩამოთვლილ საფუძვლებზე."
         return "Student status termination is regulated by the official study process rules and depends on the grounds listed in those rules."
+    asks_for_suspension_grounds = any(
+        marker in haystack
+        for marker in [
+            "რა შემთხვევაში",
+            "რომელ შემთხვევაში",
+            "საფუძვლ",
+            "როდის შეიძლება",
+            "grounds",
+            "cases",
+            "when can",
+            "under what circumstances",
+        ]
+    )
+    asks_for_suspension_duration = any(
+        marker in haystack
+        for marker in [
+            "რამდენი წლ",
+            "რამდენ ხანს",
+            "ვად",
+            "maximum",
+            "how long",
+            "how many years",
+            "duration",
+        ]
+    )
+    if asks_for_suspension_grounds and not asks_for_suspension_duration:
+        if is_ka:
+            return (
+                "სტუდენტის სტატუსის შეჩერების საფუძვლებია: სტუდენტის წერილობითი განცხადება; უცხოეთში სწავლა; "
+                "ავადმყოფობა; ორსულობა, მშობიარობა ან ბავშვის მოვლა; სამხედრო სამსახური; სწავლის საფასურის გადაუხდელობა; "
+                "ადმინისტრაციული ან აკადემიური რეგისტრაციის არ გავლა; ჩარიცხვისთვის საჭირო დოკუმენტების ვადაში არ წარმოდგენა; "
+                "და კანონმდებლობით ან უნივერსიტეტის წესებით გათვალისწინებული სხვა საფუძველი."
+            )
+        return (
+            "Student status may be suspended on grounds such as a student's written request, study abroad, illness, "
+            "pregnancy, childbirth or childcare, military service, unpaid tuition, failure to complete administrative "
+            "or academic registration, failure to submit required enrollment documents on time, and other grounds "
+            "allowed by law or university rules."
+        )
     if is_ka:
         return "სტუდენტის სტატუსის შეჩერება შესაძლებელია მაქსიმუმ 5 წლით, სასწავლო პროცესის ოფიციალური წესით განსაზღვრული პირობებით."
     return "Student status suspension can be granted for a maximum of 5 years under the official study process rules."
@@ -1568,7 +1622,18 @@ def grounded_admissions_reply(haystack: str, is_ka: bool) -> str:
         return "International and foreign applicants are routed through the official foreign applicant admission procedure; exact document and recognition requirements must be checked in the approved admissions source." if not is_ka else "საერთაშორისო და უცხოელი აპლიკანტები გადიან უცხოელი აპლიკანტების ოფიციალურ მიღების პროცედურას; დოკუმენტებისა და აღიარების ზუსტი მოთხოვნები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში."
     if any(marker in haystack for marker in ["without national", "national exam", "ეროვნული გამოცდ"]):
         return "Admission without national exams is possible only in cases allowed by Georgian legislation and the university's official admission rules." if not is_ka else "ეროვნული გამოცდების გარეშე ჩარიცხვა შესაძლებელია მხოლოდ საქართველოს კანონმდებლობითა და უნივერსიტეტის ოფიციალური მიღების წესებით დაშვებულ შემთხვევებში."
-    return "Bachelor admission documents must be checked against the approved admissions source; typical official requirements include identity and education/admission documents required by the enrollment procedure." if not is_ka else "ბაკალავრიატზე ჩასაბარებელი საბუთები უნდა შემოწმდეს დამტკიცებულ მიღების წყაროში; ოფიციალური პროცედურა მოითხოვს პირადობისა და ჩარიცხვისთვის საჭირო განათლების/მიღების დოკუმენტებს."
+    if is_ka:
+        return (
+            "ბაკალავრიატზე ჩასარიცხად საჭიროა: პირადობის დამადასტურებელი დოკუმენტის ასლი; სრული ზოგადი განათლების "
+            "დამადასტურებელი დოკუმენტი ან მისი სათანადოდ დამოწმებული ასლი; განცხადება/ელექტრონული განაცხადით მოთხოვნილი "
+            "დოკუმენტები; ხელშეკრულების გაფორმებისთვის საჭირო მონაცემები; და, საჭიროების შემთხვევაში, სამხედრო აღრიცხვაზე "
+            "ყოფნის დამადასტურებელი დოკუმენტი."
+        )
+    return (
+        "For bachelor's admission, the required documents include an ID document copy, proof of completed general "
+        "education or a duly certified copy, the application/electronic application documents, data needed for the "
+        "enrollment agreement, and, where applicable, a military registration document."
+    )
 
 
 def official_master_documents_reply(is_ka: bool) -> str:
@@ -1889,6 +1954,137 @@ def normalize_source_group_text(value: str) -> str:
     return " ".join((value or "").lower().replace("_", " ").replace("-", " ").split())
 
 
+INTERNAL_PUBLIC_ANSWER_MARKERS = (
+    "official source",
+    "reference:",
+    "policy:",
+    "answer only from",
+    "handover if",
+    "official_academic_rules",
+    "source group",
+    "source_group",
+    "chunk",
+)
+
+
+def clean_public_answer_text(reply: str) -> str:
+    cleaned_lines: list[str] = []
+    for raw_line in (reply or "").splitlines():
+        line = raw_line.strip()
+        lowered = line.lower()
+        if not line:
+            cleaned_lines.append("")
+            continue
+        if lowered.startswith(
+            (
+                "source:",
+                "sources:",
+                "official source:",
+                "reference:",
+                "policy:",
+                "retrieved sources:",
+                "internal source:",
+            )
+        ):
+            continue
+        if line.startswith(("წყარო:", "წყაროები:")):
+            continue
+        if is_public_control_line(line):
+            continue
+        cleaned_line = strip_inline_internal_markers(line)
+        if cleaned_line:
+            cleaned_lines.append(cleaned_line)
+    cleaned = "\n".join(cleaned_lines)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    return cleaned.strip()
+
+
+def is_public_control_line(line: str) -> bool:
+    lowered = line.lower().strip()
+    if any(lowered.startswith(marker) for marker in ("answer only from", "handover if")):
+        return True
+    return any(marker in lowered for marker in ("official source:", "reference:", "policy:"))
+
+
+def strip_inline_internal_markers(line: str) -> str:
+    cleaned = line
+    cleaned = re.sub(r"\bofficial_academic_rules[_a-z0-9.-]*\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bofficial_alte_[a-z0-9_.-]*(?:p\d+|c\d+)[a-z0-9_.-]*\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\b[a-z0-9_.-]+_p\d{1,4}[_-]c\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bp\d{1,4}[_-]c\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\b(?:page|pg\.?)\s*:?\s*\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bchunk\s*:?\s*\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bsource_group\s*=\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bsource group\s*:\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\binternal source(?: id)?\s*[:=]\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\s+([.,;:!?])", r"\1", cleaned)
+    cleaned = re.sub(r"([.;:,])\s*([.;:,])+", r"\1", cleaned)
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    cleaned = re.sub(r"\s*([;,])\s*$", "", cleaned)
+    cleaned = re.sub(r"\(\s*\)|\[\s*\]|\{\s*\}", "", cleaned)
+    return cleaned.strip()
+
+
+def public_used_source_labels(results: list) -> list[str]:
+    labels: list[str] = []
+    for item in results:
+        fallback_label = str(getattr(item.source, "source_key", "") or getattr(item.source, "title", "") or "დამტკიცებული წყარო")
+        identity = " ".join(
+            str(value or "")
+            for value in [
+                getattr(item.source, "source_key", ""),
+                getattr(item.source, "title", ""),
+                getattr(item.snippet, "title", ""),
+                getattr(item.snippet, "category", ""),
+            ]
+        )
+        label = public_source_label(identity, fallback_label)
+        if label and label not in labels:
+            labels.append(label)
+    return labels
+
+
+def public_source_label(identity: str, fallback_label: str | None = None) -> str:
+    lowered = normalize_source_group_text(identity)
+    is_internal_source = "official_academic_rules" in identity or "official_alte" in identity or "official alte" in lowered
+    if is_internal_source and ("program catalog" in lowered or "higher education program catalog" in lowered):
+        return "Higher Education Program Catalog"
+    if is_internal_source and ("academic calendar" in lowered or "calendar 2025 2026" in lowered or "აკადემიური კალენდ" in identity):
+        return "აკადემიური კალენდარი 2025–2026"
+    if is_internal_source and (
+        "international admission" in lowered
+        or "foreign applicant" in lowered
+        or "international admissions" in lowered
+        or "საერთაშორისო მიღ" in identity
+        or "უცხოელ" in identity
+    ):
+        return "საერთაშორისო მიღების წესი"
+    if is_internal_source and (
+        "admission" in lowered
+        or "admissions" in lowered
+        or "enrollment" in lowered
+        or "მიღებ" in identity
+        or "ჩარიცხ" in identity
+    ):
+        return "მიღების წესი"
+    if is_internal_source and ("bachelor" in lowered or "bachelors" in lowered or "ბაკალავრ" in identity):
+        return "ბაკალავრიატის დებულება"
+    if is_internal_source and ("master" in lowered or "masters" in lowered or "მაგისტრ" in identity):
+        return "მაგისტრატურის დებულება"
+    if is_internal_source and (
+        "study process" in lowered
+        or "regulation of study process" in lowered
+        or "official academic rules" in lowered
+        or "official academic rules full" in lowered
+        or "official academic rules" in lowered.replace("_", " ")
+        or "სასწავლო პროცეს" in identity
+    ):
+        return "სასწავლო პროცესის მარეგულირებელი წესი"
+    if "official_academic_rules" in identity:
+        return "სასწავლო პროცესის მარეგულირებელი წესი"
+    return str(fallback_label or identity or "დამტკიცებული წყარო").strip()
+
+
 def knowledge_payload_from_results(results: list) -> dict:
     if any(item.source_status == "source_stale" for item in results):
         status = "source_stale"
@@ -1896,7 +2092,7 @@ def knowledge_payload_from_results(results: list) -> dict:
         status = "answered_from_approved_source"
     return {
         "answer_source_status": status,
-        "used_sources": [item.source.source_key or item.source.title for item in results],
+        "used_sources": public_used_source_labels(results),
         "snippet_titles": [item.snippet.title for item in results],
         "source_excerpts": [
             {
@@ -2335,17 +2531,8 @@ def is_selected_official_document_text(text: str) -> bool:
 
 
 def build_source_backed_reply(analysis: AIAnalysisResult, snippet_titles: list[str]) -> str:
-    source_hint = ", ".join(snippet_titles[:2])
     base_reply = analysis.reply.strip()
-    if not source_hint:
-        return base_reply
-    if analysis.language == "en":
-        if "approved source" in base_reply.lower() or "verified information" in base_reply.lower():
-            return base_reply
-        return f"{base_reply}\n\nSource: {source_hint}."
-    if "წყარო" in base_reply or "დადასტურებულ" in base_reply:
-        return base_reply
-    return f"{base_reply}\n\nწყარო: {source_hint}."
+    return clean_public_answer_text(base_reply)
 
 
 def build_no_source_reply(analysis: AIAnalysisResult) -> str:

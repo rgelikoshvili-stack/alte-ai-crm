@@ -97,7 +97,7 @@ def test_chat_marks_no_approved_source_found_for_scholarship(client):
     assert data["should_handover"] is True
 
 
-def test_source_backed_reply_preserves_ai_answer_and_adds_source():
+def test_source_backed_reply_preserves_ai_answer_without_raw_source_label():
     analysis = AIAnalysisResult(
         reply="International students need to submit the required application documents.",
         language="en",
@@ -111,7 +111,7 @@ def test_source_backed_reply_preserves_ai_answer_and_adds_source():
     reply = build_source_backed_reply(analysis, ["International admissions routing - EN"])
 
     assert "International students need to submit" in reply
-    assert "Source: International admissions routing - EN." in reply
+    assert "Source: International admissions routing - EN." not in reply
     assert "I found verified information" not in reply
 
 
