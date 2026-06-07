@@ -76,8 +76,8 @@ BROAD_QUESTIONS = {
     ),
     "მიღება მაინტერესებს": (
         "admissions",
-        "მიღებასთან დაკავშირებით რომ გიპასუხოთ, გთხოვთ დააზუსტოთ: ბაკალავრიატი, მაგისტრატურა, საბუთები თუ ჩარიცხვის პროცედურა გაინტერესებთ?",
-        ["ბაკალავრიატი", "მაგისტრატურა", "საბუთები", "ჩარიცხვის პროცედურა"],
+        "გთხოვთ დააზუსტოთ: ბაკალავრიატი, მაგისტრატურა, საერთაშორისო მიღება, საბუთები თუ გამოცდების გარეშე ჩარიცხვა გაინტერესებთ?",
+        ["ბაკალავრიატი", "მაგისტრატურა", "საერთაშორისო მიღება", "საბუთები", "გამოცდების გარეშე ჩარიცხვა"],
     ),
     "გადახდებზე მაინტერესებს": (
         "finance",
@@ -88,6 +88,26 @@ BROAD_QUESTIONS = {
         "study_process",
         "სტუდენტის სტატუსთან დაკავშირებით რომ გიპასუხოთ, გთხოვთ დააზუსტოთ: შეჩერება, აღდგენა, შეწყვეტა თუ მობილობა გაინტერესებთ?",
         ["შეჩერება", "აღდგენა", "შეწყვეტა", "მობილობა"],
+    ),
+    "სტატუსზე კითხვა მაქვს": (
+        "study_process",
+        "სტუდენტის სტატუსთან დაკავშირებით რა გაინტერესებთ — შეჩერება, აღდგენა, შეწყვეტა თუ მობილობა?",
+        ["შეჩერება", "აღდგენა", "შეწყვეტა", "მობილობა"],
+    ),
+    "გამოცდებზე მაინტერესებს": (
+        "study_process",
+        "გთხოვთ დააზუსტოთ: გამოცდების თარიღები გაინტერესებთ, გამოცდაზე დაშვების წესი, შეფასება თუ გადაბარება?",
+        ["გამოცდების თარიღები", "დაშვების წესი", "შეფასება", "გადაბარება"],
+    ),
+    "პროგრამის კრედიტები მაინტერესებს": (
+        "programs",
+        "რომელ პროგრამას გულისხმობთ? რომელი პროგრამის კრედიტები გაინტერესებთ — ბაკალავრიატი, მაგისტრატურა, მედიცინა / MD, სტომატოლოგია თუ კონკრეტული პროგრამა?",
+        ["ბაკალავრიატი (240 ECTS)", "მაგისტრატურა (120 ECTS)", "მედიცინა / MD", "სტომატოლოგია", "კონკრეტული პროგრამა"],
+    ),
+    "რამდენი კრედიტია პროგრამა": (
+        "programs",
+        "რომელ პროგრამას გულისხმობთ? რომელი პროგრამის კრედიტები გაინტერესებთ — ბაკალავრიატი, მაგისტრატურა, მედიცინა / MD, სტომატოლოგია თუ კონკრეტული პროგრამა?",
+        ["ბაკალავრიატი (240 ECTS)", "მაგისტრატურა (120 ECTS)", "მედიცინა / MD", "სტომატოლოგია", "კონკრეტული პროგრამა"],
     ),
     "დახმარება მინდა": (
         "admissions",
@@ -421,27 +441,6 @@ def fallback_intent_route(
             router_validation_status="fallback_used",
         )
 
-    unsupported_likely = has_unsupported_marker(lowered)
-    if unsupported_likely:
-        return ClaudeIntentRoute(
-            intent="unsupported_or_unverified",
-            language=language,
-            department=department_for_unsupported(lowered),
-            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department_for_unsupported(lowered), "Admissions"),
-            topic="unsupported_likely",
-            needs_clarification=False,
-            clarification_question=None,
-            clarification_options=[],
-            source_groups_to_search=[],
-            search_terms=[message],
-            operator_needed=False,
-            operator_reason=None,
-            unsupported_likely=True,
-            confidence=0.9,
-            fallback_used=True,
-            router_validation_status="fallback_used",
-        )
-
     operator_needed = has_operator_request(lowered)
     if operator_needed:
         department = department_for_operator_request(lowered)
@@ -460,6 +459,27 @@ def fallback_intent_route(
             operator_reason="explicit_operator_request",
             unsupported_likely=False,
             confidence=1.0,
+            fallback_used=True,
+            router_validation_status="fallback_used",
+        )
+
+    unsupported_likely = has_unsupported_marker(lowered)
+    if unsupported_likely:
+        return ClaudeIntentRoute(
+            intent="unsupported_or_unverified",
+            language=language,
+            department=department_for_unsupported(lowered),
+            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department_for_unsupported(lowered), "Admissions"),
+            topic="unsupported_likely",
+            needs_clarification=False,
+            clarification_question=None,
+            clarification_options=[],
+            source_groups_to_search=[],
+            search_terms=[message],
+            operator_needed=False,
+            operator_reason=None,
+            unsupported_likely=True,
+            confidence=0.9,
             fallback_used=True,
             router_validation_status="fallback_used",
         )
@@ -604,31 +624,52 @@ def has_operator_request(lowered: str) -> bool:
 
 
 def known_broad_question(lowered: str):
-    if lowered == "\u10e1\u10ec\u10d0\u10d5\u10da\u10d0 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
+    normalized = normalize_broad_question_text(lowered)
+    if normalized == "\u10e1\u10ec\u10d0\u10d5\u10da\u10d0 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
         return (
             "admissions",
             "\u10d6\u10e3\u10e1\u10e2\u10d0\u10d3 \u10e0\u10dd\u10db \u10d2\u10d8\u10de\u10d0\u10e1\u10e3\u10ee\u10dd\u10d7, \u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7 \u2014 \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10d8 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
             ["\u10db\u10d8\u10e6\u10d4\u10d1\u10d0", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d8", "\u10e1\u10ec\u10d0\u10d5\u10da\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8", "\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\u10e1 \u10e1\u10e2\u10d0\u10e2\u10e3\u10e1\u10d8"],
         )
-    if lowered == "\u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d4\u10d1\u10d6\u10d4 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
+    if normalized == "\u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d4\u10d1\u10d6\u10d4 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
         return (
             "finance",
             "\u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d4\u10d1\u10d6\u10d4 \u10e0\u10dd\u10db \u10d2\u10d8\u10de\u10d0\u10e1\u10e3\u10ee\u10dd\u10d7, \u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7: \u10e1\u10ec\u10d0\u10d5\u10da\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7, \u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d8\u10e1 \u10d2\u10e0\u10d0\u10e4\u10d8\u10d9\u10d8 \u10d7\u10e3 \u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0 \u10d3\u10d4\u10de\u10d0\u10e0\u10e2\u10d0\u10db\u10d4\u10dc\u10e2\u10d7\u10d0\u10dc \u10d3\u10d0\u10d9\u10d0\u10d5\u10e8\u10d8\u10e0\u10d4\u10d1\u10d0?",
             ["\u10e1\u10ec\u10d0\u10d5\u10da\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8", "\u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d8\u10e1 \u10d2\u10e0\u10d0\u10e4\u10d8\u10d9\u10d8", "\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0 \u10d3\u10d4\u10de\u10d0\u10e0\u10e2\u10d0\u10db\u10d4\u10dc\u10e2\u10d7\u10d0\u10dc \u10d3\u10d0\u10d9\u10d0\u10d5\u10e8\u10d8\u10e0\u10d4\u10d1\u10d0"],
         )
-    if lowered == "\u10e1\u10e2\u10d0\u10e2\u10e3\u10e1\u10d6\u10d4 \u10db\u10d0\u10e5\u10d5\u10e1 \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0":
+    if normalized == "\u10e1\u10e2\u10d0\u10e2\u10e3\u10e1\u10d6\u10d4 \u10db\u10d0\u10e5\u10d5\u10e1 \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0":
         return (
             "study_process",
             "\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\u10e1 \u10e1\u10e2\u10d0\u10e2\u10e3\u10e1\u10d7\u10d0\u10dc \u10d3\u10d0\u10d9\u10d0\u10d5\u10e8\u10d8\u10e0\u10d4\u10d1\u10d8\u10d7 \u10e0\u10dd\u10db \u10d2\u10d8\u10de\u10d0\u10e1\u10e3\u10ee\u10dd\u10d7, \u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7: \u10e8\u10d4\u10e9\u10d4\u10e0\u10d4\u10d1\u10d0, \u10d0\u10e6\u10d3\u10d2\u10d4\u10dc\u10d0, \u10e8\u10d4\u10ec\u10e7\u10d5\u10d4\u10e2\u10d0 \u10d7\u10e3 \u10db\u10dd\u10d1\u10d8\u10da\u10dd\u10d1\u10d0 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
             ["\u10e8\u10d4\u10e9\u10d4\u10e0\u10d4\u10d1\u10d0", "\u10d0\u10e6\u10d3\u10d2\u10d4\u10dc\u10d0", "\u10e8\u10d4\u10ec\u10e7\u10d5\u10d4\u10e2\u10d0", "\u10db\u10dd\u10d1\u10d8\u10da\u10dd\u10d1\u10d0"],
         )
-    if lowered == "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d8 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
+    if normalized == "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d8 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
         return (
             "programs",
             "\u10e0\u10dd\u10db\u10d4\u10da \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0\u10d6\u10d4 \u10d2\u10e1\u10e3\u10e0\u10d7 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0?",
             ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0 / MD", "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10db\u10d8\u10e6\u10d4\u10d1\u10d0"],
         )
-    return BROAD_QUESTIONS.get(lowered)
+    if normalized == "\u10d9\u10e0\u10d4\u10d3\u10d8\u10e2\u10d4\u10d1\u10d8 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
+        return (
+            "programs",
+            "\u10d6\u10e3\u10e1\u10e2\u10d0\u10d3 \u10e0\u10dd\u10db \u10d2\u10d8\u10de\u10d0\u10e1\u10e3\u10ee\u10dd\u10d7, \u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7: \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10e1 \u10d0\u10dc \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1 \u10d9\u10e0\u10d4\u10d3\u10d8\u10e2\u10d4\u10d1\u10d8 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+            ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10d0\u10dc\u10d8", "\u10d9\u10dd\u10dc\u10d9\u10e0\u10d4\u10e2\u10e3\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0"],
+        )
+    if normalized in {
+        "\u10d9\u10d0\u10e2\u10d0\u10da\u10dd\u10d2\u10e8\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0\u10d6\u10d4 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1",
+        "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1 \u10e8\u10d4\u10e1\u10d0\u10ee\u10d4\u10d1 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1",
+    }:
+        return (
+            "programs",
+            "\u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7, \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7 \u10d0\u10dc \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10d3\u10d4\u10e2\u10d0\u10da\u10d8 \u10d2\u10ed\u10d8\u10e0\u10d3\u10d4\u10d1\u10d0\u10d7: \u10d9\u10e0\u10d4\u10d3\u10d8\u10e2\u10d4\u10d1\u10d8, \u10d4\u10dc\u10d0, \u10d9\u10d5\u10d0\u10da\u10d8\u10e4\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0 \u10d7\u10e3 \u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10d2\u10d4\u10d2\u10db\u10d0?",
+            ["\u10d9\u10e0\u10d4\u10d3\u10d8\u10e2\u10d4\u10d1\u10d8", "\u10e1\u10ec\u10d0\u10d5\u10da\u10d4\u10d1\u10d8\u10e1 \u10d4\u10dc\u10d0", "\u10d9\u10d5\u10d0\u10da\u10d8\u10e4\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0", "\u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10d2\u10d4\u10d2\u10db\u10d0"],
+        )
+    return BROAD_QUESTIONS.get(normalized) or BROAD_QUESTIONS.get(lowered)
+
+
+def normalize_broad_question_text(lowered: str) -> str:
+    text = " ".join((lowered or "").strip().lower().split())
+    return text.strip(" ?!.,;:؟؛")
 
 
 def specialize_source_groups_for_message(lowered: str, source_groups: list[str]) -> list[str]:
@@ -712,6 +753,9 @@ def has_unsupported_marker(lowered: str) -> bool:
             "კოსმოსური კამპუს",
             "rare manuscript",
             "current exact tuition",
+            "consultant phone",
+            "consultant phone number",
+            "კონსულტანტის ტელეფონ",
             "reset it now",
         ]
     )
@@ -751,7 +795,7 @@ def forced_source_group(lowered: str) -> str | None:
 
 
 def is_program_catalog_question(lowered: str) -> bool:
-    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
+    if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
         return False
     if is_calendar_date_or_schedule_question(lowered):
         return False
@@ -858,6 +902,19 @@ def is_program_catalog_question(lowered: str) -> bool:
         "როგორ ნაწილდება",
     ]
     return any(marker in lowered for marker in distribution_markers)
+
+
+def is_program_catalog_explicit_scope(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "program catalog",
+            "higher education program catalog",
+            "პროგრამების კატალოგ",
+            "კატალოგის მიხედვით",
+            "კატალოგში",
+        ]
+    )
 
 
 def is_credit_volume_question(lowered: str) -> bool:
@@ -969,6 +1026,8 @@ def department_for_source_group(source_group: str) -> str:
 
 
 def department_for_unsupported(lowered: str) -> str:
+    if any(marker in lowered for marker in ["program", "პროგრამ"]) and any(marker in lowered for marker in ["consultant", "კონსულტანტ", "ტელეფონ"]):
+        return "programs"
     if any(marker in lowered for marker in ["scholarship", "tuition", "price", "fee", "grant"]):
         return "finance"
     if "library" in lowered or "manuscript" in lowered:

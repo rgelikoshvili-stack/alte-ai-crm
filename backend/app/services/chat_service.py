@@ -273,12 +273,14 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
                 analysis.reply = grounded_reply
                 ai_meta.setdefault("grounded_answer", grounded_meta)
         analysis.reply = build_source_backed_reply(analysis, knowledge["snippet_titles"])
-    elif "ai_provider_error" not in analysis.risk_flags and (
-        unsupported_official_question
-        or should_require_knowledge(analysis)
-        or bool(route_decision.primary_source_group)
-        or is_official_academic_rules_text(payload.message)
-        or is_selected_official_document_text(payload.message)
+    elif unsupported_official_question or (
+        "ai_provider_error" not in analysis.risk_flags
+        and (
+            should_require_knowledge(analysis)
+            or bool(route_decision.primary_source_group)
+            or is_official_academic_rules_text(payload.message)
+            or is_selected_official_document_text(payload.message)
+        )
     ):
         analysis.risk_flags.append(knowledge["answer_source_status"])
         analysis.should_handover = True
@@ -1381,6 +1383,30 @@ def grounded_program_catalog_reply(haystack: str, is_ka: bool) -> str:
             "The assistant should not invent an amount; tuition must be checked in an official finance source "
             "or confirmed by the relevant operator."
         )
+    has_credit = any(marker in haystack for marker in ["ects", "credit", "credits", "კრედიტ"])
+    if has_credit and any(marker in haystack for marker in ["bachelor", "საბაკალავრო", "ბაკალავრიატ"]):
+        return "პროგრამების კატალოგის მიხედვით, საბაკალავრო პროგრამა მოიცავს 240 ECTS კრედიტს." if is_ka else "According to the Program Catalog, bachelor programs comprise 240 ECTS credits."
+    if has_credit and any(marker in haystack for marker in ["master", "სამაგისტრო", "მაგისტრატურ"]):
+        return "პროგრამების კატალოგის მიხედვით, სამაგისტრო პროგრამა მოიცავს 120 ECTS კრედიტს." if is_ka else "According to the Program Catalog, master programs comprise 120 ECTS credits."
+    has_language = any(marker in haystack for marker in ["language", "languages", "ენა", "ენაზე", "ენებზე"])
+    if has_language and any(marker in haystack for marker in ["ხელოვნური ინტელექტ", "artificial intelligence", "data analytics", "მონაცემთა ანალიტ"]):
+        return (
+            "პროგრამების კატალოგში ხელოვნური ინტელექტისა და მონაცემთა ანალიტიკის პროგრამა მოცემულია ქართულ და ინგლისურენოვან ვერსიებად."
+            if is_ka
+            else "In the Program Catalog, Artificial Intelligence and Data Analytics appears in Georgian and English-language versions."
+        )
+    if has_language and any(marker in haystack for marker in ["law", "სამართ"]) and any(marker in haystack for marker in ["bachelor", "საბაკალავრო"]):
+        return "პროგრამების კატალოგის მიხედვით, სამართლის საბაკალავრო პროგრამის სწავლების ენა არის ქართული." if is_ka else "According to the Program Catalog, the Law bachelor program is taught in Georgian."
+    if any(marker in haystack for marker in ["english-language program", "english language program", "ინგლისურენოვანი პროგრამ"]):
+        if is_ka:
+            return (
+                "პროგრამების კატალოგში ინგლისურენოვანი ვერსიებით მითითებულია: მედიცინა (ინგლისურენოვანი), "
+                "კომპიუტერული მეცნიერება (ინგლისურენოვანი) და ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა (ინგლისურენოვანი)."
+            )
+        return (
+            "The Program Catalog identifies these English-language program versions: Medicine (English-language), "
+            "Computer Science (English-language), and Artificial Intelligence and Data Analytics (English-language)."
+        )
     if any(marker in haystack for marker in ["law", "სამართ"]):
         if any(marker in haystack for marker in ["master", "სამაგისტრ"]):
             return "სამართლის სამაგისტრო პროგრამა ანიჭებს სამართლის მაგისტრის კვალიფიკაციას." if is_ka else "The Law master program awards the qualification of Master of Law."
@@ -2013,7 +2039,9 @@ def strip_inline_internal_markers(line: str) -> str:
     cleaned = re.sub(r"\b(?:page|pg\.?)\s*:?\s*\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\bchunk\s*:?\s*\d{1,4}\b", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\bsource_group\s*=\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bsource_group\s*=\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\bsource group\s*:\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\bsource group\s*:\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\binternal source(?: id)?\s*[:=]\s*[a-z0-9_.-]+\b", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s+([.,;:!?])", r"\1", cleaned)
     cleaned = re.sub(r"([.;:,])\s*([.;:,])+", r"\1", cleaned)
@@ -2441,6 +2469,9 @@ def is_clearly_unsupported_official_question(text: str) -> bool:
         "დღევანდელი ფასდაკლება",
         "კონკრეტული კონსულტანტის ტელეფონი",
         "კონსულტანტის ტელეფონი",
+        "კონსულტანტის ტელეფონის ნომერი",
+        "consultant phone",
+        "consultant phone number",
         "rare manuscripts",
         "six months",
         "reset it now",

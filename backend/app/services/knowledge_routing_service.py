@@ -224,7 +224,48 @@ def normalize_department_id(value: str | None) -> str | None:
 def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str]] | None:
     if has_contact_or_handover_context(lowered):
         return None
-    if lowered in BROAD_PROGRAMS_KA or lowered in BROAD_PROGRAMS_EN:
+    normalized = normalize_broad_question_text(lowered)
+    if normalized == "გამოცდებზე მაინტერესებს":
+        return (
+            "study_process",
+            "გთხოვთ დააზუსტოთ: გამოცდების თარიღები გაინტერესებთ, გამოცდაზე დაშვების წესი, შეფასება თუ გადაბარება?"
+            if language == "ka"
+            else "Please clarify: do you mean exam dates, final-exam admission rules, assessment, or retake rules?",
+            ["გამოცდების თარიღები", "დაშვების წესი", "შეფასება", "გადაბარება"]
+            if language == "ka"
+            else ["Exam dates", "Admission rules", "Assessment", "Retake rules"],
+        )
+    if normalized in {"პროგრამის კრედიტები მაინტერესებს", "რამდენი კრედიტია პროგრამა"}:
+        return (
+            "programs",
+            "რომელ პროგრამას გულისხმობთ? რომელი პროგრამის კრედიტები გაინტერესებთ — ბაკალავრიატი, მაგისტრატურა, მედიცინა / MD, სტომატოლოგია თუ კონკრეტული პროგრამა?"
+            if language == "ka"
+            else "Which program credits do you mean: bachelor, master, Medicine / MD, dentistry, or a specific program?",
+            ["ბაკალავრიატი (240 ECTS)", "მაგისტრატურა (120 ECTS)", "მედიცინა / MD", "სტომატოლოგია", "კონკრეტული პროგრამა"]
+            if language == "ka"
+            else ["Bachelor", "Master", "Medicine / MD", "Dentistry", "Specific program"],
+        )
+    if normalized == "მიღება მაინტერესებს":
+        return (
+            "admissions",
+            "გთხოვთ დააზუსტოთ: ბაკალავრიატი, მაგისტრატურა, საერთაშორისო მიღება, საბუთები თუ გამოცდების გარეშე ჩარიცხვა გაინტერესებთ?"
+            if language == "ka"
+            else "Please clarify: bachelor admission, master admission, international admission, documents, or admission without exams?",
+            ["ბაკალავრიატი", "მაგისტრატურა", "საერთაშორისო მიღება", "საბუთები", "გამოცდების გარეშე ჩარიცხვა"]
+            if language == "ka"
+            else ["Bachelor", "Master", "International admission", "Documents", "Admission without exams"],
+        )
+    if normalized == "სტატუსზე კითხვა მაქვს":
+        return (
+            "study_process",
+            "სტუდენტის სტატუსთან დაკავშირებით რა გაინტერესებთ — შეჩერება, აღდგენა, შეწყვეტა თუ მობილობა?"
+            if language == "ka"
+            else "Which student status topic do you mean: suspension, restoration, termination, or mobility?",
+            ["შეჩერება", "აღდგენა", "შეწყვეტა", "მობილობა"]
+            if language == "ka"
+            else ["Suspension", "Restoration", "Termination", "Mobility"],
+        )
+    if normalized in BROAD_PROGRAMS_KA or normalized in BROAD_PROGRAMS_EN:
         return (
             "programs",
             PROGRAMS_CLARIFICATION_KA if language == "ka" else PROGRAMS_CLARIFICATION_EN,
@@ -232,7 +273,7 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
             if language == "ka"
             else ["Bachelor", "Master", "Medicine / MD", "International admissions"],
         )
-    if lowered in BROAD_FINANCE_KA or lowered in BROAD_FINANCE_EN:
+    if normalized in BROAD_FINANCE_KA or normalized in BROAD_FINANCE_EN:
         return (
             "finance",
             FINANCE_CLARIFICATION_KA if language == "ka" else FINANCE_CLARIFICATION_EN,
@@ -240,7 +281,7 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
             if language == "ka"
             else ["Tuition", "Payment schedule", "Contact finance department"],
         )
-    if lowered in BROAD_STATUS_KA or lowered in BROAD_STATUS_EN:
+    if normalized in BROAD_STATUS_KA or normalized in BROAD_STATUS_EN:
         return (
             "study_process",
             STATUS_CLARIFICATION_KA if language == "ka" else STATUS_CLARIFICATION_EN,
@@ -255,10 +296,34 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
             GENERIC_CLARIFICATION_KA if language == "ka" else GENERIC_CLARIFICATION_EN,
             list(department.get("clarification_options_ka" if language == "ka" else "clarification_options_en", [])),
         )
-    if lowered in BROAD_GENERIC_KA or lowered in BROAD_GENERIC_EN:
+    if normalized == "კრედიტები მაინტერესებს":
+        return (
+            "programs",
+            "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ: რომელი საფეხურის ან პროგრამის კრედიტები გაინტერესებთ?",
+            ["ბაკალავრიატი", "მაგისტრატურა", "ერთსაფეხურიანი", "კონკრეტული პროგრამა"]
+            if language == "ka"
+            else ["Bachelor", "Master", "One-cycle", "Specific program"],
+        )
+    if normalized in {
+        "კატალოგში პროგრამაზე ინფორმაცია მაინტერესებს",
+        "პროგრამის შესახებ ინფორმაცია მაინტერესებს",
+    }:
+        return (
+            "programs",
+            "გთხოვთ დააზუსტოთ, რომელი პროგრამა გაინტერესებთ ან რომელი დეტალი გჭირდებათ: კრედიტები, ენა, კვალიფიკაცია თუ სასწავლო გეგმა?",
+            ["კრედიტები", "სწავლების ენა", "კვალიფიკაცია", "სასწავლო გეგმა"]
+            if language == "ka"
+            else ["Credits", "Teaching language", "Qualification", "Study plan"],
+        )
+    if normalized in BROAD_GENERIC_KA or normalized in BROAD_GENERIC_EN:
         question, options = generic_clarification(language)
         return ("admissions", question, options)
     return None
+
+
+def normalize_broad_question_text(lowered: str) -> str:
+    text = " ".join((lowered or "").strip().lower().split())
+    return text.strip(" ?!.,;:؟؛")
 
 
 def generic_clarification(language: str) -> tuple[str, list[str]]:
@@ -440,7 +505,7 @@ def is_calendar_date_or_schedule_question(lowered: str) -> bool:
 
 
 def is_program_catalog_question(lowered: str) -> bool:
-    if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):
+    if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
         return False
     if is_calendar_date_or_schedule_question(lowered):
         return False
@@ -530,6 +595,19 @@ def is_program_catalog_question(lowered: str) -> bool:
     ):
         return True
     return any(marker in lowered for marker in ["distributed by level", "distribution by level", "levels distribution", "საფეხურების მიხედვით", "როგორ ნაწილდება"])
+
+
+def is_program_catalog_explicit_scope(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "program catalog",
+            "higher education program catalog",
+            "პროგრამების კატალოგ",
+            "კატალოგის მიხედვით",
+            "კატალოგში",
+        ]
+    )
 
 
 def is_english_program_requirements_question(lowered: str) -> bool:
@@ -681,9 +759,9 @@ def choose_primary_source_group(department_id: str, lowered: str, source_groups:
         return "exams_and_assessment" if "exams_and_assessment" in source_groups else source_groups[0]
     if is_credit_recognition_question(lowered):
         return "student_status_and_mobility" if "student_status_and_mobility" in source_groups else source_groups[0]
-    if is_credit_volume_question(lowered):
+    if is_credit_volume_question(lowered) and not is_program_catalog_explicit_scope(lowered):
         return "official_academic_rules" if "official_academic_rules" in source_groups else source_groups[0]
-    if is_teaching_language_question(lowered):
+    if is_teaching_language_question(lowered) and not is_program_catalog_explicit_scope(lowered):
         return "official_academic_rules" if "official_academic_rules" in source_groups else source_groups[0]
     if is_program_catalog_question(lowered):
         return "program_catalog_sources" if "program_catalog_sources" in source_groups else source_groups[0]
