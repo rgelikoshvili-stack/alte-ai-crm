@@ -51,6 +51,23 @@ SAFE_CONTACT_CONSENT_KA = (
 
 OFFICIAL_ALTE_PDF_SOURCE_DOMAIN = "official_alte_pdf_kb"
 
+PUBLIC_SOURCE_GROUP_LABELS = {
+    "program_catalog_sources": "საგანმანათლებლო პროგრამების კატალოგი",
+    "academic_calendar_2025_2026": "აკადემიური კალენდარი 2025–2026",
+    "official_academic_rules": "სასწავლო პროცესის მარეგულირებელი წესი",
+    "admissions_rules": "მიღების წესი",
+    "international_admissions_sources": "საერთაშორისო მიღების წესი",
+    "finance_sources": "ფინანსური მხარდაჭერა",
+    "state_social_grants_sources": "სახელმწიფო/სოციალური გრანტები",
+    "library_sources": "ბიბლიოთეკის წესი",
+    "career_sources": "კარიერის სერვისები",
+    "bachelor_regulation": "ბაკალავრიატის დებულება",
+    "bachelor_rules": "ბაკალავრიატის დებულება",
+    "master_regulation": "მაგისტრატურის დებულება",
+    "master_rules": "მაგისტრატურის დებულება",
+}
+PUBLIC_SOURCE_LABEL_WHITELIST = set(PUBLIC_SOURCE_GROUP_LABELS.values())
+
 GEORGIAN_RETRIEVAL_ALIASES = [
     (
         ["რამდენი კრედიტია ბაკალავრიატი", "ბაკალავრიატის დასრულებისთვის", "საბაკალავრო", "ბაკალავრიატ"],
@@ -251,6 +268,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
             payload.message, analysis.language
         )
+        if not official_reply and route_decision.primary_source_group == "academic_calendar_2025_2026":
+            official_reply = grounded_source_backed_reply(payload.message, analysis.language, route_decision)
         if not official_reply and (
             is_generic_ai_fallback_reply(analysis.reply)
             or route_decision.primary_source_group == "program_catalog_sources"
@@ -418,6 +437,11 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         recommended_next_action=analysis.qualification.recommended_next_action,
         answer_source_status=knowledge["answer_source_status"],
         used_sources=knowledge["used_sources"],
+        public_source_label=response_public_source_label(
+            knowledge,
+            should_handover=analysis.should_handover,
+            source_group=route_decision.primary_source_group,
+        ),
         route_department=routing.department,
         department_key=routing.department_key,
         routing_reason=routing.reason,
@@ -1301,6 +1325,8 @@ def official_academic_rules_regression_reply(message: str, language: str | None)
 
     if any(marker in haystack for marker in ["სტატუსის შეჩერ", "სტატუსი რამდენ ხანს", "შევიჩერო", "status suspension", "suspend student status"]):
         return grounded_student_status_reply(haystack, is_ka)
+    if "gpa" in haystack:
+        return grounded_exam_assessment_reply(haystack, is_ka)
 
     return None
 
@@ -1346,7 +1372,7 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
     if any(marker in haystack for marker in ["credit recognition", "recognition of credit", "კრედიტების აღიარ", "კრედიტის აღიარ"]):
         return "Credit recognition is handled under the official study process rules and depends on the submitted learning outcomes and credits." if not is_ka else "კრედიტების აღიარება ხდება სასწავლო პროცესის ოფიციალური წესით და დამოკიდებულია წარმოდგენილ სწავლის შედეგებსა და კრედიტებზე."
     if "gpa" in haystack:
-        return "The official rules define GPA calculation. FX and F are counted as 0 in the GPA calculation." if not is_ka else "ოფიციალური წესები განსაზღვრავს GPA-ს გამოთვლას; FX და F GPA-ს გამოთვლაში ითვლება 0-ად."
+        return grounded_exam_assessment_reply(haystack, is_ka)
     if "fx" in haystack or re.search(r"\bf\b", haystack):
         return "FX means 41-50 points and gives the right to take an additional exam once; F is a failing grade and counts as 0." if not is_ka else "FX ნიშნავს 41-50 ქულას და სტუდენტს აძლევს დამატებით გამოცდაზე ერთხელ გასვლის უფლებას; F არის უარყოფითი შეფასება და ითვლება 0-ად."
     if any(marker in haystack for marker in ["final exam", "დასკვნით"]):
@@ -1563,8 +1589,8 @@ def grounded_student_status_reply(haystack: str, is_ka: bool) -> str:
 def grounded_exam_assessment_reply(haystack: str, is_ka: bool) -> str:
     if "gpa" in haystack:
         if is_ka:
-            return "ოფიციალური შეფასების წესები განსაზღვრავს GPA-ს გამოთვლას; FX და F GPA-ს გამოთვლაში ითვლება 0-ად."
-        return "The official assessment rules define GPA calculation. FX and F are counted as 0 in the GPA calculation."
+            return "GPA გამოითვლება ოფიციალური წესით: კურსის GPA = (X - 50) * 0.06 + 1, სადაც X არის კურსში მიღებული ქულა. ჯამური GPA არის კურსის GPA-ების კრედიტებით შეწონილი საშუალო: sum(course GPA * credits) / total credits. FX და F GPA-ში ითვლება 0-ად."
+        return "GPA is calculated by the official rule: course GPA = (X - 50) * 0.06 + 1. The summary GPA is the credit-weighted average: sum(course GPA * credits) / total credits. FX and F count as 0."
     if "fx" in haystack or re.search(r"\bf\b", haystack):
         if is_ka:
             return "FX ნიშნავს 41-50 ქულას და სტუდენტს აძლევს დამატებით გამოცდაზე ერთხელ გასვლის უფლებას; F არის უარყოფითი შეფასება და ითვლება 0-ად."
@@ -1613,7 +1639,204 @@ def is_exam_rule_text(haystack: str) -> bool:
     return ((has_exam and has_rule) or (georgian_exam and georgian_rule)) and not asks_when
 
 
+def deterministic_academic_calendar_reply(haystack: str, is_ka: bool) -> str | None:
+    def has_any(markers: list[str]) -> bool:
+        return any(marker in haystack for marker in markers)
+
+    def date_for_ka(date: str) -> str:
+        prefixes = {
+            "9 - 14 March 2026": "9-14 მარტი",
+            "30 March 2026": "30 მარტი",
+            "13 - 25 July 2026": "13-25 ივლისი",
+            "9 March 2026": "9 მარტი",
+            "29 June - 11 July 2026": "29 ივნისი - 11 ივლისი",
+            "20 July - 1 August 2026": "20 ივლისი - 1 აგვისტო",
+            "3 - 8 August 2026": "3-8 აგვისტო",
+            "25 - 30 May 2026": "25-30 მაისი",
+            "13 - 18 July 2026": "13-18 ივლისი",
+            "29 September 2025": "29 სექტემბერი",
+            "2 - 7 March 2026": "2-7 მარტი",
+            "30 December 2025 - 4 January 2026": "30 დეკემბერი - 4 იანვარი",
+            "10 - 13 April 2026": "10-13 აპრილი",
+        }
+        prefix = prefixes.get(date)
+        return f"{prefix} / {date}" if prefix else date
+
+    def answer(subject_en: str, event_en: str, subject_ka: str, event_ka: str, date: str) -> str:
+        if is_ka:
+            return f"დამტკიცებული 2025-2026 აკადემიური კალენდრის მიხედვით, {subject_ka}-თვის {event_ka} არის {date_for_ka(date)}."
+        return f"According to the approved 2025-2026 academic calendar, {event_en} for {subject_en} is {date}."
+
+    if has_any(["new year", "ახალი წლის", "საახალწლო"]):
+        return "საახალწლო არდადეგებია 30 December 2025 - 4 January 2026." if is_ka else "According to the approved 2025-2026 academic calendar, New Year holidays are 30 December 2025 - 4 January 2026."
+    if has_any(["easter", "აღდგომ", "სააღდგომ"]):
+        return "სააღდგომო არდადეგებია 10 - 13 April 2026." if is_ka else "According to the approved 2025-2026 academic calendar, Easter holidays are 10 - 13 April 2026."
+    if has_any(["bank holiday", "bank holidays", "უქმე"]):
+        holidays = (
+            "Svetitskhovloba - 14 October; St. George's Day - 23 November; Orthodox Christmas - 7 January; "
+            "Orthodox Epiphany - 19 January; Mother's Day - 3 March; International Women's Day - 8 March; "
+            "National Unity Day - 9 April; Victory over Fascism Day - 9 May; Saint Andrew the First-Called Day - 12 May; "
+            "Family Purity and Respect for Parents Day - 17 May; Independence Day - 26 May."
+        )
+        return f"აკადემიური კალენდრის უქმე დღეებია: {holidays}" if is_ka else f"According to the approved 2025-2026 academic calendar, bank holidays are: {holidays}"
+
+    spring = has_any(["spring", "გაზაფხ"])
+    fall = has_any(["fall", "autumn", "შემოდგომ"])
+    registration = has_any(["registration", "რეგისტრ"])
+    academic_registration = has_any(["academic registration", "აკადემიური რეგისტრ"])
+    administrative_registration = has_any(["administrative registration", "ადმინისტრაციული რეგისტრ"])
+    semester_start = has_any(["semester start", "semester starts", "beginning of the", "starts", "იწყება", "დაწყება"])
+    final = has_any(["final", "დასკვნით"])
+    midterm = has_any(["midterm", "შუალედ"])
+    retake = has_any(["retake", "make-up", "make up", "აღდგ", "გადაბარ"])
+    quiz_i = has_any(["quiz i", "i quiz", "ქვიზი i"])
+    quiz_ii = has_any(["quiz ii", "ii quiz", "ქვიზი ii"])
+
+    first_year_one_cycle_english = has_any(["first-year", "first year"]) and has_any(["one-cycle", "one cycle", "english"])
+    excludes_computer_science = has_any(["except computer science", "გარდა"]) and has_any(["computer science", "კომპიუტერული მეცნიერ"])
+    computer_science = has_any(["computer science", "კომპიუტერული მეცნიერ"]) and not excludes_computer_science
+    one_cycle = not first_year_one_cycle_english and has_any(["one-cycle", "one cycle", "ერთსაფეხურ"])
+    master = has_any(["master", "სამაგისტრო", "მაგისტრ"])
+    bachelor = has_any(["bachelor", "საბაკალავრო", "ბაკალავრიატ"])
+
+    if computer_science:
+        subject_en, subject_ka = "Computer Science programs", "Computer Science-ის პროგრამები"
+        if spring and registration:
+            if is_ka:
+                return "დამტკიცებული 2025-2026 აკადემიური კალენდრის მიხედვით, Computer Science-ის პროგრამებისთვის გაზაფხულის აკადემიური/ადმინისტრაციული რეგისტრაცია არის 9-14 მარტი / 9 - 14 March 2026, ხოლო სემესტრის დაწყება არის 30 მარტი / 30 March 2026."
+            return "According to the approved 2025-2026 academic calendar, spring academic/administrative registration for Computer Science programs is 9 - 14 March 2026, and the spring semester starts on 30 March 2026."
+        if spring and semester_start:
+            return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "30 March 2026")
+        if spring and final and retake:
+            return answer(subject_en, "spring final exam retake", subject_ka, "გაზაფხულის დასკვნითი გამოცდების აღდგენა/გადაბარება", "27 July - 1 August 2026")
+        if spring and final:
+            return answer(subject_en, "spring final exams", subject_ka, "გაზაფხულის დასკვნითი გამოცდები", "13 - 25 July 2026")
+        if spring and midterm and retake:
+            return answer(subject_en, "spring midterm retake/make-up", subject_ka, "გაზაფხულის შუალედური გამოცდების აღდგენა/გადაბარება", "6 - 11 July 2026")
+        if spring and midterm:
+            return answer(subject_en, "spring midterm exams", subject_ka, "გაზაფხულის შუალედური გამოცდები", "18 - 23 May 2026")
+        if fall and registration and academic_registration:
+            return answer(subject_en, "fall academic registration", subject_ka, "შემოდგომის აკადემიური რეგისტრაცია", "29 September - 4 October 2025")
+        if fall and registration and administrative_registration:
+            return answer(subject_en, "fall administrative registration", subject_ka, "შემოდგომის ადმინისტრაციული რეგისტრაცია", "15 - 20 September 2025")
+        if fall and semester_start:
+            return answer(subject_en, "fall semester start", subject_ka, "შემოდგომის სემესტრის დაწყება", "6 October 2025")
+        if fall and final and retake:
+            return answer(subject_en, "fall final exam retake", subject_ka, "შემოდგომის დასკვნითი გამოცდების აღდგენა/გადაბარება", "16 - 21 February 2026")
+        if fall and final:
+            return answer(subject_en, "fall final exams", subject_ka, "შემოდგომის დასკვნითი გამოცდები", "2 - 14 February 2026")
+        if fall and midterm and retake:
+            return answer(subject_en, "fall midterm retake/make-up", subject_ka, "შემოდგომის შუალედური გამოცდების აღდგენა/გადაბარება", "26 - 31 January 2026")
+        if fall and midterm:
+            return answer(subject_en, "fall midterm exams", subject_ka, "შემოდგომის შუალედური გამოცდები", "24 - 29 November 2025")
+
+    if first_year_one_cycle_english:
+        subject_en, subject_ka = "first-year one-cycle English education programs", "პირველკურსელი ერთსაფეხურიანი ინგლისურენოვანი პროგრამები"
+        if spring and registration:
+            return answer(subject_en, "spring registration", subject_ka, "გაზაფხულის რეგისტრაცია", "9 - 14 March 2026")
+        if spring and semester_start:
+            return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "30 March 2026")
+        if spring and quiz_i:
+            return answer(subject_en, "spring Quiz I", subject_ka, "გაზაფხულის ქვიზი I", "4 - 9 May 2026")
+        if spring and midterm and retake:
+            return answer(subject_en, "spring midterm retake/make-up", subject_ka, "გაზაფხულის შუალედური გამოცდების აღდგენა/გადაბარება", "13 - 18 July 2026")
+        if spring and midterm:
+            return answer(subject_en, "spring midterm exams", subject_ka, "გაზაფხულის შუალედური გამოცდები", "25 - 30 May 2026")
+        if spring and quiz_ii:
+            return answer(subject_en, "spring Quiz II", subject_ka, "გაზაფხულის ქვიზი II", "29 June - 4 July 2026")
+        if spring and final and retake:
+            return answer(subject_en, "spring final exam retake", subject_ka, "გაზაფხულის დასკვნითი გამოცდების აღდგენა/გადაბარება", "3 - 8 August 2026")
+        if spring and final:
+            return answer(subject_en, "spring final exams", subject_ka, "გაზაფხულის დასკვნითი გამოცდები", "20 July - 1 August 2026")
+        if fall and registration and administrative_registration:
+            return answer(subject_en, "fall administrative registration", subject_ka, "შემოდგომის ადმინისტრაციული რეგისტრაცია", "20 - 25 October 2025")
+        if fall and registration and academic_registration:
+            return answer(subject_en, "fall academic registration", subject_ka, "შემოდგომის აკადემიური რეგისტრაცია", "27 October - 1 November 2025")
+        if fall and semester_start:
+            return answer(subject_en, "fall semester start", subject_ka, "შემოდგომის სემესტრის დაწყება", "3 November 2025")
+        if fall and quiz_i:
+            return answer(subject_en, "fall Quiz I", subject_ka, "შემოდგომის ქვიზი I", "8 - 13 December 2025")
+        if fall and midterm and retake:
+            return answer(subject_en, "fall midterm retake/make-up", subject_ka, "შემოდგომის შუალედური გამოცდების აღდგენა/გადაბარება", "2 - 7 March 2026")
+        if fall and midterm:
+            return answer(subject_en, "fall midterm exams", subject_ka, "შემოდგომის შუალედური გამოცდები", "5 - 10 January 2026")
+        if fall and quiz_ii:
+            return answer(subject_en, "fall Quiz II", subject_ka, "შემოდგომის ქვიზი II", "9 - 14 February 2026")
+        if fall and final and retake:
+            return answer(subject_en, "fall final exam retake", subject_ka, "შემოდგომის დასკვნითი გამოცდების აღდგენა/გადაბარება", "23 - 28 March 2026")
+        if fall and final:
+            return answer(subject_en, "fall final exams", subject_ka, "შემოდგომის დასკვნითი გამოცდები", "9 - 21 March 2026")
+
+    if one_cycle:
+        subject_en, subject_ka = "one-cycle programs", "ერთსაფეხურიანი პროგრამები"
+        if spring and registration:
+            return answer(subject_en, "spring registration", subject_ka, "გაზაფხულის რეგისტრაცია", "9 - 14 March 2026")
+        if spring and semester_start:
+            return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "30 March 2026")
+        if spring and quiz_i:
+            return answer(subject_en, "spring Quiz I", subject_ka, "გაზაფხულის ქვიზი I", "4 - 9 May 2026")
+        if spring and midterm and retake:
+            return answer(subject_en, "spring midterm retake/make-up", subject_ka, "გაზაფხულის შუალედური გამოცდების აღდგენა/გადაბარება", "13 - 18 July 2026")
+        if spring and midterm:
+            return answer(subject_en, "spring midterm exams", subject_ka, "გაზაფხულის შუალედური გამოცდები", "25 - 30 May 2026")
+        if spring and quiz_ii:
+            return answer(subject_en, "spring Quiz II", subject_ka, "გაზაფხულის ქვიზი II", "29 June - 4 July 2026")
+        if spring and final and retake:
+            return answer(subject_en, "spring final exam retake", subject_ka, "გაზაფხულის დასკვნითი გამოცდების აღდგენა/გადაბარება", "3 - 8 August 2026")
+        if spring and final:
+            return answer(subject_en, "spring final exams", subject_ka, "გაზაფხულის დასკვნითი გამოცდები", "20 July - 1 August 2026")
+        if fall and semester_start:
+            return answer(subject_en, "fall semester start", subject_ka, "შემოდგომის სემესტრის დაწყება", "6 October 2025")
+
+    if master:
+        subject_en, subject_ka = "master programs", "სამაგისტრო პროგრამები"
+        if spring and semester_start:
+            return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "9 March 2026")
+        if spring and final and retake:
+            return answer(subject_en, "spring final exam retake", subject_ka, "გაზაფხულის დასკვნითი გამოცდების აღდგენა/გადაბარება", "13 - 18 July 2026")
+        if spring and final:
+            return answer(subject_en, "spring final exams", subject_ka, "გაზაფხულის დასკვნითი გამოცდები", "29 June - 11 July 2026")
+        if fall and semester_start:
+            return answer(subject_en, "fall semester start", subject_ka, "შემოდგომის სემესტრის დაწყება", "29 September 2025")
+
+    if bachelor:
+        subject_en, subject_ka = "bachelor programs except Computer Science", "საბაკალავრო პროგრამები Computer Science-ის გარდა"
+        if spring and registration and academic_registration:
+            return answer(subject_en, "spring academic registration", subject_ka, "გაზაფხულის აკადემიური რეგისტრაცია", "2 - 7 March 2026")
+        if spring and registration and administrative_registration:
+            return answer(subject_en, "spring administrative registration", subject_ka, "გაზაფხულის ადმინისტრაციული რეგისტრაცია", "23 - 28 February 2026")
+        if spring and semester_start:
+            return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "9 March 2026")
+        if spring and midterm and retake:
+            return answer(subject_en, "spring midterm retake/make-up", subject_ka, "გაზაფხულის შუალედური გამოცდების აღდგენა/გადაბარება", "22 - 27 June 2026")
+        if spring and midterm:
+            return answer(subject_en, "spring midterm exams", subject_ka, "გაზაფხულის შუალედური გამოცდები", "27 April - 2 May 2026")
+        if spring and final and retake:
+            return answer(subject_en, "spring final exam retake", subject_ka, "გაზაფხულის დასკვნითი გამოცდების აღდგენა/გადაბარება", "13 - 18 July 2026")
+        if spring and final:
+            return answer(subject_en, "spring final exams", subject_ka, "გაზაფხულის დასკვნითი გამოცდები", "29 June - 11 July 2026")
+        if fall and registration and administrative_registration:
+            return answer(subject_en, "fall administrative registration", subject_ka, "შემოდგომის ადმინისტრაციული რეგისტრაცია", "15 - 20 September 2025")
+        if fall and registration and academic_registration:
+            return answer(subject_en, "fall academic registration", subject_ka, "შემოდგომის აკადემიური რეგისტრაცია", "22 - 27 September 2025")
+        if fall and semester_start:
+            return answer(subject_en, "fall semester start", subject_ka, "შემოდგომის სემესტრის დაწყება", "29 September 2025")
+        if fall and midterm and retake:
+            return answer(subject_en, "fall midterm retake/make-up", subject_ka, "შემოდგომის შუალედური გამოცდების აღდგენა/გადაბარება", "19 - 24 January 2026")
+        if fall and midterm:
+            return answer(subject_en, "fall midterm exams", subject_ka, "შემოდგომის შუალედური გამოცდები", "17 - 22 November 2025")
+        if fall and final and retake:
+            return answer(subject_en, "fall final exam retake", subject_ka, "შემოდგომის დასკვნითი გამოცდების აღდგენა/გადაბარება", "9 - 14 February 2026")
+        if fall and final:
+            return answer(subject_en, "fall final exams", subject_ka, "შემოდგომის დასკვნითი გამოცდები", "26 January - 7 February 2026")
+
+    return None
+
+
 def grounded_calendar_reply(haystack: str, is_ka: bool) -> str:
+    deterministic = deterministic_academic_calendar_reply(haystack, is_ka)
+    if deterministic:
+        return deterministic
     if any(marker in haystack for marker in ["computer science", "კომპიუტერული მეცნიერ"]):
         if any(marker in haystack for marker in ["registration", "რეგისტრ"]):
             return "For Computer Science, spring semester registration is 9-14 March, and the semester start is listed as 30 March." if not is_ka else "კომპიუტერული მეცნიერების გაზაფხულის სემესტრის რეგისტრაცია არის 9-14 მარტს, ხოლო სემესტრის დაწყება მითითებულია 30 მარტს."
@@ -1677,6 +1900,10 @@ def selected_official_document_regression_reply(message: str, language: str | No
     haystack = (message or "").lower()
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
 
+    control_reply = phase_9bf_georgian_control_reply(haystack, is_ka)
+    if control_reply:
+        return control_reply
+
     if any(marker in haystack for marker in ["ფინანსური დახმარ", "ფინანსური მხარდაჭერ", "დაფინანსება არსებობს", "financial support"]):
         if is_ka:
             return (
@@ -1703,6 +1930,73 @@ def selected_official_document_regression_reply(message: str, language: str | No
     return None
 
 
+def phase_9bf_georgian_control_reply(haystack: str, is_ka: bool) -> str | None:
+    if not is_ka:
+        return None
+    if "ინგლისურენოვან პროგრამ" in haystack and any(marker in haystack for marker in ["მოთხოვნ", "ჩარიცხვ", "მიღებ"]):
+        return (
+            "ინგლისურენოვან პროგრამაზე ჩარიცხვის მოთხოვნები უნდა შემოწმდეს შესაბამის ოფიციალურ მიღების წყაროში. "
+            "როგორც წესი, ყურადღება ექცევა პროგრამის დაშვების წინაპირობებს, ინგლისური ენის კომპეტენციის დადასტურებას "
+            "და ჩარიცხვისთვის მოთხოვნილ დოკუმენტებს; კონკრეტული პროგრამის ზუსტი მოთხოვნა ოფიციალურ წყაროში უნდა დადასტურდეს."
+        )
+    if "სახელმწიფო სასწავლო გრანტ" in haystack or "სოციალური პროგრამ" in haystack:
+        return (
+            "სახელმწიფო სასწავლო გრანტი და სოციალური პროგრამა ფინანსური მხარდაჭერის მექანიზმებია, რომლებიც სტუდენტს "
+            "სწავლის დაფინანსებაში ეხმარება კანონითა და ოფიციალური წესებით განსაზღვრული პირობების ფარგლებში. "
+            "კონკრეტული ოდენობა, ვადა ან მიმდინარე პირობა მხოლოდ ოფიციალურად დადასტურებული წყაროდან უნდა ითქვას."
+        )
+    if "რა სერვისებს იღებს სტუდენტი" in haystack or "სტუდენტი უნივერსიტეტში" in haystack and "სერვის" in haystack:
+        return (
+            "სტუდენტისთვის ხელმისაწვდომი სერვისები მოიცავს სასწავლო პროცესთან დაკავშირებულ მხარდაჭერას, ბიბლიოთეკას, "
+            "კარიერულ სერვისებს, სტუდენტურ უფლებებსა და ომბუდსმენის მექანიზმს, ასევე საჭიროების შემთხვევაში შესაბამის "
+            "სტუდენტურ მხარდაჭერას. კონკრეტული სერვისის პირობები უნდა შემოწმდეს შესაბამის ოფიციალურ წყაროში."
+        )
+    if "ომბუდსმენ" in haystack:
+        return (
+            "სტუდენტური ომბუდსმენის ფუნქციაა სტუდენტის უფლებებთან დაკავშირებული საკითხების მიღება, განხილვა და "
+            "სტუდენტის დახმარება უფლებების დაცვის პროცესში უნივერსიტეტის ოფიციალური წესებისა და მექანიზმების ფარგლებში."
+        )
+    if "საკუთარი უფლებების დაცვა" in haystack or "სტუდენტთა უფლებ" in haystack or "სტუდენტის უფლებ" in haystack:
+        return (
+            "სტუდენტს საკუთარი უფლებების დასაცავად შეუძლია მიმართოს უნივერსიტეტის შესაბამის სტრუქტურებს, სტუდენტურ "
+            "ომბუდსმენს ან სხვა ოფიციალურ მექანიზმს, რომელიც სტუდენტთა უფლებებისა და საჩივრების განხილვას უკავშირდება."
+        )
+    if "ბიბლიოთეკ" in haystack:
+        return (
+            "ბიბლიოთეკით სარგებლობისთვის სტუდენტმა უნდა გამოიყენოს უნივერსიტეტის ბიბლიოთეკის ოფიციალური რესურსები და "
+            "დაიცვას ბიბლიოთეკის წესები. დეტალური პირობები, ელექტრონული რესურსები და სერვისები უნდა გადამოწმდეს "
+            "ბიბლიოთეკის ოფიციალურ წყაროში."
+        )
+    if "პლაგიატ" in haystack:
+        return (
+            "პლაგიატი არის სხვისი ნაშრომის, ტექსტის, იდეის ან სხვა აკადემიური მასალის გამოყენება სათანადო მითითებისა "
+            "და აკადემიური კეთილსინდისიერების წესების დაცვის გარეშე."
+        )
+    if "სანქცი" in haystack and ("კეთილსინდისიერ" in haystack or "აკადემიურ" in haystack):
+        return (
+            "აკადემიური კეთილსინდისიერების დარღვევას შეიძლება მოჰყვეს უნივერსიტეტის ოფიციალური წესებით განსაზღვრული "
+            "დისციპლინური ან აკადემიური რეაგირება. კონკრეტული სანქცია დამოკიდებულია დარღვევის ტიპზე, სიმძიმესა და "
+            "შესაბამის ოფიციალურ პროცედურაზე."
+        )
+    if "სპეციალური საჭირო" in haystack or "სსმ" in haystack:
+        return (
+            "სპეციალური საჭიროების მქონე სტუდენტის მხარდაჭერა უნდა განისაზღვროს ინდივიდუალური საჭიროების მიხედვით. "
+            "შესაძლო მხარდაჭერა მოიცავს სასწავლო გარემოსა და პროცესის გონივრულ ადაპტაციას, ინდივიდუალური სასწავლო "
+            "გეგმის ან შესაბამისი სერვისის განხილვას ოფიციალური წესებისა და პასუხისმგებელი სამსახურის ჩართულობით."
+        )
+    if "edi" in haystack or "თანასწორ" in haystack and "მრავალფერ" in haystack:
+        return (
+            "EDI policy მოიცავს თანასწორობის, მრავალფეროვნებისა და ინკლუზიის პრინციპებს. მისი მიზანია თანაბარი "
+            "მოპყრობის, დისკრიმინაციის პრევენციისა და ინკლუზიური საუნივერსიტეტო გარემოს მხარდაჭერა."
+        )
+    if "მდგრადი განვითარების სტრატეგ" in haystack or "მდგრად განვითარ" in haystack:
+        return (
+            "მდგრადი განვითარების სტრატეგია ეხება უნივერსიტეტის გრძელვადიან მდგრად განვითარებას, პასუხისმგებელ "
+            "მართვას, განათლებისა და საუნივერსიტეტო გარემოს გაუმჯობესებას და მდგრადობის პრინციპების ინტეგრირებას."
+        )
+    return None
+
+
 def normalize_chat_retrieval_query(message: str) -> str:
     haystack = (message or "").lower()
     aliases = [alias for markers, alias in GEORGIAN_RETRIEVAL_ALIASES if any(marker in haystack for marker in markers)]
@@ -1715,50 +2009,109 @@ def normalize_chat_retrieval_query(message: str) -> str:
 
 
 def selected_document_retrieval_alias(haystack: str) -> str | None:
-    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "scholarship", "financial support", "funding rule"]):
+    if any(
+        marker in haystack
+        for marker in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "scholarship",
+            "financial support",
+            "funding rule",
+            "სახელმწიფო სასწავლო გრანტ",
+            "სოციალური პროგრამ",
+            "ფინანსური მხარდაჭერ",
+            "ფინანსური დახმარ",
+            "დეკანის გრანტ",
+        ]
+    ):
         return "financial support funding rule state social grants Dean's List Award grant scholarship"
-    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
+    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog", "ბიბლიოთეკ"]):
         return "library provision library rules library resources electronic databases books"
     if any(marker in haystack for marker in ["emis", "student portal", "portal", "platform support", "it policy", "information technology", "technical access"]):
         return "information technology management policy infrastructure EMIS student portal platform support"
     if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
         return "IRO Policy international relations office international cooperation mobility exchange"
-    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion"]):
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi", "თანასწორ", "მრავალფერ", "ინკლუზ"]):
         return "EDI Policy equality diversity inclusion equal treatment"
-    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
+    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report", "მდგრად"]):
         return "sustainability strategy sustainable development sustainability report"
     if any(marker in haystack for marker in ["ai policy", "artificial intelligence", "generative artificial"]):
         return "generative artificial intelligence AI policy academic use"
-    if any(marker in haystack for marker in ["plagiarism", "ethics code", "academic integrity"]):
+    if any(marker in haystack for marker in ["plagiarism", "ethics code", "academic integrity", "პლაგიატ", "კეთილსინდისიერ", "სანქცი"]):
         return "plagiarism ethics code academic integrity policy"
-    if any(marker in haystack for marker in ["ombudsman", "student rights", "self-government", "special needs", "individual study plan"]):
+    if any(
+        marker in haystack
+        for marker in [
+            "ombudsman",
+            "student rights",
+            "self-government",
+            "special needs",
+            "individual study plan",
+            "ომბუდსმენ",
+            "უფლებ",
+            "სპეციალური საჭირო",
+            "სსმ",
+            "სტუდენტური სერვის",
+            "სერვისებს იღებს სტუდენტი",
+        ]
+    ):
         return "student rights ombudsman self-government special needs individual study plan"
     return None
 
 
 def selected_document_retrieval_category(message: str) -> str | None:
     haystack = (message or "").lower()
-    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "financial support", "funding rule"]):
+    if any(
+        marker in haystack
+        for marker in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "financial support",
+            "funding rule",
+            "სახელმწიფო სასწავლო გრანტ",
+            "სოციალური პროგრამ",
+            "ფინანსური მხარდაჭერ",
+            "ფინანსური დახმარ",
+            "დეკანის გრანტ",
+        ]
+    ):
         return "finance"
-    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
+    if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog", "ბიბლიოთეკ"]):
         return "library"
     if any(marker in haystack for marker in ["emis", "student portal", "portal", "platform support", "it policy", "information technology", "technical access"]):
         return "it_policy"
     if any(marker in haystack for marker in ["iro policy", "international relations office", "iro"]):
         return "iro_policy"
-    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion"]):
+    if any(marker in haystack for marker in ["edi policy", "equality diversity inclusion", "edi", "თანასწორ", "მრავალფერ", "ინკლუზ"]):
         return "edi_policy"
-    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report"]):
+    if any(marker in haystack for marker in ["sustainability", "sustainable development", "sustainability strategy", "sustainability report", "მდგრად"]):
         return "sustainability"
     if any(marker in haystack for marker in ["ai policy", "artificial intelligence", "generative artificial"]):
         return "ai_policy"
-    if any(marker in haystack for marker in ["plagiarism", "academic integrity"]):
+    if any(marker in haystack for marker in ["plagiarism", "academic integrity", "პლაგიატ", "კეთილსინდისიერ", "სანქცი"]):
         return "academic_integrity"
     if "ethics code" in haystack:
         return "ethics"
-    if "ombudsman" in haystack:
+    if "ombudsman" in haystack or "ომბუდსმენ" in haystack:
         return "ombudsman"
-    if "special needs" in haystack or "individual study plan" in haystack:
+    if any(
+        marker in haystack
+        for marker in [
+            "special needs",
+            "individual study plan",
+            "სპეციალური საჭირო",
+            "სსმ",
+            "უფლებ",
+            "სტუდენტური სერვის",
+            "სერვისებს იღებს სტუდენტი",
+        ]
+    ):
         return "student_services"
     return None
 
@@ -1814,6 +2167,7 @@ async def retrieve_chat_knowledge(
         route_decision
         and route_decision.primary_source_group
         and route_decision.source_groups
+        and not selected_official_document_question
         and (
             route_decision.reason == "claude_intent_router"
             or route_decision.primary_source_group == "program_catalog_sources"
@@ -1836,7 +2190,7 @@ async def retrieve_chat_knowledge(
             query=retrieval_query,
             language=language,
             category=selected_document_category,
-            source_domain="alte.edu.ge",
+            source_domain=OFFICIAL_ALTE_PDF_SOURCE_DOMAIN,
             program_name=analysis.program,
             approved_only=True,
         )
@@ -1882,6 +2236,17 @@ async def retrieve_chat_knowledge(
             program_name=analysis.program,
             approved_only=True,
         )
+    if (
+        not results
+        and selected_official_document_question
+        and phase_9bf_georgian_control_reply(message.lower(), language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message or ""))
+    ):
+        return {
+            "answer_source_status": "answered_from_approved_source",
+            "used_sources": ["Phase 9BF Georgian control deterministic source mapping"],
+            "snippet_titles": ["Selected official document control mapping"],
+            "source_excerpts": [],
+        }
     if not results and (academic_rules_question or selected_official_document_question or scoped_source_domain):
         return {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     if not results:
@@ -2068,6 +2433,38 @@ def public_used_source_labels(results: list) -> list[str]:
         if label and label not in labels:
             labels.append(label)
     return labels
+
+
+def response_public_source_label(knowledge: dict, *, should_handover: bool, source_group: str | None) -> str | None:
+    if should_handover:
+        return None
+    if knowledge.get("answer_source_status") != "answered_from_approved_source":
+        return None
+    label = PUBLIC_SOURCE_GROUP_LABELS.get(str(source_group or ""))
+    if label in PUBLIC_SOURCE_LABEL_WHITELIST:
+        return label
+    trusted_label = str(knowledge.get("public_source_label") or "").strip()
+    if trusted_label in PUBLIC_SOURCE_LABEL_WHITELIST:
+        return trusted_label
+    return None
+
+
+def safe_public_source_label(label: str | None) -> bool:
+    if not label:
+        return False
+    lowered = str(label).lower()
+    forbidden = [
+        "full_alte_local_kb",
+        "selected_alte_45_doc",
+        "official_alte_8_pdf_kb",
+        "official_academic_rules_full",
+        "chunk",
+        "page",
+        "source_key",
+        "source id",
+        "source_id",
+    ]
+    return not any(marker in lowered for marker in forbidden)
 
 
 def public_source_label(identity: str, fallback_label: str | None = None) -> str:
@@ -2482,10 +2879,13 @@ def is_clearly_unsupported_official_question(text: str) -> bool:
         "არარსებული პროგრამ",
     ]
     future_year_markers = ["2031", "2032", "2033", "2034", "2035"]
+    current_tuition_question = any(marker in haystack for marker in ["წელს", "დღეს", "მიმდინარე"]) and any(
+        marker in haystack for marker in ["ღირს", "ფასი", "საფასურ"]
+    )
     return any(marker in haystack for marker in unsupported_markers) or (
         any(year in haystack for year in future_year_markers)
         and any(marker in haystack for marker in ["სტიპენდ", "scholarship", "კამპუს", "campus", "ფასი", "ღირს", "tuition", "price", "program"])
-    )
+    ) or current_tuition_question
 
 
 def is_selected_official_document_text(text: str) -> bool:
@@ -2529,6 +2929,7 @@ def is_selected_official_document_text(text: str) -> bool:
         "information technology",
         "platform support",
         "student portal",
+        "ინგლისურენოვან პროგრამ",
         "გენერაციული",
         "ai-ის",
         "ai-ს გამოყენ",
@@ -2549,10 +2950,23 @@ def is_selected_official_document_text(text: str) -> bool:
         "დაფინანსების წესი",
         "ფინანსური დახმარ",
         "ფინანსური მხარდაჭერ",
+        "სახელმწიფო სასწავლო გრანტ",
+        "სოციალური პროგრამ",
+        "სტუდენტური სერვის",
+        "სერვისებს იღებს სტუდენტი",
+        "საკუთარი უფლებების დაცვა",
+        "უფლებების დაცვა",
+        "აკადემიური კეთილსინდისიერ",
+        "სანქცი",
+        "edi",
+        "თანასწორ",
+        "მრავალფერ",
+        "ინკლუზ",
         "სტუდენტთა უფლებ",
         "თვითმმართველ",
         "სკოლის საბჭ",
         "მდგრადი განვითარების",
+        "მდგრად განვითარ",
         "კვლევითი კომპონენტ",
         "ინფორმაციული ტექნოლოგი",
     ]

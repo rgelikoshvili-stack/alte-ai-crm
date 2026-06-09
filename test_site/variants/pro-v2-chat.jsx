@@ -119,11 +119,9 @@ const proV2Css = `
 .cw-dept{ display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:var(--alte-soft); color:var(--alte-teal); border-radius:20px; font-size:10px; font-weight:700; letter-spacing:0.01em; }
 .cw-dept .dot{ width:5px; height:5px; border-radius:50%; background:currentColor; }
 
-.cw-srcs{ display:flex; gap:5px; flex-wrap:wrap; }
-.cw-src{ display:inline-flex; align-items:center; gap:5px; padding:4px 9px 4px 6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:20px; font-size:10.5px; color:var(--alte-teal-mid,#0a5258); font-weight:500; cursor:pointer; transition:.15s; max-width:100%; }
-.cw-src:hover{ border-color:var(--alte-soft-line); background:var(--alte-soft); }
-.cw-src .n{ width:14px; height:14px; border-radius:50%; background:var(--alte-teal); color:#fff; font-size:8.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.cw-src .u{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px; }
+.cw-srcs{ display:flex; max-width:100%; min-width:0; }
+.cw-src{ display:block; padding:0; border:0; background:transparent; font-size:10.5px; line-height:1.35; color:var(--alte-mute); font-weight:600; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cw-src strong{ color:var(--alte-teal-mid,#0a5258); font-weight:800; }
 
 .cw-msg-acts{ display:flex; gap:4px; margin-top:2px; opacity:0; transition:.15s; }
 .cw-row:hover .cw-msg-acts{ opacity:1; }
@@ -243,8 +241,7 @@ const proV2Css = `
   .cw-bub-wrap{ max-width:calc(100% - 34px); min-width:0; }
   .cw-bub{ max-width:100%; }
   .cw-srcs{ width:100%; min-width:0; }
-  .cw-src{ max-width:100%; min-width:0; }
-  .cw-src .u{ max-width:calc(100vw - 92px); }
+  .cw-src{ max-width:calc(100vw - 92px); }
   .cw-feat{ align-items:flex-start; }
   .cw-feat > div:nth-child(2){ min-width:0; }
   .cw-feat .ttl,
@@ -408,16 +405,10 @@ function Header({ S, lang, setLang, onSettings, onNew, onClose, onExpand, expand
   );
 }
 
-// ============ Source pill ============
-function SourceChip({ n, url }){
-  const handle = (e) => { e.preventDefault(); window.open(url.startsWith('http')?url:'https://'+url,'_blank','noopener'); };
-  const trimmed = url.replace(/^https?:\/\//,'');
-  return (
-    <a className="cw-src" href="#" onClick={handle} title={url}>
-      <span className="n">{n}</span>
-      <span className="u">{trimmed}</span>
-    </a>
-  );
+// ============ Public source line ============
+function SourceLine({ label, lang }){
+  if (!label) return null;
+  return <div className="cw-src"><strong>{lang==='KA' ? 'წყარო:' : 'Source:'}</strong> {label}</div>;
 }
 
 // ============ Bubble actions ============
@@ -471,9 +462,9 @@ function Message({ msg, S, lang, onCopy, onRegen, onVote, onContactHandover, onW
           </div>
         )}
         {msg.text && <div className="cw-bub">{md(msg.text)}</div>}
-        {msg.sources && msg.sources.length>0 && (
+        {msg.sourceLabel && (
           <div className="cw-srcs">
-            {msg.sources.map((s,i)=><SourceChip key={i} n={i+1} url={s}/>)}
+            <SourceLine label={msg.sourceLabel} lang={lang}/>
           </div>
         )}
         {!isUser && !isOperator && msg.text && (
@@ -672,28 +663,47 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     return { system: sys, messages: hist };
   }, [messages, lang, dept]);
 
-  // Guess sources from text (look for alte.edu.ge mentions, else default to dept page)
-  const inferSources = (text, deptId) => {
-    const out = [];
-    const urlRe = /alte\.edu\.ge\/[^\s\)\]]+/gi;
-    let m;
-    while ((m = urlRe.exec(text)) !== null) {
-      if (out.indexOf(m[0]) === -1) out.push(m[0]);
-    }
-    if (out.length === 0) {
-      const defaultUrls = {
-        admissions:'alte.edu.ge/ka/migebis-pirobebi',
-        programs:'alte.edu.ge/ka/programebi',
-        finance:'alte.edu.ge/ka/datsva-da-stipendia',
-        international:'alte.edu.ge/en/international-students',
-        medicine:'alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2',
-        library:'alte.edu.ge/ka/biblioteka',
-        career:'alte.edu.ge/ka/karieris-centri',
-        it:'alte.edu.ge/ka/it-dakhmareba',
-      };
-      out.push(defaultUrls[deptId] || 'alte.edu.ge');
-    }
-    return out.slice(0,3);
+  const publicSourceLabel = (backend) => {
+    if (!backend || backend.answer_source_status !== 'answered_from_approved_source') return null;
+    if (backend.clarification_needed || backend.should_handover) return null;
+    const allowedLabels = [
+      'საგანმანათლებლო პროგრამების კატალოგი',
+      'აკადემიური კალენდარი 2025–2026',
+      'სასწავლო პროცესის მარეგულირებელი წესი',
+      'ბაკალავრიატის დებულება',
+      'მაგისტრატურის დებულება',
+      'მიღების წესი',
+      'საერთაშორისო მიღების წესი',
+      'ფინანსური მხარდაჭერა',
+      'სახელმწიფო/სოციალური გრანტები',
+      'ბიბლიოთეკის წესი',
+      'კარიერის სერვისები',
+    ];
+    const safeLabel = (label) => {
+      if (!label) return null;
+      const text = String(label).trim();
+      return allowedLabels.includes(text) ? text : null;
+    };
+    const groupLabel = (group) => ({
+      program_catalog_sources: 'საგანმანათლებლო პროგრამების კატალოგი',
+      academic_calendar_2025_2026: 'აკადემიური კალენდარი 2025–2026',
+      official_academic_rules: 'სასწავლო პროცესის მარეგულირებელი წესი',
+      admissions_rules: 'მიღების წესი',
+      international_admissions_sources: 'საერთაშორისო მიღების წესი',
+      finance_sources: 'ფინანსური მხარდაჭერა',
+      state_social_grants_sources: 'სახელმწიფო/სოციალური გრანტები',
+      library_sources: 'ბიბლიოთეკის წესი',
+      career_sources: 'კარიერის სერვისები',
+      bachelor_regulation: 'ბაკალავრიატის დებულება',
+      bachelor_rules: 'ბაკალავრიატის დებულება',
+      master_regulation: 'მაგისტრატურის დებულება',
+      master_rules: 'მაგისტრატურის დებულება',
+    }[group] || null);
+    const directLabel = safeLabel(backend.public_source_label);
+    if (directLabel) return directLabel;
+    const routedLabel = safeLabel(groupLabel(backend.source_group));
+    if (routedLabel) return routedLabel;
+    return null;
   };
 
   // Detect intent: handover request, lead request
@@ -773,7 +783,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         kind: backend.should_handover ? 'handover' : undefined,
         text: reply,
         deptId: backend.department_key || currentDept,
-        sources: settingsState.sources ? (backend.used_sources || inferSources(reply, currentDept)) : [],
+        sourceLabel: settingsState.sources ? publicSourceLabel(backend) : null,
       }]);
     } catch (err) {
       setTyping(false);
@@ -803,7 +813,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       const histBeforeUser = messages.slice(0, idx).filter(x=>x.role==='user'||x.role==='assistant').map(x=>({role:x.role, content:x.text||''}));
       const reply = await window.AlteChatBridge.complete({ system: altePrompt(lang, dept), messages: histBeforeUser });
       setTyping(false);
-      setMessages(m => [...m, { id:'a'+Date.now(), role:'assistant', text: reply, deptId: currentDept, sources: settingsState.sources?inferSources(reply,currentDept):[] }]);
+      setMessages(m => [...m, { id:'a'+Date.now(), role:'assistant', text: reply, deptId: currentDept, sourceLabel: null }]);
     } catch (e){ setTyping(false); }
   };
 

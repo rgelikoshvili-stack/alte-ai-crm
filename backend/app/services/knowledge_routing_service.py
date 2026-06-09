@@ -225,6 +225,19 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
     if has_contact_or_handover_context(lowered):
         return None
     normalized = normalize_broad_question_text(lowered)
+    if normalized in {
+        "გამოცდები როდის არის",
+        "რეგისტრაცია როდის არის",
+        "სემესტრი როდის იწყება",
+        "როდის არის რეგისტრაციის პერიოდი აკადემიურ კალენდარში",
+        "როდის იწყება სემესტრი",
+        "როდის არის შუალედური ან დასკვნითი გამოცდები",
+    }:
+        return (
+            "academic_calendar",
+            "გთხოვთ დააზუსტოთ: რომელი პროგრამის ჯგუფი, რომელი სემესტრი და რომელი მოვლენა გაინტერესებთ?",
+            ["ბაკალავრიატი Computer Science-ის გარდა", "Computer Science", "მაგისტრატურა", "ერთსაფეხურიანი"],
+        )
     if normalized == "გამოცდებზე მაინტერესებს":
         return (
             "study_process",
@@ -507,6 +520,8 @@ def is_calendar_date_or_schedule_question(lowered: str) -> bool:
 def is_program_catalog_question(lowered: str) -> bool:
     if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
         return False
+    if is_academic_calendar_priority_question(lowered):
+        return False
     if is_calendar_date_or_schedule_question(lowered):
         return False
     if any(
@@ -590,6 +605,8 @@ def is_program_catalog_question(lowered: str) -> bool:
         ]
     ):
         return True
+    if "computer science" in lowered and any(marker in lowered for marker in ["language", "languages"]) and any(marker in lowered for marker in ["catalog", "program"]):
+        return True
     if any(marker in lowered for marker in ["computer science language", "computer science languages", "კომპიუტერული მეცნიერების პროგრამა"]) and any(
         marker in lowered for marker in ["language", "languages", "ენა", "ენებზე", "geo", "eng"]
     ):
@@ -598,6 +615,8 @@ def is_program_catalog_question(lowered: str) -> bool:
 
 
 def is_program_catalog_explicit_scope(lowered: str) -> bool:
+    if "catalog" in lowered and any(marker in lowered for marker in ["program", "computer science", "bachelor", "master", "one-cycle", "one cycle"]):
+        return True
     return any(
         marker in lowered
         for marker in [
@@ -647,8 +666,59 @@ def is_calendar_question(lowered: str) -> bool:
     )
 
 
+def is_academic_calendar_priority_question(lowered: str) -> bool:
+    if is_exam_rule_question(lowered):
+        return False
+    time_markers = [
+        "when",
+        "date",
+        "dates",
+        "calendar",
+        "schedule",
+        "starts",
+        "registration",
+        "final exams",
+        "midterm exams",
+        "holidays",
+        "vacation",
+        "\u10e0\u10dd\u10d3\u10d8\u10e1",
+        "\u10d7\u10d0\u10e0\u10d8\u10e6",
+        "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3",
+        "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2",
+        "\u10d8\u10ec\u10e7\u10d4\u10d1\u10d0",
+    ]
+    calendar_topics = [
+        "semester",
+        "registration",
+        "exam",
+        "midterm",
+        "final",
+        "retake",
+        "holiday",
+        "vacation",
+        "bachelor",
+        "master",
+        "one-cycle",
+        "one cycle",
+        "computer science",
+        "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0",
+        "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0",
+        "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3",
+        "\u10e8\u10e3\u10d0\u10da\u10d4\u10d3",
+        "\u10d3\u10d0\u10e1\u10d9\u10d5\u10dc\u10d8\u10d7",
+        "\u10d2\u10d0\u10d3\u10d0\u10d1\u10d0\u10e0",
+        "\u10d0\u10e0\u10d3\u10d0\u10d3\u10d4\u10d2",
+        "\u10e1\u10d0\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
+        "\u10e1\u10d0\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
+        "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0",
+    ]
+    return any(marker in lowered for marker in time_markers) and any(marker in lowered for marker in calendar_topics)
+
+
 def is_admissions_question(lowered: str) -> bool:
     if is_credit_recognition_question(lowered) or is_teaching_language_question(lowered):
+        return False
+    if is_selected_official_control_topic(lowered):
         return False
     return any(
         marker in lowered
@@ -675,6 +745,32 @@ def is_admissions_question(lowered: str) -> bool:
     )
 
 
+def is_selected_official_control_topic(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "ომბუდსმენ",
+            "უფლებ",
+            "სპეციალური საჭირო",
+            "სსმ",
+            "პლაგიატ",
+            "კეთილსინდისიერ",
+            "სანქცი",
+            "edi",
+            "მდგრად",
+            "ბიბლიოთეკ",
+            "სტუდენტური სერვის",
+            "სერვისებს იღებს სტუდენტი",
+            "student services",
+            "student rights",
+            "academic integrity",
+            "special needs",
+            "sustainability",
+            "edi policy",
+        ]
+    )
+
+
 def is_career_question(lowered: str) -> bool:
     return any(marker in lowered for marker in ["კარიერ", "სტაჟირ", "დასაქმ", "career", "internship", "employment", "job"])
 
@@ -691,12 +787,16 @@ def is_grants_or_finance_policy_question(lowered: str) -> bool:
             "scholarship",
             "funding rule",
             "financial support",
+            "სახელმწიფო სასწავლო გრანტ",
+            "სოციალური პროგრამ",
+            "ფინანსური მხარდაჭერ",
+            "ფინანსური დახმარ",
         ]
     )
 
 
 def is_library_question(lowered: str) -> bool:
-    return any(marker in lowered for marker in ["library", "library resources", "database", "catalog", "books"])
+    return any(marker in lowered for marker in ["library", "library resources", "database", "catalog", "books", "ბიბლიოთეკ"])
 
 
 def is_iro_policy_question(lowered: str) -> bool:
@@ -713,6 +813,10 @@ def is_edi_or_sustainability_policy_question(lowered: str) -> bool:
             "sustainable development",
             "sustainability strategy",
             "sustainability report",
+            "მდგრად",
+            "თანასწორ",
+            "მრავალფერ",
+            "ინკლუზ",
         ]
     )
 
@@ -755,6 +859,8 @@ def first_source_group(department: dict) -> str | None:
 def choose_primary_source_group(department_id: str, lowered: str, source_groups: list[str]) -> str | None:
     if not source_groups:
         return None
+    if is_academic_calendar_priority_question(lowered):
+        return "academic_calendar_2025_2026" if "academic_calendar_2025_2026" in source_groups else source_groups[0]
     if is_exam_rule_question(lowered):
         return "exams_and_assessment" if "exams_and_assessment" in source_groups else source_groups[0]
     if is_credit_recognition_question(lowered):

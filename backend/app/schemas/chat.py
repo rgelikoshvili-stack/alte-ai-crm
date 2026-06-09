@@ -127,6 +127,7 @@ class ChatMessageResponse(BaseModel):
     recommended_next_action: str | None = None
     answer_source_status: str | None = None
     used_sources: list[str] = Field(default_factory=list)
+    public_source_label: str | None = None
     route_department: str | None = None
     department_key: str | None = None
     routing_reason: str | None = None

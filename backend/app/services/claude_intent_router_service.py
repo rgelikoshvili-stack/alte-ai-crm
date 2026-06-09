@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -625,6 +626,9 @@ def has_operator_request(lowered: str) -> bool:
 
 def known_broad_question(lowered: str):
     normalized = normalize_broad_question_text(lowered)
+    calendar_broad = known_broad_calendar_question(normalized, detect_language(lowered))
+    if calendar_broad:
+        return calendar_broad
     if normalized == "\u10e1\u10ec\u10d0\u10d5\u10da\u10d0 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1":
         return (
             "admissions",
@@ -744,6 +748,13 @@ def department_for_specialized_route(lowered: str, source_groups: list[str], cur
 
 
 def has_unsupported_marker(lowered: str) -> bool:
+    if has_unsupported_calendar_year(lowered):
+        return True
+    current_tuition_question = any(marker in lowered for marker in ["წელს", "დღეს", "მიმდინარე"]) and any(
+        marker in lowered for marker in ["ღირს", "ფასი", "საფასურ"]
+    )
+    if current_tuition_question:
+        return True
     return any(
         marker in lowered
         for marker in [
@@ -761,8 +772,105 @@ def has_unsupported_marker(lowered: str) -> bool:
     )
 
 
+def known_broad_calendar_question(normalized: str, language: str):
+    ka_questions = {
+        "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3\u10d4\u10d1\u10d8 \u10e0\u10dd\u10d3\u10d8\u10e1 \u10d0\u10e0\u10d8\u10e1",
+        "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0 \u10e0\u10dd\u10d3\u10d8\u10e1 \u10d0\u10e0\u10d8\u10e1",
+        "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0\u10d8 \u10e0\u10dd\u10d3\u10d8\u10e1 \u10d8\u10ec\u10e7\u10d4\u10d1\u10d0",
+        "როდის არის რეგისტრაციის პერიოდი აკადემიურ კალენდარში",
+        "როდის იწყება სემესტრი",
+        "როდის არის შუალედური ან დასკვნითი გამოცდები",
+    }
+    en_questions = {"when are exams", "when is registration", "when does the semester start"}
+    if normalized in ka_questions:
+        return (
+            "academic_calendar",
+            "\u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7: \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1 \u10ef\u10d2\u10e3\u10e4\u10d8, \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0\u10d8 \u10d3\u10d0 \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10db\u10dd\u10d5\u10da\u10d4\u10dc\u10d0 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+            [
+                "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8 \u10d9\u10dd\u10db\u10de\u10d8\u10e3\u10e2\u10d4\u10e0\u10e3\u10da\u10d8 \u10db\u10d4\u10ea\u10dc\u10d8\u10d4\u10e0\u10d4\u10d1\u10d8\u10e1 \u10d2\u10d0\u10e0\u10d3\u10d0",
+                "Computer Science",
+                "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0",
+                "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10d0\u10dc\u10d8",
+            ],
+        )
+    if normalized in en_questions:
+        return (
+            "academic_calendar",
+            "Please clarify which program group, semester, and event you mean.",
+            ["Bachelor except Computer Science", "Computer Science", "Master programs", "One-cycle / first-year one-cycle English"],
+        )
+    return None
+
+
+def has_unsupported_calendar_year(lowered: str) -> bool:
+    years = {int(match) for match in re.findall(r"\b(20\d{2})\b", lowered)}
+    if not years or years <= {2025, 2026}:
+        return False
+    return is_academic_calendar_priority_question(lowered)
+
+
+def is_academic_calendar_priority_question(lowered: str) -> bool:
+    if is_exam_rule_like_question(lowered):
+        return False
+    time_markers = [
+        "when",
+        "date",
+        "dates",
+        "calendar",
+        "schedule",
+        "starts",
+        "registration",
+        "final exams",
+        "midterm exams",
+        "holidays",
+        "vacation",
+        "\u10e0\u10dd\u10d3\u10d8\u10e1",
+        "\u10d7\u10d0\u10e0\u10d8\u10e6",
+        "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3",
+        "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2",
+        "\u10d8\u10ec\u10e7\u10d4\u10d1\u10d0",
+    ]
+    calendar_topics = [
+        "semester",
+        "registration",
+        "exam",
+        "midterm",
+        "final",
+        "retake",
+        "holiday",
+        "vacation",
+        "bachelor",
+        "master",
+        "one-cycle",
+        "one cycle",
+        "computer science",
+        "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0",
+        "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0",
+        "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3",
+        "\u10e8\u10e3\u10d0\u10da\u10d4\u10d3",
+        "\u10d3\u10d0\u10e1\u10d9\u10d5\u10dc\u10d8\u10d7",
+        "\u10d2\u10d0\u10d3\u10d0\u10d1\u10d0\u10e0",
+        "\u10d0\u10e0\u10d3\u10d0\u10d3\u10d4\u10d2",
+        "\u10e1\u10d0\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
+        "\u10e1\u10d0\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
+        "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0",
+    ]
+    return any(marker in lowered for marker in time_markers) and any(marker in lowered for marker in calendar_topics)
+
+
+def is_exam_rule_like_question(lowered: str) -> bool:
+    has_exam = any(marker in lowered for marker in ["exam", "retake", "make-up", "assessment", "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3", "\u10d2\u10d0\u10d3\u10d0\u10d1\u10d0\u10e0", "\u10d3\u10d0\u10e1\u10d9\u10d5\u10dc\u10d8\u10d7"])
+    has_rule = any(marker in lowered for marker in ["rule", "admission", "allowed", "mean", "means", "\u10ec\u10d4\u10e1", "\u10d3\u10d0\u10e8\u10d5", "\u10e0\u10dd\u10d2\u10dd\u10e0"])
+    if any(marker in lowered for marker in ["fx", "gpa"]) and has_rule:
+        return True
+    asks_when = any(marker in lowered for marker in ["when", "date", "calendar", "\u10e0\u10dd\u10d3\u10d8\u10e1"])
+    return has_exam and has_rule and not asks_when
+
+
 def forced_source_group(lowered: str) -> str | None:
     lowered = " ".join((lowered or "").lower().split())
+    if is_academic_calendar_priority_question(lowered):
+        return "academic_calendar_2025_2026"
     if is_program_catalog_question(lowered):
         return "program_catalog_sources"
     if is_admission_without_exams_question(lowered):
@@ -787,8 +895,10 @@ def forced_source_group(lowered: str) -> str | None:
         return "it_support_sources"
     if any(marker in lowered for marker in ["international student", "foreign applicant", "foreign education", "iro"]):
         return "international_admissions_sources"
-    if any(marker in lowered for marker in ["finance", "financial", "tuition", "payment", "scholarship", "grant", "dean's list", "გრანტ", "დაფინანს"]):
+    if any(marker in lowered for marker in ["finance", "financial", "tuition", "payment", "scholarship", "grant", "dean's list", "გრანტ", "დაფინანს", "სოციალური პროგრამ"]):
         return "finance_sources"
+    if any(marker in lowered for marker in ["ომბუდსმენ", "უფლებ", "სპეციალური საჭირო", "სსმ", "პლაგიატ", "კეთილსინდისიერ", "სანქცი", "edi", "მდგრად"]):
+        return "official_academic_rules"
     if any(marker in lowered for marker in ["career", "internship", "employment", "job"]):
         return "career_sources"
     return None
@@ -796,6 +906,8 @@ def forced_source_group(lowered: str) -> str | None:
 
 def is_program_catalog_question(lowered: str) -> bool:
     if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
+        return False
+    if is_academic_calendar_priority_question(lowered):
         return False
     if is_calendar_date_or_schedule_question(lowered):
         return False
@@ -890,6 +1002,8 @@ def is_program_catalog_question(lowered: str) -> bool:
         "languages is computer science",
         "კომპიუტერული მეცნიერების პროგრამა",
     ]
+    if "computer science" in lowered and any(marker in lowered for marker in ["language", "languages"]) and any(marker in lowered for marker in ["catalog", "program"]):
+        return True
     if any(marker in lowered for marker in language_markers) and any(
         marker in lowered for marker in ["language", "languages", "ენა", "ენებზე", "geo", "eng"]
     ):
@@ -905,6 +1019,8 @@ def is_program_catalog_question(lowered: str) -> bool:
 
 
 def is_program_catalog_explicit_scope(lowered: str) -> bool:
+    if "catalog" in lowered and any(marker in lowered for marker in ["program", "computer science", "bachelor", "master", "one-cycle", "one cycle"]):
+        return True
     return any(
         marker in lowered
         for marker in [
@@ -1026,6 +1142,8 @@ def department_for_source_group(source_group: str) -> str:
 
 
 def department_for_unsupported(lowered: str) -> str:
+    if has_unsupported_calendar_year(lowered):
+        return "academic_calendar"
     if any(marker in lowered for marker in ["program", "პროგრამ"]) and any(marker in lowered for marker in ["consultant", "კონსულტანტ", "ტელეფონ"]):
         return "programs"
     if any(marker in lowered for marker in ["scholarship", "tuition", "price", "fee", "grant"]):
