@@ -809,28 +809,63 @@ def has_unsupported_calendar_year(lowered: str) -> bool:
     return is_academic_calendar_priority_question(lowered)
 
 
+def has_english_word_marker(lowered: str, markers: list[str]) -> bool:
+    for marker in markers:
+        pattern = re.escape(marker).replace(r"\ ", r"\s+")
+        if re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", lowered):
+            return True
+    return False
+
+
 def is_academic_calendar_priority_question(lowered: str) -> bool:
     if is_exam_rule_like_question(lowered):
         return False
-    time_markers = [
+    english_explicit_calendar_context = [
+        "academic calendar",
+        "calendar",
+        "schedule",
+    ]
+    georgian_explicit_calendar_context = [
+        "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8",
+        "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3",
+        "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8",
+        "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3",
+        "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2\u10d8",
+    ]
+    english_date_time_markers = [
         "when",
         "date",
         "dates",
-        "calendar",
-        "schedule",
+        "start",
         "starts",
-        "registration",
+        "begin",
+        "begins",
+        "start date",
+        "semester start",
+        "exam date",
+        "final date",
+        "midterm date",
+        "holiday dates",
         "final exams",
         "midterm exams",
         "holidays",
         "vacation",
+    ]
+    georgian_date_time_markers = [
         "\u10e0\u10dd\u10d3\u10d8\u10e1",
+        "\u10e0\u10dd\u10d3\u10d8\u10d3\u10d0\u10dc",
+        "\u10e0\u10dd\u10d3\u10d4\u10db\u10d3\u10d4",
         "\u10d7\u10d0\u10e0\u10d8\u10e6",
+        "\u10d7\u10d0\u10e0\u10d8\u10e6\u10d4\u10d1\u10d8",
         "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3",
         "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2",
         "\u10d8\u10ec\u10e7\u10d4\u10d1\u10d0",
+        "\u10d3\u10d0\u10ec\u10e7\u10d4\u10d1\u10d0",
+        "\u10d3\u10d0\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0",
+        "\u10e0\u10d8\u10ea\u10ee\u10d5\u10e8\u10d8",
+        "\u10e0\u10dd\u10db\u10d4\u10da \u10d3\u10e6\u10d4\u10e1",
     ]
-    calendar_topics = [
+    english_calendar_topics = [
         "semester",
         "registration",
         "exam",
@@ -844,6 +879,8 @@ def is_academic_calendar_priority_question(lowered: str) -> bool:
         "one-cycle",
         "one cycle",
         "computer science",
+    ]
+    georgian_calendar_topics = [
         "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0",
         "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0",
         "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3",
@@ -851,11 +888,88 @@ def is_academic_calendar_priority_question(lowered: str) -> bool:
         "\u10d3\u10d0\u10e1\u10d9\u10d5\u10dc\u10d8\u10d7",
         "\u10d2\u10d0\u10d3\u10d0\u10d1\u10d0\u10e0",
         "\u10d0\u10e0\u10d3\u10d0\u10d3\u10d4\u10d2",
+        "\u10e3\u10e5\u10db\u10d4",
         "\u10e1\u10d0\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
         "\u10e1\u10d0\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
         "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0",
     ]
-    return any(marker in lowered for marker in time_markers) and any(marker in lowered for marker in calendar_topics)
+    english_exclusion_terms = [
+        "requirement",
+        "requirements",
+        "admission",
+        "admissions",
+        "eligibility",
+        "documents",
+        "document",
+        "needed documents",
+        "procedure",
+        "rule",
+        "rules",
+        "policy",
+        "how to register",
+        "application requirements",
+    ]
+    georgian_exclusion_terms = [
+        "\u10db\u10dd\u10d7\u10ee\u10dd\u10d5\u10dc\u10d0",
+        "\u10db\u10dd\u10d7\u10ee\u10dd\u10d5\u10dc\u10d4\u10d1\u10d8",
+        "\u10db\u10d8\u10e6\u10d4\u10d1\u10d0",
+        "\u10e9\u10d0\u10e0\u10d8\u10ea\u10ee\u10d5\u10d0",
+        "\u10e1\u10d0\u10d1\u10e3\u10d7\u10d4\u10d1\u10d8",
+        "\u10d3\u10dd\u10d9\u10e3\u10db\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8",
+        "\u10e1\u10d0\u10ed\u10d8\u10e0\u10dd \u10d3\u10dd\u10d9\u10e3\u10db\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8",
+        "\u10de\u10e0\u10dd\u10ea\u10d4\u10d3\u10e3\u10e0\u10d0",
+        "\u10ec\u10d4\u10e1\u10d8",
+        "\u10ec\u10d4\u10e1\u10d4\u10d1\u10d8",
+        "\u10de\u10dd\u10da\u10d8\u10e2\u10d8\u10d9\u10d0",
+        "\u10e0\u10dd\u10d2\u10dd\u10e0 \u10d3\u10d0\u10d5\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d8\u10e0\u10d3\u10d4",
+        "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d8\u10e1 \u10db\u10dd\u10d7\u10ee\u10dd\u10d5\u10dc\u10d4\u10d1\u10d8",
+    ]
+    has_explicit_context = has_english_word_marker(lowered, english_explicit_calendar_context) or any(marker in lowered for marker in georgian_explicit_calendar_context)
+    has_date_time = has_english_word_marker(lowered, english_date_time_markers) or any(marker in lowered for marker in georgian_date_time_markers)
+    has_calendar_topic = has_english_word_marker(lowered, english_calendar_topics) or any(marker in lowered for marker in georgian_calendar_topics)
+    has_exclusion = has_english_word_marker(lowered, english_exclusion_terms) or any(marker in lowered for marker in georgian_exclusion_terms)
+    if has_exclusion and not has_explicit_context and not has_date_time:
+        return False
+    return (has_explicit_context or has_date_time) and has_calendar_topic
+
+
+def is_registration_policy_question(lowered: str) -> bool:
+    has_registration = has_english_word_marker(lowered, ["registration", "register"]) or any(
+        marker in lowered for marker in ["რეგისტრ", "დარეგისტრ"]
+    )
+    has_policy = has_english_word_marker(
+        lowered,
+        [
+            "requirement",
+            "requirements",
+            "admission",
+            "admissions",
+            "eligibility",
+            "documents",
+            "document",
+            "needed documents",
+            "procedure",
+            "rule",
+            "rules",
+            "policy",
+            "how to register",
+            "application requirements",
+        ],
+    ) or any(
+        marker in lowered
+        for marker in [
+            "მოთხოვ",
+            "მიღება",
+            "ჩარიცხ",
+            "საბუთ",
+            "დოკუმენტ",
+            "პროცედურ",
+            "წეს",
+            "პოლიტიკ",
+            "როგორ დავრეგისტრირდე",
+        ]
+    )
+    return has_registration and has_policy and not is_academic_calendar_priority_question(lowered)
 
 
 def is_exam_rule_like_question(lowered: str) -> bool:
@@ -871,6 +985,8 @@ def forced_source_group(lowered: str) -> str | None:
     lowered = " ".join((lowered or "").lower().split())
     if is_academic_calendar_priority_question(lowered):
         return "academic_calendar_2025_2026"
+    if is_registration_policy_question(lowered):
+        return "admissions_rules"
     if is_program_catalog_question(lowered):
         return "program_catalog_sources"
     if is_admission_without_exams_question(lowered):
@@ -881,8 +997,6 @@ def forced_source_group(lowered: str) -> str | None:
         marker in lowered for marker in ["exam", "assessment", "grade", "student"]
     ):
         return "exams_and_assessment"
-    if "computer science" in lowered and "spring" in lowered and ("registration" in lowered or "semester" in lowered):
-        return "academic_calendar_2025_2026"
     if any(marker in lowered for marker in ["bachelor admission", "master admission", "admission document", "enrollment"]):
         return "admissions_rules"
     if is_credit_volume_question(lowered) or is_teaching_language_question(lowered):

@@ -20,7 +20,11 @@ from app.schemas.chat import (
 from app.schemas.crm import CustomerCreate, LeadCreate, LeadUpdate, TaskCreate
 from app.services.audit_service import audit_event
 from app.services.ai_service import analyze_with_ai, generate_source_grounded_answer
-from app.services.claude_intent_router_service import route_decision_from_intent, route_with_claude_intent
+from app.services.claude_intent_router_service import (
+    is_academic_calendar_priority_question,
+    route_decision_from_intent,
+    route_with_claude_intent,
+)
 from app.services.customer_service import create_or_update_customer
 from app.services.department_routing_service import DepartmentRoutingResult, resolve_department
 from app.services.knowledge_routing_service import (
@@ -1355,10 +1359,12 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
         return grounded_student_status_reply(haystack, is_ka)
     if source_group == "exams_and_assessment":
         return grounded_exam_assessment_reply(haystack, is_ka)
-    if source_group == "academic_calendar_2025_2026" or (is_calendar_text(haystack) and not is_exam_rule_text(haystack)):
+    if source_group == "academic_calendar_2025_2026":
         return grounded_calendar_reply(haystack, is_ka)
     if source_group == "admissions_rules" or is_admissions_text(haystack):
         return grounded_admissions_reply(haystack, is_ka)
+    if is_academic_calendar_priority_question(haystack):
+        return grounded_calendar_reply(haystack, is_ka)
     if any(marker in haystack for marker in ["teaching language", "language of instruction", "program language", "სწავლების ენა", "რა ენაზე"]):
         return "A program's teaching language is defined in the approved educational program and official academic rules." if not is_ka else "სწავლების ენა განსაზღვრულია დამტკიცებულ საგანმანათლებლო პროგრამაში და ოფიციალურ აკადემიურ წესებში."
     if any(marker in haystack for marker in ["english-language program", "english language program", "english program requirements", "english-language admission", "english language admission"]):
@@ -1697,7 +1703,7 @@ def deterministic_academic_calendar_reply(haystack: str, is_ka: bool) -> str | N
     computer_science = has_any(["computer science", "კომპიუტერული მეცნიერ"]) and not excludes_computer_science
     one_cycle = not first_year_one_cycle_english and has_any(["one-cycle", "one cycle", "ერთსაფეხურ"])
     master = has_any(["master", "სამაგისტრო", "მაგისტრ"])
-    bachelor = has_any(["bachelor", "საბაკალავრო", "ბაკალავრიატ"])
+    bachelor = has_any(["bachelor", "საბაკალავრო", "ბაკალავრიატ", "ბაკალავრ"])
 
     if computer_science:
         subject_en, subject_ka = "Computer Science programs", "Computer Science-ის პროგრამები"
@@ -1801,6 +1807,25 @@ def deterministic_academic_calendar_reply(haystack: str, is_ka: bool) -> str | N
 
     if bachelor:
         subject_en, subject_ka = "bachelor programs except Computer Science", "საბაკალავრო პროგრამები Computer Science-ის გარდა"
+        if registration and not spring and not fall:
+            if is_ka:
+                return (
+                    "დამტკიცებული 2025-2026 აკადემიური კალენდრის მიხედვით, საბაკალავრო პროგრამებისთვის "
+                    "Computer Science-ის გარდა რეგისტრაციის თარიღებია: შემოდგომის ადმინისტრაციული რეგისტრაცია - "
+                    "15 - 20 September 2025; შემოდგომის აკადემიური რეგისტრაცია - 22 - 27 September 2025; "
+                    "გაზაფხულის ადმინისტრაციული რეგისტრაცია - 23 - 28 February 2026; გაზაფხულის აკადემიური "
+                    "რეგისტრაცია - 2 - 7 March 2026. თუ Computer Science-ს გულისხმობთ, მას ცალკე თარიღები აქვს: "
+                    "შემოდგომის აკადემიური რეგისტრაცია - 29 September - 4 October 2025; გაზაფხულის რეგისტრაცია - "
+                    "9 - 14 March 2026."
+                )
+            return (
+                "For Bachelor programs except Computer Science, registration dates in the approved 2025-2026 "
+                "academic calendar are: fall semester administrative registration - 15 - 20 September 2025; "
+                "fall semester academic registration - 22 - 27 September 2025; spring semester administrative "
+                "registration - 23 - 28 February 2026; spring semester academic registration - 2 - 7 March 2026. "
+                "If you mean Computer Science, it has separate dates: fall academic registration - 29 September - "
+                "4 October 2025; spring registration - 9 - 14 March 2026."
+            )
         if spring and registration and academic_registration:
             return answer(subject_en, "spring academic registration", subject_ka, "გაზაფხულის აკადემიური რეგისტრაცია", "2 - 7 March 2026")
         if spring and registration and administrative_registration:
@@ -1852,8 +1877,8 @@ def grounded_calendar_reply(haystack: str, is_ka: bool) -> str:
     if any(marker in haystack for marker in ["holiday", "არდადეგ"]):
         return "The approved 2025-2026 academic calendar includes holiday rows; answer should be checked against the exact calendar category." if not is_ka else "დამტკიცებულ 2025-2026 აკადემიურ კალენდარში არდადეგების/დასვენების პერიოდები მოცემულია კალენდრის შესაბამის რიგებში; ზუსტი თარიღი უნდა შემოწმდეს კონკრეტული კატეგორიის მიხედვით."
     if any(marker in haystack for marker in ["spring", "გაზაფხულ"]):
-        return "For bachelor programs except Computer Science, the spring semester registration includes 23 February-7 March 2026 for administrative registration and 2-7 March 2026 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, გაზაფხულის სემესტრის ადმინისტრაციული რეგისტრაცია არის 23 თებერვალი-7 მარტი 2026, აკადემიური რეგისტრაცია კი 2-7 მარტი 2026."
-    return "For bachelor programs except Computer Science, the fall semester registration includes 8-13 September 2025 for administrative registration and 15-20 September 2025 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, შემოდგომის სემესტრის ადმინისტრაციული რეგისტრაცია არის 8-13 სექტემბერი 2025, აკადემიური რეგისტრაცია კი 15-20 სექტემბერი 2025."
+        return "For bachelor programs except Computer Science, the spring semester registration includes 23 - 28 February 2026 for administrative registration and 2 - 7 March 2026 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, გაზაფხულის სემესტრის ადმინისტრაციული რეგისტრაცია არის 23 - 28 February 2026, აკადემიური რეგისტრაცია კი 2 - 7 March 2026."
+    return "For bachelor programs except Computer Science, the fall semester registration includes 15 - 20 September 2025 for administrative registration and 22 - 27 September 2025 for academic registration." if not is_ka else "ბაკალავრიატის პროგრამებისთვის, კომპიუტერული მეცნიერების გარდა, შემოდგომის სემესტრის ადმინისტრაციული რეგისტრაცია არის 15 - 20 September 2025, აკადემიური რეგისტრაცია კი 22 - 27 September 2025."
 
 
 def is_admissions_text(haystack: str) -> bool:
@@ -2133,11 +2158,43 @@ def is_master_admission_documents_question(haystack: str) -> bool:
     return has_master and has_documents
 
 
+def has_chat_english_word_marker(haystack: str, markers: list[str]) -> bool:
+    for marker in markers:
+        pattern = re.escape(marker).replace(r"\ ", r"\s+")
+        if re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", haystack):
+            return True
+    return False
+
+
 def is_computer_science_spring_registration_question(haystack: str) -> bool:
     has_program = any(marker in haystack for marker in ["კომპიუტერული მეცნიერ", "computer science"])
-    has_spring = any(marker in haystack for marker in ["გაზაფხულის სემესტ", "spring semester"])
+    has_spring = any(marker in haystack for marker in ["გაზაფხულის სემესტ", "გაზაფხულ", "spring semester", "spring"])
     has_registration_or_start = any(marker in haystack for marker in ["რეგისტრ", "სემესტრის დაწყ", "registration", "semester start"])
-    return has_program and has_spring and has_registration_or_start
+    has_english_date_time = has_chat_english_word_marker(
+        haystack,
+        [
+            "when",
+            "date",
+            "dates",
+            "start",
+            "starts",
+            "begin",
+            "begins",
+            "schedule",
+            "calendar",
+        ],
+    )
+    has_georgian_date_time = any(
+        marker in haystack
+        for marker in [
+            "როდის",
+            "თარიღ",
+            "იწყება",
+            "განრიგ",
+        ]
+    )
+    has_date_time = has_english_date_time or has_georgian_date_time
+    return has_program and has_spring and has_registration_or_start and has_date_time
 
 
 async def retrieve_chat_knowledge(
