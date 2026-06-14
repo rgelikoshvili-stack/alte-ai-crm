@@ -215,3 +215,54 @@ def test_program_catalog_grounded_replies_cover_production_qa_terms():
         assert all(term.lower() in lowered for term in expected_terms)
         assert "₾" not in reply
         assert "gel" not in lowered
+
+
+def test_bachelor_program_list_reply_contains_all_10_catalog_programs():
+    route_decision = SimpleNamespace(primary_source_group="program_catalog_sources")
+    reply = grounded_source_backed_reply(
+        "ჩამომითვალე ალტე უნივერსიტეტის საბაკალავრო პროგრამები.",
+        "ka",
+        route_decision,
+    )
+    assert reply is not None
+    expected_programs = [
+        "სამართალი",
+        "ფსიქოლოგია",
+        "საერთაშორისო ურთიერთობები",
+        "ჟურნალისტიკა",
+        "ბიზნესის ადმინისტრირება",
+        "ტურიზმი",
+        "კომპიუტერული მეცნიერება",
+        "კომპიუტერული მეცნიერება (ინგლისურენოვანი)",
+        "ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა",
+        "ხელოვნური ინტელექტი და მონაცემთა ანალიტიკა (ინგლისურენოვანი)",
+    ]
+    for program in expected_programs:
+        assert program in reply
+    assert "Source:" not in reply
+    assert "Higher Education Program Catalog p." not in reply
+
+
+def test_english_bachelor_program_list_reply_contains_all_10_catalog_programs():
+    route_decision = SimpleNamespace(primary_source_group="program_catalog_sources")
+    reply = grounded_source_backed_reply(
+        "List Alte University's bachelor programs.",
+        "en",
+        route_decision,
+    )
+    assert reply is not None
+    expected_programs = [
+        "Law",
+        "Psychology",
+        "International Relations",
+        "Journalism",
+        "Business Administration",
+        "Tourism",
+        "Computer Science",
+        "Computer Science (English-language)",
+        "Artificial Intelligence and Data Analytics",
+        "Artificial Intelligence and Data Analytics (English-language)",
+    ]
+    for program in expected_programs:
+        assert program in reply
+    assert "Higher Education Program Catalog p." not in reply
