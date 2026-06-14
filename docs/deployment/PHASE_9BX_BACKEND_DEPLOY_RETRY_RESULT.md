@@ -6,9 +6,11 @@ Branch: `phase-9s-agent-preview-cors-note`
 
 Predeploy commit SHA: `4cafd76b0012f18fcaec4c66fd3cc7c2a76815a1`
 
-Current production revision: `alte-ai-crm-backend-00052-mjq`
+Previous production revision: `alte-ai-crm-backend-00052-mjq`
 
-Current traffic: 100% to `alte-ai-crm-backend-00052-mjq`
+Current production revision: `alte-ai-crm-backend-00053-pbz`
+
+Current traffic: 100% to `alte-ai-crm-backend-00053-pbz`
 
 Public launch: `NO-GO`
 
@@ -23,72 +25,116 @@ Commands:
 
 ## Billing / Deploy Permission Status
 
-Billing status: BLOCKED
+Billing status: RESTORED
 
-Deploy permission status: BLOCKED_BY_BILLING
+Deploy permission status: AVAILABLE
 
 Non-mutating checks performed:
 
 - Active project/account check: PASS
-- Current Cloud Run service describe: PASS
-- Artifact Registry repository describe: FAIL, `BILLING_DISABLED`
+- Current Cloud Run service describe before deploy: PASS
+- Artifact Registry repository describe: PASS
 
-Observed current Cloud Run state:
+Observed predeploy Cloud Run state:
 
 - Service: `alte-ai-crm-backend`
 - Region: `europe-west1`
 - Latest ready revision: `alte-ai-crm-backend-00052-mjq`
 - Traffic: `alte-ai-crm-backend-00052-mjq=100%`
 
-Artifact Registry check failed because billing is still disabled for project `project-1e145fd0-c30e-4aac-a34`.
+## Local Validation
 
-## Deploy Attempt
+Commands run from `C:\tmp\alte-ai-crm\backend` before deploy:
 
-Deploy attempted: NO
+- `.venv\Scripts\python.exe -m compileall app`: PASS
+- `.venv\Scripts\python.exe -m pytest --basetemp .pytest_tmp_9bx_predeploy_full`: PASS, 1108 passed
+- `.venv\Scripts\python.exe -m app.scripts.verify_phase_9be_academic_calendar_fixes`: PASS
+- `.venv\Scripts\python.exe -m app.scripts.local_phase_9be_academic_calendar_fixes_qa`: PASS, 30/30 calendar QA, 23/23 over-capture, 7/7 fallback over-capture, 4/4 stale-date regression
+- `.venv\Scripts\python.exe -m pytest app/tests/test_phase_9bf_georgian_control_fixes.py app/tests/test_phase_9bg_public_widget_source_display_cleanup.py --basetemp .pytest_tmp_9bx_9bf_9bg`: PASS, 12 passed
 
-Decision: `DEPLOY_NOT_ATTEMPTED_BILLING_STILL_BLOCKED`
+## Deploy
 
-Reason: Artifact Registry access still requires billing to be enabled. Because deploy permissions are blocked by billing, no Cloud Build, Docker push, image publish, Cloud Run deploy, or production QA was attempted.
+Deploy attempted: YES
 
-## Image / Revision
+Deploy result: SUCCESS
 
-Requested image tag for this retry:
+Build method:
 
-- `v0.9-phase-9bf-9bg-9be-clean-hygiene`
+- Cloud Build from `.\backend`
 
-Image digest: NOT_AVAILABLE
+Build ID:
 
-Cloud Run revision after task: unchanged, `alte-ai-crm-backend-00052-mjq`
+- `ef840cd5-03cb-4b6e-be83-b38531230c14`
 
-Traffic allocation after task: unchanged, 100% to `alte-ai-crm-backend-00052-mjq`
+Image tag:
 
-Previous revision: `alte-ai-crm-backend-00052-mjq`
+- `europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-phase-9bf-9bg-9be-clean-hygiene`
 
-Rollback command if a future deploy succeeds and then needs rollback:
+Image digest:
+
+- `sha256:d6f2ee8940e63086b7641e1ecc634de667aa34405c549f346a46e2af594fcb84`
+
+Cloud Run revision:
+
+- `alte-ai-crm-backend-00053-pbz`
+
+Traffic allocation:
+
+- `alte-ai-crm-backend-00053-pbz=100%`
+
+Service URL:
+
+- `https://alte-ai-crm-backend-oobzrmikna-ew.a.run.app`
+
+Deploy command summary:
+
+```powershell
+gcloud builds submit .\backend --tag europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-phase-9bf-9bg-9be-clean-hygiene
+gcloud run deploy alte-ai-crm-backend --image europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-phase-9bf-9bg-9be-clean-hygiene --region europe-west1 --platform managed --quiet
+```
+
+No deploy command printed or changed secrets.
+
+## Rollback
+
+Rollback readiness: READY
+
+Rollback target:
+
+- `alte-ai-crm-backend-00052-mjq`
+
+Rollback command:
 
 ```powershell
 gcloud run services update-traffic alte-ai-crm-backend --region europe-west1 --to-revisions alte-ai-crm-backend-00052-mjq=100 --quiet
 ```
 
-## Local Validation
+Rollback executed: NO
 
-Full local validation was not rerun in Phase 9BX because billing/deploy permission failed before the deploy gate.
-
-Most recent clean-hygiene validation from Phase 9BW:
-
-- `compileall`: PASS
-- Full pytest after cleanup: PASS, 1108 passed
-- 9BE verifier: PASS
-- 9BE local QA: PASS, 30/30
-- 9BF/9BG focused tests: PASS, 12 passed
+Reason: deploy succeeded and no owner approval was given to rollback. Production QA was blocked by rate limiting/connectivity from the QA client, not completed as a product failure.
 
 ## Production QA
 
-Production QA after deploy: NOT RUN
+Production QA after deploy: BLOCKED / INCONCLUSIVE
 
-Reason: no backend deploy occurred.
+Reason:
 
-Required QA remains queued for the first successful backend deploy:
+- Session-based production QA requests returned `429 Rate exceeded` at session start.
+- A later `/health` request from the same QA client returned no HTTP status (`000`) after a wait.
+- Cloud Run still reported `alte-ai-crm-backend-00053-pbz` as Ready and serving 100% traffic.
+
+Production QA attempts:
+
+- Focused 9AT QA: BLOCKED, session start returned `429 Rate exceeded`
+- Full 9AS QA: BLOCKED, session start returned `429 Rate exceeded`
+- Health smoke: BLOCKED from QA client, `/health` returned `429` then later no HTTP status after wait
+- Operator alignment QA: NOT RUN after rate limiting to avoid more production traffic
+- Program Catalog QA: NOT RUN after rate limiting to avoid more production traffic
+- 9BE Academic Calendar QA: NOT RUN after rate limiting to avoid more production traffic
+- 9BF Georgian controls focused production checks: NOT RUN after rate limiting to avoid more production traffic
+- 9BG source display/source-label safety checks: NOT RUN after rate limiting to avoid more production traffic
+
+Required production QA remains pending before any public launch decision:
 
 - Full 9AS QA, expected 53/53
 - Focused 9AT QA, expected 7/7
@@ -98,6 +144,28 @@ Required QA remains queued for the first successful backend deploy:
 - 9BF Georgian controls focused production checks
 - 9BG public source display/source-label safety checks
 
+## Current Production State
+
+Cloud Run service:
+
+- `alte-ai-crm-backend`
+
+Region:
+
+- `europe-west1`
+
+Current production revision:
+
+- `alte-ai-crm-backend-00053-pbz`
+
+Current traffic:
+
+- `alte-ai-crm-backend-00053-pbz=100%`
+
+Previous revision retained for rollback:
+
+- `alte-ai-crm-backend-00052-mjq`
+
 ## Safety Confirmations
 
 - Real `alte.edu.ge` modified: NO
@@ -105,7 +173,8 @@ Required QA remains queued for the first successful backend deploy:
 - Assets uploaded or embedded: NO
 - Frontend/Netlify changed: NO
 - DB/schema/migration/seed/import changed: NO
-- Secret Manager/CORS/Bridge Hub changed: NO
+- Secret Manager/CORS changed: NO
+- Bridge Hub changed: NO
 - Contact flow submitted: NO
 - Lead/customer/task created: NO
 - Secrets/tokens/passwords/DATABASE_URL printed: NO
@@ -114,10 +183,8 @@ Required QA remains queued for the first successful backend deploy:
 
 ## Final State
 
-Deploy status: `DEPLOY_NOT_ATTEMPTED_BILLING_STILL_BLOCKED`
+Deploy status: `BACKEND_DEPLOYED_PRODUCTION_QA_BLOCKED_BY_RATE_LIMIT_PENDING_QA`
 
-Production unchanged: YES
-
-Current production revision: `alte-ai-crm-backend-00052-mjq`
+Production unchanged except backend revision: NO, backend is now `alte-ai-crm-backend-00053-pbz`
 
 Public launch: `NO-GO`
