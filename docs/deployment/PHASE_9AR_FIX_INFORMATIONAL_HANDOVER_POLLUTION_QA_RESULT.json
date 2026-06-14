@@ -1,0 +1,303 @@
+{
+  "status": "PASSED",
+  "test_time_utc": "2026-05-31T13:43:54.082312+00:00",
+  "backend_url": "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  "origin": "https://nimble-croissant-2f66e8.netlify.app",
+  "operator_api_auth_status": "AUTH_OK",
+  "operator_api_checked": true,
+  "checks_total": 36,
+  "checks_passed": 36,
+  "checks_failed": 0,
+  "checks": [
+    {
+      "name": "bachelor HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "bachelor source backed",
+      "passed": true,
+      "detail": "answered_from_approved_source"
+    },
+    {
+      "name": "bachelor includes 240",
+      "passed": true,
+      "detail": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია"
+    },
+    {
+      "name": "bachelor should_handover false",
+      "passed": true,
+      "detail": "False"
+    },
+    {
+      "name": "bachelor department public",
+      "passed": true,
+      "detail": "programs"
+    },
+    {
+      "name": "bachelor no CRM response records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "bachelor no direct contact request",
+      "passed": true,
+      "detail": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია"
+    },
+    {
+      "name": "operator detail HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "operator detail conversation id",
+      "passed": true,
+      "detail": "54cd0151-a5a3-4e35-a657-19e414d439e4"
+    },
+    {
+      "name": "bachelor operator human_handover false",
+      "passed": true,
+      "detail": "False"
+    },
+    {
+      "name": "bachelor operator department public",
+      "passed": true,
+      "detail": "Programs"
+    },
+    {
+      "name": "bachelor no operator customer/lead",
+      "passed": true,
+      "detail": "{'http_status': 200, 'conversation_status': 'open', 'human_handover': False, 'selected_department': 'Programs', 'waiting_status': None, 'has_customer': False, 'has_lead': False, 'message_count': 2}"
+    },
+    {
+      "name": "master HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "master source backed",
+      "passed": true,
+      "detail": "answered_from_approved_source"
+    },
+    {
+      "name": "master includes 120",
+      "passed": true,
+      "detail": "სამაგისტრო პროგრამისთვის საჭიროა არანაკლებ 120 ECTS კრედიტის დაგროვება.\n\nწყარო: page 6; chunk 12, page 3; მაგისტრატურის დებულება მუხლი 1. ზოგადი დებულებანი წინა"
+    },
+    {
+      "name": "master should_handover false",
+      "passed": true,
+      "detail": "False"
+    },
+    {
+      "name": "master no CRM response records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "clarification HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "clarification needed",
+      "passed": true,
+      "detail": "True"
+    },
+    {
+      "name": "clarification should_handover false",
+      "passed": true,
+      "detail": "False"
+    },
+    {
+      "name": "clarification no CRM response records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "unsupported HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "unsupported no approved source",
+      "passed": true,
+      "detail": "no_approved_source_found"
+    },
+    {
+      "name": "unsupported should_handover true",
+      "passed": true,
+      "detail": "True"
+    },
+    {
+      "name": "unsupported no hallucination",
+      "passed": true,
+      "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+    },
+    {
+      "name": "unsupported no CRM response records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "explicit operator HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "explicit operator should_handover true",
+      "passed": true,
+      "detail": "True"
+    },
+    {
+      "name": "explicit operator no CRM response records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "wait response HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "wait status waiting",
+      "passed": true,
+      "detail": "waiting_for_operator"
+    },
+    {
+      "name": "wait no task/customer/lead",
+      "passed": true,
+      "detail": "{'status': 'waiting_for_operator', 'conversation_id': '9347e190-37d9-456f-9571-048fa084c8b4', 'task_id': None, 'http_status': 200}"
+    },
+    {
+      "name": "operator detail HTTP 200",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "operator detail conversation id",
+      "passed": true,
+      "detail": "9347e190-37d9-456f-9571-048fa084c8b4"
+    },
+    {
+      "name": "operator detail waiting status",
+      "passed": true,
+      "detail": "waiting_for_operator"
+    },
+    {
+      "name": "operator detail human handover true after wait",
+      "passed": true,
+      "detail": "True"
+    }
+  ],
+  "cases": [
+    {
+      "name": "bachelor_ects",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "answered_from_approved_source",
+        "department_key": "programs",
+        "route_department": "Programs",
+        "should_handover": false,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECT"
+      },
+      "operator": {
+        "http_status": 200,
+        "conversation_status": "open",
+        "human_handover": false,
+        "selected_department": "Programs",
+        "waiting_status": null,
+        "has_customer": false,
+        "has_lead": false,
+        "message_count": 2
+      }
+    },
+    {
+      "name": "master_ects",
+      "conversation_id": "f9733722-a6e2-4ecb-b540-47b5de23e3a0",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "answered_from_approved_source",
+        "department_key": "programs",
+        "route_department": "Programs",
+        "should_handover": false,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "სამაგისტრო პროგრამისთვის საჭიროა არანაკლებ 120 ECTS კრედიტის დაგროვება.\n\nწყარო: page 6; chunk 12, page 3; მაგისტრატურის დებულება მუხლი 1. ზოგადი დებულებანი წინამდებარე დებულება შემ"
+      }
+    },
+    {
+      "name": "clarification",
+      "conversation_id": "af0df60c-3af7-403e-bbb2-ff4decf9f912",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "clarification_needed",
+        "department_key": "admissions",
+        "route_department": "მიღება",
+        "should_handover": false,
+        "clarification_needed": true,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენტის სტატუსი"
+      }
+    },
+    {
+      "name": "unsupported",
+      "conversation_id": "9acc9a36-11f1-4978-9718-1d85fe5d23f5",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "no_approved_source_found",
+        "department_key": "finance",
+        "route_department": "Finance",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+      }
+    },
+    {
+      "name": "explicit_operator",
+      "conversation_id": "9347e190-37d9-456f-9571-048fa084c8b4",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "not_required",
+        "department_key": "general",
+        "route_department": "General / Operator",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+      }
+    },
+    {
+      "name": "wait_for_operator",
+      "wait_response": {
+        "status": "waiting_for_operator",
+        "conversation_id": "9347e190-37d9-456f-9571-048fa084c8b4",
+        "task_id": null,
+        "http_status": 200
+      },
+      "operator": {
+        "http_status": 200,
+        "conversation_status": "waiting_for_operator",
+        "human_handover": true,
+        "selected_department": "General / Operator",
+        "waiting_status": "waiting_for_operator",
+        "has_customer": false,
+        "has_lead": false,
+        "message_count": 2
+      }
+    }
+  ],
+  "contact_flow_executed": false,
+  "real_contact_data_sent": false,
+  "lead_task_customer_created_intentionally": false,
+  "visitor_side_operator_reply_polling": "NOT_ACTIVE",
+  "sanitized": true
+}
