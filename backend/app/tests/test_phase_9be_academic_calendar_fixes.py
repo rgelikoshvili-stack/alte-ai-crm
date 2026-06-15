@@ -214,6 +214,39 @@ def test_phase_9be_broad_bachelor_registration_georgian_uses_approved_dates():
     assert "8 - 13" not in answer
 
 
+def test_phase_9by_bachelor_spring_registration_georgian_prioritizes_registration():
+    answer = calendar_answer("ბაკალავრიატის გაზაფხულის სემესტრის რეგისტრაცია როდის იწყება?", "ka")
+    assert "23 - 28 February 2026" in answer
+    assert "2 - 7 March 2026" in answer
+    assert "9 March 2026" not in answer
+
+
+def test_phase_9by_bachelor_spring_semester_start_georgian_still_answers_start():
+    answer = calendar_answer("ბაკალავრიატის გაზაფხულის სემესტრი როდის იწყება?", "ka")
+    assert "9 March 2026" in answer
+    assert "23 - 28 February 2026" not in answer
+    assert "2 - 7 March 2026" not in answer
+
+
+def test_phase_9by_bachelor_registration_requirements_georgian_stays_admissions_safe():
+    for question in [
+        "ბაკალავრიატის გაზაფხულის სემესტრის რეგისტრაციის მოთხოვნები რა არის?",
+        "ბაკალავრიატის გაზაფხულის სემესტრის რეგისტრაციისთვის რა საბუთებია საჭირო?",
+    ]:
+        route = fallback_intent_route(question)
+        assert route.source_groups_to_search[:1] != ["academic_calendar_2025_2026"]
+        assert route.department != "academic_calendar"
+        answer = grounded_source_backed_reply(question, "ka", admissions_decision("ka")) or ""
+        assert "23 - 28 February 2026" not in answer
+        assert "2 - 7 March 2026" not in answer
+
+
+def test_phase_9by_bachelor_spring_registration_english_sanity():
+    answer = calendar_answer("When is bachelor spring registration?", "en")
+    assert "23 - 28 February 2026" in answer
+    assert "2 - 7 March 2026" in answer
+
+
 def test_phase_9be_computer_science_registration_dates_still_use_cs_mapping():
     spring_answer = calendar_answer("When is Computer Science spring registration?", "en")
     fall_answer = calendar_answer("When is Computer Science fall academic registration?", "en")

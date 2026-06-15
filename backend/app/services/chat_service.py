@@ -1830,6 +1830,18 @@ def deterministic_academic_calendar_reply(haystack: str, is_ka: bool) -> str | N
             return answer(subject_en, "spring academic registration", subject_ka, "გაზაფხულის აკადემიური რეგისტრაცია", "2 - 7 March 2026")
         if spring and registration and administrative_registration:
             return answer(subject_en, "spring administrative registration", subject_ka, "გაზაფხულის ადმინისტრაციული რეგისტრაცია", "23 - 28 February 2026")
+        if spring and registration:
+            if is_ka:
+                return (
+                    "დამტკიცებული 2025-2026 აკადემიური კალენდრის მიხედვით, საბაკალავრო პროგრამებისთვის "
+                    "Computer Science-ის გარდა გაზაფხულის სემესტრის ადმინისტრაციული რეგისტრაცია არის "
+                    "23 - 28 February 2026, ხოლო აკადემიური რეგისტრაცია არის 2 - 7 March 2026."
+                )
+            return (
+                "According to the approved 2025-2026 academic calendar, spring semester registration for "
+                "Bachelor programs except Computer Science is: administrative registration - 23 - 28 February 2026; "
+                "academic registration - 2 - 7 March 2026."
+            )
         if spring and semester_start:
             return answer(subject_en, "spring semester start", subject_ka, "გაზაფხულის სემესტრის დაწყება", "9 March 2026")
         if spring and midterm and retake:
