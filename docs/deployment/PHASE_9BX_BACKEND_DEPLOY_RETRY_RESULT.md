@@ -1,14 +1,14 @@
 # Phase 9BX Backend Deploy Retry Result
 
-Date: 2026-06-14
+Date: 2026-06-15
 
 Branch: `phase-9s-agent-preview-cors-note`
 
-Predeploy commit SHA: `4cafd76b0012f18fcaec4c66fd3cc7c2a76815a1`
+Predeploy commit SHA for this retry: `23d83267888ae685f8f670c699b4cf4725e4a89c`
 
-Previous production revision: `alte-ai-crm-backend-00052-mjq`
+Previous production revision before Phase 9BX deploy: `alte-ai-crm-backend-00052-mjq`
 
-Current production revision: `alte-ai-crm-backend-00053-pbz`
+Active production revision during this retry: `alte-ai-crm-backend-00053-pbz`
 
 Current traffic: 100% to `alte-ai-crm-backend-00053-pbz`
 
@@ -21,7 +21,7 @@ Worktree clean before deploy checks: YES
 Commands:
 
 - `git status --short --branch`: clean on `phase-9s-agent-preview-cors-note`
-- `git rev-parse HEAD`: `4cafd76b0012f18fcaec4c66fd3cc7c2a76815a1`
+- `git rev-parse HEAD`: `23d83267888ae685f8f670c699b4cf4725e4a89c`
 
 ## Billing / Deploy Permission Status
 
@@ -29,42 +29,37 @@ Billing status: RESTORED
 
 Deploy permission status: AVAILABLE
 
-Non-mutating checks performed:
-
-- Active project/account check: PASS
-- Current Cloud Run service describe before deploy: PASS
-- Artifact Registry repository describe: PASS
-
-Observed predeploy Cloud Run state:
+Observed Cloud Run state at retry start:
 
 - Service: `alte-ai-crm-backend`
 - Region: `europe-west1`
-- Latest ready revision: `alte-ai-crm-backend-00052-mjq`
-- Traffic: `alte-ai-crm-backend-00052-mjq=100%`
+- Latest ready revision: `alte-ai-crm-backend-00053-pbz`
+- Traffic: `alte-ai-crm-backend-00053-pbz=100%`
+
+The queued image was already deployed and serving 100% traffic when this retry started, so no redundant rebuild or redeploy was executed during this retry.
 
 ## Local Validation
 
-Commands run from `C:\tmp\alte-ai-crm\backend` before deploy:
+Commands run from `C:\tmp\alte-ai-crm\backend` during this retry:
 
 - `.venv\Scripts\python.exe -m compileall app`: PASS
-- `.venv\Scripts\python.exe -m pytest --basetemp .pytest_tmp_9bx_predeploy_full`: PASS, 1108 passed
+- `.venv\Scripts\python.exe -m pytest --basetemp .pytest_tmp_9bx_retry_predeploy_full`: PASS, 1108 passed
 - `.venv\Scripts\python.exe -m app.scripts.verify_phase_9be_academic_calendar_fixes`: PASS
 - `.venv\Scripts\python.exe -m app.scripts.local_phase_9be_academic_calendar_fixes_qa`: PASS, 30/30 calendar QA, 23/23 over-capture, 7/7 fallback over-capture, 4/4 stale-date regression
-- `.venv\Scripts\python.exe -m pytest app/tests/test_phase_9bf_georgian_control_fixes.py app/tests/test_phase_9bg_public_widget_source_display_cleanup.py --basetemp .pytest_tmp_9bx_9bf_9bg`: PASS, 12 passed
+- `.venv\Scripts\python.exe -m pytest app/tests/test_phase_9bf_georgian_control_fixes.py app/tests/test_phase_9bg_public_widget_source_display_cleanup.py --basetemp .pytest_tmp_9bx_retry_9bf_9bg`: PASS, 12 passed
 
 ## Deploy
 
-Deploy attempted: YES
+Deploy attempted during this retry: NO
 
-Deploy result: SUCCESS
+Reason: the requested queued image tag was already deployed to Cloud Run and serving 100% traffic as revision `alte-ai-crm-backend-00053-pbz`.
 
-Build method:
+Prior Phase 9BX deploy result retained:
 
-- Cloud Build from `.\backend`
-
-Build ID:
-
-- `ef840cd5-03cb-4b6e-be83-b38531230c14`
+- Deploy attempted: YES
+- Deploy result: SUCCESS
+- Build method: Cloud Build from `.\backend`
+- Build ID: `ef840cd5-03cb-4b6e-be83-b38531230c14`
 
 Image tag:
 
@@ -86,7 +81,7 @@ Service URL:
 
 - `https://alte-ai-crm-backend-oobzrmikna-ew.a.run.app`
 
-Deploy command summary:
+Deploy command summary from the prior Phase 9BX deploy:
 
 ```powershell
 gcloud builds submit .\backend --tag europe-west1-docker.pkg.dev/project-1e145fd0-c30e-4aac-a34/alte-ai-crm/alte-ai-crm-backend:v0.9-phase-9bf-9bg-9be-clean-hygiene
@@ -111,38 +106,37 @@ gcloud run services update-traffic alte-ai-crm-backend --region europe-west1 --t
 
 Rollback executed: NO
 
-Reason: deploy succeeded and no owner approval was given to rollback. Production QA was blocked by rate limiting/connectivity from the QA client, not completed as a product failure.
+Reason: no owner approval was given to rollback. Production QA now has one full 9AS failure and public launch remains blocked.
 
 ## Production QA
 
-Production QA after deploy: BLOCKED / INCONCLUSIVE
+Production health smoke:
 
-Reason:
+- `/health`: PASS, HTTP 200
 
-- Session-based production QA requests returned `429 Rate exceeded` at session start.
-- A later `/health` request from the same QA client returned no HTTP status (`000`) after a wait.
-- Cloud Run still reported `alte-ai-crm-backend-00053-pbz` as Ready and serving 100% traffic.
+Production QA after active deployment:
 
-Production QA attempts:
+- Focused 9AT QA: PASS, 7/7
+- Full 9AS QA: FAILED, 52/53
+- Operator alignment QA: PASS, 7/7
+- Program Catalog source QA: PASS, 10/10 using available production script `production_phase_9ay_program_catalog_source_qa`; no 20-question production script was present in the current tree
+- 9BE Academic Calendar QA: local verifier and 30/30 local QA PASS; full 9AS production failed one academic-calendar case
+- 9BF Georgian controls focused checks: local focused tests PASS, 12-test combined 9BF/9BG suite; no dedicated production 9BF script was present in the current tree
+- 9BG source display/source-label safety checks: local focused tests PASS, 12-test combined 9BF/9BG suite; no dedicated production 9BG script was present in the current tree
 
-- Focused 9AT QA: BLOCKED, session start returned `429 Rate exceeded`
-- Full 9AS QA: BLOCKED, session start returned `429 Rate exceeded`
-- Health smoke: BLOCKED from QA client, `/health` returned `429` then later no HTTP status after wait
-- Operator alignment QA: NOT RUN after rate limiting to avoid more production traffic
-- Program Catalog QA: NOT RUN after rate limiting to avoid more production traffic
-- 9BE Academic Calendar QA: NOT RUN after rate limiting to avoid more production traffic
-- 9BF Georgian controls focused production checks: NOT RUN after rate limiting to avoid more production traffic
-- 9BG source display/source-label safety checks: NOT RUN after rate limiting to avoid more production traffic
+Full 9AS failure detail:
 
-Required production QA remains pending before any public launch decision:
+- Failed case: `calendar_bachelor_spring_registration_ka`
+- Category: `academic_calendar`
+- Summary: production answered with the spring semester start date instead of a registration answer.
+- Result: 52 passed, 1 failed.
 
-- Full 9AS QA, expected 53/53
-- Focused 9AT QA, expected 7/7
-- Operator alignment QA, expected 7/7
-- Program Catalog QA, expected 20/20
-- 9BE Academic Calendar QA, expected 30/30
-- 9BF Georgian controls focused production checks
-- 9BG public source display/source-label safety checks
+Production QA safety:
+
+- Contact flow executed: NO
+- Real contact data sent: NO
+- Lead/task/customer created: NO
+- Public launch: NO-GO
 
 ## Current Production State
 
@@ -183,8 +177,8 @@ Previous revision retained for rollback:
 
 ## Final State
 
-Deploy status: `BACKEND_DEPLOYED_PRODUCTION_QA_BLOCKED_BY_RATE_LIMIT_PENDING_QA`
+Deploy status: `BACKEND_DEPLOYED_PRODUCTION_9AS_FAILED_PENDING_FIX_OR_ROLLBACK_DECISION`
 
-Production unchanged except backend revision: NO, backend is now `alte-ai-crm-backend-00053-pbz`
+Production revision: `alte-ai-crm-backend-00053-pbz`
 
 Public launch: `NO-GO`
