@@ -59,6 +59,8 @@ def test_phase_10a_route_clarifies_ambiguous_registration_tuition_grants_program
         ("Tell me about programs", "en", "Which level"),
         ("\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1", "ka", "\u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1"),
         ("I am interested in the calendar", "en", "Which program"),
+        ("\u10d3\u10d0\u10db\u10d4\u10ee\u10db\u10d0\u10e0\u10d4", "ka", "\u10e0\u10dd\u10db\u10d4\u10da \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10d6\u10d4"),
+        ("I need help", "en", "Which topic"),
     ]
 
     for question, language, expected in cases:
@@ -67,6 +69,36 @@ def test_phase_10a_route_clarifies_ambiguous_registration_tuition_grants_program
         assert route.source_groups
         assert expected in (route.clarification_question or "")
         assert route.clarification_options
+
+
+def test_phase_10a_clarification_options_match_cloud_ai_ux_contract():
+    cases = [
+        (
+            "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0 \u10e0\u10dd\u10d3\u10d8\u10e1 \u10d0\u10e0\u10d8\u10e1?",
+            {"Computer Science-\u10d8\u10e1 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0", "\u10e9\u10d0\u10d1\u10d0\u10e0\u10d4\u10d1\u10d8\u10e1/Admissions \u10de\u10e0\u10dd\u10ea\u10d4\u10e1\u10d8"},
+        ),
+        (
+            "\u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8 \u10e0\u10d0\u10db\u10d3\u10d4\u10dc\u10d8\u10d0?",
+            {"\u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d8\u10e1 \u10de\u10d8\u10e0\u10dd\u10d1\u10d4\u10d1\u10d8", "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8"},
+        ),
+        (
+            "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d6\u10d4 \u10db\u10d8\u10d7\u10ee\u10d0\u10e0\u10d8",
+            {"\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10d0\u10dc\u10d8", "\u10d8\u10dc\u10d2\u10da\u10d8\u10e1\u10e3\u10e0\u10d4\u10dc\u10dd\u10d5\u10d0\u10dc\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d8"},
+        ),
+        (
+            "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8 \u10db\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10e1",
+            {"Computer Science", "\u10d9\u10dd\u10dc\u10d9\u10e0\u10d4\u10e2\u10e3\u10da\u10d8 \u10d7\u10d0\u10e0\u10d8\u10e6\u10d8 / \u10d2\u10d0\u10db\u10dd\u10ea\u10d3\u10d0 / \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0"},
+        ),
+        (
+            "\u10d3\u10d0\u10db\u10d4\u10ee\u10db\u10d0\u10e0\u10d4",
+            {"\u10db\u10d8\u10e6\u10d4\u10d1\u10d0 / Admissions", "\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10d4\u10d1\u10d8 / \u10d2\u10e0\u10d0\u10dc\u10e2\u10d4\u10d1\u10d8", "\u10dd\u10de\u10d4\u10e0\u10d0\u10e2\u10dd\u10e0\u10d7\u10d0\u10dc \u10d3\u10d0\u10d9\u10d0\u10d5\u10e8\u10d8\u10e0\u10d4\u10d1\u10d0"},
+        ),
+    ]
+
+    for question, expected_options in cases:
+        route = classify_knowledge_route(question)
+        assert route.clarification_required is True
+        assert expected_options.issubset(set(route.clarification_options))
 
 
 def test_phase_10a_does_not_clarify_answerable_calendar_and_catalog_summary_questions():
