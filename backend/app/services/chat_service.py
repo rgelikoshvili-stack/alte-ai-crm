@@ -207,6 +207,12 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         conversation_history=history,
     )
     route_decision = route_decision_from_intent(intent_route, deterministic_route_decision)
+    if deterministic_route_decision.clarification_required and deterministic_route_decision.reason in {
+        "broad_question_requires_clarification",
+        "multiple_close_department_scores",
+    }:
+        route_decision = deterministic_route_decision
+        intent_router_meta["deterministic_clarification_override"] = True
     if route_decision.clarification_required:
         return await handle_clarification_response(db, conversation, user_message, route_decision)
 
@@ -325,6 +331,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             pass
         else:
             analysis.reply = build_no_source_reply(analysis)
+    validate_public_chat_answer(payload.message, analysis, knowledge, route_decision)
     sanitize_premature_contact_request(analysis)
     apply_no_contact_lead_guard(analysis)
     apply_info_only_no_contact_guard(analysis)
@@ -1465,6 +1472,118 @@ def private_student_data_refusal_reply(message: str, language: str | None) -> st
         "I cannot disclose private student data, student records, grades, IDs, contact details, or financial information. "
         "Please contact the relevant university office through official channels for any personal-record request."
     )
+
+
+def validate_public_chat_answer(
+    message: str,
+    analysis: AIAnalysisResult,
+    knowledge: dict,
+    route_decision: KnowledgeRouteDecision,
+) -> None:
+    is_ka = analysis.language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message or "")
+
+    privacy_reply = private_student_data_refusal_reply(message, analysis.language)
+    if privacy_reply:
+        analysis.intent = "privacy_safety"
+        analysis.reply = privacy_reply
+        analysis.should_create_lead = False
+        analysis.should_handover = False
+        analysis.used_sources = []
+        knowledge["answer_source_status"] = "not_required"
+        knowledge["used_sources"] = []
+        knowledge["snippet_titles"] = []
+        if "answer_validator_private_data_refusal" not in analysis.risk_flags:
+            analysis.risk_flags.append("answer_validator_private_data_refusal")
+        return
+
+    future_calendar_reply = unsupported_future_calendar_reply((message or "").lower(), is_ka)
+    if future_calendar_reply and (
+        route_decision.primary_source_group == "academic_calendar_2025_2026"
+        or contains_supported_calendar_date(analysis.reply)
+    ):
+        analysis.reply = future_calendar_reply
+        analysis.should_create_lead = False
+        if "answer_validator_unsupported_calendar_year" not in analysis.risk_flags:
+            analysis.risk_flags.append("answer_validator_unsupported_calendar_year")
+
+    if not (analysis.reply or "").strip():
+        analysis.reply = safe_empty_answer_fallback(route_decision, analysis.language)
+        analysis.should_create_lead = False
+        if "answer_validator_empty_reply" not in analysis.risk_flags:
+            analysis.risk_flags.append("answer_validator_empty_reply")
+
+    if route_decision.primary_source_group == "finance_sources" and finance_answer_invents_exact_amount(analysis.reply):
+        analysis.reply = finance_exact_amount_fallback(is_ka)
+        analysis.should_create_lead = False
+        if "answer_validator_finance_exact_amount_guard" not in analysis.risk_flags:
+            analysis.risk_flags.append("answer_validator_finance_exact_amount_guard")
+
+    analysis.reply = hide_internal_source_identifiers(analysis.reply)
+
+
+def contains_supported_calendar_date(reply: str | None) -> bool:
+    text = reply or ""
+    return any(
+        marker in text
+        for marker in [
+            "15 - 20 September 2025",
+            "22 - 27 September 2025",
+            "23 - 28 February 2026",
+            "2 - 7 March 2026",
+            "9 March 2026",
+            "29 June - 11 July 2026",
+            "9 - 14 March 2026",
+        ]
+    )
+
+
+def safe_empty_answer_fallback(route_decision: KnowledgeRouteDecision, language: str | None) -> str:
+    if route_decision.department_id == "finance":
+        return finance_exact_amount_fallback(language == "ka")
+    if route_decision.department_id == "academic_calendar":
+        if language == "ka":
+            return (
+                "\u10d7\u10e5\u10d5\u10d4\u10dc\u10d8 \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0 \u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10e1 \u10d4\u10ee\u10d4\u10d1\u10d0, \u10db\u10d0\u10d2\u10e0\u10d0\u10db "
+                "\u10d6\u10e3\u10e1\u10e2\u10d8 \u10de\u10d0\u10e1\u10e3\u10ee\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10d4\u10d7 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0, \u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0\u10d8 \u10d3\u10d0 \u10db\u10dd\u10d5\u10da\u10d4\u10dc\u10d0."
+            )
+        return "Please clarify the program, semester, and calendar event so I can answer from the approved calendar."
+    if language == "ka":
+        return "\u10d6\u10e3\u10e1\u10e2\u10d8 \u10de\u10d0\u10e1\u10e3\u10ee\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1 \u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7, \u10e0\u10dd\u10db\u10d4\u10da \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10e1 \u10d2\u10e3\u10da\u10d8\u10e1\u10ee\u10db\u10dd\u10d1\u10d7."
+    return "Please clarify which topic you mean so I can answer from the correct approved source."
+
+
+def finance_answer_invents_exact_amount(reply: str | None) -> bool:
+    text = reply or ""
+    if not text:
+        return False
+    if not re.search(r"(\d+\s*(gel|lari|₾)|₾\s*\d+)", text, flags=re.IGNORECASE):
+        return False
+    grounded_markers = ["official source", "approved source", "დამტკიცებული წყარო", "ოფიციალურ წყარო"]
+    return not any(marker in text.lower() for marker in grounded_markers)
+
+
+def finance_exact_amount_fallback(is_ka: bool) -> str:
+    if is_ka:
+        return (
+            "\u10e1\u10ec\u10d0\u10d5\u10da\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8\u10e1, \u10d2\u10e0\u10d0\u10dc\u10e2\u10d8\u10e1 \u10d0\u10dc \u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10d4\u10d1\u10d8\u10e1 \u10d6\u10e3\u10e1\u10e2\u10d8 "
+            "\u10d7\u10d0\u10dc\u10ee\u10d0 \u10d0\u10dc \u10db\u10d8\u10db\u10d3\u10d8\u10dc\u10d0\u10e0\u10d4 \u10de\u10d8\u10e0\u10dd\u10d1\u10d0 \u10e3\u10dc\u10d3\u10d0 \u10d3\u10d0\u10d0\u10d3\u10d0\u10e1\u10e2\u10e3\u10e0\u10dd\u10e1 \u10db\u10d8\u10e6\u10d4\u10d1\u10d8\u10e1 \u10d0\u10dc "
+            "\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10db\u10d0 \u10e1\u10d0\u10db\u10e1\u10d0\u10ee\u10e3\u10e0\u10db\u10d0; \u10d0\u10e1\u10d8\u10e1\u10e2\u10d4\u10dc\u10e2\u10db\u10d0 \u10d0\u10e0 \u10e3\u10dc\u10d3\u10d0 \u10d2\u10d0\u10db\u10dd\u10d8\u10d2\u10dd\u10dc\u10dd\u10e1 \u10d7\u10d0\u10dc\u10ee\u10d0."
+        )
+    return (
+        "Exact tuition, grant, or funding amounts and current terms must be confirmed by the admissions or finance office; "
+        "the assistant should not invent an amount."
+    )
+
+
+def hide_internal_source_identifiers(reply: str | None) -> str:
+    text = reply or ""
+    internal_markers = ["source_group", "chunk", "page_article_reference", "official_academic_rules_full"]
+    if not any(marker in text.lower() for marker in internal_markers):
+        return text
+    cleaned = text
+    for marker in internal_markers:
+        cleaned = re.sub(rf"\b{re.escape(marker)}\b[:=]?\s*\S*", "", cleaned, flags=re.IGNORECASE)
+    return " ".join(cleaned.split())
 
 
 def grounded_source_backed_reply(message: str, language: str | None, route_decision: KnowledgeRouteDecision | None = None) -> str | None:

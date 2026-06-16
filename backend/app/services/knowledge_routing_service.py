@@ -225,6 +225,9 @@ def normalize_department_id(value: str | None) -> str | None:
 def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str]] | None:
     if has_contact_or_handover_context(lowered):
         return None
+    phase_10a = phase_10a_broad_clarification(lowered, language)
+    if phase_10a:
+        return phase_10a
     normalized = normalize_broad_question_text(lowered)
     if normalized in {
         "გამოცდები როდის არის",
@@ -332,6 +335,207 @@ def broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str
     if normalized in BROAD_GENERIC_KA or normalized in BROAD_GENERIC_EN:
         question, options = generic_clarification(language)
         return ("admissions", question, options)
+    return None
+
+
+def phase_10a_broad_clarification(lowered: str, language: str) -> tuple[str, str, list[str]] | None:
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in lowered or "")
+    normalized = " ".join((lowered or "").strip().lower().split()).strip(" ?!.,;:")
+    unsupported_or_exact_context = any(
+        marker in lowered
+        for marker in [
+            "2027",
+            "2028",
+            "2031",
+            "space campus",
+            "cosmic campus",
+            "current",
+            "this year",
+            "exact",
+            "exactly",
+            "\u10d9\u10dd\u10e1\u10db\u10dd\u10e1",
+            "\u10db\u10d8\u10db\u10d3\u10d8\u10dc\u10d0\u10e0",
+            "\u10ec\u10d4\u10da\u10e1",
+            "\u10d6\u10e3\u10e1\u10e2",
+        ]
+    )
+    if unsupported_or_exact_context:
+        return None
+
+    has_calendar_program = any(
+        marker in lowered
+        for marker in [
+            "bachelor",
+            "master",
+            "computer science",
+            "medicine",
+            "one-cycle",
+            "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
+            "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
+            "\u10d9\u10dd\u10db\u10de\u10d8\u10e3\u10e2\u10d4\u10e0",
+            "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc",
+            "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0",
+        ]
+    )
+    has_policy_context = any(
+        marker in lowered
+        for marker in [
+            "requirement",
+            "requirements",
+            "document",
+            "documents",
+            "procedure",
+            "policy",
+            "rule",
+            "rules",
+            "\u10db\u10dd\u10d7\u10ee\u10dd\u10d5\u10dc",
+            "\u10e1\u10d0\u10d1\u10e3\u10d7",
+            "\u10d3\u10dd\u10d9\u10e3\u10db\u10d4\u10dc\u10e2",
+            "\u10de\u10e0\u10dd\u10ea\u10d4\u10d3\u10e3\u10e0",
+            "\u10ec\u10d4\u10e1",
+        ]
+    )
+
+    if (
+        any(marker in lowered for marker in ["registration", "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8"])
+        and not has_calendar_program
+        and not has_policy_context
+    ):
+        if is_ka:
+            return (
+                "academic_calendar",
+                "\u10d2\u10d7\u10ee\u10dd\u10d5\u10d7 \u10d3\u10d0\u10d0\u10d6\u10e3\u10e1\u10e2\u10dd\u10d7: \u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0, \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1 \u10ef\u10d2\u10e3\u10e4\u10d8\u10e1 \u10db\u10d8\u10ee\u10d4\u10d3\u10d5\u10d8\u10d7, \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+                [
+                    "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8\u10e1 \u10d0\u10d3\u10db\u10d8\u10dc\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10e3\u10da\u10d8 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0",
+                    "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8\u10e1 \u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0",
+                    "Computer Science-\u10d8\u10e1 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0",
+                    "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d8\u10e1 \u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0",
+                ],
+            )
+        return (
+            "academic_calendar",
+            "Which registration do you mean?",
+            ["Bachelor administrative registration", "Bachelor academic registration", "Computer Science registration", "Master registration"],
+        )
+
+    broad_tuition_prompt = normalized in {
+        "how much is tuition",
+        "\u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8 \u10e0\u10d0\u10db\u10d3\u10d4\u10dc\u10d8\u10d0",
+    }
+    if broad_tuition_prompt and not any(
+        marker in lowered
+        for marker in [
+            "bachelor",
+            "master",
+            "medicine",
+            "international",
+            "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
+            "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
+            "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc",
+            "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1",
+        ]
+    ):
+        if is_ka:
+            return (
+                "finance",
+                "\u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1/\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+                ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0/\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10d0\u10dc\u10d8", "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8"],
+            )
+        return (
+            "finance",
+            "Which program or level tuition do you mean?",
+            ["Bachelor", "Master", "Medicine / one-cycle", "International student"],
+        )
+
+    has_grant_marker = any(marker in lowered for marker in ["grant", "scholarship", "funding", "\u10d2\u10e0\u10d0\u10dc\u10e2", "\u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3", "\u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1"])
+    broad_grant_prompt = any(marker in lowered for marker in ["how do i get", "how can i get", "\u10e0\u10dd\u10d2\u10dd\u10e0 \u10db\u10d8\u10d5\u10d8\u10e6\u10dd"])
+    specific_grant_context = any(
+        marker in lowered
+        for marker in [
+            "state grant",
+            "social grant",
+            "dean",
+            "financial support",
+            "policy",
+            "details",
+            "available",
+            "what does",
+            "what financial",
+            "\u10e1\u10d0\u10ee\u10d4\u10da\u10db\u10ec\u10d8\u10e4\u10dd",
+            "\u10e1\u10dd\u10ea\u10d8\u10d0\u10da",
+            "\u10e0\u10d0 \u10d0\u10e0\u10d8\u10e1",
+        ]
+    )
+    if has_grant_marker and broad_grant_prompt and not specific_grant_context:
+        if is_ka:
+            return (
+                "finance",
+                "\u10e0\u10dd\u10db\u10d4\u10da \u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10d4\u10d1\u10d0\u10d6\u10d4 \u10d2\u10e1\u10e3\u10e0\u10d7 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0?",
+                [
+                    "\u10e1\u10d0\u10ee\u10d4\u10da\u10db\u10ec\u10d8\u10e4\u10dd \u10d2\u10e0\u10d0\u10dc\u10e2\u10d8",
+                    "\u10e8\u10d8\u10d3\u10d0 \u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3\u10d8\u10d0/\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10d8 \u10db\u10ee\u10d0\u10e0\u10d3\u10d0\u10ed\u10d4\u10e0\u10d0",
+                    "\u10e1\u10ec\u10d0\u10d5\u10da\u10d8\u10e1 \u10e1\u10d0\u10e4\u10d0\u10e1\u10e3\u10e0\u10d8\u10e1 \u10d2\u10d0\u10d3\u10d0\u10ee\u10d3\u10d8\u10e1 \u10de\u10d8\u10e0\u10dd\u10d1\u10d4\u10d1\u10d8",
+                    "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1 \u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10d4\u10d1\u10d0",
+                ],
+            )
+        return (
+            "finance",
+            "Which funding topic do you mean?",
+            ["State grant", "Internal scholarship / financial support", "Tuition payment terms", "Funding for international students"],
+        )
+
+    has_teaching_language_context = any(
+        marker in lowered
+        for marker in [
+            "teaching language",
+            "language",
+            "\u10e1\u10ec\u10d0\u10d5\u10da\u10d4\u10d1\u10d8\u10e1 \u10d4\u10dc\u10d0",
+            "\u10e0\u10d0 \u10d4\u10dc\u10d0",
+        ]
+    )
+    if not has_teaching_language_context and any(marker in lowered for marker in ["programs", "programmes", "program catalog", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d6"]):
+        if not any(
+            marker in lowered
+            for marker in [
+                "bachelor",
+                "master",
+                "one-cycle",
+                "english",
+                "computer science",
+                "medicine",
+                "\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0",
+                "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0",
+                "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0",
+                "\u10d8\u10dc\u10d2\u10da\u10d8\u10e1",
+                "\u10d9\u10dd\u10db\u10de\u10d8\u10e3\u10e2\u10d4\u10e0",
+                "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc",
+            ]
+        ):
+            if is_ka:
+                return (
+                    "programs",
+                    "\u10e0\u10dd\u10db\u10d4\u10da \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0\u10d6\u10d4 \u10d0\u10dc \u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d6\u10d4 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+                    ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10db\u10d4\u10d3\u10d8\u10ea\u10d8\u10dc\u10d0 / MD", "\u10e1\u10d0\u10d4\u10e0\u10d7\u10d0\u10e8\u10dd\u10e0\u10d8\u10e1\u10dd \u10db\u10d8\u10e6\u10d4\u10d1\u10d0"],
+                )
+            return (
+                "programs",
+                "Which level of programs are you interested in?",
+                ["Bachelor", "Master", "One-cycle", "English-language programs"],
+            )
+
+    if any(marker in lowered for marker in ["calendar", "academic calendar", "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0"]) and not has_calendar_program:
+        if is_ka:
+            return (
+                "academic_calendar",
+                "\u10e0\u10dd\u10db\u10d4\u10da\u10d8 \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d8\u10e1/\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0\u10d8\u10e1 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8 \u10d2\u10d0\u10d8\u10dc\u10e2\u10d4\u10e0\u10d4\u10e1\u10d4\u10d1\u10d7?",
+                ["\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10d8\u10d0\u10e2\u10d8", "Computer Science", "\u10db\u10d0\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10e2\u10e3\u10e0\u10d0", "\u10d4\u10e0\u10d7\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d8\u10d0\u10dc\u10d8"],
+            )
+        return (
+            "academic_calendar",
+            "Which program or semester calendar do you mean?",
+            ["Bachelor", "Computer Science", "Master", "One-cycle"],
+        )
+
     return None
 
 
