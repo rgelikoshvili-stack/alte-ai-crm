@@ -38,14 +38,16 @@ The clarification layer was narrowed after production QA to avoid over-clarifyin
 
 - Feature commit: `fad05e5` - `phase 10a: add clarifying router and answer validator`
 - Production QA narrowing commit: `bfeb8a2` - `phase 10a: narrow clarification for answerable facts`
+- Cloud AI UX alignment commit: `b54452b` - `phase 10a: add cloud ai clarifying router and validator`
 
 ## Clarifying Behavior Examples
 
-- Broad registration: asks which registration/program group is meant.
-- Broad tuition: asks which program or level tuition is meant.
+- Broad registration: asks which registration/program group is meant, including Admissions process as an option.
+- Broad tuition: asks which program or level tuition is meant, including payment terms as an option.
 - Broad grant/funding: asks which funding topic is meant.
-- Broad program catalog: asks which program or level is meant.
-- Broad calendar: asks which program or semester calendar is meant.
+- Broad program catalog: asks which program or level is meant, including one-cycle and English-language options.
+- Broad calendar: asks which program or semester calendar is meant, including a specific date/exam/registration option.
+- Generic help: asks which topic the user needs help with, including admissions, academic calendar, programs, finance/grants, student services, and operator handoff.
 
 Answerable facts are not clarified when the source path is specific enough, including catalog distribution/fields and calendar midterm, retake, and holiday questions.
 
@@ -59,8 +61,8 @@ Answerable facts are not clarified when the source path is specific enough, incl
 ## Local Validation
 
 - `python -m compileall app`: PASS
-- Focused Phase 10A tests: PASS, 6/6
-- Full backend pytest: PASS, 1123/1123
+- Focused Phase 10A tests: PASS, 7/7
+- Full backend pytest: PASS, 1124/1124
 - Phase 10A local production-safe behavior review: PASS, 14/14
 - 9BE verifier: PASS
 - 9BE local QA: PASS, 30/30
@@ -75,15 +77,19 @@ Backend-only deploy completed.
 
 - Image tag: `v1.0-phase-10a-clarifying-router-validator`
 - Image digest: `sha256:f0a26d64a7b23445beb42b5d742e7267545da2ff4cb4886b9b80d1249d60810f`
-- Current Cloud Run revision: `alte-ai-crm-backend-00057-4qr`
+- Superseded Cloud Run revision: `alte-ai-crm-backend-00057-4qr`
+- Current image tag: `v1.0-phase-10a-cloud-ai-clarifying-router`
+- Current image digest: `sha256:30186996825998d77115c55adb1e117d21ce8e3285a32c8c8d2dfca75ca1a40a`
+- Current Cloud Run revision: `alte-ai-crm-backend-00058-wss`
 - Traffic: 100%
 - Health: 200
+- Previous revision before latest Phase 10A deploy: `alte-ai-crm-backend-00057-4qr`
 - Previous revision before Phase 10A: `alte-ai-crm-backend-00055-f9p`
 - Intermediate superseded Phase 10A revision: `alte-ai-crm-backend-00056-khl`
 - Rollback command:
 
 ```powershell
-gcloud run services update-traffic alte-ai-crm-backend --region europe-west1 --to-revisions alte-ai-crm-backend-00055-f9p=100
+gcloud run services update-traffic alte-ai-crm-backend --region europe-west1 --to-revisions alte-ai-crm-backend-00057-4qr=100
 ```
 
 ## Production QA
@@ -91,7 +97,7 @@ gcloud run services update-traffic alte-ai-crm-backend --region europe-west1 --t
 Production-safe QA after the corrected Phase 10A deploy:
 
 - 4 former Phase 9CF blocker cases: PASS, 4/4
-- Full 9CF-style behavior review: PASS, 24/24, 0 PARTIAL, 0 FAIL
+- Full 9CF-style behavior review plus cloud-AI clarification probes: PASS, 28/28, 0 PARTIAL, 0 FAIL
 - 9AS full knowledge QA: PASS, 53/53
 - 9AT focused QA: PASS, 7/7
 - Operator alignment QA: PASS, 7/7
