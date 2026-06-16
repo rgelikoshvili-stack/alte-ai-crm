@@ -258,16 +258,28 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     analysis.qualification = build_qualification(payload.message, analysis)
     if analysis.qualification.handover_required:
         analysis.should_handover = True
+    privacy_refusal_reply = private_student_data_refusal_reply(payload.message, analysis.language)
     unsupported_official_question = (
         is_clearly_unsupported_official_question(payload.message)
         or intent_route.unsupported_likely
         or intent_route.router_validation_status in {"invalid_source_groups", "empty_source_groups"}
     )
-    if unsupported_official_question:
+    if privacy_refusal_reply:
+        analysis.intent = "privacy_safety"
+        analysis.should_create_lead = False
+        analysis.should_handover = False
+        analysis.reply = privacy_refusal_reply
+        analysis.used_sources = []
+        if "private_student_data_refused" not in analysis.risk_flags:
+            analysis.risk_flags.append("private_student_data_refused")
+        knowledge = {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
+    elif unsupported_official_question:
         knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     else:
         knowledge = await retrieve_chat_knowledge(db, payload.message, analysis, route_decision)
-    if knowledge["answer_source_status"] == "answered_from_approved_source":
+    if privacy_refusal_reply:
+        pass
+    elif knowledge["answer_source_status"] == "answered_from_approved_source":
         analysis.used_sources = knowledge["used_sources"]
         official_reply = official_academic_rules_regression_reply(payload.message, analysis.language) or selected_official_document_regression_reply(
             payload.message, analysis.language
@@ -1348,10 +1360,120 @@ def is_generic_ai_fallback_reply(reply: str | None) -> bool:
     )
 
 
+def unsupported_future_calendar_reply(haystack: str, is_ka: bool) -> str | None:
+    if not re.search(r"\b(2027|2028|2029|2030|2031|2032|2033|2034|2035)\b", haystack):
+        return None
+    has_calendar_context = any(
+        marker in haystack
+        for marker in [
+            "academic calendar",
+            "calendar",
+            "semester",
+            "registration",
+            "exam",
+            "exams",
+            "finals",
+            "schedule",
+            "start",
+            "starts",
+            "begins",
+            "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0",
+            "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0",
+            "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0",
+            "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8",
+            "\u10d2\u10d0\u10db\u10dd\u10ea\u10d3",
+            "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2",
+            "\u10d8\u10ec\u10e7\u10d4\u10d1",
+            "\u10d7\u10d0\u10e0\u10d8\u10e6",
+            "\u10e0\u10dd\u10d3\u10d8\u10e1",
+        ]
+    )
+    if not has_calendar_context:
+        return None
+    if is_ka:
+        return (
+            "\u10d0\u10db \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0\u10d6\u10d4 2027 \u10ec\u10da\u10d8\u10e1 \u10d3\u10d0 \u10e3\u10e4\u10e0\u10dd \u10d2\u10d5\u10d8\u10d0\u10dc\u10d8 "
+            "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8 \u10d0\u10e0 \u10d0\u10e0\u10d8\u10e1 \u10d3\u10d0\u10db\u10e2\u10d9\u10d8\u10ea\u10d4\u10d1\u10e3\u10da \u10ec\u10e7\u10d0\u10e0\u10dd\u10d4\u10d1\u10e8\u10d8. "
+            "\u10d0\u10e1\u10d8\u10e1\u10e2\u10d4\u10dc\u10e2\u10e1 \u10d0\u10e5\u10d5\u10e1 \u10db\u10ee\u10dd\u10da\u10dd\u10d3 \u10db\u10d8\u10db\u10d3\u10d8\u10dc\u10d0\u10e0\u10d4 \u10d3\u10d0\u10db\u10e2\u10d9\u10d8\u10ea\u10d4\u10d1\u10e3\u10da\u10d8 \u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10ec\u10da\u10d8\u10e1 "
+            "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8; \u10d2\u10d0\u10dc\u10d0\u10ee\u10da\u10d4\u10d1\u10e3\u10da\u10d8 \u10d7\u10d0\u10e0\u10d8\u10e6\u10d4\u10d1\u10d8 \u10e3\u10dc\u10d3\u10d0 \u10d2\u10d0\u10d3\u10d0\u10db\u10dd\u10ec\u10db\u10d3\u10d4\u10e1 \u10e3\u10dc\u10d8\u10d5\u10d4\u10e0\u10e1\u10d8\u10e2\u10d4\u10e2\u10d8\u10e1 "
+            "\u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10da\u10e3\u10e0 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10e8\u10d8 \u10d0\u10dc \u10d0\u10d3\u10db\u10d8\u10dc\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0\u10e1\u10d7\u10d0\u10dc."
+        )
+    return (
+        "The requested future academic calendar year is not available in the approved sources. "
+        "I can only answer from the currently approved academic-year calendar; please check the official updated calendar "
+        "or confirm future dates with the university administration."
+    )
+
+
+def private_student_data_refusal_reply(message: str, language: str | None) -> str | None:
+    haystack = (message or "").lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
+    has_private_data = any(
+        marker in haystack
+        for marker in [
+            "personal data",
+            "private data",
+            "student data",
+            "student record",
+            "student records",
+            "student id",
+            "student's id",
+            "grades",
+            "transcript",
+            "phone number",
+            "email address",
+            "financial details",
+            "another student",
+            "\u10de\u10d8\u10e0\u10d0\u10d3\u10d8 \u10db\u10dd\u10dc\u10d0\u10ea\u10d4\u10db",
+            "\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\u10e1 \u10db\u10dd\u10dc\u10d0\u10ea\u10d4\u10db",
+            "\u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\u10e1 \u10de\u10d8\u10e0\u10d0\u10d3\u10d8",
+            "\u10e1\u10ee\u10d5\u10d0 \u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2",
+            "\u10dc\u10d8\u10e8\u10dc\u10d4\u10d1",
+            "\u10e2\u10e0\u10d0\u10dc\u10e1\u10d9\u10e0\u10d8\u10de\u10e2",
+            "\u10de\u10d8\u10e0\u10d0\u10d3\u10dd\u10d1\u10d8\u10e1 \u10dc\u10dd\u10db\u10d4\u10e0",
+            "\u10e2\u10d4\u10da\u10d4\u10e4\u10dd\u10dc\u10d8\u10e1 \u10dc\u10dd\u10db\u10d4\u10e0",
+            "\u10d4\u10da\u10e4\u10dd\u10e1\u10e2",
+        ]
+    )
+    has_request = any(
+        marker in haystack
+        for marker in [
+            "send",
+            "show",
+            "give",
+            "tell me",
+            "provide",
+            "lookup",
+            "find",
+            "\u10db\u10dd\u10db\u10ec\u10d4\u10e0\u10d4",
+            "\u10db\u10d0\u10dc\u10d0\u10ee\u10d4",
+            "\u10db\u10d8\u10d7\u10ee\u10d0\u10e0",
+            "\u10db\u10dd\u10db\u10d4\u10ea\u10d8",
+            "\u10db\u10dd\u10d8\u10eb\u10d8\u10d4",
+        ]
+    )
+    if not (has_private_data and has_request):
+        return None
+    if is_ka:
+        return (
+            "\u10d5\u10d4\u10e0 \u10d2\u10d0\u10d5\u10e1\u10ea\u10d4\u10db \u10e1\u10e2\u10e3\u10d3\u10d4\u10dc\u10e2\u10d8\u10e1 \u10de\u10d8\u10e0\u10d0\u10d3 \u10db\u10dd\u10dc\u10d0\u10ea\u10d4\u10db\u10d4\u10d1\u10e1, \u10e9\u10d0\u10dc\u10d0\u10ec\u10d4\u10e0\u10d4\u10d1\u10e1, "
+            "\u10dc\u10d8\u10e8\u10dc\u10d4\u10d1\u10e1 \u10d0\u10dc \u10e1\u10ee\u10d5\u10d0 \u10d9\u10dd\u10dc\u10e4\u10d8\u10d3\u10d4\u10dc\u10ea\u10d8\u10d0\u10da\u10e3\u10e0 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0\u10e1. \u10d0\u10e1\u10d4\u10d7\u10d8 \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10d8\u10e1\u10d7\u10d5\u10d8\u10e1 "
+            "\u10d3\u10d0\u10e3\u10d9\u10d0\u10d5\u10e8\u10d8\u10e0\u10d8\u10d7 \u10e3\u10dc\u10d8\u10d5\u10d4\u10e0\u10e1\u10d8\u10e2\u10d4\u10e2\u10d8\u10e1 \u10e8\u10d4\u10e1\u10d0\u10d1\u10d0\u10db\u10d8\u10e1 \u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10da\u10e3\u10e0 \u10e1\u10d0\u10db\u10e1\u10d0\u10ee\u10e3\u10e0\u10e1 "
+            "\u10d3\u10d0\u10ea\u10e3\u10da\u10d8 \u10d0\u10e0\u10ee\u10d8\u10d7."
+        )
+    return (
+        "I cannot disclose private student data, student records, grades, IDs, contact details, or financial information. "
+        "Please contact the relevant university office through official channels for any personal-record request."
+    )
+
+
 def grounded_source_backed_reply(message: str, language: str | None, route_decision: KnowledgeRouteDecision | None = None) -> str | None:
     haystack = (message or "").lower()
     is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message)
     source_group = route_decision.primary_source_group if route_decision else None
+    future_calendar_reply = unsupported_future_calendar_reply(haystack, is_ka)
+    if future_calendar_reply:
+        return future_calendar_reply
 
     if source_group == "program_catalog_sources":
         return grounded_program_catalog_reply(haystack, is_ka)
@@ -1385,7 +1507,22 @@ def grounded_source_backed_reply(message: str, language: str | None, route_decis
         return "Final exam admission is regulated by the official study process and assessment rules." if not is_ka else "დასკვნით გამოცდაზე დაშვება რეგულირდება სასწავლო პროცესისა და შეფასების ოფიციალური წესებით."
     if any(marker in haystack for marker in ["retake", "make-up", "გადაბარ", "დამატებით"]):
         return "Retake and make-up exams are regulated by the official study process rules and the approved academic calendar." if not is_ka else "გადაბარებისა და დამატებითი გამოცდის წესები რეგულირდება სასწავლო პროცესის ოფიციალური წესით და დამტკიცებული აკადემიური კალენდრით."
-    if any(marker in haystack for marker in ["dean's list", "deans list", "state grant", "social grant", "grant", "scholarship", "financial support", "funding rule"]):
+    if any(
+        marker in haystack
+        for marker in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "scholarship",
+            "financial support",
+            "funding rule",
+            "\u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1",
+            "\u10d2\u10e0\u10d0\u10dc\u10e2",
+            "\u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3",
+        ]
+    ):
         return "The approved finance and grant sources cover financial support mechanisms, state/social grants, and Dean's List Award rules. Exact eligibility depends on the specific approved grant rule." if not is_ka else "დამტკიცებული ფინანსური და საგრანტო წყაროები მოიცავს ფინანსური მხარდაჭერის მექანიზმებს, სახელმწიფო/სოციალურ გრანტებს და Dean's List Award-ის წესებს. ზუსტი უფლებამოსილება დამოკიდებულია კონკრეტულ დამტკიცებულ წესზე."
     if any(marker in haystack for marker in ["library", "library resources", "books", "databases", "catalog"]):
         return "The approved library sources describe library services, use rules, books, and electronic resources. For an exact operational request, the library operator can confirm the current process." if not is_ka else "დამტკიცებული ბიბლიოთეკის წყაროები აღწერს ბიბლიოთეკის სერვისებს, სარგებლობის წესებს, წიგნებსა და ელექტრონულ რესურსებს. ზუსტი ოპერაციული საკითხისთვის ბიბლიოთეკის ოპერატორი დაადასტურებს მიმდინარე პროცესს."
@@ -1941,6 +2078,64 @@ def selected_official_document_regression_reply(message: str, language: str | No
     if control_reply:
         return control_reply
 
+    if any(
+        marker in haystack
+        for marker in [
+            "academic integrity",
+            "academic honesty",
+            "plagiarism",
+            "ethics code",
+            "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d4\u10d7\u10d8\u10da\u10e1\u10d8\u10dc\u10d3\u10d8\u10e1\u10d8\u10d4\u10e0",
+            "\u10d9\u10d4\u10d7\u10d8\u10da\u10e1\u10d8\u10dc\u10d3\u10d8\u10e1\u10d8\u10d4\u10e0",
+            "\u10de\u10da\u10d0\u10d2\u10d8\u10d0\u10e2",
+        ]
+    ):
+        if is_ka:
+            return (
+                "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d4\u10d7\u10d8\u10da\u10e1\u10d8\u10dc\u10d3\u10d8\u10e1\u10d8\u10d4\u10e0\u10d4\u10d1\u10d0 \u10dc\u10d8\u10e8\u10dc\u10d0\u10d5\u10e1 "
+                "\u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10d3\u10d0 \u10d9\u10d5\u10da\u10d4\u10d5\u10d8\u10d7\u10d8 \u10e1\u10d0\u10db\u10e3\u10e8\u10d0\u10dd\u10e1 \u10e1\u10d0\u10d9\u10e3\u10d7\u10d0\u10e0\u10d8 \u10e8\u10e0\u10dd\u10db\u10d8\u10d7 "
+                "\u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0\u10e1, \u10ec\u10e7\u10d0\u10e0\u10dd\u10d4\u10d1\u10d8\u10e1 \u10e1\u10d0\u10d7\u10d0\u10dc\u10d0\u10d3\u10dd \u10db\u10d8\u10d7\u10d8\u10d7\u10d4\u10d1\u10d0\u10e1 \u10d3\u10d0 "
+                "\u10de\u10da\u10d0\u10d2\u10d8\u10d0\u10e2\u10d8\u10e1 \u10d0\u10e0\u10d8\u10d3\u10d4\u10d1\u10d0\u10e1. \u10d6\u10e3\u10e1\u10e2\u10d8 \u10e3\u10e4\u10da\u10d4\u10d1\u10d4\u10d1\u10d8, \u10d5\u10d0\u10da\u10d3\u10d4\u10d1\u10e3\u10da\u10d4\u10d1\u10d4\u10d1\u10d8 "
+                "\u10d3\u10d0 \u10e1\u10d0\u10dc\u10e5\u10ea\u10d8\u10d4\u10d1\u10d8 \u10e3\u10dc\u10d3\u10d0 \u10d2\u10d0\u10d3\u10d0\u10db\u10dd\u10ec\u10db\u10d3\u10d4\u10e1 \u10e3\u10dc\u10d8\u10d5\u10d4\u10e0\u10e1\u10d8\u10e2\u10d4\u10e2\u10d8\u10e1 "
+                "\u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10da\u10e3\u10e0 \u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0 \u10ec\u10d4\u10e1\u10d4\u10d1\u10e8\u10d8."
+            )
+        return (
+            "Academic integrity means completing academic work honestly, using proper citations, and avoiding plagiarism "
+            "or unauthorized use of another person's work. Exact duties and sanctions should be checked in the university's official academic rules."
+        )
+
+    if any(
+        marker in haystack
+        for marker in [
+            "dean's list",
+            "deans list",
+            "state grant",
+            "social grant",
+            "grant",
+            "scholarship",
+            "financial support",
+            "funding",
+            "\u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1",
+            "\u10d2\u10e0\u10d0\u10dc\u10e2",
+            "\u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3",
+            "\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10d8 \u10db\u10ee\u10d0\u10e0\u10d3\u10d0\u10ed\u10d4\u10e0",
+            "\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10d8 \u10d3\u10d0\u10ee\u10db\u10d0\u10e0",
+        ]
+    ):
+        if is_ka:
+            return (
+                "\u10d0\u10da\u10e2\u10d4\u10e8\u10d8 \u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10d4\u10d1\u10d0, \u10d2\u10e0\u10d0\u10dc\u10e2\u10d8 \u10d0\u10dc \u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3\u10d8\u10d0 "
+                "\u10e3\u10dc\u10d3\u10d0 \u10d2\u10d0\u10d3\u10d0\u10db\u10dd\u10ec\u10db\u10d3\u10d4\u10e1 \u10d3\u10d0\u10db\u10e2\u10d9\u10d8\u10ea\u10d4\u10d1\u10e3\u10da\u10d8 \u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10d8 "
+                "\u10db\u10ee\u10d0\u10e0\u10d3\u10d0\u10ed\u10d4\u10e0\u10d8\u10e1 \u10db\u10d4\u10e5\u10d0\u10dc\u10d8\u10d6\u10db\u10d4\u10d1\u10d8\u10e1, \u10e1\u10d0\u10ee\u10d4\u10da\u10db\u10ec\u10d8\u10e4\u10dd/\u10e1\u10dd\u10ea\u10d8\u10d0\u10da\u10e3\u10e0\u10d8 "
+                "\u10d2\u10e0\u10d0\u10dc\u10e2\u10d4\u10d1\u10d8\u10e1 \u10d0\u10dc Dean's List Award-\u10d8\u10e1 \u10ec\u10d4\u10e1\u10d4\u10d1\u10d8\u10e1 \u10db\u10d8\u10ee\u10d4\u10d3\u10d5\u10d8\u10d7. "
+                "\u10d6\u10e3\u10e1\u10e2\u10d8 \u10d7\u10d0\u10dc\u10ee\u10d0, \u10d5\u10d0\u10d3\u10d0, \u10de\u10e0\u10dd\u10ea\u10d4\u10dc\u10e2\u10d8 \u10d0\u10dc \u10db\u10d8\u10db\u10d3\u10d8\u10dc\u10d0\u10e0\u10d4 \u10de\u10d8\u10e0\u10dd\u10d1\u10d0 "
+                "\u10e3\u10dc\u10d3\u10d0 \u10d3\u10d0\u10d0\u10d3\u10d0\u10e1\u10e2\u10e3\u10e0\u10dd\u10e1 \u10db\u10d8\u10e6\u10d4\u10d1\u10d8\u10e1 \u10d0\u10dc \u10e4\u10d8\u10dc\u10d0\u10dc\u10e1\u10e3\u10e0\u10db\u10d0 \u10e1\u10d0\u10db\u10e1\u10d0\u10ee\u10e3\u10e0\u10db\u10d0."
+            )
+        return (
+            "Approved finance sources cover financial support mechanisms, state/social grants, scholarships, and Dean's List Award rules. "
+            "Exact amounts, deadlines, percentages, or current eligibility terms must be confirmed from the official admissions or finance office."
+        )
+
     if any(marker in haystack for marker in ["ფინანსური დახმარ", "ფინანსური მხარდაჭერ", "დაფინანსება არსებობს", "financial support"]):
         if is_ka:
             return (
@@ -2057,6 +2252,9 @@ def selected_document_retrieval_alias(haystack: str) -> str | None:
             "scholarship",
             "financial support",
             "funding rule",
+            "\u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1",
+            "\u10d2\u10e0\u10d0\u10dc\u10e2",
+            "\u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3",
             "სახელმწიფო სასწავლო გრანტ",
             "სოციალური პროგრამ",
             "ფინანსური მხარდაჭერ",
@@ -2994,6 +3192,9 @@ def is_selected_official_document_text(text: str) -> bool:
         "school council",
         "funding rule",
         "financial support",
+        "\u10d3\u10d0\u10e4\u10d8\u10dc\u10d0\u10dc\u10e1",
+        "\u10d2\u10e0\u10d0\u10dc\u10e2",
+        "\u10e1\u10e2\u10d8\u10de\u10d4\u10dc\u10d3",
         "it policy",
         "information technology",
         "platform support",
