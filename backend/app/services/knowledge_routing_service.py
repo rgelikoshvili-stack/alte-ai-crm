@@ -395,6 +395,35 @@ def phase_10a_broad_clarification(lowered: str, language: str) -> tuple[str, str
             "\u10ec\u10d4\u10e1",
         ]
     )
+    has_specific_calendar_fact = any(
+        marker in lowered
+        for marker in [
+            "holiday",
+            "holidays",
+            "midterm",
+            "retake",
+            "retakes",
+            "\u10e8\u10e3\u10d0\u10da\u10d4\u10d3\u10e3\u10e0",
+            "\u10d2\u10d0\u10d3\u10d0\u10d1\u10d0\u10e0",
+            "\u10e3\u10e5\u10db\u10d4",
+            "\u10d0\u10e0\u10d3\u10d0\u10d3\u10d4\u10d2",
+        ]
+    )
+    has_catalog_summary_context = any(
+        marker in lowered
+        for marker in [
+            "distribution",
+            "fields",
+            "contains",
+            "include",
+            "includes",
+            "catalog field",
+            "\u10e0\u10dd\u10d2\u10dd\u10e0 \u10dc\u10d0\u10ec\u10d8\u10da\u10d3\u10d4\u10d1",
+            "\u10e1\u10d0\u10e4\u10d4\u10ee\u10e3\u10e0\u10d4\u10d1\u10d8\u10e1 \u10db\u10d8\u10ee\u10d4\u10d3\u10d5\u10d8\u10d7",
+            "\u10e0\u10d0 \u10d8\u10dc\u10e4\u10dd\u10e0\u10db\u10d0\u10ea\u10d8\u10d0\u10e1 \u10e8\u10d4\u10d8\u10ea\u10d0\u10d5\u10e1",
+            "\u10d9\u10d0\u10e2\u10d0\u10da\u10dd\u10d2\u10d8 \u10d7\u10d8\u10d7\u10dd\u10d4\u10e3\u10da",
+        ]
+    )
 
     if (
         any(marker in lowered for marker in ["registration", "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8"])
@@ -493,7 +522,7 @@ def phase_10a_broad_clarification(lowered: str, language: str) -> tuple[str, str
             "\u10e0\u10d0 \u10d4\u10dc\u10d0",
         ]
     )
-    if not has_teaching_language_context and any(marker in lowered for marker in ["programs", "programmes", "program catalog", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d6"]):
+    if not has_teaching_language_context and not has_catalog_summary_context and any(marker in lowered for marker in ["programs", "programmes", "program catalog", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1", "\u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d6"]):
         if not any(
             marker in lowered
             for marker in [
@@ -523,7 +552,7 @@ def phase_10a_broad_clarification(lowered: str, language: str) -> tuple[str, str
                 ["Bachelor", "Master", "One-cycle", "English-language programs"],
             )
 
-    if any(marker in lowered for marker in ["calendar", "academic calendar", "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0"]) and not has_calendar_program:
+    if any(marker in lowered for marker in ["calendar", "academic calendar", "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0"]) and not has_calendar_program and not has_specific_calendar_fact:
         if is_ka:
             return (
                 "academic_calendar",
