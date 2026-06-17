@@ -43,6 +43,8 @@ class ChatSessionStartRequest(BaseModel):
     channel: Literal["website_chat"] = "website_chat"
     source_domain: str | None = "alte.edu.ge"
     language: Language = "unknown"
+    widget_variant: str | None = None
+    metadata: dict | None = None
 
 
 class ChatSessionStartResponse(BaseModel):
@@ -65,6 +67,15 @@ class ChatMessageRequest(BaseModel):
 
 class ChatHandoverRequest(BaseModel):
     session_id: str | None = None
+    selected_department: str | None = None
+    selected_topic: str | None = None
+    source_domain: str | None = "alte.edu.ge"
+    language: Language | None = None
+    reason: str | None = None
+    mode: str | None = None
+    message: str | None = None
+    question: str | None = None
+    note: str | None = None
 
 
 class ChatContactRequest(BaseModel):
@@ -79,6 +90,9 @@ class ChatContactRequest(BaseModel):
     selected_topic: str | None = None
     source_domain: str | None = "alte.edu.ge"
     language: Language | None = None
+    message: str | None = None
+    question: str | None = None
+    note: str | None = None
     consent: bool = False
 
 
@@ -113,6 +127,10 @@ class ChatMessageResponse(BaseModel):
     recommended_next_action: str | None = None
     answer_source_status: str | None = None
     used_sources: list[str] = Field(default_factory=list)
+    public_source_label: str | None = None
     route_department: str | None = None
     department_key: str | None = None
     routing_reason: str | None = None
+    source_group: str | None = None
+    clarification_needed: bool = False
+    clarification_options: list[str] = Field(default_factory=list)

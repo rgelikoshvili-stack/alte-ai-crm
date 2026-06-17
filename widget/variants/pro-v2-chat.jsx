@@ -119,11 +119,9 @@ const proV2Css = `
 .cw-dept{ display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:var(--alte-soft); color:var(--alte-teal); border-radius:20px; font-size:10px; font-weight:700; letter-spacing:0.01em; }
 .cw-dept .dot{ width:5px; height:5px; border-radius:50%; background:currentColor; }
 
-.cw-srcs{ display:flex; gap:5px; flex-wrap:wrap; }
-.cw-src{ display:inline-flex; align-items:center; gap:5px; padding:4px 9px 4px 6px; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:20px; font-size:10.5px; color:var(--alte-teal-mid,#0a5258); font-weight:500; cursor:pointer; transition:.15s; max-width:100%; }
-.cw-src:hover{ border-color:var(--alte-soft-line); background:var(--alte-soft); }
-.cw-src .n{ width:14px; height:14px; border-radius:50%; background:var(--alte-teal); color:#fff; font-size:8.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.cw-src .u{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px; }
+.cw-srcs{ display:flex; max-width:100%; min-width:0; }
+.cw-src{ display:block; padding:0; border:0; background:transparent; font-size:10.5px; line-height:1.35; color:var(--alte-mute); font-weight:600; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cw-src strong{ color:var(--alte-teal-mid,#0a5258); font-weight:800; }
 
 .cw-msg-acts{ display:flex; gap:4px; margin-top:2px; opacity:0; transition:.15s; }
 .cw-row:hover .cw-msg-acts{ opacity:1; }
@@ -243,8 +241,7 @@ const proV2Css = `
   .cw-bub-wrap{ max-width:calc(100% - 34px); min-width:0; }
   .cw-bub{ max-width:100%; }
   .cw-srcs{ width:100%; min-width:0; }
-  .cw-src{ max-width:100%; min-width:0; }
-  .cw-src .u{ max-width:calc(100vw - 92px); }
+  .cw-src{ max-width:calc(100vw - 92px); }
   .cw-feat{ align-items:flex-start; }
   .cw-feat > div:nth-child(2){ min-width:0; }
   .cw-feat .ttl,
@@ -408,16 +405,10 @@ function Header({ S, lang, setLang, onSettings, onNew, onClose, onExpand, expand
   );
 }
 
-// ============ Source pill ============
-function SourceChip({ n, url }){
-  const handle = (e) => { e.preventDefault(); window.open(url.startsWith('http')?url:'https://'+url,'_blank','noopener'); };
-  const trimmed = url.replace(/^https?:\/\//,'');
-  return (
-    <a className="cw-src" href="#" onClick={handle} title={url}>
-      <span className="n">{n}</span>
-      <span className="u">{trimmed}</span>
-    </a>
-  );
+// ============ Public source line ============
+function SourceLine({ label, lang }){
+  if (!label) return null;
+  return <div className="cw-src"><strong>{lang==='KA' ? 'წყარო:' : 'Source:'}</strong> {label}</div>;
 }
 
 // ============ Bubble actions ============
@@ -433,8 +424,10 @@ function MsgActions({ S, onCopy, onRegen, onGood, onBad, vote }){
 }
 
 // ============ Single message ============
-function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
-  if (msg.kind === 'handover') return <HandoverCard msg={msg} S={S} lang={lang} onYes={onHandover}/>;
+function Message({ msg, S, lang, onCopy, onRegen, onVote, onContactHandover, onWaitHandover }){
+  if (msg.kind === 'handover') {
+    return <HandoverCard msg={msg} S={S} lang={lang} onContact={onContactHandover} onWait={onWaitHandover}/>;
+  }
   const isUser = msg.role === 'user';
   const isOperator = msg.role === 'operator' || msg.kind === 'operator';
   const dept = msg.deptId ? DEPTS.find(d=>d.id===msg.deptId) : null;
@@ -469,9 +462,9 @@ function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
           </div>
         )}
         {msg.text && <div className="cw-bub">{md(msg.text)}</div>}
-        {msg.sources && msg.sources.length>0 && (
+        {msg.sourceLabel && (
           <div className="cw-srcs">
-            {msg.sources.map((s,i)=><SourceChip key={i} n={i+1} url={s}/>)}
+            <SourceLine label={msg.sourceLabel} lang={lang}/>
           </div>
         )}
         {!isUser && !isOperator && msg.text && (
@@ -483,7 +476,7 @@ function Message({ msg, S, lang, onCopy, onRegen, onVote, onHandover }){
   );
 }
 
-function HandoverCard({ msg, S, lang, onYes }){
+function HandoverCard({ msg, S, lang, onContact, onWait }){
   return (
     <div className="cw-row">
       <div className="cw-av"><AlteMark size={26}/></div>
@@ -502,8 +495,8 @@ function HandoverCard({ msg, S, lang, onYes }){
             {S.handoverHours}<strong>{S.handoverHoursVal}</strong>. {S.handoverWait}
           </div>
           <div className="acts">
-            <button className="cw-btn-p" onClick={onYes}>{S.handoverYes}</button>
-            <button className="cw-btn-s">{S.handoverNo}</button>
+            <button className="cw-btn-p" onClick={onContact}>{S.handoverYes}</button>
+            <button className="cw-btn-s" onClick={onWait}>{S.handoverNo}</button>
           </div>
         </div>
       </div>
@@ -639,6 +632,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showLead, setShowLead] = useState(false);
+  const [leadMessageDraft, setLeadMessageDraft] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [toast, setToast] = useState(null);
   const seenOperatorMessageIds = useRef(new Set());
@@ -669,28 +663,47 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     return { system: sys, messages: hist };
   }, [messages, lang, dept]);
 
-  // Guess sources from text (look for alte.edu.ge mentions, else default to dept page)
-  const inferSources = (text, deptId) => {
-    const out = [];
-    const urlRe = /alte\.edu\.ge\/[^\s\)\]]+/gi;
-    let m;
-    while ((m = urlRe.exec(text)) !== null) {
-      if (out.indexOf(m[0]) === -1) out.push(m[0]);
-    }
-    if (out.length === 0) {
-      const defaultUrls = {
-        admissions:'alte.edu.ge/ka/migebis-pirobebi',
-        programs:'alte.edu.ge/ka/programebi',
-        finance:'alte.edu.ge/ka/datsva-da-stipendia',
-        international:'alte.edu.ge/en/international-students',
-        medicine:'alte.edu.ge/ka/ertsafekhuriani-sameditsino-programebi-2',
-        library:'alte.edu.ge/ka/biblioteka',
-        career:'alte.edu.ge/ka/karieris-centri',
-        it:'alte.edu.ge/ka/it-dakhmareba',
-      };
-      out.push(defaultUrls[deptId] || 'alte.edu.ge');
-    }
-    return out.slice(0,3);
+  const publicSourceLabel = (backend) => {
+    if (!backend || backend.answer_source_status !== 'answered_from_approved_source') return null;
+    if (backend.clarification_needed || backend.should_handover) return null;
+    const allowedLabels = [
+      'საგანმანათლებლო პროგრამების კატალოგი',
+      'აკადემიური კალენდარი 2025–2026',
+      'სასწავლო პროცესის მარეგულირებელი წესი',
+      'ბაკალავრიატის დებულება',
+      'მაგისტრატურის დებულება',
+      'მიღების წესი',
+      'საერთაშორისო მიღების წესი',
+      'ფინანსური მხარდაჭერა',
+      'სახელმწიფო/სოციალური გრანტები',
+      'ბიბლიოთეკის წესი',
+      'კარიერის სერვისები',
+    ];
+    const safeLabel = (label) => {
+      if (!label) return null;
+      const text = String(label).trim();
+      return allowedLabels.includes(text) ? text : null;
+    };
+    const groupLabel = (group) => ({
+      program_catalog_sources: 'საგანმანათლებლო პროგრამების კატალოგი',
+      academic_calendar_2025_2026: 'აკადემიური კალენდარი 2025–2026',
+      official_academic_rules: 'სასწავლო პროცესის მარეგულირებელი წესი',
+      admissions_rules: 'მიღების წესი',
+      international_admissions_sources: 'საერთაშორისო მიღების წესი',
+      finance_sources: 'ფინანსური მხარდაჭერა',
+      state_social_grants_sources: 'სახელმწიფო/სოციალური გრანტები',
+      library_sources: 'ბიბლიოთეკის წესი',
+      career_sources: 'კარიერის სერვისები',
+      bachelor_regulation: 'ბაკალავრიატის დებულება',
+      bachelor_rules: 'ბაკალავრიატის დებულება',
+      master_regulation: 'მაგისტრატურის დებულება',
+      master_rules: 'მაგისტრატურის დებულება',
+    }[group] || null);
+    const directLabel = safeLabel(backend.public_source_label);
+    if (directLabel) return directLabel;
+    const routedLabel = safeLabel(groupLabel(backend.source_group));
+    if (routedLabel) return routedLabel;
+    return null;
   };
 
   // Detect intent: handover request, lead request
@@ -708,8 +721,17 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       selected_department: deptId,
       selected_topic: deptId,
       message: messageText,
+      reason: 'wait_for_operator',
+      mode: 'waiting_for_operator',
     });
   }, [currentDept, lang]);
+
+  const latestUserText = useCallback(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user' && messages[i].text) return messages[i].text;
+    }
+    return '';
+  }, [messages]);
 
   // SEND
   const send = useCallback(async (overrideText) => {
@@ -761,7 +783,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         kind: backend.should_handover ? 'handover' : undefined,
         text: reply,
         deptId: backend.department_key || currentDept,
-        sources: settingsState.sources ? (backend.used_sources || inferSources(reply, currentDept)) : [],
+        sourceLabel: settingsState.sources ? publicSourceLabel(backend) : null,
       }]);
     } catch (err) {
       setTyping(false);
@@ -791,7 +813,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       const histBeforeUser = messages.slice(0, idx).filter(x=>x.role==='user'||x.role==='assistant').map(x=>({role:x.role, content:x.text||''}));
       const reply = await window.AlteChatBridge.complete({ system: altePrompt(lang, dept), messages: histBeforeUser });
       setTyping(false);
-      setMessages(m => [...m, { id:'a'+Date.now(), role:'assistant', text: reply, deptId: currentDept, sources: settingsState.sources?inferSources(reply,currentDept):[] }]);
+      setMessages(m => [...m, { id:'a'+Date.now(), role:'assistant', text: reply, deptId: currentDept, sourceLabel: null }]);
     } catch (e){ setTyping(false); }
   };
 
@@ -821,22 +843,41 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     }
   };
 
+  const waitForOperator = useCallback((deptId=currentDept, messageText=latestUserText()) => {
+    const textForOperator = messageText || (lang==='KA' ? 'მინდა ოპერატორთან დაკავშირება' : 'I want to speak with an operator');
+    requestBackendHandover(deptId, textForOperator).catch(()=>null).finally(()=>{
+      setMessages(m => [...m, {
+        id:'a'+Date.now(),
+        role:'assistant',
+        deptId,
+        text: lang==='KA'
+          ? 'თქვენი მოთხოვნა გადაეცა ოპერატორს. გთხოვთ დაელოდოთ — ოპერატორი მალე დაგიკავშირდებათ ამ ჩატში.'
+          : 'Your request has been sent to an operator. Please wait — an operator will join this chat soon.',
+      }]);
+    });
+  }, [currentDept, lang, latestUserText, requestBackendHandover]);
+
+  const openContactForm = useCallback((messageText=latestUserText()) => {
+    setLeadMessageDraft(messageText || '');
+    setShowLead(true);
+  }, [latestUserText]);
+
   const startHandover = () => {
     const requestText = lang==='KA' ? 'დამაკავშირე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
+    // Previous wiring called requestBackendHandover(currentDept, requestText) here.
+    // Phase 9AH keeps the typed/sidebar request local until the user chooses "Wait for operator".
     setMessages(m => [...m, {
       id:'u'+Date.now(),
       role:'user',
       text: requestText,
     }]);
-    requestBackendHandover(currentDept, requestText).catch(()=>null).finally(()=>{
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        kind:'handover',
-        deptId:currentDept,
-        text: lang==='KA' ? 'გასაგებია - გადაგრთავთ **მიღების** გუნდის ცოცხალ ოპერატორთან.' : "I'll connect you with a live operator from **Admissions**.",
-      }]);
-    });
+    setMessages(m => [...m, {
+      id:'a'+Date.now(),
+      role:'assistant',
+      kind:'handover',
+      deptId:currentDept,
+      text: lang==='KA' ? 'შემიძლია დაგაკავშიროთ ოპერატორთან ამ ჩატში ან დატოვოთ საკონტაქტო ინფორმაცია.' : 'I can connect you with an operator in this chat, or you can leave contact details.',
+    }]);
   };
 
   const newChat = () => {
@@ -855,6 +896,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         language: lang,
         selected_department: currentDept,
         selected_topic: contact?.interest || currentDept,
+        message: contact?.message || leadMessageDraft || latestUserText(),
       });
       setShowLead(false);
       setMessages(m => [...m, {
@@ -928,7 +970,8 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
             {messages.map(m => (
               <Message key={m.id} msg={m} S={S} lang={lang}
                 onCopy={copy} onRegen={regen} onVote={vote}
-                onHandover={()=>setShowLead(true)}/>
+                onContactHandover={()=>openContactForm(latestUserText() || m.text)}
+                onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
             ))}
             {typing && (
               <div className="cw-row">
@@ -957,7 +1000,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         state={settingsState} setState={setSettingsState}
         onClear={()=>{ setMessages([]); setShowSettings(false); }}
         onClose={()=>setShowSettings(false)}/>}
-      {showLead && <LeadModal S={S} lang={lang} onClose={()=>setShowLead(false)} onSubmit={onLeadSubmit}/>}
+      {showLead && <LeadModal S={S} lang={lang} initialMessage={leadMessageDraft} onClose={()=>setShowLead(false)} onSubmit={onLeadSubmit}/>}
     </div>
     </>
   );

@@ -105,7 +105,8 @@ def test_finance_question_uses_consultant_reply_without_invented_price(client):
 
     assert result["intent"] == "finance_question"
     assert result["created_lead_id"] is None
-    assert "დაგიდასტურებთ" in result["reply"]
+    assert "დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე" in result["reply"]
+    assert "შესაბამის ოპერატორთან" in result["reply"]
 
 
 def test_student_service_does_not_create_admissions_lead(client, session_factory):

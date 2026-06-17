@@ -1,0 +1,3 @@
+Phase 9T - Official Academic Rules Knowledge Import + 20 Question QA Verification
+
+Sanitized local spec reconstructed from the active project task because the expected uploaded file named "Вставленный текст(161).txt" was not present on disk. Scope: prepare evidence, extracted text, structured summary, knowledge artifact, 20-question QA dataset, evaluator, verifier, and result documentation. Safety: no production DB write, no migrations/seeds, no deploy, no Secret Manager change, no real Alte site change, no contact-flow test, public launch remains NO-GO.

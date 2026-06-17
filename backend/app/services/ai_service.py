@@ -128,6 +128,102 @@ def call_claude(
     return extract_response_text(response)
 
 
+def generate_source_grounded_answer(
+    message: str,
+    *,
+    language: str | None,
+    approved_excerpts: list[dict[str, Any]],
+    route_metadata: dict[str, Any] | None = None,
+) -> tuple[str | None, dict[str, Any]]:
+    """Generate a final answer using only retrieved approved excerpts.
+
+    In test/mock mode this returns a deterministic excerpt-based fallback so
+    local tests never require a live AI provider.
+    """
+    if not approved_excerpts:
+        return None, {"provider": "none", "model": "none", "fallback": True, "reason": "no_excerpts"}
+
+    settings = get_settings()
+    provider = settings.AI_PROVIDER.lower().strip()
+    if provider != "claude":
+        return deterministic_grounded_answer(language, approved_excerpts), {
+            "provider": "mock",
+            "model": "deterministic_source_grounded_answer",
+            "fallback": True,
+        }
+
+    try:
+        raw_text = call_claude_source_grounded_answer(
+            message,
+            language=language,
+            approved_excerpts=approved_excerpts,
+            route_metadata=route_metadata or {},
+        )
+        answer = raw_text.strip()
+        if not answer:
+            raise ValueError("Claude grounded answer was empty")
+        return answer, {"provider": "claude", "model": settings.AI_MODEL, "fallback": False}
+    except Exception as exc:
+        logger.warning("Claude source-grounded answer fallback: %s", type(exc).__name__)
+        return deterministic_grounded_answer(language, approved_excerpts), {
+            "provider": "claude",
+            "model": settings.AI_MODEL,
+            "fallback": True,
+            "error_type": type(exc).__name__,
+        }
+
+
+def call_claude_source_grounded_answer(
+    message: str,
+    *,
+    language: str | None,
+    approved_excerpts: list[dict[str, Any]],
+    route_metadata: dict[str, Any],
+) -> str:
+    settings = get_settings()
+    handle = get_ai_client()
+    prompt_payload = {
+        "instruction": (
+            "You are answering as Alte University's assistant. Use only the approved source excerpts provided below. "
+            "Do not use your general knowledge. If the exact answer is not present in the excerpts, say that the "
+            "approved source does not contain exact information and offer to connect the user with the relevant operator. "
+            "Do not invent dates, prices, deadlines, documents, or policies."
+        ),
+        "answer_requirements": [
+            "Answer in the same language as the user.",
+            "Be clear and concise.",
+            "Use only the retrieved approved excerpts.",
+            "If source-backed, do not ask for phone, email, or name.",
+            "If unsupported, do not invent.",
+            "If broad, ask for clarification instead of answering broadly.",
+            "Keep Georgian UTF-8 clean."
+        ],
+        "message": message,
+        "language": language,
+        "route_metadata": route_metadata,
+        "approved_excerpts": approved_excerpts[:5],
+    }
+    response = handle.client.messages.create(
+        model=settings.AI_MODEL,
+        max_tokens=settings.AI_MAX_TOKENS,
+        system="Answer only from the approved source excerpts. Never use outside knowledge.",
+        messages=[{"role": "user", "content": json.dumps(prompt_payload, ensure_ascii=False)}],
+        timeout=settings.AI_TIMEOUT_SECONDS,
+    )
+    return extract_response_text(response)
+
+
+def deterministic_grounded_answer(language: str | None, approved_excerpts: list[dict[str, Any]]) -> str:
+    first = approved_excerpts[0]
+    title = str(first.get("title") or first.get("source_title") or "approved source")
+    content = " ".join(str(first.get("content") or first.get("snippet") or "").split())
+    if len(content) > 520:
+        content = content[:517].rstrip() + "..."
+    if language == "en":
+        return f"According to the approved source ({title}), {content}"
+    return f"დამტკიცებული წყაროს მიხედვით ({title}): {content}"
+
+
 def extract_response_text(response: Any) -> str:
     content = getattr(response, "content", None)
     if isinstance(content, list) and content:

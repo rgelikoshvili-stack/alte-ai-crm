@@ -1,5 +1,66 @@
 # Next Phases
 
+## Phase 9W-DB: Production DB Credential Fixed
+
+Status: `BACKEND_DEPLOYED_DB_CREDENTIAL_FIXED_CHAT_READY_PENDING_BROWSER_RETEST`
+
+- Root cause was production Cloud SQL app user password mismatch with the active `alte-database-url:latest` Secret Manager credential.
+- The Cloud SQL app user password was repaired after explicit approval, without printing secret values.
+- Cloud Run still maps `DATABASE_URL` from Secret Manager.
+- `/chat/session/start` now returns 200 with exact Netlify CORS origin.
+- Production DB credential smoke reached `/chat/message` without contact details or intentional CRM record creation.
+- Netlify public chat CORS smoke passed.
+- Department routing sidebar smoke passed `28/28`.
+- Finance no-contact smoke passed `21/22`; one deadline case timed out and needs retry/review.
+- Knowledge smoke passed `24/25`; one deadline conservativeness assertion needs review.
+- No migration, seed, schema change, DB data change, real Alte site change, or frontend design change was made.
+- Public launch remains NO-GO.
+
+Next required action: manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`.
+
+## Phase 9W: Chat Session Start 500 Diagnosed
+
+Status: `BACKEND_DEPLOYED_CHAT_SESSION_START_500_DIAGNOSED_PENDING_APPROVAL`
+
+- `/chat/session/start` reaches the backend and carries the exact Netlify CORS header.
+- Sanitized production logs show `asyncpg.exceptions.InvalidPasswordError` during DB connection/flush in `start_session()`.
+- Root cause is production DB credential or Secret Manager mapping, not frontend payload and not CORS.
+- Session schema now explicitly accepts Pro v2 `widget_variant` and `metadata`.
+- No Secret Manager, DB user/password, production DB, migration, seed, real Alte site, or frontend design change was made.
+- Public launch remains NO-GO.
+
+Resolved by Phase 9W-DB after explicit approval.
+
+## Phase 9V: Netlify Chat CORS Restore Deployed
+
+Status: `BACKEND_DEPLOYED_NETLIFY_CHAT_CORS_RESTORED_PENDING_BROWSER_RETEST`
+
+- Exact Netlify origin remains the approved public chatbot test origin:
+  - `https://nimble-croissant-2f66e8.netlify.app`
+- Serving revision: `alte-ai-crm-backend-00016-2gk`.
+- Preflight CORS for `/chat/session/start`, `/chat/message`, and `/chat/handover/{conversation_id}` returns the exact origin and no wildcard.
+- CORS middleware is now positioned to cover backend error responses as well, including `500`; real `/chat/session/start` still returns backend `500` before DB repair but includes the Netlify CORS header.
+- No DB, Secret Manager, real Alte site, or wildcard CORS change was made.
+- Public launch remains NO-GO.
+
+Next required action: manually retest `https://nimble-croissant-2f66e8.netlify.app/join.html`; if session start still fails, handle the backend `500`/DB credential issue in a separate explicitly approved phase.
+
+## Phase 9S: Pro v2 Message 500 Flow Fix Ready
+
+Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_500_FIXED_PENDING_NETLIFY_REDEPLOY`
+
+- Normal browser message flow remains restricted to:
+  - `POST /chat/session/start`
+  - `POST /chat/message`
+- Typed operator intent no longer automatically calls `/chat/handover/{conversation_id}`.
+- Backend handover remains guarded behind explicit operator/sidebar action.
+- Visible Pro v2 error card added for failed `/chat/message`.
+- Netlify deploy ZIP rebuilt.
+- Real Alte site modified: NO.
+- Public launch remains NO-GO.
+
+Next required action: redeploy Netlify from latest package/master, repair the known production DB credential mismatch, then manually retest browser chat.
+
 ## Phase 9S: Pro v2 Message Endpoint and CORS Fix Ready
 
 Status: `BACKEND_DEPLOYED_PRO_V2_MESSAGE_ENDPOINT_CORS_FIXED_PENDING_NETLIFY_REDEPLOY`

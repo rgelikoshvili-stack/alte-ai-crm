@@ -76,6 +76,7 @@ async def build_inbox_item(db: AsyncSession, conversation: Conversation) -> Inbo
     last_message = await db.scalar(
         select(Message).where(Message.conversation_id == conversation.id).order_by(Message.created_at.desc()).limit(1)
     )
+    selected_department = await infer_conversation_department(db, conversation.id)
     return InboxListItem(
         conversation_id=conversation.id,
         channel=conversation.channel,
@@ -90,11 +91,41 @@ async def build_inbox_item(db: AsyncSession, conversation: Conversation) -> Inbo
         lead_id=lead.id if lead else None,
         lead_status=lead.status if lead else None,
         lead_priority=lead.priority if lead else None,
+        selected_department=selected_department,
+        waiting_status="waiting_for_operator" if conversation.status == "waiting_for_operator" else None,
         last_message_text=last_message.text if last_message else None,
         last_message_sender_type=last_message.sender_type if last_message else None,
         last_message_at=last_message.created_at if last_message else None,
         created_at=conversation.created_at,
     )
+
+
+async def infer_conversation_department(db: AsyncSession, conversation_id: str) -> str | None:
+    messages = (
+        await db.scalars(
+            select(Message).where(Message.conversation_id == conversation_id).order_by(Message.created_at.desc())
+        )
+    ).all()
+    for message in messages:
+        metadata = message.metadata_json or {}
+        for key in ("route_department", "selected_department", "department_key"):
+            value = metadata.get(key)
+            if value:
+                return str(value)
+    audits = (
+        await db.scalars(
+            select(AuditLog)
+            .where(AuditLog.entity_type == "conversation", AuditLog.entity_id == conversation_id)
+            .order_by(AuditLog.created_at.desc())
+        )
+    ).all()
+    for audit in audits:
+        metadata = audit.metadata_json or {}
+        for key in ("selected_department", "route_department", "department_key"):
+            value = metadata.get(key)
+            if value:
+                return str(value)
+    return None
 
 
 async def build_task_items(

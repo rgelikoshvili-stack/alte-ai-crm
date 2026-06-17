@@ -182,6 +182,8 @@ function renderConversationItem(item) {
       <div class="badge-row">
         ${badge(item.channel)}
         ${badge(item.status)}
+        ${item.waiting_status ? badge("Waiting for operator", "handover") : ""}
+        ${item.selected_department ? badge(item.selected_department, "handover") : ""}
         ${item.human_handover ? badge("handover", "handover") : ""}
         ${item.lead_priority ? badge(item.lead_priority) : ""}
       </div>
@@ -419,7 +421,20 @@ async function loadConversationDetail(conversationId) {
   const data = await apiGet(`/conversations/${conversationId}/detail`);
   const customer = data.customer || {};
   const lead = data.lead || {};
+  const conversation = data.conversation || {};
   $("conversationDetail").innerHTML = `
+    <div class="detail-section">
+      <h3>Operator routing</h3>
+      <div class="badge-row">
+        ${conversation.status === "waiting_for_operator" ? badge("Waiting for operator", "handover") : badge(conversation.status)}
+        ${data.selected_department ? badge(data.selected_department, "handover") : ""}
+        ${data.human_handover ? badge("needs operator", "handover") : ""}
+      </div>
+      <div class="field-grid">
+        <div class="field"><span>Conversation ID</span><strong>${escapeHtml(display(conversation.id || conversationId))}</strong></div>
+        <div class="field"><span>Latest status</span><strong>${escapeHtml(display(data.waiting_status || conversation.status))}</strong></div>
+      </div>
+    </div>
     <div class="detail-section">
       <h3>კლიენტი</h3>
       <div class="field-grid">

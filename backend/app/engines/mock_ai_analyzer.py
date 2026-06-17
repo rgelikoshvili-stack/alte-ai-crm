@@ -4,6 +4,10 @@ from app.schemas.chat import AIAnalysisResult, ExtractedContact
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 PHONE_RE = re.compile(r"(?:\+995)?\d{9}")
+SAFE_CONTACT_CONSENT_KA = (
+    "თუ გსურთ ოპერატორთან დაკავშირება, დააჭირეთ „დიახ, კონტაქტი“-ს. "
+    "საკონტაქტო ინფორმაციის გაზიარება მხოლოდ თქვენი მკაფიო თანხმობის შემდეგ უნდა მოხდეს."
+)
 
 
 def analyze_message(message: str, source_domain: str | None = None) -> AIAnalysisResult:
@@ -29,33 +33,33 @@ def analyze_message(message: str, source_domain: str | None = None) -> AIAnalysi
         should_create_lead = False
         used_sources = ["mock_contact_source"]
     elif intent == "finance_question":
-        reply = "სწავლის საფასურსა და დაფინანსებას ზუსტად ფინანსური/მიღების კონსულტანტი დაგიდასტურებთ. შეგიძლიათ დატოვოთ საკონტაქტო ინფორმაცია?"
+        reply = f"სწავლის საფასურსა და დაფინანსებას ზუსტად ფინანსური/მიღების კონსულტანტი დაგიდასტურებთ. {SAFE_CONTACT_CONSENT_KA}"
         risk_flags = ["finance_details_require_human_verification"]
         department = "Finance"
     elif intent == "human_request":
-        reply = "გადაგამისამართებთ ადამიანთან. გთხოვთ მომწეროთ სახელი და ტელეფონი ან ელფოსტა."
+        reply = f"გადაგამისამართებთ ადამიანთან. {SAFE_CONTACT_CONSENT_KA}"
     elif intent == "student_service":
         reply = "ეს სტუდენტური სერვისების საკითხია. თუ გსურთ, დაგაკავშირებთ შესაბამის გუნდთან."
         department = "Student Services"
         should_create_lead = False
     elif intent == "international_admission":
-        reply = "International Admissions დაგეხმარებათ. გთხოვთ მოგვწეროთ სახელი, ქვეყანა/ქალაქი და ტელეფონი ან ელფოსტა."
+        reply = f"International Admissions დაგეხმარებათ. {SAFE_CONTACT_CONSENT_KA}"
         priority = "high"
         department = "International Admissions"
         interest_area = "International admission"
         if medical_track:
             program = program or "Medicine / 6-year MD"
     elif intent in {"admission_interest", "consultation_request"}:
-        reply = "მიღების კონსულტაციისთვის გთხოვთ მომწეროთ სახელი და ტელეფონი ან ელფოსტა."
+        reply = f"მიღების კონსულტაციისთვის დაგეხმარებათ შესაბამისი გუნდი. {SAFE_CONTACT_CONSENT_KA}"
         department = "Admissions"
         interest_area = "Admissions"
     elif intent == "technical_issue":
-        reply = "ტექნიკურ საკითხზე დაგეხმარებათ მხარდაჭერის გუნდი. გთხოვთ აღწეროთ პრობლემა და დატოვოთ საკონტაქტო ინფორმაცია."
+        reply = f"ტექნიკურ საკითხზე დაგეხმარებათ მხარდაჭერის გუნდი. {SAFE_CONTACT_CONSENT_KA}"
         department = "IT Support"
         should_create_lead = False
         should_handover = True
     elif intent == "event_interest":
-        reply = "ღონისძიების შესახებ ინფორმაციას დაგიზუსტებთ. თუ გსურთ, დატოვეთ საკონტაქტო ინფორმაცია."
+        reply = f"ღონისძიების შესახებ ინფორმაციას დაგიზუსტებთ. {SAFE_CONTACT_CONSENT_KA}"
         interest_area = "Event"
     else:
         reply = "გმადლობთ შეტყობინებისთვის. შემიძლია დაგეხმაროთ პროგრამებზე, მიღებაზე, დაფინანსებაზე ან კონტაქტზე."
@@ -102,7 +106,7 @@ def detect_intent(lowered: str) -> str:
         return "human_request"
     if contains_any(lowered, ["international", "medicine", "from india", "visa", "relocation"]):
         return "international_admission"
-    if contains_any(lowered, ["ფასი", "ღირს", "გადასახადი", "დაფინანსება", "სტიპენდია", "tuition", "fee"]):
+    if contains_any(lowered, ["ფასი", "ღირს", "გადასახადი", "დაფინანსება", "ფინანსური", "დახმარება", "სტიპენდია", "tuition", "fee", "financial support"]):
         return "finance_question"
     if contains_any(lowered, ["ბიბლიოთეკ", "სტუდენტ", "საგამოცდო", "ცხრილი"]):
         return "student_service"

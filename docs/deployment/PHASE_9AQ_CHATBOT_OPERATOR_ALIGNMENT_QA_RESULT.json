@@ -1,0 +1,1005 @@
+{
+  "status": "PASSED",
+  "test_time_utc": "2026-05-31T13:45:35.646696+00:00",
+  "backend_url": "https://alte-ai-crm-backend-226875230147.europe-west1.run.app",
+  "origin": "https://nimble-croissant-2f66e8.netlify.app",
+  "netlify_url": "https://nimble-croissant-2f66e8.netlify.app/join.html",
+  "operator_api_auth_status": "AUTH_OK",
+  "operator_api_checked": true,
+  "scenarios_total": 8,
+  "checks_total": 116,
+  "checks_passed": 116,
+  "checks_failed": 0,
+  "scenarios": [
+    {
+      "name": "official_kb_bachelor_ects",
+      "conversation_id": "854d80ff-bff1-4ea5-a483-275e906db8be",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "answered_from_approved_source",
+        "department_key": "programs",
+        "route_department": "Programs",
+        "should_handover": false,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECT"
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "854d80ff-bff1-4ea5-a483-275e906db8be",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "Programs",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედ",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:44:06.601999Z"
+        },
+        "detail_summary": {
+          "conversation_id": "854d80ff-bff1-4ea5-a483-275e906db8be",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "Programs",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "official_kb_bachelor_ects: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "official_kb_bachelor_ects: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "official_kb_bachelor_ects: no direct contact request",
+          "passed": true,
+          "detail": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECT"
+        },
+        {
+          "name": "official_kb_bachelor_ects: source status",
+          "passed": true,
+          "detail": "answered_from_approved_source"
+        },
+        {
+          "name": "official_kb_bachelor_ects: answer tokens",
+          "passed": true,
+          "detail": "საბაკალავრო პროგრამის დასასრულებლად საჭიროა არანაკლებ 240 ECTS კრედიტის დაგროვება. ერთსაფეხურიანი პროგრამები ცალკეა: მედიცინა - არანაკლებ 360 ECTS, სტომატოლოგია - არანაკლებ 300 ECT"
+        },
+        {
+          "name": "official_kb_bachelor_ects: handover flag",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "name": "official_kb_bachelor_ects: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "official_kb_bachelor_ects: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "official_kb_bachelor_ects: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "official_kb_bachelor_ects: detail conversation id",
+          "passed": true,
+          "detail": "854d80ff-bff1-4ea5-a483-275e906db8be"
+        },
+        {
+          "name": "official_kb_bachelor_ects: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "official_kb_bachelor_ects: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "official_kb_bachelor_ects: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "official_kb_bachelor_ects: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "official_kb_bachelor_ects: operator handover not required",
+          "passed": true,
+          "detail": "detail=False inbox=False"
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "broad_clarification",
+      "conversation_id": "13563708-03f4-4a6e-b05a-9adc3bf14bf5",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "clarification_needed",
+        "department_key": "admissions",
+        "route_department": "მიღება",
+        "should_handover": false,
+        "clarification_needed": true,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენტის სტატუსი"
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "13563708-03f4-4a6e-b05a-9adc3bf14bf5",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "მიღება",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენ",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:44:16.930461Z"
+        },
+        "detail_summary": {
+          "conversation_id": "13563708-03f4-4a6e-b05a-9adc3bf14bf5",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "მიღება",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "broad_clarification: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "broad_clarification: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "broad_clarification: no direct contact request",
+          "passed": true,
+          "detail": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენტის სტატუსი"
+        },
+        {
+          "name": "broad_clarification: clarification",
+          "passed": true,
+          "detail": "ზუსტად რომ გიპასუხოთ, გთხოვთ დააზუსტოთ — რომელი საკითხი გაინტერესებთ?\n\n- მიღება\n- პროგრამები\n- სწავლის საფასური\n- სტუდენტის სტატუსი"
+        },
+        {
+          "name": "broad_clarification: handover flag",
+          "passed": true,
+          "detail": "False"
+        },
+        {
+          "name": "broad_clarification: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "broad_clarification: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "broad_clarification: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "broad_clarification: detail conversation id",
+          "passed": true,
+          "detail": "13563708-03f4-4a6e-b05a-9adc3bf14bf5"
+        },
+        {
+          "name": "broad_clarification: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "broad_clarification: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "broad_clarification: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "broad_clarification: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "broad_clarification: operator handover not required",
+          "passed": true,
+          "detail": "detail=False inbox=False"
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "finance_handover_route",
+      "conversation_id": "02eccaf2-31c0-4a24-b853-a2ecc57a3cd9",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "not_required",
+        "department_key": "finance",
+        "route_department": "Finance",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "02eccaf2-31c0-4a24-b853-a2ecc57a3cd9",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:44:28.796323Z"
+        },
+        "detail_summary": {
+          "conversation_id": "02eccaf2-31c0-4a24-b853-a2ecc57a3cd9",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "finance_handover_route: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "finance_handover_route: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "finance_handover_route: no direct contact request",
+          "passed": true,
+          "detail": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+        },
+        {
+          "name": "finance_handover_route: handover flag",
+          "passed": true,
+          "detail": "True"
+        },
+        {
+          "name": "finance_handover_route: department route",
+          "passed": true,
+          "detail": "finance"
+        },
+        {
+          "name": "finance_handover_route: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "finance_handover_route: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "finance_handover_route: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "finance_handover_route: detail conversation id",
+          "passed": true,
+          "detail": "02eccaf2-31c0-4a24-b853-a2ecc57a3cd9"
+        },
+        {
+          "name": "finance_handover_route: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "finance_handover_route: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "finance_handover_route: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "finance_handover_route: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "finance_handover_route: operator department badge",
+          "passed": true,
+          "detail": "Finance"
+        },
+        {
+          "name": "finance_handover_route: operator handover inferable",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "library_route",
+      "conversation_id": "fca192c2-a643-4c44-80bc-0a3107c21e42",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "no_approved_source_found",
+        "department_key": "library",
+        "route_department": "Library",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "fca192c2-a643-4c44-80bc-0a3107c21e42",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Library",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კით",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:44:39.574827Z"
+        },
+        "detail_summary": {
+          "conversation_id": "fca192c2-a643-4c44-80bc-0a3107c21e42",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Library",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "library_route: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "library_route: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "library_route: no direct contact request",
+          "passed": true,
+          "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+        },
+        {
+          "name": "library_route: department route",
+          "passed": true,
+          "detail": "library"
+        },
+        {
+          "name": "library_route: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "library_route: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "library_route: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "library_route: detail conversation id",
+          "passed": true,
+          "detail": "fca192c2-a643-4c44-80bc-0a3107c21e42"
+        },
+        {
+          "name": "library_route: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "library_route: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "library_route: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "library_route: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "library_route: operator department badge",
+          "passed": true,
+          "detail": "Library"
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "it_route",
+      "conversation_id": "ce4373c8-b182-434b-b8bd-cdc8de5d9993",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "not_required",
+        "department_key": "it_support",
+        "route_department": "IT Support",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "ce4373c8-b182-434b-b8bd-cdc8de5d9993",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "IT Support",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:44:50.657921Z"
+        },
+        "detail_summary": {
+          "conversation_id": "ce4373c8-b182-434b-b8bd-cdc8de5d9993",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "IT Support",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "it_route: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "it_route: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "it_route: no direct contact request",
+          "passed": true,
+          "detail": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან."
+        },
+        {
+          "name": "it_route: department route",
+          "passed": true,
+          "detail": "it_support"
+        },
+        {
+          "name": "it_route: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "it_route: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "it_route: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "it_route: detail conversation id",
+          "passed": true,
+          "detail": "ce4373c8-b182-434b-b8bd-cdc8de5d9993"
+        },
+        {
+          "name": "it_route: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "it_route: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "it_route: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "it_route: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "it_route: operator department badge",
+          "passed": true,
+          "detail": "IT Support"
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "medicine_md_route",
+      "conversation_id": "cef3afd5-698e-41e4-8f28-33de9dd21ef7",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "answered_from_approved_source",
+        "department_key": "medicine",
+        "route_department": "Medicine / MD",
+        "should_handover": false,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.\n\nწყარო: page 8; ან მასთან გათანაბრებული აკადემიური ან შესაბამისი კვალიფიკაციის მქ"
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "cef3afd5-698e-41e4-8f28-33de9dd21ef7",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "Medicine / MD",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.\n\nწყარო: page 8; ან მა",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:45:02.292390Z"
+        },
+        "detail_summary": {
+          "conversation_id": "cef3afd5-698e-41e4-8f28-33de9dd21ef7",
+          "status": "open",
+          "human_handover": false,
+          "selected_department": "Medicine / MD",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "medicine_md_route: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "medicine_md_route: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "medicine_md_route: no direct contact request",
+          "passed": true,
+          "detail": "ამ მომენტში AI სერვისთან კავშირი შეფერხებულია. ამ საკითხზე დაგაკავშირებთ შესაბამის დეპარტამენტთან.\n\nწყარო: page 8; ან მასთან გათანაბრებული აკადემიური ან შესაბამისი კვალიფიკაციის მქ"
+        },
+        {
+          "name": "medicine_md_route: department route",
+          "passed": true,
+          "detail": "medicine"
+        },
+        {
+          "name": "medicine_md_route: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "medicine_md_route: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "medicine_md_route: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "medicine_md_route: detail conversation id",
+          "passed": true,
+          "detail": "cef3afd5-698e-41e4-8f28-33de9dd21ef7"
+        },
+        {
+          "name": "medicine_md_route: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "medicine_md_route: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "medicine_md_route: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "medicine_md_route: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "medicine_md_route: operator department badge",
+          "passed": true,
+          "detail": "Medicine / MD"
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "unsupported_no_hallucination",
+      "conversation_id": "f97d86e7-4e90-4426-918e-13cc46fa14a8",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "no_approved_source_found",
+        "department_key": "finance",
+        "route_department": "Finance",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+      },
+      "wait_response": null,
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "f97d86e7-4e90-4426-918e-13cc46fa14a8",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": null,
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კით",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:45:13.582511Z"
+        },
+        "detail_summary": {
+          "conversation_id": "f97d86e7-4e90-4426-918e-13cc46fa14a8",
+          "status": "open",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": null,
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "unsupported_no_hallucination: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "unsupported_no_hallucination: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "unsupported_no_hallucination: no direct contact request",
+          "passed": true,
+          "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+        },
+        {
+          "name": "unsupported_no_hallucination: source status",
+          "passed": true,
+          "detail": "no_approved_source_found"
+        },
+        {
+          "name": "unsupported_no_hallucination: handover flag",
+          "passed": true,
+          "detail": "True"
+        },
+        {
+          "name": "unsupported_no_hallucination: no hallucination",
+          "passed": true,
+          "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+        },
+        {
+          "name": "unsupported_no_hallucination: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "unsupported_no_hallucination: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "unsupported_no_hallucination: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "unsupported_no_hallucination: detail conversation id",
+          "passed": true,
+          "detail": "f97d86e7-4e90-4426-918e-13cc46fa14a8"
+        },
+        {
+          "name": "unsupported_no_hallucination: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "unsupported_no_hallucination: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "unsupported_no_hallucination: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "unsupported_no_hallucination: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "unsupported_no_hallucination: operator handover inferable",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "status": "PASSED"
+    },
+    {
+      "name": "wait_for_operator",
+      "conversation_id": "e8114e66-0358-4de8-a9cd-84e392b0e4a6",
+      "chat": {
+        "http_status": 200,
+        "answer_source_status": "no_approved_source_found",
+        "department_key": "finance",
+        "route_department": "Finance",
+        "should_handover": true,
+        "clarification_needed": false,
+        "created_lead_id": null,
+        "created_task_id": null,
+        "reply_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+      },
+      "wait_response": {
+        "status": "waiting_for_operator",
+        "conversation_id": "e8114e66-0358-4de8-a9cd-84e392b0e4a6",
+        "task_id": null,
+        "http_status": 200
+      },
+      "operator": {
+        "auth_available": true,
+        "inbox_http_status": 200,
+        "detail_http_status": 200,
+        "inbox_item": {
+          "conversation_id": "e8114e66-0358-4de8-a9cd-84e392b0e4a6",
+          "status": "waiting_for_operator",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": "waiting_for_operator",
+          "last_message_sender_type": "ai",
+          "last_message_text_excerpt": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კით",
+          "has_customer_id": false,
+          "has_lead_id": false,
+          "last_message_at": "2026-05-31T13:45:24.920699Z"
+        },
+        "detail_summary": {
+          "conversation_id": "e8114e66-0358-4de8-a9cd-84e392b0e4a6",
+          "status": "waiting_for_operator",
+          "human_handover": true,
+          "selected_department": "Finance",
+          "waiting_status": "waiting_for_operator",
+          "message_count": 2,
+          "senders": [
+            "user",
+            "ai"
+          ],
+          "has_customer": false,
+          "has_lead": false
+        }
+      },
+      "checks": [
+        {
+          "name": "wait_for_operator: chat HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "wait_for_operator: no response lead/task",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "wait_for_operator: no direct contact request",
+          "passed": true,
+          "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+        },
+        {
+          "name": "wait_for_operator: source status",
+          "passed": true,
+          "detail": "no_approved_source_found"
+        },
+        {
+          "name": "wait_for_operator: handover flag",
+          "passed": true,
+          "detail": "True"
+        },
+        {
+          "name": "wait_for_operator: no hallucination",
+          "passed": true,
+          "detail": "ამ საკითხზე დამტკიცებულ წყაროში ზუსტი ინფორმაცია ვერ ვიპოვე. შემიძლია დაგაკავშიროთ შესაბამის ოპერატორთან, რომ თქვენი კითხვა სწორ დეპარტამენტს გადაეცეს."
+        },
+        {
+          "name": "wait_for_operator: wait handover response",
+          "passed": true,
+          "detail": "{\"status\": \"waiting_for_operator\", \"conversation_id\": \"e8114e66-0358-4de8-a9cd-84e392b0e4a6\", \"task_id\": null, \"http_status\": 200}"
+        },
+        {
+          "name": "wait_for_operator: operator inbox HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "wait_for_operator: operator detail HTTP 200",
+          "passed": true,
+          "detail": "200"
+        },
+        {
+          "name": "wait_for_operator: inbox contains conversation",
+          "passed": true,
+          "detail": "100"
+        },
+        {
+          "name": "wait_for_operator: detail conversation id",
+          "passed": true,
+          "detail": "e8114e66-0358-4de8-a9cd-84e392b0e4a6"
+        },
+        {
+          "name": "wait_for_operator: visitor message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "wait_for_operator: ai message visible",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "wait_for_operator: no customer attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "wait_for_operator: no lead attached",
+          "passed": true,
+          "detail": "None"
+        },
+        {
+          "name": "wait_for_operator: operator waiting status",
+          "passed": true,
+          "detail": "waiting_for_operator"
+        },
+        {
+          "name": "wait_for_operator: conversation status waiting",
+          "passed": true,
+          "detail": "waiting_for_operator"
+        },
+        {
+          "name": "wait_for_operator: human handover true",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "status": "PASSED"
+    }
+  ],
+  "contact_form_submission_executed": false,
+  "real_contact_data_sent": false,
+  "lead_task_customer_created_intentionally": false,
+  "visitor_side_operator_reply_polling": "NOT_ACTIVE",
+  "sanitized": true
+}

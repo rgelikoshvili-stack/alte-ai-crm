@@ -1,0 +1,698 @@
+{
+  "phase": "9BC",
+  "status": "code_ready_pending_review",
+  "public_launch_status": "NO-GO",
+  "sources": [
+    {
+      "source_id": "program_catalog",
+      "file_name": "01_program_catalog.pdf",
+      "source_group": "program_catalog_sources",
+      "route": "programs",
+      "department": "Programs",
+      "label_ka": "უმაღლესი განათლების პროგრამების კატალოგი",
+      "label_en": "Higher Education Program Catalog",
+      "use_when": [
+        "program list",
+        "program count",
+        "program level distribution",
+        "program qualification",
+        "program language",
+        "specific program credits from catalog"
+      ],
+      "do_not_use_when": [
+        "generic ECTS rules",
+        "admission without exams",
+        "exam dates",
+        "library catalog",
+        "tuition not present in catalog"
+      ],
+      "clarification_triggers": [
+        "პროგრამის კრედიტები მაინტერესებს",
+        "რამდენი კრედიტია პროგრამა",
+        "catalog program details"
+      ],
+      "clarification_question_ka": "რომელი პროგრამის ან საფეხურის ინფორმაცია გაინტერესებთ — ბაკალავრიატი, მაგისტრატურა, მედიცინა / MD, სტომატოლოგია თუ კონკრეტული პროგრამა?",
+      "clarification_question_en": "Which program or level do you mean: bachelor, master, Medicine / MD, dentistry, or a specific program?",
+      "unsupported_patterns": [
+        "exact tuition from catalog",
+        "consultant phone from catalog",
+        "2031 space campus program"
+      ],
+      "priority_rules": [
+        "program catalog",
+        "პროგრამების კატალოგი",
+        "საბაკალავრო პროგრამები",
+        "სამაგისტრო პროგრამები",
+        "ერთსაფეხურიანი პროგრამები"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "academic_calendar_geo_2025_2026",
+      "file_name": "academic_calendar_geo_2025_2026",
+      "source_group": "academic_calendar_2025_2026",
+      "route": "academic_calendar",
+      "department": "Study Process",
+      "label_ka": "აკადემიური კალენდარი 2025–2026",
+      "label_en": "Academic Calendar 2025-2026 Georgian",
+      "use_when": [
+        "Georgian semester dates",
+        "registration periods",
+        "exam date questions",
+        "holiday dates"
+      ],
+      "do_not_use_when": [
+        "exam admission rules",
+        "GPA/FX rules",
+        "admission documents",
+        "program catalog"
+      ],
+      "clarification_triggers": [
+        "გამოცდებზე მაინტერესებს",
+        "კალენდარზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "გთხოვთ დააზუსტოთ: სემესტრის თარიღები, რეგისტრაცია, გამოცდების თარიღები თუ არდადეგები გაინტერესებთ?",
+      "clarification_question_en": "Please clarify whether you mean semester dates, registration, exam dates, or holidays.",
+      "unsupported_patterns": [
+        "future calendars not in approved source"
+      ],
+      "priority_rules": [
+        "როდის",
+        "თარიღი",
+        "კალენდარი",
+        "განრიგი",
+        "სემესტრი იწყება"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "academic_calendar_eng_2025_2026",
+      "file_name": "academic_calendar_eng_2025_2026",
+      "source_group": "academic_calendar_2025_2026",
+      "route": "academic_calendar",
+      "department": "Study Process",
+      "label_ka": "აკადემიური კალენდარი 2025–2026 (ინგლისური)",
+      "label_en": "Academic Calendar 2025-2026 English",
+      "use_when": [
+        "English semester dates",
+        "English registration periods",
+        "English exam dates"
+      ],
+      "do_not_use_when": [
+        "exam rules",
+        "program requirements",
+        "admissions"
+      ],
+      "clarification_triggers": [
+        "exam schedule",
+        "calendar question"
+      ],
+      "clarification_question_ka": "გთხოვთ დააზუსტოთ, კალენდრის რომელი თარიღი გჭირდებათ?",
+      "clarification_question_en": "Please clarify which calendar date you need.",
+      "unsupported_patterns": [
+        "future calendars not in approved source"
+      ],
+      "priority_rules": [
+        "when",
+        "date",
+        "schedule",
+        "calendar",
+        "semester starts"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "bachelor_regulation",
+      "file_name": "bachelor regulation",
+      "source_group": "official_academic_rules",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "ბაკალავრიატის დებულება",
+      "label_en": "Bachelor Regulation",
+      "use_when": [
+        "bachelor ECTS",
+        "bachelor academic rules",
+        "bachelor program completion requirements"
+      ],
+      "do_not_use_when": [
+        "specific program catalog credits",
+        "tuition",
+        "calendar dates"
+      ],
+      "clarification_triggers": [
+        "რამდენი კრედიტია პროგრამა"
+      ],
+      "clarification_question_ka": "ბაკალავრიატის ზოგადი კრედიტები გაინტერესებთ თუ კონკრეტული პროგრამის კრედიტები?",
+      "clarification_question_en": "Do you mean general bachelor ECTS rules or a specific program's credits?",
+      "unsupported_patterns": [
+        "program price",
+        "consultant phone"
+      ],
+      "priority_rules": [
+        "ბაკალავრიატი რამდენი ECTS",
+        "bachelor ECTS"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "master_regulation",
+      "file_name": "master regulation",
+      "source_group": "official_academic_rules",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "მაგისტრატურის დებულება",
+      "label_en": "Master Regulation",
+      "use_when": [
+        "master ECTS",
+        "master academic rules",
+        "master completion requirements"
+      ],
+      "do_not_use_when": [
+        "specific program catalog credits",
+        "international English requirements",
+        "tuition"
+      ],
+      "clarification_triggers": [
+        "რამდენი კრედიტია პროგრამა"
+      ],
+      "clarification_question_ka": "მაგისტრატურის ზოგადი კრედიტები გაინტერესებთ თუ კონკრეტული სამაგისტრო პროგრამის კრედიტები?",
+      "clarification_question_en": "Do you mean general master ECTS rules or a specific master's program?",
+      "unsupported_patterns": [
+        "program price",
+        "future promotion"
+      ],
+      "priority_rules": [
+        "მაგისტრატურა რამდენი ECTS",
+        "master ECTS"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "study_process_rule",
+      "file_name": "study process regulation",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "სასწავლო პროცესის მარეგულირებელი წესი",
+      "label_en": "Study Process Rule",
+      "use_when": [
+        "student status suspension",
+        "student status restoration",
+        "student status termination",
+        "mobility",
+        "study process rules"
+      ],
+      "do_not_use_when": [
+        "calendar dates",
+        "program catalog",
+        "tuition"
+      ],
+      "clarification_triggers": [
+        "სტატუსზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "სტუდენტის სტატუსთან დაკავშირებით რა გაინტერესებთ — შეჩერება, აღდგენა, შეწყვეტა თუ მობილობა?",
+      "clarification_question_en": "Which student status topic do you mean: suspension, restoration, termination, or mobility?",
+      "unsupported_patterns": [
+        "unapproved legal advice",
+        "nonexistent status category"
+      ],
+      "priority_rules": [
+        "სტატუსის შეჩერება",
+        "სტატუსის აღდგენა",
+        "მობილობა"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "ects_credit_recognition",
+      "file_name": "ECTS credit recognition",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "კრედიტების აღიარების წესი",
+      "label_en": "ECTS Credit Recognition",
+      "use_when": [
+        "credit recognition",
+        "recognized credits",
+        "mobility credit transfer"
+      ],
+      "do_not_use_when": [
+        "program credit volume",
+        "bachelor/master ECTS totals"
+      ],
+      "clarification_triggers": [
+        "კრედიტებზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "კრედიტების აღიარება გაინტერესებთ თუ პროგრამის კრედიტების რაოდენობა?",
+      "clarification_question_en": "Do you mean credit recognition or the number of credits in a program?",
+      "unsupported_patterns": [
+        "external institution decision not in source"
+      ],
+      "priority_rules": [
+        "კრედიტების აღიარება",
+        "credit recognition"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "exam_regulation",
+      "file_name": "exam regulation",
+      "source_group": "exams_and_assessment",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "გამოცდებისა და შეფასების წესი",
+      "label_en": "Exam and Assessment Regulation",
+      "use_when": [
+        "final exam admission rules",
+        "retake exam rules",
+        "FX/F",
+        "GPA",
+        "assessment"
+      ],
+      "do_not_use_when": [
+        "exam dates",
+        "academic calendar",
+        "admission without national exams"
+      ],
+      "clarification_triggers": [
+        "გამოცდებზე მაინტერესებს"
+      ],
+      "clarification_question_ka": "გთხოვთ დააზუსტოთ: გამოცდების თარიღები გაინტერესებთ, გამოცდაზე დაშვების წესი, შეფასება თუ გადაბარება?",
+      "clarification_question_en": "Please clarify: exam dates, exam admission rules, assessment, or retake rules?",
+      "unsupported_patterns": [
+        "future exam schedule not in calendar"
+      ],
+      "priority_rules": [
+        "დასკვნით გამოცდაზე დაშვების წესი",
+        "გადაბარების წესი",
+        "შეფასება",
+        "FX",
+        "ქულა"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "financial_support",
+      "file_name": "financial_support_mechanisms",
+      "source_group": "finance_sources",
+      "route": "finance",
+      "department": "Finance",
+      "label_ka": "ფინანსური მხარდაჭერის მექანიზმები",
+      "label_en": "Financial Support Mechanisms",
+      "use_when": [
+        "financial support",
+        "internal scholarships",
+        "funding mechanisms"
+      ],
+      "do_not_use_when": [
+        "program catalog",
+        "exact current tuition if not sourced",
+        "state social grants"
+      ],
+      "clarification_triggers": [
+        "გადახდებზე მაინტერესებს"
+      ],
+      "clarification_question_ka": "ფინანსებთან დაკავშირებით რა გაინტერესებთ — სწავლის საფასური, გადახდის გრაფიკი, გრანტები თუ ფინანსურ დეპარტამენტთან დაკავშირება?",
+      "clarification_question_en": "Which finance topic do you mean: tuition, payment schedule, grants, or contacting Finance?",
+      "unsupported_patterns": [
+        "current exact tuition missing from source",
+        "consultant phone"
+      ],
+      "priority_rules": [
+        "ფინანსური მხარდაჭერა",
+        "დაფინანსება",
+        "scholarship"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "state_social_grants",
+      "file_name": "state_social_grants",
+      "source_group": "finance_sources",
+      "route": "finance",
+      "department": "Finance",
+      "label_ka": "სახელმწიფო და სოციალური გრანტები",
+      "label_en": "State and Social Grants",
+      "use_when": [
+        "state grants",
+        "social grants",
+        "grant eligibility"
+      ],
+      "do_not_use_when": [
+        "program list",
+        "admission documents",
+        "library resources"
+      ],
+      "clarification_triggers": [
+        "გრანტებზე მაინტერესებს"
+      ],
+      "clarification_question_ka": "რომელი გრანტი გაინტერესებთ — სახელმწიფო, სოციალური თუ შიდა ფინანსური მხარდაჭერა?",
+      "clarification_question_en": "Which grant do you mean: state, social, or internal financial support?",
+      "unsupported_patterns": [
+        "future grant amount not in source"
+      ],
+      "priority_rules": [
+        "გრანტი",
+        "grant",
+        "social grant"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "student_services",
+      "file_name": "student services",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "სტუდენტური სერვისები",
+      "label_en": "Student Services",
+      "use_when": [
+        "student support service",
+        "student service procedures"
+      ],
+      "do_not_use_when": [
+        "operator contact request",
+        "library resources",
+        "career services"
+      ],
+      "clarification_triggers": [
+        "დახმარება მინდა"
+      ],
+      "clarification_question_ka": "რა სახის სტუდენტური დახმარება გჭირდებათ?",
+      "clarification_question_en": "Which student service do you need?",
+      "unsupported_patterns": [
+        "personal case decision"
+      ],
+      "priority_rules": [
+        "student services",
+        "სტუდენტური სერვისი"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "student_rights",
+      "file_name": "student rights",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "სტუდენტის უფლებები",
+      "label_en": "Student Rights",
+      "use_when": [
+        "student rights",
+        "student obligations",
+        "appeal rights"
+      ],
+      "do_not_use_when": [
+        "ombudsman complaint handling unless explicitly ombudsman",
+        "ethics violations"
+      ],
+      "clarification_triggers": [
+        "უფლებებზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "სტუდენტის რომელ უფლებაზე ან ვალდებულებაზე გსურთ ინფორმაცია?",
+      "clarification_question_en": "Which student right or obligation do you mean?",
+      "unsupported_patterns": [
+        "legal advice outside approved policy"
+      ],
+      "priority_rules": [
+        "student rights",
+        "სტუდენტის უფლებები"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "ombudsman",
+      "file_name": "ombudsman",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "ომბუდსმენი",
+      "label_en": "Ombudsman",
+      "use_when": [
+        "ombudsman role",
+        "student complaint escalation",
+        "rights protection"
+      ],
+      "do_not_use_when": [
+        "operator contact request",
+        "ethics code unless specifically ethics"
+      ],
+      "clarification_triggers": [
+        "საჩივარზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "საჩივრის პროცედურა გაინტერესებთ, ომბუდსმენის როლი თუ სხვა მიმართვის გზა?",
+      "clarification_question_en": "Do you mean complaint procedure, the ombudsman's role, or another escalation path?",
+      "unsupported_patterns": [
+        "personal legal representation"
+      ],
+      "priority_rules": [
+        "ომბუდსმენი",
+        "ombudsman"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "library",
+      "file_name": "library_catalog",
+      "source_group": "library_sources",
+      "route": "library",
+      "department": "Library",
+      "label_ka": "ბიბლიოთეკა",
+      "label_en": "Library",
+      "use_when": [
+        "library catalog",
+        "books",
+        "databases",
+        "electronic resources",
+        "library services"
+      ],
+      "do_not_use_when": [
+        "program catalog",
+        "program list",
+        "academic calendar"
+      ],
+      "clarification_triggers": [
+        "ბიბლიოთეკაზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "ბიბლიოთეკის რომელი სერვისი გაინტერესებთ — კატალოგი, წიგნები, ბაზები თუ ელექტრონული რესურსები?",
+      "clarification_question_en": "Which library service do you mean: catalog, books, databases, or electronic resources?",
+      "unsupported_patterns": [
+        "rare manuscripts not in source"
+      ],
+      "priority_rules": [
+        "ბიბლიოთეკის კატალოგი",
+        "library catalog",
+        "electronic resources"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "career",
+      "file_name": "career_development",
+      "source_group": "career_sources",
+      "route": "career",
+      "department": "Career",
+      "label_ka": "კარიერული განვითარება",
+      "label_en": "Career Development",
+      "use_when": [
+        "career services",
+        "internships",
+        "employment support",
+        "alumni career"
+      ],
+      "do_not_use_when": [
+        "academic program admission",
+        "student status",
+        "operator request"
+      ],
+      "clarification_triggers": [
+        "კარიერაზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "კარიერული სერვისებიდან რა გაინტერესებთ — სტაჟირება, დასაქმება თუ კონსულტაცია?",
+      "clarification_question_en": "Which career service do you mean: internship, employment, or consultation?",
+      "unsupported_patterns": [
+        "guaranteed employment claim"
+      ],
+      "priority_rules": [
+        "კარიერა",
+        "სტაჟირება",
+        "career",
+        "internship"
+      ],
+      "source_group_status": "configured",
+      "routable": true,
+      "qa_ready": true
+    },
+    {
+      "source_id": "special_needs",
+      "file_name": "special_needs",
+      "source_group": "student_status_and_mobility",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "სპეციალური საჭიროებების მხარდაჭერა",
+      "label_en": "Special Needs Support",
+      "use_when": [
+        "special needs support",
+        "accessibility accommodation",
+        "inclusive education support"
+      ],
+      "do_not_use_when": [
+        "medical diagnosis",
+        "operator contact only"
+      ],
+      "clarification_triggers": [
+        "სპეციალურ საჭიროებებზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "სპეციალური საჭიროებების მხარდაჭერის რომელი ნაწილი გაინტერესებთ?",
+      "clarification_question_en": "Which special-needs support topic do you mean?",
+      "unsupported_patterns": [
+        "medical advice"
+      ],
+      "priority_rules": [
+        "special needs",
+        "accessibility",
+        "სპეციალური საჭიროება"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "ai_policy",
+      "file_name": "ai_policy",
+      "source_group": "official_academic_rules",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "ხელოვნური ინტელექტის გამოყენების პოლიტიკა",
+      "label_en": "AI Policy",
+      "use_when": [
+        "AI tool use policy",
+        "generative AI rules",
+        "academic AI use"
+      ],
+      "do_not_use_when": [
+        "AI program catalog questions",
+        "IT login support"
+      ],
+      "clarification_triggers": [
+        "AI-ზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "ხელოვნური ინტელექტის გამოყენების რომელი წესი გაინტერესებთ?",
+      "clarification_question_en": "Which AI-use rule do you mean?",
+      "unsupported_patterns": [
+        "AI product support not in policy"
+      ],
+      "priority_rules": [
+        "AI policy",
+        "ხელოვნური ინტელექტის პოლიტიკა"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "plagiarism",
+      "file_name": "plagiarism",
+      "source_group": "official_academic_rules",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "პლაგიატის წესი",
+      "label_en": "Plagiarism Policy",
+      "use_when": [
+        "plagiarism definition",
+        "academic integrity",
+        "similarity checking"
+      ],
+      "do_not_use_when": [
+        "ethics code unless broad conduct",
+        "exam dates"
+      ],
+      "clarification_triggers": [
+        "პლაგიატზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "პლაგიატის განმარტება გაინტერესებთ, პროცედურა თუ შედეგები?",
+      "clarification_question_en": "Do you mean plagiarism definition, procedure, or consequences?",
+      "unsupported_patterns": [
+        "personal disciplinary decision"
+      ],
+      "priority_rules": [
+        "plagiarism",
+        "პლაგიატი"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    },
+    {
+      "source_id": "ethics_code",
+      "file_name": "ethics code",
+      "source_group": "official_academic_rules",
+      "route": "study_process",
+      "department": "Study Process",
+      "label_ka": "ეთიკის კოდექსი",
+      "label_en": "Ethics Code",
+      "use_when": [
+        "ethics rules",
+        "conduct standards",
+        "academic ethics"
+      ],
+      "do_not_use_when": [
+        "program catalog",
+        "financial aid",
+        "library resources"
+      ],
+      "clarification_triggers": [
+        "ეთიკაზე კითხვა მაქვს"
+      ],
+      "clarification_question_ka": "ეთიკის კოდექსის რომელი ნაწილი გაინტერესებთ?",
+      "clarification_question_en": "Which part of the ethics code do you mean?",
+      "unsupported_patterns": [
+        "personal legal judgment"
+      ],
+      "priority_rules": [
+        "ethics code",
+        "ეთიკის კოდექსი"
+      ],
+      "source_group_status": "missing_source_group_config",
+      "routable": false,
+      "qa_ready": false,
+      "notes": "Strict source group membership must be configured before routing/retrieval."
+    }
+  ]
+}

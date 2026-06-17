@@ -17,6 +17,7 @@ TAXONOMY_PATH = OUTPUT_DIR / "topic_taxonomy.json"
 ANSWER_POLICY_PATH = OUTPUT_DIR / "official_alte_8_pdf_answer_policy.json"
 MANIFEST_PATH = EVIDENCE_DIR / "OFFICIAL_ALTE_8_PDF_SOURCE_MANIFEST.md"
 REVIEWER_CSV_PATH = PROJECT_ROOT / "backend" / "reports" / "official_alte_8_pdf_kb_reviewer_queue.csv"
+APPLY_RESULT_PATH = PROJECT_ROOT / "docs" / "deployment" / "PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_APPLY_RESULT.md"
 
 PDFS = [
     "01_program_catalog.pdf",
@@ -60,7 +61,7 @@ def is_tracked(path: str) -> bool:
 def run_checks() -> dict:
     for pdf in PDFS:
         require((EVIDENCE_DIR / pdf).exists(), f"Missing PDF: {pdf}")
-    for path in [JSONL_PATH, QUESTION_BANK_PATH, TAXONOMY_PATH, ANSWER_POLICY_PATH, MANIFEST_PATH, REVIEWER_CSV_PATH]:
+    for path in [JSONL_PATH, QUESTION_BANK_PATH, TAXONOMY_PATH, ANSWER_POLICY_PATH, MANIFEST_PATH, REVIEWER_CSV_PATH, APPLY_RESULT_PATH]:
         require(path.exists(), f"Missing generated file: {path}")
 
     rows = load_jsonl(JSONL_PATH)
@@ -112,6 +113,9 @@ def run_checks() -> dict:
         require(not re.search(pattern, generated_text, re.IGNORECASE), f"Forbidden generated marker: {pattern}")
     require(not is_tracked(".env"), ".env must not be tracked")
     require(not is_tracked(".local-secrets"), ".local-secrets must not be tracked")
+    apply_text = APPLY_RESULT_PATH.read_text(encoding="utf-8", errors="ignore")
+    require("PHASE_9T_OFFICIAL_ALTE_8_PDF_KB_APPLY_STATUS=APPLIED_TO_PRODUCTION_KB_SINGLE_SMOKE_PASSED" in apply_text, "Apply result status is not applied")
+    require("Public launch: NO-GO" in apply_text, "Public launch must remain NO-GO")
 
     return {
         "status": "PASS",

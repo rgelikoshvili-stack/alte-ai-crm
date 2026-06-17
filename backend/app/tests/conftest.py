@@ -12,6 +12,7 @@ os.environ.setdefault("JWT_SECRET", "test-secret")
 os.environ.setdefault("ANTHROPIC_API_KEY", "test-anthropic-key")
 os.environ.setdefault("ENVIRONMENT", "test")
 os.environ.setdefault("APP_VERSION", "0.1.0")
+os.environ["AI_PROVIDER"] = "mock"
 
 from app.core.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
