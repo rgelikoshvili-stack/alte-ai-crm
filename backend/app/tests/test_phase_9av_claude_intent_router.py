@@ -518,7 +518,9 @@ def test_selected_admissions_group_does_not_return_calendar_or_finance_chunks(cl
     result = send_message(client, session, "Which documents are needed for bachelor admission?")
 
     assert result["answer_source_status"] == "answered_from_approved_source"
-    assert "bachelor admission chunks" in result["used_sources"]
+    assert result["public_source_label"]
+    assert result["used_sources"] == [result["public_source_label"]]
+    assert "bachelor admission chunks" not in result["used_sources"]
     assert "phase_9av_calendar" not in result["used_sources"]
 
 
@@ -560,7 +562,9 @@ def test_source_domain_null_finance_group_filters_out_international_admissions(c
     result = send_message(client, session, "What financial support grants are available?")
 
     assert result["answer_source_status"] == "answered_from_approved_source"
-    assert "financial_support_mechanisms" in result["used_sources"]
+    assert result["public_source_label"]
+    assert result["used_sources"] == [result["public_source_label"]]
+    assert "financial_support_mechanisms" not in result["used_sources"]
     assert "phase_9av_international_admissions" not in result["used_sources"]
 
 
@@ -602,7 +606,9 @@ def test_calendar_group_does_not_return_admissions_chunks(client, monkeypatch):
     result = send_message(client, session, "When is Computer Science spring semester registration?")
 
     assert result["answer_source_status"] == "answered_from_approved_source"
-    assert "academic_calendar_geo_2025_2026" in result["used_sources"]
+    assert result["public_source_label"]
+    assert result["used_sources"] == [result["public_source_label"]]
+    assert "academic_calendar_geo_2025_2026" not in result["used_sources"]
     assert "phase_9av_admissions_noise" not in result["used_sources"]
 
 

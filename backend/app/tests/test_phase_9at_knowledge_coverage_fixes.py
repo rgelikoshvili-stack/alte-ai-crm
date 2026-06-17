@@ -361,7 +361,12 @@ def test_phase_9at_weak_selected_document_routes_use_targeted_approved_sources(c
         assert payload["answer_source_status"] == "answered_from_approved_source"
         assert payload["department_key"] == item["expected_department"]
         assert payload["should_handover"] is False
-        assert any(item["source_key"] in source for source in payload["used_sources"])
+        assert len(payload["used_sources"]) <= 1
+        if payload["public_source_label"]:
+            assert payload["used_sources"] == [payload["public_source_label"]]
+        else:
+            assert payload["used_sources"] == []
+        assert not any(item["source_key"] in source for source in payload["used_sources"])
         assert not any("phase_9at_official_source" in source for source in payload["used_sources"])
     assert_no_crm_records(session_factory)
 

@@ -440,6 +440,17 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     )
     await db.commit()
 
+    public_source_label = response_public_source_label(
+        knowledge,
+        should_handover=analysis.should_handover,
+        source_group=route_decision.primary_source_group,
+    )
+    response_used_sources = public_response_used_sources(
+        knowledge,
+        public_source_label=public_source_label,
+        payload=payload,
+    )
+
     return ChatMessageResponse(
         conversation_id=conversation.id,
         reply=analysis.reply,
@@ -459,12 +470,8 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         ),
         recommended_next_action=analysis.qualification.recommended_next_action,
         answer_source_status=knowledge["answer_source_status"],
-        used_sources=knowledge["used_sources"],
-        public_source_label=response_public_source_label(
-            knowledge,
-            should_handover=analysis.should_handover,
-            source_group=route_decision.primary_source_group,
-        ),
+        used_sources=response_used_sources,
+        public_source_label=public_source_label,
         route_department=routing.department,
         department_key=routing.department_key,
         routing_reason=routing.reason,
@@ -2833,6 +2840,25 @@ def response_public_source_label(knowledge: dict, *, should_handover: bool, sour
     if trusted_label in PUBLIC_SOURCE_LABEL_WHITELIST:
         return trusted_label
     return None
+
+
+def public_response_used_sources(
+    knowledge: dict,
+    *,
+    public_source_label: str | None,
+    payload: ChatMessageRequest | None,
+) -> list[str]:
+    used_sources = list(knowledge.get("used_sources") or [])
+    widget_variant = str(getattr(payload, "widget_variant", "") or "")
+    source_domain = str(getattr(payload, "source_domain", "") or "")
+    public_widget_mode = widget_variant == "pro_v2_safe" or source_domain == "join.alte.edu.ge"
+    if not public_widget_mode:
+        return used_sources
+    if knowledge.get("answer_source_status") != "answered_from_approved_source":
+        return []
+    if public_source_label and public_source_label in PUBLIC_SOURCE_LABEL_WHITELIST and safe_public_source_label(public_source_label):
+        return [public_source_label]
+    return []
 
 
 def safe_public_source_label(label: str | None) -> bool:
