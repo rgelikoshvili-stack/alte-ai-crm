@@ -2689,6 +2689,17 @@ async def search_approved_sources_for_groups(
             approved_only=True,
             limit=max(limit * 4, 20),
         )
+        if not candidates and language:
+            candidates = await search_knowledge_snippets(
+                db,
+                query=query,
+                language=None,
+                category=None,
+                source_domain=source_domain,
+                program_name=program_name,
+                approved_only=True,
+                limit=max(limit * 4, 20),
+            )
         for item in candidates:
             if not retrieval_result_belongs_to_source_group(item, group_id, config):
                 continue

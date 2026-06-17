@@ -239,3 +239,24 @@ def test_phase_10b_direct_computer_science_program_and_registration_intents_spli
 
     registration_en = send(client, session, "When is Computer Science spring registration?", "en")
     assert_cs_registration_answer(registration_en)
+
+
+def test_phase_10b_english_computer_science_program_uses_catalog_cross_language_fallback(client):
+    seed_source(
+        client,
+        source_key="official_alte_8_pdf_kb_01_01_program_catalog",
+        title="Program Catalog - Computer Science KA only",
+        source_domain="official_alte_pdf_kb",
+        category="programs",
+        language="ka",
+        content=(
+            "\u10e1\u10d0\u10d2\u10d0\u10dc\u10db\u10d0\u10dc\u10d0\u10d7\u10da\u10d4\u10d1\u10da\u10dd \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d4\u10d1\u10d8\u10e1 \u10d9\u10d0\u10e2\u10d0\u10da\u10dd\u10d2\u10e8\u10d8 \u10db\u10dd\u10ea\u10d4\u10db\u10e3\u10da\u10d8\u10d0 Computer Science "
+            "\u10e1\u10d0\u10d1\u10d0\u10d9\u10d0\u10da\u10d0\u10d5\u10e0\u10dd \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0."
+        ),
+        keywords="Computer Science \u10de\u10e0\u10dd\u10d2\u10e0\u10d0\u10db\u10d0 \u10d9\u10d0\u10e2\u10d0\u10da\u10dd\u10d2\u10d8",
+    )
+    session = start_session(client, language="en")
+
+    payload = send(client, session, "Tell me about the Computer Science program", "en")
+
+    assert_computer_science_program_answer(payload)
