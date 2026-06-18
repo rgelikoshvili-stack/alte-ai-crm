@@ -16,6 +16,7 @@ PUBLIC_PREFIXES = (
     "/chat/handover",
     "/chat/contact",
     "/chat/messages",
+    "/api/knowledge/ask",
 )
 
 ROLE_PERMISSIONS: dict[str, set[str]] = {

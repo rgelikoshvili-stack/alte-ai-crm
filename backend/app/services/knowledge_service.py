@@ -6,8 +6,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.mock_retriever import retrieve_snippets
 from app.models import Conversation, KnowledgeSnippet, KnowledgeSource, Message
-from app.schemas.knowledge import KnowledgeSnippetCreate, KnowledgeSnippetUpdate, KnowledgeSourceCreate, KnowledgeSourceUpdate
+from app.schemas.knowledge import (
+    KnowledgeAskRequest,
+    KnowledgeAskResponse,
+    KnowledgeSnippetCreate,
+    KnowledgeSnippetUpdate,
+    KnowledgeSourceCreate,
+    KnowledgeSourceUpdate,
+)
 from app.services.audit_service import audit_event
+from app.services.knowledge_routing_service import (
+    KnowledgeRouteDecision,
+    classify_knowledge_route,
+    detect_language,
+    format_clarification_reply,
+    source_group_config,
+)
 
 
 async def create_knowledge_source(db: AsyncSession, payload: KnowledgeSourceCreate) -> KnowledgeSource:
@@ -324,6 +338,307 @@ async def search_knowledge_snippets(
         include_stale=include_stale,
         limit=limit,
     )
+
+
+async def ask_knowledge_deterministic(db: AsyncSession, payload: KnowledgeAskRequest) -> KnowledgeAskResponse:
+    _ = db  # The gateway is read-only; db is reserved for future structured lookups.
+    question = " ".join((payload.question or "").split())
+    if payload.program:
+        question = f"{question} {payload.program}".strip()
+    language = payload.language or detect_language(question)
+    lowered = question.lower()
+    is_ka = language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in question)
+
+    from app.services import chat_service as chat_helpers
+
+    if not question:
+        return clarification_response(
+            answer="გთხოვთ ჩაწეროთ კითხვა." if is_ka else "Please enter a question.",
+            source_group=None,
+            confidence=0.2,
+            options=[],
+        )
+
+    privacy_reply = chat_helpers.private_student_data_refusal_reply(question, language)
+    if not privacy_reply and knowledge_ask_private_data_request(lowered):
+        privacy_reply = (
+            "ვერ გავცემ სტუდენტის პირად მონაცემებს, ჩანაწერებს, ნიშნებს ან სხვა კონფიდენციალურ ინფორმაციას. ასეთი საკითხისთვის დაუკავშირდით უნივერსიტეტის შესაბამის ოფიციალურ სამსახურს დაცული არხით."
+            if is_ka
+            else "I cannot disclose private student data, student records, grades, IDs, contact details, or financial information. Please contact the relevant university office through official channels."
+        )
+    if privacy_reply:
+        return KnowledgeAskResponse(
+            answer=chat_helpers.clean_public_answer_text(privacy_reply),
+            status="refused",
+            source_group=None,
+            public_source_label=None,
+            confidence=1.0,
+            clarification_options=[],
+            used_claude=False,
+        )
+
+    finance_clarification = knowledge_ask_finance_clarification(lowered, is_ka)
+    if finance_clarification:
+        answer, options = finance_clarification
+        return clarification_response(
+            answer=answer,
+            source_group="finance_sources",
+            confidence=0.92,
+            options=options,
+        )
+
+    broad_clarification = knowledge_ask_broad_clarification(lowered, is_ka)
+    if broad_clarification:
+        source_group, answer, options = broad_clarification
+        return clarification_response(answer=answer, source_group=source_group, confidence=0.9, options=options)
+
+    route = classify_knowledge_route(question)
+    if payload.source_group and source_group_config(payload.source_group):
+        route = route_for_source_group(route, payload.source_group)
+    if has_any(lowered, ["academic integrity", "academic honesty", "plagiarism", "ethics code", "კეთილსინდისიერ", "პლაგიატ"]):
+        route = route_for_source_group(route, "official_academic_rules")
+
+    future_calendar_reply = chat_helpers.unsupported_future_calendar_reply(lowered, is_ka)
+    if future_calendar_reply:
+        return KnowledgeAskResponse(
+            answer=chat_helpers.clean_public_answer_text(future_calendar_reply),
+            status="unsupported",
+            source_group=route.primary_source_group,
+            public_source_label=None,
+            confidence=1.0,
+            clarification_options=[],
+            used_claude=False,
+        )
+
+    if route.clarification_required:
+        return clarification_response(
+            answer=format_clarification_reply(route),
+            source_group=route.primary_source_group,
+            confidence=route.confidence,
+            options=route.clarification_options,
+        )
+
+    reply = chat_helpers.grounded_source_backed_reply(question, language, route)
+    if not reply:
+        reply = chat_helpers.selected_official_document_regression_reply(question, language)
+    if not reply and route.primary_source_group == "finance_sources":
+        reply = chat_helpers.finance_exact_amount_fallback(is_ka)
+    if reply:
+        cleaned = chat_helpers.clean_public_answer_text(chat_helpers.hide_internal_source_identifiers(reply))
+        return KnowledgeAskResponse(
+            answer=cleaned,
+            status="answered",
+            source_group=route.primary_source_group,
+            public_source_label=knowledge_ask_public_source_label(route.primary_source_group),
+            confidence=max(route.confidence, 0.78),
+            clarification_options=[],
+            used_claude=False,
+        )
+
+    return KnowledgeAskResponse(
+        answer=(
+            "ამ კითხვაზე დეტერმინისტული პასუხი დამტკიცებულ სტრუქტურულ წყაროებში ვერ მოიძებნა."
+            if is_ka
+            else "A deterministic answer for this question was not found in the approved structured sources."
+        ),
+        status="unsupported",
+        source_group=route.primary_source_group,
+        public_source_label=None,
+        confidence=0.35,
+        clarification_options=[],
+        used_claude=False,
+    )
+
+
+def clarification_response(
+    *,
+    answer: str,
+    source_group: str | None,
+    confidence: float,
+    options: list[str],
+) -> KnowledgeAskResponse:
+    return KnowledgeAskResponse(
+        answer=answer if not options else f"{answer}\n\n" + "\n".join(f"- {option}" for option in options),
+        status="clarification_needed",
+        source_group=source_group,
+        public_source_label=None,
+        confidence=confidence,
+        clarification_options=options,
+        used_claude=False,
+    )
+
+
+def knowledge_ask_finance_clarification(lowered: str, is_ka: bool) -> tuple[str, list[str]] | None:
+    if not has_any(
+        lowered,
+        [
+            "რა ღირს",
+            "ფასი",
+            "საფასურ",
+            "tuition",
+            "fee",
+            "cost",
+            "how much",
+            "payment",
+            "გადახდ",
+        ],
+    ):
+        return None
+
+    has_medicine = has_any(lowered, ["მედიც", "სამედიცინო", "medicine", "md program", "md "])
+    if has_medicine:
+        if is_ka:
+            return (
+                "გთხოვთ დამიზუსტოთ, რომელი ინფორმაცია გჭირდებათ სამედიცინო პროგრამის საფასურზე? ზუსტი/current საფასური უნდა გადაამოწმოთ ალტეს მიღების ან საფინანსო სამსახურთან.",
+                [
+                    "მედიცინის პროგრამის საფასური",
+                    "გადახდის პირობები",
+                    "დაფინანსება/გრანტები",
+                    "საერთაშორისო სტუდენტების საფასური",
+                ],
+            )
+        return (
+            "Please clarify what you need about the Medicine/MD tuition fee. Exact/current tuition must be confirmed with Alte admissions or the finance office.",
+            [
+                "Medicine program tuition",
+                "Payment terms",
+                "Funding/grants",
+                "International student tuition",
+            ],
+        )
+
+    if is_ka:
+        return (
+            "გთხოვთ დამიზუსტოთ, რომელი საფასური ან გადახდის ინფორმაცია გაინტერესებთ? ზუსტი/current თანხა უნდა გადაამოწმოთ ალტეს მიღების ან საფინანსო სამსახურთან.",
+            [
+                "ბაკალავრიატის საფასური",
+                "მაგისტრატურის საფასური",
+                "მედიცინის პროგრამის საფასური",
+                "გადახდის პირობები",
+                "დაფინანსება/გრანტები",
+            ],
+        )
+    return (
+        "Please clarify which tuition or payment information you need. Exact/current amounts must be confirmed with Alte admissions or the finance office.",
+        [
+            "Bachelor tuition",
+            "Master tuition",
+            "Medicine program tuition",
+            "Payment terms",
+            "Funding/grants",
+        ],
+    )
+
+
+def knowledge_ask_broad_clarification(lowered: str, is_ka: bool) -> tuple[str, str, list[str]] | None:
+    if has_any(lowered, ["რეგისტრაცია როდის", "როდისაა რეგისტრაცია", "registration when", "when is registration"]) and not has_any(
+        lowered, ["ბაკალავრ", "computer science", "კომპიუტერულ", "spring", "გაზაფხულ", "შემოდგომ", "master", "მაგისტრ"]
+    ):
+        return (
+            "academic_calendar_2025_2026",
+            "გთხოვთ დააზუსტოთ: რომელი პროგრამის ჯგუფი, რომელი სემესტრი და რომელი რეგისტრაცია გაინტერესებთ?"
+            if is_ka
+            else "Please clarify the program group, semester, and registration event.",
+            ["ბაკალავრიატი", "Computer Science", "მაგისტრატურა", "ერთსაფეხურიანი"]
+            if is_ka
+            else ["Bachelor", "Computer Science", "Master", "One-cycle programs"],
+        )
+    if has_any(lowered, ["პროგრამებზე მითხარი", "პროგრამები მაინტერესებს", "programs", "tell me about programs"]):
+        return (
+            "program_catalog_sources",
+            "რომელ პროგრამაზე გსურთ ინფორმაცია?"
+            if is_ka
+            else "Which program do you want information about?",
+            ["ბაკალავრიატი", "მაგისტრატურა", "მედიცინა / MD", "Computer Science", "კონკრეტული პროგრამა"]
+            if is_ka
+            else ["Bachelor", "Master", "Medicine / MD", "Computer Science", "Specific program"],
+        )
+    if has_any(lowered, ["კალენდარი მაინტერესებს", "calendar", "academic calendar"]) and not has_any(
+        lowered, ["2025", "2026", "spring", "fall", "გაზაფხულ", "შემოდგომ", "რეგისტრ", "სემესტრ"]
+    ):
+        return (
+            "academic_calendar_2025_2026",
+            "გთხოვთ დააზუსტოთ, კალენდრის რომელი მოვლენა გაინტერესებთ?"
+            if is_ka
+            else "Please clarify which calendar event you need.",
+            ["რეგისტრაცია", "სემესტრის დაწყება", "შუალედური გამოცდები", "დასკვნითი გამოცდები"]
+            if is_ka
+            else ["Registration", "Semester start", "Midterms", "Final exams"],
+        )
+    if has_any(lowered, ["გრანტი როგორ", "დაფინანსება როგორ", "how do i get a grant", "how can i get a grant"]):
+        return (
+            "state_social_grants_sources",
+            "გთხოვთ დააზუსტოთ, გრანტის ან დაფინანსების რომელი ინფორმაცია გჭირდებათ?"
+            if is_ka
+            else "Please clarify which grant or funding information you need.",
+            ["სახელმწიფო გრანტი", "სოციალური გრანტი", "დაფინანსების პირობები", "საფინანსო სამსახურთან გადამოწმება"]
+            if is_ka
+            else ["State grant", "Social grant", "Funding terms", "Confirm with finance office"],
+        )
+    return None
+
+
+def knowledge_ask_private_data_request(lowered: str) -> bool:
+    private_markers = [
+        "personal data",
+        "private data",
+        "student record",
+        "student records",
+        "grades",
+        "transcript",
+        "student id",
+        "პირადი მონაცემ",
+        "სტუდენტის მონაცემ",
+        "სტუდენტის პირად",
+        "ნიშნებ",
+        "ტრანსკრიპტ",
+        "პირადობის ნომერ",
+    ]
+    request_markers = [
+        "show",
+        "send",
+        "give",
+        "tell me",
+        "lookup",
+        "find",
+        "მაჩვენე",
+        "მომწერე",
+        "მომეცი",
+        "მითხარი",
+        "მოიძიე",
+    ]
+    return has_any(lowered, private_markers) and has_any(lowered, request_markers)
+
+
+def route_for_source_group(route: KnowledgeRouteDecision, source_group: str) -> KnowledgeRouteDecision:
+    return KnowledgeRouteDecision(
+        department_id=route.department_id,
+        department_label=route.department_label,
+        source_groups=[source_group],
+        primary_source_group=source_group,
+        clarification_required=False,
+        clarification_question=None,
+        clarification_options=[],
+        language=route.language,
+        confidence=max(route.confidence, 0.85),
+        reason=f"knowledge_ask_source_group_override:{source_group}",
+    )
+
+
+def knowledge_ask_public_source_label(source_group: str | None) -> str | None:
+    if not source_group:
+        return None
+    from app.services import chat_service as chat_helpers
+
+    return chat_helpers.response_public_source_label(
+        {"answer_source_status": "answered_from_approved_source"},
+        should_handover=False,
+        source_group=source_group,
+    )
+
+
+def has_any(value: str, markers: list[str]) -> bool:
+    return any(marker in value for marker in markers)
 
 
 def review_reasons(snippet: KnowledgeSnippet, source: KnowledgeSource, stale: bool) -> list[str]:

@@ -144,6 +144,28 @@ class KnowledgeSearchQuery(BaseModel):
     include_stale: bool = False
 
 
+KnowledgeAskStatus = Literal["answered", "clarification_needed", "unsupported", "refused"]
+KnowledgeAskMode = Literal["public", "internal"]
+
+
+class KnowledgeAskRequest(BaseModel):
+    question: str
+    language: KnowledgeLanguage | None = None
+    source_group: str | None = None
+    program: str | None = None
+    mode: KnowledgeAskMode = "public"
+
+
+class KnowledgeAskResponse(BaseModel):
+    answer: str
+    status: KnowledgeAskStatus
+    source_group: str | None = None
+    public_source_label: str | None = None
+    confidence: float
+    clarification_options: list[str] = []
+    used_claude: bool = False
+
+
 class KnowledgeReviewItem(BaseModel):
     snippet: KnowledgeSnippetRead
     source: KnowledgeSourceRead

@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.schemas.knowledge import (
+    KnowledgeAskRequest,
+    KnowledgeAskResponse,
     KnowledgeSearchResponse,
     KnowledgeReviewItem,
     KnowledgeSnippetCreate,
@@ -15,6 +17,7 @@ from app.schemas.knowledge import (
     OperatorReplyKnowledgeCandidateRead,
 )
 from app.services.knowledge_service import (
+    ask_knowledge_deterministic,
     approve_knowledge_snippet,
     archive_knowledge_snippet,
     create_operator_reply_knowledge_candidate,
@@ -28,6 +31,12 @@ from app.services.knowledge_service import (
 )
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
+api_router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
+
+
+@api_router.post("/ask", response_model=KnowledgeAskResponse)
+async def ask_knowledge(payload: KnowledgeAskRequest, db: AsyncSession = Depends(get_db)):
+    return await ask_knowledge_deterministic(db, payload)
 
 
 @router.post("/sources", response_model=KnowledgeSourceRead)
