@@ -366,6 +366,52 @@ def deterministic_override_for_message(lowered: str, language: str) -> ClaudeInt
             deterministic_override_applied=True,
             deterministic_override_reason="explicit_operator_request",
         )
+    deadline_clarification = admissions_deadline_clarification(lowered, language)
+    if deadline_clarification:
+        department, question, options = deadline_clarification
+        return ClaudeIntentRoute(
+            intent="clarification",
+            language=language,
+            department=department,
+            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department, "Admissions"),
+            topic="admissions_deadline_ambiguous",
+            needs_clarification=True,
+            clarification_question=question,
+            clarification_options=options,
+            source_groups_to_search=[],
+            search_terms=[],
+            operator_needed=False,
+            operator_reason=None,
+            unsupported_likely=False,
+            confidence=1.0,
+            fallback_used=False,
+            router_validation_status="valid",
+            deterministic_override_applied=True,
+            deterministic_override_reason="admissions_deadline_clarification",
+        )
+    tuition_clarification = medical_tuition_clarification(lowered, language)
+    if tuition_clarification:
+        department, question, options = tuition_clarification
+        return ClaudeIntentRoute(
+            intent="clarification",
+            language=language,
+            department=department,
+            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department, "Finance"),
+            topic="medical_tuition_clarification",
+            needs_clarification=True,
+            clarification_question=question,
+            clarification_options=options,
+            source_groups_to_search=[],
+            search_terms=[],
+            operator_needed=False,
+            operator_reason=None,
+            unsupported_likely=False,
+            confidence=1.0,
+            fallback_used=False,
+            router_validation_status="valid",
+            deterministic_override_applied=True,
+            deterministic_override_reason="medical_tuition_clarification",
+        )
     broad = known_broad_question(lowered)
     if broad:
         department, question, options = broad
@@ -422,6 +468,48 @@ def fallback_intent_route(
 ) -> ClaudeIntentRoute:
     language = detect_language(message)
     lowered = " ".join((message or "").lower().split())
+    deadline_clarification = admissions_deadline_clarification(lowered, language)
+    if deadline_clarification:
+        department, question, options = deadline_clarification
+        return ClaudeIntentRoute(
+            intent="clarification",
+            language=language,
+            department=department,
+            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department, "Admissions"),
+            topic="admissions_deadline_ambiguous",
+            needs_clarification=True,
+            clarification_question=question,
+            clarification_options=options,
+            source_groups_to_search=[],
+            operator_needed=False,
+            unsupported_likely=False,
+            confidence=1.0,
+            fallback_used=True,
+            router_validation_status="fallback_used",
+            deterministic_override_applied=True,
+            deterministic_override_reason="admissions_deadline_clarification",
+        )
+    tuition_clarification = medical_tuition_clarification(lowered, language)
+    if tuition_clarification:
+        department, question, options = tuition_clarification
+        return ClaudeIntentRoute(
+            intent="clarification",
+            language=language,
+            department=department,
+            public_department_label=PUBLIC_DEPARTMENT_LABELS.get(department, "Finance"),
+            topic="medical_tuition_clarification",
+            needs_clarification=True,
+            clarification_question=question,
+            clarification_options=options,
+            source_groups_to_search=[],
+            operator_needed=False,
+            unsupported_likely=False,
+            confidence=1.0,
+            fallback_used=True,
+            router_validation_status="fallback_used",
+            deterministic_override_applied=True,
+            deterministic_override_reason="medical_tuition_clarification",
+        )
     broad = known_broad_question(lowered)
     if broad:
         department, question, options = broad
@@ -669,6 +757,109 @@ def known_broad_question(lowered: str):
             ["\u10d9\u10e0\u10d4\u10d3\u10d8\u10e2\u10d4\u10d1\u10d8", "\u10e1\u10ec\u10d0\u10d5\u10da\u10d4\u10d1\u10d8\u10e1 \u10d4\u10dc\u10d0", "\u10d9\u10d5\u10d0\u10da\u10d8\u10e4\u10d8\u10d9\u10d0\u10ea\u10d8\u10d0", "\u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10d2\u10d4\u10d2\u10db\u10d0"],
         )
     return BROAD_QUESTIONS.get(normalized) or BROAD_QUESTIONS.get(lowered)
+
+
+def admissions_deadline_clarification(lowered: str, language: str):
+    if not is_admissions_deadline_question(lowered):
+        return None
+    if is_academic_registration_deadline_question(lowered):
+        return None
+    if language == "en":
+        return (
+            "admissions",
+            "Please clarify which admission deadline you mean.",
+            [
+                "Bachelor admission",
+                "Master admission",
+                "International student admission",
+                "Specific program",
+                "Academic/administrative registration",
+            ],
+        )
+    return (
+        "admissions",
+        "გთხოვთ დამიზუსტოთ, რომელი ჩარიცხვის ბოლო ვადა გაინტერესებთ?",
+        [
+            "ბაკალავრიატის მიღება",
+            "მაგისტრატურის მიღება",
+            "საერთაშორისო სტუდენტების მიღება",
+            "კონკრეტული პროგრამა",
+            "აკადემიური/ადმინისტრაციული რეგისტრაცია",
+        ],
+    )
+
+
+def medical_tuition_clarification(lowered: str, language: str):
+    if not (has_tuition_marker(lowered) and has_medical_program_marker(lowered)):
+        return None
+    if language == "en":
+        return (
+            "finance",
+            "Please clarify which Medicine program fee information you need. Exact/current tuition should be confirmed with Alte's admissions or finance office.",
+            [
+                "Medicine program tuition",
+                "Payment terms",
+                "Funding/grants",
+                "International student fee",
+            ],
+        )
+    return (
+        "finance",
+        "გთხოვთ დამიზუსტოთ, რომელი ინფორმაცია გჭირდებათ სამედიცინო პროგრამის საფასურზე? ზუსტი/current საფასური უნდა გადაამოწმოთ ალტეს მიღების ან საფინანსო სამსახურთან.",
+        [
+            "მედიცინის პროგრამის საფასური",
+            "გადახდის პირობები",
+            "დაფინანსება/გრანტები",
+            "საერთაშორისო სტუდენტების საფასური",
+        ],
+    )
+
+
+def is_admissions_deadline_question(lowered: str) -> bool:
+    deadline_markers = [
+        "ბოლო ვადა",
+        "დედლაინი",
+        "application deadline",
+        "admission deadline",
+        "როდის მთავრდება მიღება",
+        "ჩარიცხვა როდის მთავრდება",
+    ]
+    has_deadline = any(marker in lowered for marker in deadline_markers) or (
+        "deadline" in lowered and any(marker in lowered for marker in ["admission", "application", "apply"])
+    )
+    has_admissions = any(
+        marker in lowered
+        for marker in ["მიღებ", "ჩარიცხ", "ჩაბარ", "admission", "application", "apply", "enroll"]
+    )
+    return has_deadline and has_admissions
+
+
+def is_academic_registration_deadline_question(lowered: str) -> bool:
+    has_registration = any(marker in lowered for marker in ["რეგისტრ", "registration"])
+    has_academic = any(marker in lowered for marker in ["აკადემიურ", "ადმინისტრაციულ", "academic", "administrative"])
+    has_deadline = any(marker in lowered for marker in ["ბოლო ვადა", "დედლაინი", "deadline"])
+    return has_registration and has_academic and has_deadline
+
+
+def has_tuition_marker(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "რა ღირს",
+            "ფასი",
+            "საფასურ",
+            "tuition",
+            "fee",
+            "cost",
+            "how much",
+            "payment",
+            "გადახდ",
+        ]
+    )
+
+
+def has_medical_program_marker(lowered: str) -> bool:
+    return any(marker in lowered for marker in ["medicine", "medical", " md", "md program", "მედიცინ", "სამედიცინო"])
 
 
 def normalize_broad_question_text(lowered: str) -> str:
@@ -983,8 +1174,12 @@ def is_exam_rule_like_question(lowered: str) -> bool:
 
 def forced_source_group(lowered: str) -> str | None:
     lowered = " ".join((lowered or "").lower().split())
+    if is_academic_registration_deadline_question(lowered):
+        return "academic_calendar_2025_2026"
     if is_academic_calendar_priority_question(lowered):
         return "academic_calendar_2025_2026"
+    if has_tuition_marker(lowered) and not is_program_catalog_explicit_scope(lowered):
+        return "finance_sources"
     if is_registration_policy_question(lowered):
         return "admissions_rules"
     if is_program_catalog_question(lowered):
@@ -1019,6 +1214,8 @@ def forced_source_group(lowered: str) -> str | None:
 
 
 def is_program_catalog_question(lowered: str) -> bool:
+    if has_tuition_marker(lowered) and not is_program_catalog_explicit_scope(lowered):
+        return False
     if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
         return False
     if is_academic_calendar_priority_question(lowered):

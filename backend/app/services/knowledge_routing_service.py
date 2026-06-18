@@ -124,6 +124,38 @@ def classify_knowledge_route(
     lowered = " ".join((message or "").lower().split())
     selected = normalize_department_id(selected_department)
 
+    if is_academic_registration_deadline_question(lowered):
+        department = department_entry("academic_calendar")
+        return KnowledgeRouteDecision(
+            department_id="academic_calendar",
+            department_label=label_for_department(department, language),
+            source_groups=list(department.get("source_groups", [])),
+            primary_source_group="academic_calendar_2025_2026",
+            clarification_required=False,
+            clarification_question=None,
+            clarification_options=[],
+            language=language,
+            confidence=0.95,
+            reason="academic_registration_deadline",
+        )
+
+    deadline_clarification = admissions_deadline_clarification(lowered, language)
+    if deadline_clarification:
+        department_id, question, options = deadline_clarification
+        department = department_entry(department_id)
+        return KnowledgeRouteDecision(
+            department_id=department_id,
+            department_label=label_for_department(department, language),
+            source_groups=list(department.get("source_groups", [])),
+            primary_source_group=first_source_group(department),
+            clarification_required=True,
+            clarification_question=question,
+            clarification_options=options,
+            language=language,
+            confidence=1.0,
+            reason="admissions_deadline_clarification",
+        )
+
     broad = broad_clarification(lowered, language)
     if broad:
         department_id, question, options = broad
@@ -635,6 +667,10 @@ def score_departments(lowered: str) -> dict[str, int]:
     if is_english_program_requirements_question(lowered):
         scores["international_admissions"] = scores.get("international_admissions", 0) + 10
         scores["programs"] = max(0, scores.get("programs", 0) - 2)
+    if has_tuition_marker(lowered):
+        scores["finance"] = scores.get("finance", 0) + 10
+        scores["programs"] = max(0, scores.get("programs", 0) - 3)
+        scores["medicine_md"] = max(0, scores.get("medicine_md", 0) - 3)
     if is_computer_science_spring_calendar_question(lowered):
         scores["academic_calendar"] = scores.get("academic_calendar", 0) + 8
         scores["admissions"] = max(0, scores.get("admissions", 0) - 2)
@@ -772,6 +808,8 @@ def is_calendar_date_or_schedule_question(lowered: str) -> bool:
 
 
 def is_program_catalog_question(lowered: str) -> bool:
+    if has_tuition_marker(lowered) and not is_program_catalog_explicit_scope(lowered):
+        return False
     if (is_credit_volume_question(lowered) or is_teaching_language_question(lowered)) and not is_program_catalog_explicit_scope(lowered):
         return False
     if is_academic_calendar_priority_question(lowered):
@@ -1177,6 +1215,8 @@ def first_source_group(department: dict) -> str | None:
 def choose_primary_source_group(department_id: str, lowered: str, source_groups: list[str]) -> str | None:
     if not source_groups:
         return None
+    if has_tuition_marker(lowered) and not is_program_catalog_explicit_scope(lowered):
+        return "finance_sources" if "finance_sources" in source_groups else source_groups[0]
     if is_academic_calendar_priority_question(lowered):
         return "academic_calendar_2025_2026" if "academic_calendar_2025_2026" in source_groups else source_groups[0]
     if is_exam_rule_question(lowered):
@@ -1209,7 +1249,80 @@ def format_clarification_reply(decision: KnowledgeRouteDecision) -> str:
     question = decision.clarification_question or generic_clarification(decision.language)[0]
     if not decision.clarification_options:
         return question
-    return f"{question}\n\n" + "\n".join(f"- {option}" for option in decision.clarification_options[:4])
+    return f"{question}\n\n" + "\n".join(f"- {option}" for option in decision.clarification_options[:6])
+
+
+def admissions_deadline_clarification(lowered: str, language: str) -> tuple[str, str, list[str]] | None:
+    if not is_admissions_deadline_question(lowered):
+        return None
+    if is_academic_registration_deadline_question(lowered):
+        return None
+    if language == "en":
+        return (
+            "admissions",
+            "Please clarify which admission deadline you mean.",
+            [
+                "Bachelor admission",
+                "Master admission",
+                "International student admission",
+                "Specific program",
+                "Academic/administrative registration",
+            ],
+        )
+    return (
+        "admissions",
+        "გთხოვთ დამიზუსტოთ, რომელი ჩარიცხვის ბოლო ვადა გაინტერესებთ?",
+        [
+            "ბაკალავრიატის მიღება",
+            "მაგისტრატურის მიღება",
+            "საერთაშორისო სტუდენტების მიღება",
+            "კონკრეტული პროგრამა",
+            "აკადემიური/ადმინისტრაციული რეგისტრაცია",
+        ],
+    )
+
+
+def is_admissions_deadline_question(lowered: str) -> bool:
+    deadline_markers = [
+        "ბოლო ვადა",
+        "დედლაინი",
+        "application deadline",
+        "admission deadline",
+        "როდის მთავრდება მიღება",
+        "ჩარიცხვა როდის მთავრდება",
+    ]
+    has_deadline = any(marker in lowered for marker in deadline_markers) or (
+        "deadline" in lowered and any(marker in lowered for marker in ["admission", "application", "apply"])
+    )
+    has_admissions = any(
+        marker in lowered
+        for marker in ["მიღებ", "ჩარიცხ", "ჩაბარ", "admission", "application", "apply", "enroll"]
+    )
+    return has_deadline and has_admissions
+
+
+def is_academic_registration_deadline_question(lowered: str) -> bool:
+    has_registration = any(marker in lowered for marker in ["რეგისტრ", "registration"])
+    has_academic = any(marker in lowered for marker in ["აკადემიურ", "ადმინისტრაციულ", "academic", "administrative"])
+    has_deadline = any(marker in lowered for marker in ["ბოლო ვადა", "დედლაინი", "deadline"])
+    return has_registration and has_academic and has_deadline
+
+
+def has_tuition_marker(lowered: str) -> bool:
+    return any(
+        marker in lowered
+        for marker in [
+            "რა ღირს",
+            "ფასი",
+            "საფასურ",
+            "tuition",
+            "fee",
+            "cost",
+            "how much",
+            "payment",
+            "გადახდ",
+        ]
+    )
 
 
 def source_group_config(source_group_id: str | None) -> dict | None:
