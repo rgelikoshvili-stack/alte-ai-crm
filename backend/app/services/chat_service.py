@@ -1732,7 +1732,7 @@ def preserved_deadline_context(
     level = infer_deadline_level(lowered_message, is_ka)
     if not level:
         return None
-    for message in reversed(recent_messages[:-1]):
+    for message in reversed(recent_messages):
         if message.sender_type != "ai":
             continue
         metadata = message.metadata_json or {}
@@ -1774,6 +1774,10 @@ def weak_tuition_answer(message: str, reply: str | None, route_decision: Knowled
     lowered = (message or "").lower()
     answer = (reply or "").lower()
     if not has_cost_marker(lowered):
+        return False
+    if any(marker in lowered for marker in ["catalog", "კატალოგ"]) and any(
+        marker in answer for marker in ["catalog", "კატალოგ", "წყარო", "source"]
+    ):
         return False
     if "ზუსტი/current" in answer or "exact/current" in answer or "finance" in answer or "საფინანსო" in answer:
         return False
