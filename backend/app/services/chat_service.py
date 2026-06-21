@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -54,6 +55,19 @@ SAFE_CONTACT_CONSENT_KA = (
 )
 
 OFFICIAL_ALTE_PDF_SOURCE_DOMAIN = "official_alte_pdf_kb"
+
+
+@dataclass(frozen=True)
+class CloudAIOrchestratorDecision:
+    decision: str
+    intent: str
+    source_group: str | None
+    confidence: float
+    reason: str
+    clarification_question: str | None = None
+    clarification_options: tuple[str, ...] = ()
+    answer_strategy: str | None = None
+    must_not_invent: bool = True
 
 PUBLIC_SOURCE_GROUP_LABELS = {
     "program_catalog_sources": "საგანმანათლებლო პროგრამების კატალოგი",
@@ -283,6 +297,24 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         knowledge = {"answer_source_status": "no_approved_source_found", "used_sources": [], "snippet_titles": []}
     else:
         knowledge = await retrieve_chat_knowledge(db, payload.message, analysis, route_decision)
+    if (
+        not privacy_refusal_reply
+        and not unsupported_official_question
+        and knowledge.get("answer_source_status") == "no_approved_source_found"
+        and allow_deterministic_no_source_fallback(payload.message, analysis, route_decision)
+    ):
+        deterministic_official_reply = official_academic_rules_regression_reply(
+            payload.message, analysis.language
+        ) or selected_official_document_regression_reply(payload.message, analysis.language)
+        if not deterministic_official_reply:
+            deterministic_official_reply = grounded_source_backed_reply(payload.message, analysis.language, route_decision)
+        if deterministic_official_reply:
+            analysis.reply = deterministic_official_reply
+            knowledge = {
+                "answer_source_status": "answered_from_approved_source",
+                "used_sources": [],
+                "snippet_titles": [],
+            }
     if privacy_refusal_reply:
         pass
     elif knowledge["answer_source_status"] == "answered_from_approved_source":
@@ -331,6 +363,25 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             pass
         else:
             analysis.reply = build_no_source_reply(analysis)
+    orchestrator_decision = await cloud_ai_orchestrator_reasoning_fallback(
+        db,
+        conversation.id,
+        payload.message,
+        analysis,
+        knowledge,
+        route_decision,
+    )
+    if orchestrator_decision:
+        apply_cloud_ai_orchestrator_decision(analysis, knowledge, route_decision, orchestrator_decision)
+        ai_meta["cloud_ai_orchestrator"] = {
+            "decision": orchestrator_decision.decision,
+            "intent": orchestrator_decision.intent,
+            "source_group": orchestrator_decision.source_group,
+            "confidence": orchestrator_decision.confidence,
+            "reason": orchestrator_decision.reason,
+            "answer_strategy": orchestrator_decision.answer_strategy,
+            "must_not_invent": orchestrator_decision.must_not_invent,
+        }
     validate_public_chat_answer(payload.message, analysis, knowledge, route_decision)
     sanitize_premature_contact_request(analysis)
     apply_no_contact_lead_guard(analysis)
@@ -1526,6 +1577,297 @@ def validate_public_chat_answer(
             analysis.risk_flags.append("answer_validator_finance_exact_amount_guard")
 
     analysis.reply = hide_internal_source_identifiers(analysis.reply)
+
+
+async def cloud_ai_orchestrator_reasoning_fallback(
+    db: AsyncSession,
+    conversation_id: str,
+    message: str,
+    analysis: AIAnalysisResult,
+    knowledge: dict,
+    route_decision: KnowledgeRouteDecision,
+) -> CloudAIOrchestratorDecision | None:
+    """Reasoning fallback for weak deterministic public chat answers.
+
+    This is deliberately constrained to metadata and recent-turn context. It does
+    not add Cloud AI to /api/knowledge/ask and does not perform writes.
+    """
+    recent_messages = await recent_messages_with_metadata(db, conversation_id, limit=8)
+    lowered = (message or "").lower()
+    is_ka = analysis.language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message or "")
+    preserved_deadline = preserved_deadline_context(recent_messages, lowered, is_ka)
+    if preserved_deadline:
+        level, reason = preserved_deadline
+        return CloudAIOrchestratorDecision(
+            decision="safe_fallback",
+            intent=f"admissions_deadline_{level}",
+            source_group="admissions_rules",
+            confidence=0.94,
+            reason=reason,
+            clarification_options=tuple(deadline_followup_options(is_ka, level)),
+            answer_strategy=deadline_safe_fallback(is_ka, level),
+            must_not_invent=True,
+        )
+
+    if weak_deadline_answer(message, analysis.reply, route_decision):
+        level = infer_deadline_level(lowered, is_ka) or "admission"
+        return CloudAIOrchestratorDecision(
+            decision="safe_fallback",
+            intent=f"admissions_deadline_{level}",
+            source_group="admissions_rules",
+            confidence=0.88,
+            reason="deadline_prompt_received_non_deadline_answer",
+            clarification_options=tuple(deadline_followup_options(is_ka, level)),
+            answer_strategy=deadline_safe_fallback(is_ka, level),
+            must_not_invent=True,
+        )
+
+    if weak_tuition_answer(message, analysis.reply, route_decision):
+        return CloudAIOrchestratorDecision(
+            decision="clarify",
+            intent="tuition_cost",
+            source_group="finance_sources",
+            confidence=0.9,
+            reason="cost_prompt_received_program_description",
+            clarification_question=(
+                "გთხოვთ დამიზუსტოთ, რომელი საფასური ან გადახდის ინფორმაცია გაინტერესებთ?"
+                if is_ka
+                else "Please clarify which tuition or payment information you need."
+            ),
+            clarification_options=tuple(
+                [
+                    "მედიცინის პროგრამის საფასური",
+                    "გადახდის პირობები",
+                    "დაფინანსება/გრანტები",
+                    "საერთაშორისო სტუდენტების საფასური",
+                ]
+                if is_ka
+                else ["Medicine program tuition", "Payment terms", "Funding/grants", "International student tuition"]
+            ),
+            answer_strategy=finance_exact_amount_fallback(is_ka),
+            must_not_invent=True,
+        )
+    return None
+
+
+def apply_cloud_ai_orchestrator_decision(
+    analysis: AIAnalysisResult,
+    knowledge: dict,
+    route_decision: KnowledgeRouteDecision,
+    decision: CloudAIOrchestratorDecision,
+) -> None:
+    if decision.decision == "refuse":
+        analysis.intent = "privacy_safety"
+        analysis.reply = decision.answer_strategy or analysis.reply
+        analysis.should_create_lead = False
+        analysis.should_handover = False
+        knowledge["answer_source_status"] = "not_required"
+    elif decision.decision == "clarify":
+        analysis.intent = "clarification"
+        analysis.reply = format_orchestrator_clarification(decision)
+        analysis.should_create_lead = False
+        analysis.should_handover = False
+        knowledge["answer_source_status"] = "clarification_needed"
+    elif decision.decision == "safe_fallback":
+        analysis.intent = decision.intent
+        analysis.reply = decision.answer_strategy or analysis.reply
+        analysis.should_create_lead = False
+        analysis.should_handover = False
+        knowledge["answer_source_status"] = "safe_fallback"
+    elif decision.decision == "answer" and decision.answer_strategy:
+        analysis.reply = decision.answer_strategy
+        analysis.should_create_lead = False
+    if decision.source_group:
+        object.__setattr__(route_decision, "source_groups", [decision.source_group])
+        object.__setattr__(route_decision, "primary_source_group", decision.source_group)
+    analysis.confidence = max(analysis.confidence, decision.confidence)
+    if "cloud_ai_orchestrator_reasoning_fallback" not in analysis.risk_flags:
+        analysis.risk_flags.append("cloud_ai_orchestrator_reasoning_fallback")
+    if decision.reason not in analysis.risk_flags:
+        analysis.risk_flags.append(decision.reason)
+    analysis.used_sources = []
+    knowledge["used_sources"] = []
+    knowledge["snippet_titles"] = []
+
+
+def allow_deterministic_no_source_fallback(
+    message: str,
+    analysis: AIAnalysisResult,
+    route_decision: KnowledgeRouteDecision,
+) -> bool:
+    if analysis.should_create_lead or analysis.should_handover:
+        return False
+    if "ai_provider_error" in analysis.risk_flags:
+        return False
+    lowered = (message or "").lower()
+    source_group = route_decision.primary_source_group
+    if source_group == "academic_calendar_2025_2026":
+        return is_academic_calendar_priority_question(lowered)
+    if source_group == "program_catalog_sources":
+        return any(marker in lowered for marker in ["program", "პროგრამ", "computer science", "კომპიუტერულ"])
+    if source_group == "official_academic_rules":
+        return any(marker in lowered for marker in ["medicine", "md", "მედიც", "dentistry", "სტომატოლოგ"])
+    return False
+
+
+async def recent_messages_with_metadata(db: AsyncSession, conversation_id: str, *, limit: int) -> list[Message]:
+    messages = (
+        await db.scalars(
+            select(Message)
+            .where(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.desc())
+            .limit(limit)
+        )
+    ).all()
+    return list(reversed(messages))
+
+
+def preserved_deadline_context(
+    recent_messages: list[Message],
+    lowered_message: str,
+    is_ka: bool,
+) -> tuple[str, str] | None:
+    if has_deadline_marker(lowered_message):
+        return None
+    level = infer_deadline_level(lowered_message, is_ka)
+    if not level:
+        return None
+    for message in reversed(recent_messages[:-1]):
+        if message.sender_type != "ai":
+            continue
+        metadata = message.metadata_json or {}
+        if not metadata.get("clarification_needed"):
+            continue
+        text = (message.text or "").lower()
+        options_text = " ".join(str(option).lower() for option in metadata.get("clarification_options") or [])
+        if has_deadline_marker(text) or has_deadline_marker(options_text):
+            return level, "preserved_previous_admissions_deadline_clarification"
+    return None
+
+
+def weak_deadline_answer(message: str, reply: str | None, route_decision: KnowledgeRouteDecision | None) -> bool:
+    lowered = (message or "").lower()
+    answer = (reply or "").lower()
+    if not has_deadline_marker(lowered):
+        return False
+    if has_deadline_marker(answer) or "deadline" in answer or "ზუსტი/current" in answer or "exact/current" in answer:
+        return False
+    documents_only = any(
+        marker in answer
+        for marker in [
+            "documents are",
+            "required documents",
+            "id copy",
+            "cv",
+            "diploma",
+            "საბუთ",
+            "დოკუმენტ",
+            "პირადობის",
+            "დიპლომ",
+            "cv",
+        ]
+    )
+    return documents_only or (route_decision and route_decision.primary_source_group == "admissions_rules")
+
+
+def weak_tuition_answer(message: str, reply: str | None, route_decision: KnowledgeRouteDecision | None) -> bool:
+    lowered = (message or "").lower()
+    answer = (reply or "").lower()
+    if not has_cost_marker(lowered):
+        return False
+    if "ზუსტი/current" in answer or "exact/current" in answer or "finance" in answer or "საფინანსო" in answer:
+        return False
+    program_only = any(marker in answer for marker in ["360 ects", "one-cycle", "ერთსაფეხურიანი", "program catalog"])
+    return program_only or (route_decision and route_decision.primary_source_group == "program_catalog_sources")
+
+
+def has_deadline_marker(value: str) -> bool:
+    return any(
+        marker in value
+        for marker in [
+            "ბოლო ვადა",
+            "ვადა",
+            "დედლაინ",
+            "deadline",
+            "application deadline",
+            "admission deadline",
+            "როდის მთავრდება მიღება",
+            "ჩარიცხვა როდის მთავრდება",
+        ]
+    )
+
+
+def has_cost_marker(value: str) -> bool:
+    return any(
+        marker in value
+        for marker in ["რა ღირს", "საფასურ", "ფასი", "tuition", "fee", "cost", "how much", "გადახდ"]
+    )
+
+
+def infer_deadline_level(lowered: str, is_ka: bool) -> str | None:
+    if any(marker in lowered for marker in ["მაგისტ", "master"]):
+        return "master"
+    if any(marker in lowered for marker in ["ბაკალავრ", "bachelor"]):
+        return "bachelor"
+    if any(marker in lowered for marker in ["international", "საერთაშორისო", "უცხოელ"]):
+        return "international"
+    if any(marker in lowered for marker in ["აკადემიურ", "ადმინისტრაციულ", "academic", "administrative"]):
+        return "academic_registration"
+    if any(marker in lowered for marker in ["კონკრეტული", "specific program"]):
+        return "specific_program"
+    if not lowered.strip() and is_ka:
+        return None
+    return None
+
+
+def deadline_safe_fallback(is_ka: bool, level: str) -> str:
+    if is_ka:
+        level_label = {
+            "master": "მაგისტრატურის მიღების",
+            "bachelor": "ბაკალავრიატის მიღების",
+            "international": "საერთაშორისო სტუდენტების მიღების",
+            "academic_registration": "აკადემიური/ადმინისტრაციული რეგისტრაციის",
+            "specific_program": "კონკრეტული პროგრამის მიღების",
+        }.get(level, "მიღების")
+        return (
+            f"{level_label} ზუსტი/current ბოლო ვადა დამტკიცებულ წყაროებში არ არის საკმარისად დადასტურებული, ამიტომ თარიღს ვერ გამოვიგონებ. "
+            "გადაამოწმეთ ოფიციალურ მიღების გვერდზე ან ალტეს მიღების სამსახურთან.\n\n"
+            "თუ გსურთ, დააზუსტეთ რომელი შემთხვევაა:\n"
+            "- ქართველი აპლიკანტი\n"
+            "- საერთაშორისო აპლიკანტი\n"
+            "- კონკრეტული პროგრამა\n"
+            "- აკადემიური/ადმინისტრაციული რეგისტრაცია"
+        )
+    level_label = {
+        "master": "master's admission",
+        "bachelor": "bachelor admission",
+        "international": "international student admission",
+        "academic_registration": "academic/administrative registration",
+        "specific_program": "specific program admission",
+    }.get(level, "admission")
+    return (
+        f"The exact/current deadline for {level_label} is not sufficiently confirmed in the approved sources, so I should not invent a date. "
+        "Please confirm it on the official admissions page or with the Alte admissions office.\n\n"
+        "If needed, please clarify:\n"
+        "- Georgian applicant\n"
+        "- International applicant\n"
+        "- Specific program\n"
+        "- Academic/administrative registration"
+    )
+
+
+def deadline_followup_options(is_ka: bool, level: str) -> list[str]:
+    _ = level
+    if is_ka:
+        return ["ქართველი აპლიკანტი", "საერთაშორისო აპლიკანტი", "კონკრეტული პროგრამა", "აკადემიური/ადმინისტრაციული რეგისტრაცია"]
+    return ["Georgian applicant", "International applicant", "Specific program", "Academic/administrative registration"]
+
+
+def format_orchestrator_clarification(decision: CloudAIOrchestratorDecision) -> str:
+    question = decision.clarification_question or "Please clarify which information you need."
+    if not decision.clarification_options:
+        return question
+    return f"{question}\n\n" + "\n".join(f"- {option}" for option in decision.clarification_options[:6])
 
 
 def contains_supported_calendar_date(reply: str | None) -> bool:
