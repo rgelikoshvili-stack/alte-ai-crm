@@ -2,7 +2,7 @@
 
 PHASE_9AS_FULL_KNOWLEDGE_QA_STATUS=PASSED
 
-Test time UTC: 2026-06-07T14:19:20.928487+00:00
+Test time UTC: 2026-06-22T17:01:59.000105+00:00
 Backend URL: https://alte-ai-crm-backend-226875230147.europe-west1.run.app
 Netlify Origin: https://nimble-croissant-2f66e8.netlify.app
 Dataset: `backend\app\data\evaluation\phase_9as_full_knowledge_qa.json`
