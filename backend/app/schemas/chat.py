@@ -134,3 +134,6 @@ class ChatMessageResponse(BaseModel):
     source_group: str | None = None
     clarification_needed: bool = False
     clarification_options: list[str] = Field(default_factory=list)
+    chat_only_mode: bool = True
+    contact_cta_allowed: bool = False
+    contact_write_allowed: bool = False

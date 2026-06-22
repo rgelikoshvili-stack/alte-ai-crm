@@ -45,6 +45,7 @@ CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "int
 CONTACT_FIELD = "phone_or_email"
 INFO_ONLY_NO_CONTACT_INTENTS = {"finance_question", "deadline_question"}
 INFO_ONLY_NO_CONTACT_QUALIFICATION_INTENTS = {"tuition_fee", "scholarship", "schedule"}
+CONTACT_WRITE_RECOMMENDATIONS = {"ask_phone_or_email", "create_follow_up_task", "ask_contact_details"}
 SAFE_CONTACT_CONSENT_EN = (
     'If you would like an operator to follow up, click "Yes, contact". '
     "Contact details should only be shared after your explicit consent."
@@ -388,6 +389,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     apply_info_only_no_contact_guard(analysis)
     routing = apply_department_routing(analysis, payload, knowledge)
     sanitize_premature_contact_request(analysis)
+    apply_chat_only_contact_cta_suppression(analysis, payload, knowledge)
     await persist_ai_interaction(
         db,
         conversation_id=conversation.id,
@@ -529,6 +531,9 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         source_group=route_decision.primary_source_group,
         clarification_needed=False,
         clarification_options=[],
+        chat_only_mode=chat_only_mode_enabled(payload),
+        contact_cta_allowed=contact_cta_allowed(payload),
+        contact_write_allowed=False,
     )
 
 
@@ -637,6 +642,9 @@ async def handle_clarification_response(
         source_group=decision.primary_source_group,
         clarification_needed=True,
         clarification_options=decision.clarification_options,
+        chat_only_mode=True,
+        contact_cta_allowed=False,
+        contact_write_allowed=False,
     )
 
 
@@ -1132,6 +1140,68 @@ def has_contact(analysis: AIAnalysisResult) -> bool:
     return bool(contact.phone or contact.email)
 
 
+def chat_only_mode_enabled(payload: ChatMessageRequest | None = None) -> bool:
+    """Public chat remains read-only while contact-flow is blocked."""
+    return True
+
+
+def contact_cta_allowed(payload: ChatMessageRequest | None = None) -> bool:
+    return False
+
+
+def apply_chat_only_contact_cta_suppression(
+    analysis: AIAnalysisResult,
+    payload: ChatMessageRequest | None = None,
+    knowledge: dict | None = None,
+) -> None:
+    if not chat_only_mode_enabled(payload):
+        return
+    answer_status = (knowledge or {}).get("answer_source_status")
+    suppress_contact_prompt = (
+        analysis.intent == "privacy_safety"
+        or analysis.intent.startswith("admissions_deadline_")
+        or analysis.intent == "unsupported_academic_calendar_year"
+        or answer_status in {"safe_fallback", "refused"}
+        or is_public_contact_write_request(payload.message if payload else "")
+    )
+    if not suppress_contact_prompt:
+        return
+    if not has_contact(analysis):
+        analysis.should_create_lead = False
+        analysis.missing_fields = [
+            field for field in analysis.missing_fields if field not in {CONTACT_FIELD, "first_name", "phone", "email"}
+        ]
+        if analysis.qualification.recommended_next_action in CONTACT_WRITE_RECOMMENDATIONS:
+            analysis.qualification.recommended_next_action = "answer_or_ask_followup"
+        if reply_requests_contact(analysis.reply):
+            cleaned = strip_contact_request_sentence(analysis.reply)
+            if cleaned:
+                analysis.reply = cleaned
+    if analysis.intent == "privacy_safety" or analysis.intent.startswith("admissions_deadline_"):
+        analysis.should_handover = False
+    if is_public_contact_write_request(payload.message if payload else ""):
+        analysis.should_handover = False
+
+
+def is_public_contact_write_request(message: str | None) -> bool:
+    haystack = (message or "").lower()
+    return any(
+        marker in haystack
+        for marker in [
+            "create lead",
+            "create a lead",
+            "make a lead",
+            "test lead",
+            "create customer",
+            "create task",
+            "\u10e8\u10d4\u10db\u10d8\u10e5\u10db\u10d4\u10dc\u10d8 \u10da\u10d8\u10d3\u10d8",
+            "\u10da\u10d8\u10d3\u10d8 \u10e1\u10d0\u10e2\u10d4\u10e1\u10e2\u10dd\u10d3",
+            "\u10e8\u10d4\u10db\u10d8\u10e5\u10db\u10d4\u10dc\u10d8 \u10d9\u10da\u10d8\u10d4\u10dc\u10e2\u10d8",
+            "\u10e8\u10d4\u10db\u10d8\u10e5\u10db\u10d4\u10dc\u10d8 \u10d3\u10d0\u10d5\u10d0\u10da\u10d4\u10d1\u10d0",
+        ]
+    )
+
+
 def apply_no_contact_lead_guard(analysis: AIAnalysisResult) -> None:
     if analysis.intent not in CONTACT_GATED_LEAD_INTENTS or has_contact(analysis):
         return
@@ -1426,7 +1496,8 @@ def is_generic_ai_fallback_reply(reply: str | None) -> bool:
 
 
 def unsupported_future_calendar_reply(haystack: str, is_ka: bool) -> str | None:
-    if not re.search(r"\b(2027|2028|2029|2030|2031|2032|2033|2034|2035)\b", haystack):
+    year_match = re.search(r"\b(2027|2028|2029|2030|2031|2032|2033|2034|2035)\b", haystack)
+    if not year_match:
         return None
     has_calendar_context = any(
         marker in haystack
@@ -1455,18 +1526,50 @@ def unsupported_future_calendar_reply(haystack: str, is_ka: bool) -> str | None:
     )
     if not has_calendar_context:
         return None
+    year = year_match.group(1)
     if is_ka:
         return (
-            "\u10d0\u10db \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0\u10d6\u10d4 2027 \u10ec\u10da\u10d8\u10e1 \u10d3\u10d0 \u10e3\u10e4\u10e0\u10dd \u10d2\u10d5\u10d8\u10d0\u10dc\u10d8 "
+            f"\u10d0\u10db \u10d9\u10d8\u10d7\u10ee\u10d5\u10d0\u10d6\u10d4 {year} \u10ec\u10da\u10d8\u10e1 "
             "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8 \u10d0\u10e0 \u10d0\u10e0\u10d8\u10e1 \u10d3\u10d0\u10db\u10e2\u10d9\u10d8\u10ea\u10d4\u10d1\u10e3\u10da \u10ec\u10e7\u10d0\u10e0\u10dd\u10d4\u10d1\u10e8\u10d8. "
             "\u10d0\u10e1\u10d8\u10e1\u10e2\u10d4\u10dc\u10e2\u10e1 \u10d0\u10e5\u10d5\u10e1 \u10db\u10ee\u10dd\u10da\u10dd\u10d3 \u10db\u10d8\u10db\u10d3\u10d8\u10dc\u10d0\u10e0\u10d4 \u10d3\u10d0\u10db\u10e2\u10d9\u10d8\u10ea\u10d4\u10d1\u10e3\u10da\u10d8 \u10e1\u10d0\u10e1\u10ec\u10d0\u10d5\u10da\u10dd \u10ec\u10da\u10d8\u10e1 "
             "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8; \u10d2\u10d0\u10dc\u10d0\u10ee\u10da\u10d4\u10d1\u10e3\u10da\u10d8 \u10d7\u10d0\u10e0\u10d8\u10e6\u10d4\u10d1\u10d8 \u10e3\u10dc\u10d3\u10d0 \u10d2\u10d0\u10d3\u10d0\u10db\u10dd\u10ec\u10db\u10d3\u10d4\u10e1 \u10e3\u10dc\u10d8\u10d5\u10d4\u10e0\u10e1\u10d8\u10e2\u10d4\u10e2\u10d8\u10e1 "
             "\u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10da\u10e3\u10e0 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10e8\u10d8 \u10d0\u10dc \u10d0\u10d3\u10db\u10d8\u10dc\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8\u10d0\u10e1\u10d7\u10d0\u10dc."
         )
     return (
-        "The requested future academic calendar year is not available in the approved sources. "
+        f"The {year} academic calendar is not available in the approved sources. "
         "I can only answer from the currently approved academic-year calendar; please check the official updated calendar "
         "or confirm future dates with the university administration."
+    )
+
+
+def is_explicit_academic_calendar_override(haystack: str) -> bool:
+    has_future_year = bool(re.search(r"\b(2027|2028|2029|2030|2031|2032|2033|2034|2035)\b", haystack))
+    has_calendar_marker = any(
+        marker in haystack
+        for marker in [
+            "academic calendar",
+            "calendar",
+            "\u10d0\u10d9\u10d0\u10d3\u10d4\u10db\u10d8\u10e3\u10e0\u10d8 \u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0\u10d8",
+            "\u10d9\u10d0\u10da\u10d4\u10dc\u10d3\u10d0\u10e0",
+        ]
+    )
+    if has_calendar_marker:
+        return True
+    if not has_future_year:
+        return False
+    return any(
+        marker in haystack
+        for marker in [
+            "semester",
+            "registration",
+            "schedule",
+            "start",
+            "\u10e1\u10d4\u10db\u10d4\u10e1\u10e2\u10e0",
+            "\u10e0\u10d4\u10d2\u10d8\u10e1\u10e2\u10e0\u10d0\u10ea\u10d8",
+            "\u10d2\u10d0\u10dc\u10e0\u10d8\u10d2",
+            "\u10d8\u10ec\u10e7\u10d4\u10d1",
+            "\u10ec\u10d4\u10da\u10d8",
+        ]
     )
 
 
@@ -1556,11 +1659,16 @@ def validate_public_chat_answer(
 
     future_calendar_reply = unsupported_future_calendar_reply((message or "").lower(), is_ka)
     if future_calendar_reply and (
+        is_explicit_academic_calendar_override((message or "").lower())
+        or
         route_decision.primary_source_group == "academic_calendar_2025_2026"
         or contains_supported_calendar_date(analysis.reply)
     ):
         analysis.reply = future_calendar_reply
         analysis.should_create_lead = False
+        analysis.should_handover = False
+        object.__setattr__(route_decision, "source_groups", ["academic_calendar_2025_2026"])
+        object.__setattr__(route_decision, "primary_source_group", "academic_calendar_2025_2026")
         if "answer_validator_unsupported_calendar_year" not in analysis.risk_flags:
             analysis.risk_flags.append("answer_validator_unsupported_calendar_year")
 
@@ -1595,6 +1703,17 @@ async def cloud_ai_orchestrator_reasoning_fallback(
     recent_messages = await recent_messages_with_metadata(db, conversation_id, limit=8)
     lowered = (message or "").lower()
     is_ka = analysis.language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message or "")
+    future_calendar_reply = unsupported_future_calendar_reply(lowered, is_ka)
+    if future_calendar_reply and is_explicit_academic_calendar_override(lowered):
+        return CloudAIOrchestratorDecision(
+            decision="safe_fallback",
+            intent="unsupported_academic_calendar_year",
+            source_group="academic_calendar_2025_2026",
+            confidence=0.98,
+            reason="explicit_academic_calendar_override_unsupported_year",
+            answer_strategy=future_calendar_reply,
+            must_not_invent=True,
+        )
     preserved_deadline = preserved_deadline_context(recent_messages, lowered, is_ka)
     if preserved_deadline:
         level, reason = preserved_deadline
@@ -1680,6 +1799,8 @@ def apply_cloud_ai_orchestrator_decision(
     if decision.source_group:
         object.__setattr__(route_decision, "source_groups", [decision.source_group])
         object.__setattr__(route_decision, "primary_source_group", decision.source_group)
+    if analysis.qualification.recommended_next_action in CONTACT_WRITE_RECOMMENDATIONS:
+        analysis.qualification.recommended_next_action = "answer_or_ask_followup"
     analysis.confidence = max(analysis.confidence, decision.confidence)
     if "cloud_ai_orchestrator_reasoning_fallback" not in analysis.risk_flags:
         analysis.risk_flags.append("cloud_ai_orchestrator_reasoning_fallback")
@@ -1728,6 +1849,8 @@ def preserved_deadline_context(
     is_ka: bool,
 ) -> tuple[str, str] | None:
     if has_deadline_marker(lowered_message):
+        return None
+    if is_explicit_academic_calendar_override(lowered_message):
         return None
     level = infer_deadline_level(lowered_message, is_ka)
     if not level:
