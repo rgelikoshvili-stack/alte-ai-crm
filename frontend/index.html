@@ -301,6 +301,59 @@
               <span id="authStatus" class="auth-status">No token stored.</span>
             </div>
           </section>
+          <section class="panel website-sync-panel">
+            <div class="panel-header">
+              <h2>Knowledge - Website Sync</h2>
+            </div>
+            <div class="settings-notice">
+              Draft website sync content is not used by the public chatbot until approved in a later approval phase.
+            </div>
+            <div class="settings-grid">
+              <label>
+                Source name
+                <input id="websiteSyncName" type="text" placeholder="Official admissions page" />
+              </label>
+              <label>
+                Base URL
+                <input id="websiteSyncBaseUrl" type="url" placeholder="https://alte.edu.ge" />
+              </label>
+              <label>
+                Allowed paths
+                <input id="websiteSyncAllowedPaths" type="text" placeholder="/ka,/en" />
+              </label>
+              <label>
+                Source group hint
+                <input id="websiteSyncSourceGroup" type="text" placeholder="admissions_rules" />
+              </label>
+              <label>
+                Enabled
+                <select id="websiteSyncEnabled">
+                  <option value="true">Enabled</option>
+                  <option value="false">Disabled</option>
+                </select>
+              </label>
+              <label>
+                Preview URL
+                <input id="websiteSyncPreviewUrl" type="text" placeholder="fixture://admissions-deadlines" />
+              </label>
+            </div>
+            <div class="settings-actions">
+              <button id="websiteSyncAddSourceBtn" class="primary-action" type="button">Add source</button>
+              <button id="websiteSyncRefreshBtn" class="secondary-action" type="button">Refresh sources</button>
+              <select id="websiteSyncSourceSelect"></select>
+              <button id="websiteSyncPreviewBtn" class="primary-action" type="button">Run preview</button>
+            </div>
+            <div class="split-grid website-sync-grid">
+              <section>
+                <h3>Sources</h3>
+                <div id="websiteSyncSources" class="list"></div>
+              </section>
+              <section>
+                <h3>Preview result</h3>
+                <div id="websiteSyncPreviewResult" class="list"></div>
+              </section>
+            </div>
+          </section>
         </section>
       </main>
     </div>

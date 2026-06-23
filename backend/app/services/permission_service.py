@@ -123,6 +123,8 @@ def permission_for_request(request: Request) -> str | None:
         return "department:write" if method in {"POST", "PATCH", "PUT", "DELETE"} else "department:read"
     if path.startswith("/customers"):
         return "customer:write" if method in {"POST", "PATCH", "PUT", "DELETE"} else "customer:read"
+    if path.startswith("/api/knowledge/sync"):
+        return "knowledge:write" if method in {"POST", "PATCH", "PUT", "DELETE"} else "knowledge:read"
     return None
 
 

@@ -15,6 +15,11 @@ from app.schemas.knowledge import (
     KnowledgeSourceUpdate,
     OperatorReplyKnowledgeCandidateCreate,
     OperatorReplyKnowledgeCandidateRead,
+    WebsiteSyncDiffRead,
+    WebsiteSyncPreviewRequest,
+    WebsiteSyncPreviewRunRead,
+    WebsiteSyncSourceCreate,
+    WebsiteSyncSourceRead,
 )
 from app.services.knowledge_service import (
     ask_knowledge_deterministic,
@@ -29,6 +34,13 @@ from app.services.knowledge_service import (
     update_knowledge_snippet,
     update_knowledge_source,
 )
+from app.services.website_sync_preview_service import (
+    create_website_source,
+    get_website_diff,
+    list_website_runs,
+    list_website_sources,
+    run_preview_sync,
+)
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 api_router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
@@ -37,6 +49,48 @@ api_router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
 @api_router.post("/ask", response_model=KnowledgeAskResponse)
 async def ask_knowledge(payload: KnowledgeAskRequest, db: AsyncSession = Depends(get_db)):
     return await ask_knowledge_deterministic(db, payload)
+
+
+@api_router.post("/sync/website/sources", response_model=WebsiteSyncSourceRead)
+async def create_website_sync_source(payload: WebsiteSyncSourceCreate):
+    try:
+        return create_website_source(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@api_router.get("/sync/website/sources", response_model=list[WebsiteSyncSourceRead])
+async def get_website_sync_sources():
+    return list_website_sources()
+
+
+@api_router.post("/sync/website/preview", response_model=WebsiteSyncPreviewRunRead)
+async def preview_website_sync(payload: WebsiteSyncPreviewRequest):
+    try:
+        return run_preview_sync(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@api_router.get("/sync/website/runs", response_model=list[WebsiteSyncPreviewRunRead])
+async def get_website_sync_runs():
+    return list_website_runs()
+
+
+@api_router.get("/sync/website/diff/{run_id}", response_model=WebsiteSyncDiffRead)
+async def get_website_sync_diff(run_id: str):
+    diff = get_website_diff(run_id)
+    if diff is None:
+        raise HTTPException(status_code=404, detail="Website sync preview run not found")
+    return diff
+
+
+@api_router.post("/sync/website/approve/{run_id}")
+async def approve_website_sync_disabled(run_id: str):
+    raise HTTPException(
+        status_code=501,
+        detail="Approval/publish is planned for Phase 10N/10O.",
+    )
 
 
 @router.post("/sources", response_model=KnowledgeSourceRead)

@@ -166,6 +166,72 @@ class KnowledgeAskResponse(BaseModel):
     used_claude: bool = False
 
 
+WebsiteFreshnessClass = Literal["variable", "stable", "unknown"]
+WebsiteSyncStatus = Literal["draft"]
+WebsiteSyncMode = Literal["single_url"]
+
+
+class WebsiteSyncSourceCreate(BaseModel):
+    name: str
+    base_url: str
+    allowed_paths: list[str] = []
+    source_group_hint: str | None = None
+    enabled: bool = True
+
+
+class WebsiteSyncSourceRead(BaseModel):
+    id: str
+    name: str
+    base_url: str
+    allowed_paths: list[str] = []
+    source_group_hint: str | None = None
+    enabled: bool
+    created_at: datetime
+    updated_at: datetime
+    last_preview_run_id: str | None = None
+    last_preview_at: datetime | None = None
+
+
+class WebsiteSyncPreviewRequest(BaseModel):
+    source_id: str
+    url: str
+    mode: WebsiteSyncMode = "single_url"
+    limit: int | None = None
+    dry_run: bool = True
+
+
+class WebsiteSyncChunkPreview(BaseModel):
+    index: int
+    text: str
+    content_hash: str
+
+
+class WebsiteSyncPreviewRunRead(BaseModel):
+    run_id: str
+    source_id: str
+    status: WebsiteSyncStatus = "draft"
+    source_url: str
+    canonical_url: str | None = None
+    page_title: str | None = None
+    language: KnowledgeLanguage | Literal["unknown"] = "unknown"
+    content_hash: str
+    extracted_text_preview: str
+    chunks_count: int
+    chunks: list[WebsiteSyncChunkPreview] = []
+    source_group_guess: str | None = None
+    freshness_class: WebsiteFreshnessClass
+    risk_flags: list[str] = []
+    public_usable: bool = False
+    created_at: datetime
+
+
+class WebsiteSyncDiffRead(BaseModel):
+    run: WebsiteSyncPreviewRunRead
+    detected_changes: list[str] = []
+    conflicts: list[str] = []
+    approval_status: str = "disabled_preview_only"
+
+
 class KnowledgeReviewItem(BaseModel):
     snippet: KnowledgeSnippetRead
     source: KnowledgeSourceRead

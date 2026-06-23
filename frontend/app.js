@@ -9,6 +9,7 @@ const state = {
   limit: Number(localStorage.getItem("alte_operator_limit") || 20),
   activeView: localStorage.getItem("alte_active_view") || "dashboard",
   pipelines: [],
+  websiteSyncSources: [],
   refreshTimer: null,
 };
 
@@ -774,6 +775,117 @@ function renderKnowledgeReviewItem(item) {
   `;
 }
 
+function parseAllowedPaths(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function renderWebsiteSyncSources(sources) {
+  const select = $("websiteSyncSourceSelect");
+  if (select) {
+    select.innerHTML = sources.length
+      ? sources.map((src) => `<option value="${escapeHtml(src.id)}">${escapeHtml(src.name)} - ${escapeHtml(src.base_url)}</option>`).join("")
+      : `<option value="">No sources</option>`;
+  }
+  const target = $("websiteSyncSources");
+  if (!target) return;
+  target.innerHTML = sources.length
+    ? sources.map((src) => `
+      <article class="list-item">
+        <div class="item-title">
+          <span>${escapeHtml(src.name)}</span>
+          <span>${src.enabled ? badge("enabled", "approved") : badge("disabled")}</span>
+        </div>
+        <div class="item-meta">${escapeHtml(src.base_url)}</div>
+        <div class="item-meta">Allowed: ${escapeHtml((src.allowed_paths || []).join(", ") || "-")}</div>
+        <div class="badge-row">
+          ${badge(src.source_group_hint || "no hint")}
+          ${src.last_preview_run_id ? badge("previewed", "approved") : badge("no preview")}
+        </div>
+      </article>
+    `).join("")
+    : listEmpty("No website sync sources configured.");
+}
+
+async function loadWebsiteSyncSources() {
+  const sources = await apiGet("/api/knowledge/sync/website/sources");
+  state.websiteSyncSources = sources;
+  renderWebsiteSyncSources(sources);
+}
+
+async function addWebsiteSyncSource() {
+  const name = $("websiteSyncName").value.trim();
+  const baseUrl = $("websiteSyncBaseUrl").value.trim();
+  if (!name || !baseUrl) {
+    setStatus("Website sync source name and base URL are required.", true);
+    return;
+  }
+  await apiPost("/api/knowledge/sync/website/sources", {
+    name,
+    base_url: baseUrl,
+    allowed_paths: parseAllowedPaths($("websiteSyncAllowedPaths").value),
+    source_group_hint: $("websiteSyncSourceGroup").value.trim() || undefined,
+    enabled: $("websiteSyncEnabled").value === "true",
+  });
+  setStatus("Website sync source added as preview-only configuration.");
+  await loadWebsiteSyncSources();
+}
+
+function renderWebsiteSyncPreview(run) {
+  const target = $("websiteSyncPreviewResult");
+  if (!target) return;
+  if (!run) {
+    target.innerHTML = listEmpty("Run a preview to inspect extracted draft content.");
+    return;
+  }
+  target.innerHTML = `
+    <article class="list-item">
+      <div class="item-title">
+        <span>${escapeHtml(run.page_title || "Untitled page")}</span>
+        <span>${badge(run.status)} ${badge(run.freshness_class)}</span>
+      </div>
+      <div class="item-meta">${escapeHtml(run.canonical_url || run.source_url)}</div>
+      <div class="field-grid">
+        <div class="field"><span>Language</span><strong>${escapeHtml(run.language || "unknown")}</strong></div>
+        <div class="field"><span>Source group guess</span><strong>${escapeHtml(run.source_group_guess || "-")}</strong></div>
+        <div class="field"><span>Chunks</span><strong>${Number(run.chunks_count || 0)}</strong></div>
+        <div class="field"><span>Public usable</span><strong>${run.public_usable ? "true" : "false"}</strong></div>
+      </div>
+      <div class="badge-row">${(run.risk_flags || []).map((flag) => badge(flag, "handover")).join("")}</div>
+      <textarea class="knowledge-edit-textarea" rows="7" readonly>${escapeHtml(run.extracted_text_preview || "")}</textarea>
+      <div class="list">
+        ${(run.chunks || []).map((chunk) => `
+          <article class="list-item">
+            <div class="item-title"><span>Chunk ${Number(chunk.index) + 1}</span><span>${escapeHtml(chunk.content_hash.slice(0, 10))}</span></div>
+            <div class="item-meta">${escapeHtml(chunk.text)}</div>
+          </article>
+        `).join("")}
+      </div>
+    </article>
+  `;
+}
+
+async function runWebsiteSyncPreview() {
+  const sourceId = $("websiteSyncSourceSelect").value;
+  const url = $("websiteSyncPreviewUrl").value.trim();
+  if (!sourceId || !url) {
+    setStatus("Select a source and enter a preview URL.", true);
+    return;
+  }
+  const run = await apiPost("/api/knowledge/sync/website/preview", {
+    source_id: sourceId,
+    url,
+    mode: "single_url",
+    limit: 5,
+    dry_run: true,
+  });
+  renderWebsiteSyncPreview(run);
+  await loadWebsiteSyncSources();
+  setStatus("Preview sync completed. Draft content remains public_usable=false.");
+}
+
 async function loadKnowledge() {
   const q = $("knowledgeSearch").value.trim();
   const language = $("knowledgeLanguage").value;
@@ -942,6 +1054,18 @@ function syncSettings() {
   syncApiControls();
   $("settingsLimit").value = state.limit;
   $("authStatus").textContent = state.token ? "Token stored for authenticated API calls." : "No token stored.";
+  if ($("websiteSyncBaseUrl") && !$("websiteSyncBaseUrl").value) {
+    $("websiteSyncBaseUrl").value = "https://alte.edu.ge";
+  }
+  if ($("websiteSyncAllowedPaths") && !$("websiteSyncAllowedPaths").value) {
+    $("websiteSyncAllowedPaths").value = "/ka";
+  }
+  if ($("websiteSyncPreviewUrl") && !$("websiteSyncPreviewUrl").value) {
+    $("websiteSyncPreviewUrl").value = "fixture://admissions-deadlines";
+  }
+  loadWebsiteSyncSources()
+    .then(() => renderWebsiteSyncPreview(null))
+    .catch((error) => setStatus(error.message, true));
 }
 
 async function loginOperator() {
@@ -1116,6 +1240,9 @@ function init() {
   });
   $("loginBtn").addEventListener("click", loginOperator);
   $("logoutBtn").addEventListener("click", logoutOperator);
+  $("websiteSyncAddSourceBtn").addEventListener("click", () => addWebsiteSyncSource().catch((error) => setStatus(error.message, true)));
+  $("websiteSyncRefreshBtn").addEventListener("click", () => loadWebsiteSyncSources().catch((error) => setStatus(error.message, true)));
+  $("websiteSyncPreviewBtn").addEventListener("click", () => runWebsiteSyncPreview().catch((error) => setStatus(error.message, true)));
   $("operatorKnowledgeFilterBtn").addEventListener("click", showOperatorAnswerDrafts);
   $("newLeadBtn").addEventListener("click", openLeadModal);
   $("newTaskBtn").addEventListener("click", () => openTaskModal(null));

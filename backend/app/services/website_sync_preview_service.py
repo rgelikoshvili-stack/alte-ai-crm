@@ -1,0 +1,437 @@
+from __future__ import annotations
+
+import hashlib
+import ipaddress
+import re
+import socket
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlparse
+from urllib.request import Request, urlopen
+from uuid import uuid4
+
+from app.schemas.knowledge import (
+    WebsiteSyncChunkPreview,
+    WebsiteSyncDiffRead,
+    WebsiteSyncPreviewRequest,
+    WebsiteSyncPreviewRunRead,
+    WebsiteSyncSourceCreate,
+    WebsiteSyncSourceRead,
+)
+
+APPROVED_WEBSITE_HOSTS = {"alte.edu.ge", "www.alte.edu.ge", "join.alte.edu.ge"}
+BLOCKED_PATH_PREFIXES = ("/admin", "/login", "/wp-admin", "/dashboard", "/api")
+MAX_PREVIEW_BYTES = 750_000
+DEFAULT_CHUNK_CHARS = 900
+SAFE_USER_AGENT = "AlteAI-WebsiteSyncPreview/10M draft-only"
+
+FIXTURE_HTML: dict[str, str] = {
+    "fixture://admissions-deadlines": """
+      <html lang="ka"><head><title>Admissions deadlines</title><link rel="canonical" href="https://alte.edu.ge/ka/admissions" /></head>
+      <body><header>Menu</header><nav>Home Admissions</nav><main>
+      <h1>მიღების ვადები</h1>
+      <p>2026 წლის მიღების ბოლო ვადა და რეგისტრაცია გამოქვეყნდება ოფიციალურ გვერდზე.</p>
+      <p>ჩარიცხვა და განაცხადის deadline უკავშირდება მიმდინარე მიღების სტატუსს.</p>
+      </main><footer>Contact footer</footer><script>bad()</script></body></html>
+    """,
+    "fixture://program-stable": """
+      <html lang="en"><head><title>Computer Science Program</title></head>
+      <body><main><h1>Computer Science</h1>
+      <p>The Computer Science bachelor program is a higher education program. The program level is bachelor and the volume is 240 ECTS credits.</p>
+      <p>Students study software engineering, databases, algorithms, and computer systems.</p>
+      </main></body></html>
+    """,
+    "fixture://tuition": """
+      <html lang="ka"><head><title>Tuition fees</title></head><body><main>
+      <h1>სწავლის საფასური</h1><p>მედიცინის პროგრამის საფასური არის 12000 GEL წელიწადში. გადახდის პირობები განახლებულია.</p>
+      </main></body></html>
+    """,
+    "fixture://noisy": """
+      <html><head><title>Noisy page</title><style>.x{display:none}</style></head><body>
+      <header>Header menu should disappear</header><nav>Navigation should disappear</nav>
+      <main><h1>Library rules</h1><p>Library users may access reading spaces and general student services.</p></main>
+      <footer>Footer should disappear</footer><script>console.log("remove")</script></body></html>
+    """,
+}
+
+_sources: dict[str, WebsiteSyncSourceRead] = {}
+_runs: dict[str, WebsiteSyncPreviewRunRead] = {}
+
+
+@dataclass
+class ExtractedPage:
+    title: str | None
+    canonical_url: str | None
+    text: str
+
+
+def reset_website_sync_preview_state() -> None:
+    _sources.clear()
+    _runs.clear()
+
+
+class ReadableHTMLExtractor(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.skip_depth = 0
+        self.title_depth = 0
+        self.title_parts: list[str] = []
+        self.text_parts: list[str] = []
+        self.canonical_url: str | None = None
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        attrs_dict = {key.lower(): value for key, value in attrs if key}
+        if tag in {"script", "style", "nav", "footer", "header", "noscript"}:
+            self.skip_depth += 1
+            return
+        if tag == "title":
+            self.title_depth += 1
+            return
+        if tag == "link" and attrs_dict.get("rel") == "canonical" and attrs_dict.get("href"):
+            self.canonical_url = attrs_dict["href"]
+        if tag in {"p", "div", "section", "article", "li", "h1", "h2", "h3", "br"} and not self.skip_depth:
+            self.text_parts.append(" ")
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        if tag in {"script", "style", "nav", "footer", "header", "noscript"} and self.skip_depth:
+            self.skip_depth -= 1
+            return
+        if tag == "title" and self.title_depth:
+            self.title_depth -= 1
+            return
+        if tag in {"p", "div", "section", "article", "li", "h1", "h2", "h3"} and not self.skip_depth:
+            self.text_parts.append(" ")
+
+    def handle_data(self, data: str) -> None:
+        if self.title_depth:
+            self.title_parts.append(data)
+        elif not self.skip_depth:
+            self.text_parts.append(data)
+
+
+def create_website_source(payload: WebsiteSyncSourceCreate) -> WebsiteSyncSourceRead:
+    validate_source_config(payload)
+    now = datetime.now(UTC)
+    source = WebsiteSyncSourceRead(
+        id=str(uuid4()),
+        name=payload.name.strip(),
+        base_url=canonicalize_url(payload.base_url),
+        allowed_paths=normalize_allowed_paths(payload.allowed_paths),
+        source_group_hint=payload.source_group_hint,
+        enabled=payload.enabled,
+        created_at=now,
+        updated_at=now,
+    )
+    _sources[source.id] = source
+    return source
+
+
+def list_website_sources() -> list[WebsiteSyncSourceRead]:
+    return sorted(_sources.values(), key=lambda item: item.created_at)
+
+
+def list_website_runs() -> list[WebsiteSyncPreviewRunRead]:
+    return sorted(_runs.values(), key=lambda item: item.created_at, reverse=True)
+
+
+def get_website_diff(run_id: str) -> WebsiteSyncDiffRead | None:
+    run = _runs.get(run_id)
+    if not run:
+        return None
+    return WebsiteSyncDiffRead(
+        run=run,
+        detected_changes=["Preview-only run created; publish/approval diffing is planned for Phase 10N/10O."],
+        conflicts=[],
+        approval_status="disabled_preview_only",
+    )
+
+
+def run_preview_sync(payload: WebsiteSyncPreviewRequest) -> WebsiteSyncPreviewRunRead:
+    source = _sources.get(payload.source_id)
+    if not source:
+        raise ValueError("Website sync source not found")
+    if not source.enabled:
+        raise ValueError("Website sync source is disabled")
+    if payload.mode != "single_url":
+        raise ValueError("Only single_url preview mode is supported")
+    if not payload.dry_run:
+        raise ValueError("Website sync preview must be dry_run=true in Phase 10M")
+
+    validate_preview_url(payload.url, source)
+    html = load_preview_html(payload.url)
+    extracted = extract_readable_html(html, base_url=payload.url)
+    text = extracted.text
+    if not text:
+        raise ValueError("No readable page text extracted")
+    chunks = chunk_text(text, limit=payload.limit or 5)
+    freshness_class = classify_freshness(text)
+    risk_flags = risk_flags_for_text(text, payload.url)
+    source_group_guess = guess_source_group(text, source.source_group_hint)
+    now = datetime.now(UTC)
+    run = WebsiteSyncPreviewRunRead(
+        run_id=str(uuid4()),
+        source_id=source.id,
+        status="draft",
+        source_url=payload.url,
+        canonical_url=extracted.canonical_url or canonicalize_url(payload.url),
+        page_title=extracted.title,
+        language=detect_language(text),
+        content_hash=hash_text(text),
+        extracted_text_preview=text[:1000],
+        chunks_count=len(chunks),
+        chunks=[
+            WebsiteSyncChunkPreview(index=index, text=chunk, content_hash=hash_text(chunk))
+            for index, chunk in enumerate(chunks)
+        ],
+        source_group_guess=source_group_guess,
+        freshness_class=freshness_class,
+        risk_flags=risk_flags,
+        public_usable=False,
+        created_at=now,
+    )
+    _runs[run.run_id] = run
+    updated = source.model_copy(update={"last_preview_run_id": run.run_id, "last_preview_at": now, "updated_at": now})
+    _sources[source.id] = updated
+    return run
+
+
+def validate_source_config(payload: WebsiteSyncSourceCreate) -> None:
+    if not payload.name.strip():
+        raise ValueError("Source name is required")
+    parsed = parse_http_url(payload.base_url)
+    if parsed.hostname not in APPROVED_WEBSITE_HOSTS:
+        raise ValueError("Website source domain is not approved")
+    if parsed.path and is_blocked_path(parsed.path):
+        raise ValueError("Website source base path is blocked")
+    normalize_allowed_paths(payload.allowed_paths)
+
+
+def validate_preview_url(url: str, source: WebsiteSyncSourceRead) -> None:
+    if url.startswith("fixture://"):
+        if url not in FIXTURE_HTML:
+            raise ValueError("Unknown website sync fixture")
+        return
+    parsed = parse_http_url(url)
+    if parsed.hostname not in APPROVED_WEBSITE_HOSTS:
+        raise ValueError("Preview URL domain is not approved")
+    source_host = urlparse(source.base_url).hostname
+    if source_host != parsed.hostname:
+        raise ValueError("Preview URL must match the configured source host")
+    if is_blocked_path(parsed.path):
+        raise ValueError("Preview URL path is blocked")
+    if parsed.query and len(parsed.query) > 80:
+        raise ValueError("Query-heavy preview URLs are blocked")
+    if source.allowed_paths and not any(parsed.path.startswith(path) for path in source.allowed_paths):
+        raise ValueError("Preview URL path is outside configured allowed paths")
+    reject_private_host(parsed.hostname or "")
+
+
+def parse_http_url(url: str):
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError("Only http/https URLs are allowed")
+    if not parsed.hostname:
+        raise ValueError("URL host is required")
+    if parsed.hostname in {"localhost", "127.0.0.1", "::1"}:
+        raise ValueError("Localhost URLs are not allowed outside fixture mode")
+    return parsed
+
+
+def reject_private_host(hostname: str) -> None:
+    try:
+        address = ipaddress.ip_address(hostname)
+    except ValueError:
+        try:
+            resolved = socket.gethostbyname(hostname)
+        except OSError:
+            return
+        address = ipaddress.ip_address(resolved)
+    if address.is_private or address.is_loopback or address.is_link_local or address.is_reserved:
+        raise ValueError("Private or local network hosts are not allowed")
+
+
+def is_blocked_path(path: str) -> bool:
+    lowered = (path or "/").lower()
+    return any(lowered == prefix or lowered.startswith(f"{prefix}/") for prefix in BLOCKED_PATH_PREFIXES)
+
+
+def normalize_allowed_paths(paths: list[str]) -> list[str]:
+    normalized = []
+    for path in paths:
+        value = (path or "").strip()
+        if not value:
+            continue
+        if not value.startswith("/"):
+            value = f"/{value}"
+        if is_blocked_path(value):
+            raise ValueError("Allowed paths cannot include admin/login/private paths")
+        normalized.append(value)
+    return normalized
+
+
+def canonicalize_url(url: str) -> str:
+    parsed = urlparse(url)
+    if url.startswith("fixture://"):
+        return url
+    path = parsed.path or "/"
+    return f"{parsed.scheme}://{parsed.hostname}{path}"
+
+
+def load_preview_html(url: str) -> str:
+    if url.startswith("fixture://"):
+        return FIXTURE_HTML[url]
+    request = Request(url, headers={"User-Agent": SAFE_USER_AGENT, "Accept": "text/html"})
+    with urlopen(request, timeout=5) as response:  # nosec B310 - URL is validated against approved domains first.
+        content_type = response.headers.get("Content-Type", "")
+        if "html" not in content_type.lower():
+            raise ValueError("Preview URL did not return HTML")
+        data = response.read(MAX_PREVIEW_BYTES + 1)
+    if len(data) > MAX_PREVIEW_BYTES:
+        raise ValueError("Preview HTML exceeds size limit")
+    return data.decode("utf-8", errors="replace")
+
+
+def extract_readable_html(html: str, *, base_url: str | None = None) -> ExtractedPage:
+    parser = ReadableHTMLExtractor()
+    parser.feed(html or "")
+    title = normalize_text(" ".join(parser.title_parts)) or None
+    text = normalize_text(" ".join(parser.text_parts))
+    canonical = parser.canonical_url
+    if canonical and base_url and not canonical.startswith(("http://", "https://", "fixture://")):
+        canonical = urljoin(base_url, canonical)
+    return ExtractedPage(title=title, canonical_url=canonical, text=text)
+
+
+def normalize_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value or "").strip()
+
+
+def chunk_text(text: str, *, limit: int) -> list[str]:
+    limit = max(1, min(limit, 20))
+    chunks = []
+    remaining = text
+    while remaining and len(chunks) < limit:
+        chunk = remaining[:DEFAULT_CHUNK_CHARS].strip()
+        chunks.append(chunk)
+        remaining = remaining[DEFAULT_CHUNK_CHARS:].strip()
+    return chunks
+
+
+def hash_text(text: str) -> str:
+    return hashlib.sha256((text or "").encode("utf-8")).hexdigest()
+
+
+def detect_language(text: str) -> str:
+    georgian = sum(1 for char in text if "\u10a0" <= char <= "\u10ff")
+    latin = sum(1 for char in text if "a" <= char.lower() <= "z")
+    if georgian > latin:
+        return "ka"
+    if latin:
+        return "en"
+    return "unknown"
+
+
+VARIABLE_MARKERS = [
+    "როდის",
+    "ვადა",
+    "ბოლო ვადა",
+    "რეგისტრაცია",
+    "ჩარიცხვა",
+    "მიღება",
+    "სემესტრი",
+    "კალენდარი",
+    "გამოცდა",
+    "საფასური",
+    "ფასი",
+    "რა ღირს",
+    "გრანტი",
+    "დაფინანსება",
+    "სტიპენდია",
+    "when",
+    "deadline",
+    "application deadline",
+    "admission deadline",
+    "registration",
+    "semester",
+    "calendar",
+    "exam",
+    "tuition",
+    "fee",
+    "cost",
+    "scholarship",
+    "grant",
+    "funding",
+    "latest",
+    "updated",
+    "current",
+]
+
+STABLE_MARKERS = [
+    "program description",
+    "program level",
+    "bachelor program",
+    "master program",
+    "ects",
+    "credits",
+    "academic integrity",
+    "library users",
+    "student services",
+    "ombudsman",
+    "policy",
+    "ზოგადი",
+    "პროგრამა",
+    "კრედიტ",
+    "კეთილსინდისიერება",
+    "ბიბლიოთეკ",
+]
+
+
+def classify_freshness(text: str) -> str:
+    lowered = (text or "").lower()
+    if any(marker.lower() in lowered for marker in VARIABLE_MARKERS):
+        return "variable"
+    if re.search(r"\b20(2[6-9]|3[0-5])\b", lowered):
+        return "variable"
+    if re.search(r"\b\d{1,2}[./-]\d{1,2}([./-]\d{2,4})?\b", lowered):
+        return "variable"
+    if re.search(r"\b\d+\s*(gel|lari|usd|eur)\b|₾\s*\d+", lowered):
+        return "variable"
+    if any(marker in lowered for marker in ["schedule", "period", "office hours", "contact", "განრიგ", "პერიოდ", "საკონტაქტ", "საათ"]):
+        return "variable"
+    if any(marker.lower() in lowered for marker in STABLE_MARKERS):
+        return "stable"
+    return "unknown"
+
+
+def guess_source_group(text: str, hint: str | None = None) -> str | None:
+    if hint:
+        return hint
+    lowered = (text or "").lower()
+    if any(marker in lowered for marker in ["tuition", "fee", "cost", "საფასური", "ფასი", "გრანტ", "დაფინანს"]):
+        return "finance_sources"
+    if any(marker in lowered for marker in ["admission", "deadline", "მიღება", "ჩარიცხვა", "ვადა"]):
+        return "admissions_rules"
+    if any(marker in lowered for marker in ["calendar", "semester", "exam", "კალენდარი", "სემესტრი", "გამოცდა"]):
+        return "academic_calendar_2025_2026"
+    if any(marker in lowered for marker in ["program", "ects", "credits", "პროგრამ", "კრედიტ"]):
+        return "program_catalog_sources"
+    if any(marker in lowered for marker in ["library", "ბიბლიოთეკ"]):
+        return "library_sources"
+    return None
+
+
+def risk_flags_for_text(text: str, url: str) -> list[str]:
+    flags = ["preview_only", "draft_not_public_usable"]
+    freshness = classify_freshness(text)
+    if freshness == "variable":
+        flags.append("freshness_sensitive")
+    if re.search(r"\b20(2[6-9]|3[0-5])\b", text or ""):
+        flags.append("year_specific")
+    if re.search(r"\b\d+\s*(gel|lari|usd|eur)\b|₾\s*\d+", (text or "").lower()):
+        flags.append("price_detected")
+    if url.startswith("fixture://"):
+        flags.append("fixture_input")
+    return flags
