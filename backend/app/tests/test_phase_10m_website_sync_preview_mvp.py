@@ -100,6 +100,11 @@ def test_phase_10m_preview_fixture_creates_draft_run_public_unusable(client):
     assert run["freshness_class"] == "variable"
     assert run["source_group_guess"] == "admissions_rules"
     assert run["chunks_count"] >= 1
+    assert "მიღების ვადები" in run["extracted_text_preview"]
+    assert "2026 წლის მიღების ბოლო ვადა" in run["extracted_text_preview"]
+    assert "ჩარიცხვა და განაცხადის deadline" in run["chunks"][0]["text"]
+    assert "áƒ" not in run["extracted_text_preview"]
+    assert "áƒ" not in run["chunks"][0]["text"]
     assert "script" not in run["extracted_text_preview"].lower()
     assert "Footer" not in run["extracted_text_preview"]
     assert "draft_not_public_usable" in run["risk_flags"]
