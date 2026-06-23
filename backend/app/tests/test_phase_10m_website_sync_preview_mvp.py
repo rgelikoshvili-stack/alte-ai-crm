@@ -110,10 +110,10 @@ def test_phase_10m_preview_fixture_creates_draft_run_public_unusable(client):
 
     diff = client.get(f"/api/knowledge/sync/website/diff/{run['run_id']}")
     assert diff.status_code == 200
-    assert diff.json()["approval_status"] == "disabled_preview_only"
-
-    approve = client.post(f"/api/knowledge/sync/website/approve/{run['run_id']}")
-    assert approve.status_code == 501
+    diff_payload = diff.json()
+    assert diff_payload["approval_status"] == "draft"
+    assert diff_payload["approval_allowed"] is True
+    assert diff_payload["public_usable"] is False
 
 
 def test_phase_10m_extractor_removes_noisy_layout():

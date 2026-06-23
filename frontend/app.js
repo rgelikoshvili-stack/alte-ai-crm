@@ -10,6 +10,8 @@ const state = {
   activeView: localStorage.getItem("alte_active_view") || "dashboard",
   pipelines: [],
   websiteSyncSources: [],
+  websiteSyncApproved: [],
+  websiteSyncLastRun: null,
   refreshTimer: null,
 };
 
@@ -836,6 +838,7 @@ async function addWebsiteSyncSource() {
 function renderWebsiteSyncPreview(run) {
   const target = $("websiteSyncPreviewResult");
   if (!target) return;
+  state.websiteSyncLastRun = run || null;
   if (!run) {
     target.innerHTML = listEmpty("Run a preview to inspect extracted draft content.");
     return;
@@ -854,6 +857,10 @@ function renderWebsiteSyncPreview(run) {
         <div class="field"><span>Public usable</span><strong>${run.public_usable ? "true" : "false"}</strong></div>
       </div>
       <div class="badge-row">${(run.risk_flags || []).map((flag) => badge(flag, "handover")).join("")}</div>
+      <div class="action-row" style="margin-top:8px">
+        <button class="primary-action" id="websiteSyncApproveBtn" data-run-id="${escapeHtml(run.run_id)}" type="button" ${run.status !== "draft" ? "disabled" : ""}>Approve</button>
+        <button class="secondary-action" id="websiteSyncRejectBtn" data-run-id="${escapeHtml(run.run_id)}" type="button" ${run.status !== "draft" ? "disabled" : ""}>Reject</button>
+      </div>
       <textarea class="knowledge-edit-textarea" rows="7" readonly>${escapeHtml(run.extracted_text_preview || "")}</textarea>
       <div class="list">
         ${(run.chunks || []).map((chunk) => `
@@ -865,6 +872,8 @@ function renderWebsiteSyncPreview(run) {
       </div>
     </article>
   `;
+  $("websiteSyncApproveBtn")?.addEventListener("click", () => approveWebsiteSyncRun(run.run_id).catch((error) => setStatus(error.message, true)));
+  $("websiteSyncRejectBtn")?.addEventListener("click", () => rejectWebsiteSyncRun(run.run_id).catch((error) => setStatus(error.message, true)));
 }
 
 async function runWebsiteSyncPreview() {
@@ -884,6 +893,74 @@ async function runWebsiteSyncPreview() {
   renderWebsiteSyncPreview(run);
   await loadWebsiteSyncSources();
   setStatus("Preview sync completed. Draft content remains public_usable=false.");
+}
+
+function renderApprovedWebsiteSync(chunks) {
+  const target = $("websiteSyncApproved");
+  if (!target) return;
+  if (!chunks.length) {
+    target.innerHTML = listEmpty("No approved website sync content.");
+    return;
+  }
+  const byVersion = chunks.reduce((acc, chunk) => {
+    const key = chunk.version || chunk.run_id;
+    acc[key] = acc[key] || [];
+    acc[key].push(chunk);
+    return acc;
+  }, {});
+  target.innerHTML = Object.entries(byVersion).map(([version, items]) => {
+    const first = items[0] || {};
+    return `
+      <article class="list-item">
+        <div class="item-title">
+          <span>${escapeHtml(first.page_title || first.source_url || "Approved website content")}</span>
+          <span>${badge(first.status || "approved", first.status === "archived" ? "" : "approved")} ${badge(first.freshness_class || "unknown")}</span>
+        </div>
+        <div class="item-meta">${escapeHtml(first.canonical_url || first.source_url || "")}</div>
+        <div class="field-grid">
+          <div class="field"><span>Source group</span><strong>${escapeHtml(first.source_group || "-")}</strong></div>
+          <div class="field"><span>Chunks</span><strong>${items.length}</strong></div>
+          <div class="field"><span>Priority</span><strong>${Number(first.priority || 100)}</strong></div>
+          <div class="field"><span>Public usable</span><strong>${first.public_usable ? "true" : "false"}</strong></div>
+        </div>
+        <div class="item-meta">${escapeHtml((first.chunk_text || "").slice(0, 260))}</div>
+        <div class="action-row" style="margin-top:8px">
+          <button class="secondary-action website-sync-archive-btn" data-version="${escapeHtml(version)}" type="button" ${first.status === "archived" ? "disabled" : ""}>Archive</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+  document.querySelectorAll(".website-sync-archive-btn").forEach((button) => {
+    button.addEventListener("click", () => archiveWebsiteSyncVersion(button.dataset.version).catch((error) => setStatus(error.message, true)));
+  });
+}
+
+async function loadApprovedWebsiteSync() {
+  const chunks = await apiGet("/api/knowledge/sync/website/approved");
+  state.websiteSyncApproved = chunks;
+  renderApprovedWebsiteSync(chunks);
+}
+
+async function approveWebsiteSyncRun(runId) {
+  const result = await apiPost(`/api/knowledge/sync/website/approve/${encodeURIComponent(runId)}`, {});
+  setStatus(`Website sync run approved. ${result.approved_count} chunks are public_usable=true.`);
+  await Promise.all([loadWebsiteSyncSources(), loadApprovedWebsiteSync()]);
+  const diff = await apiGet(`/api/knowledge/sync/website/diff/${encodeURIComponent(runId)}`);
+  renderWebsiteSyncPreview(diff.run);
+}
+
+async function rejectWebsiteSyncRun(runId) {
+  await apiPost(`/api/knowledge/sync/website/reject/${encodeURIComponent(runId)}`, {});
+  setStatus("Website sync run rejected. Draft content remains public_usable=false.");
+  const diff = await apiGet(`/api/knowledge/sync/website/diff/${encodeURIComponent(runId)}`);
+  renderWebsiteSyncPreview(diff.run);
+  await loadApprovedWebsiteSync();
+}
+
+async function archiveWebsiteSyncVersion(versionId) {
+  const result = await apiPost(`/api/knowledge/sync/website/rollback/${encodeURIComponent(versionId)}`, {});
+  setStatus(`Website sync version archived. ${result.archived_count} chunks are public_usable=false.`);
+  await loadApprovedWebsiteSync();
 }
 
 async function loadKnowledge() {
@@ -1066,6 +1143,7 @@ function syncSettings() {
   loadWebsiteSyncSources()
     .then(() => renderWebsiteSyncPreview(null))
     .catch((error) => setStatus(error.message, true));
+  loadApprovedWebsiteSync().catch((error) => setStatus(error.message, true));
 }
 
 async function loginOperator() {

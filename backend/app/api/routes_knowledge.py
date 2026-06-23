@@ -15,9 +15,13 @@ from app.schemas.knowledge import (
     KnowledgeSourceUpdate,
     OperatorReplyKnowledgeCandidateCreate,
     OperatorReplyKnowledgeCandidateRead,
+    WebsiteApprovedChunkRead,
+    WebsiteSyncApproveResponse,
     WebsiteSyncDiffRead,
     WebsiteSyncPreviewRequest,
     WebsiteSyncPreviewRunRead,
+    WebsiteSyncRejectResponse,
+    WebsiteSyncRollbackResponse,
     WebsiteSyncSourceCreate,
     WebsiteSyncSourceRead,
 )
@@ -35,10 +39,14 @@ from app.services.knowledge_service import (
     update_knowledge_source,
 )
 from app.services.website_sync_preview_service import (
+    approve_website_run,
+    archive_approved_website_version,
     create_website_source,
     get_website_diff,
+    list_approved_website_chunks,
     list_website_runs,
     list_website_sources,
+    reject_website_run,
     run_preview_sync,
 )
 
@@ -85,12 +93,35 @@ async def get_website_sync_diff(run_id: str):
     return diff
 
 
-@api_router.post("/sync/website/approve/{run_id}")
-async def approve_website_sync_disabled(run_id: str):
-    raise HTTPException(
-        status_code=501,
-        detail="Approval/publish is planned for Phase 10N/10O.",
-    )
+@api_router.post("/sync/website/approve/{run_id}", response_model=WebsiteSyncApproveResponse)
+async def approve_website_sync_run(run_id: str):
+    try:
+        return approve_website_run(run_id, approved_by="local_admin")
+    except ValueError as exc:
+        status_code = 404 if "not found" in str(exc).lower() else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+@api_router.post("/sync/website/reject/{run_id}", response_model=WebsiteSyncRejectResponse)
+async def reject_website_sync_run(run_id: str):
+    try:
+        return reject_website_run(run_id)
+    except ValueError as exc:
+        status_code = 404 if "not found" in str(exc).lower() else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+@api_router.get("/sync/website/approved", response_model=list[WebsiteApprovedChunkRead])
+async def get_approved_website_sync_chunks():
+    return list_approved_website_chunks()
+
+
+@api_router.post("/sync/website/rollback/{version_id}", response_model=WebsiteSyncRollbackResponse)
+async def rollback_website_sync_version(version_id: str):
+    try:
+        return archive_approved_website_version(version_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @router.post("/sources", response_model=KnowledgeSourceRead)

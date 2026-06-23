@@ -39,6 +39,10 @@ from app.services.lead_service import update_lead
 from app.services.qualification_service import apply_qualification_to_lead_create, build_qualification
 from app.services.task_service import create_task
 from app.services.knowledge_service import search_knowledge_snippets
+from app.services.website_sync_preview_service import (
+    OFFICIAL_WEBSITE_SOURCE_LABEL,
+    approved_website_answer_for_question,
+)
 
 
 CONTACT_GATED_LEAD_INTENTS = {"admission_interest", "consultation_request", "international_admission", "medicine_admission"}
@@ -86,6 +90,8 @@ PUBLIC_SOURCE_GROUP_LABELS = {
     "master_rules": "მაგისტრატურის დებულება",
 }
 PUBLIC_SOURCE_LABEL_WHITELIST = set(PUBLIC_SOURCE_GROUP_LABELS.values())
+PUBLIC_SOURCE_GROUP_LABELS["approved_website_sync"] = OFFICIAL_WEBSITE_SOURCE_LABEL
+PUBLIC_SOURCE_LABEL_WHITELIST.add(OFFICIAL_WEBSITE_SOURCE_LABEL)
 
 GEORGIAN_RETRIEVAL_ALIASES = [
     (
@@ -228,8 +234,15 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
     }:
         route_decision = deterministic_route_decision
         intent_router_meta["deterministic_clarification_override"] = True
-    if route_decision.clarification_required:
+    approved_website_precheck = approved_website_answer_for_question(
+        payload.message,
+        language=payload.language or conversation.language,
+        source_group=route_decision.primary_source_group,
+    ) or approved_website_answer_for_question(payload.message, language=payload.language or conversation.language)
+    if route_decision.clarification_required and not approved_website_precheck:
         return await handle_clarification_response(db, conversation, user_message, route_decision)
+    if approved_website_precheck:
+        object.__setattr__(route_decision, "clarification_required", False)
 
     initial_knowledge_context = await retrieve_initial_knowledge_context(db, payload.message, route_decision)
     knowledge = {"answer_source_status": "not_required", "used_sources": [], "snippet_titles": []}
@@ -364,6 +377,7 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
             pass
         else:
             analysis.reply = build_no_source_reply(analysis)
+    apply_approved_website_answer_override(payload.message, analysis, knowledge, route_decision)
     orchestrator_decision = await cloud_ai_orchestrator_reasoning_fallback(
         db,
         conversation.id,
@@ -535,6 +549,43 @@ async def handle_message(db: AsyncSession, payload: ChatMessageRequest) -> ChatM
         contact_cta_allowed=contact_cta_allowed(payload),
         contact_write_allowed=False,
     )
+
+
+def apply_approved_website_answer_override(
+    message: str,
+    analysis: AIAnalysisResult,
+    knowledge: dict,
+    route_decision: KnowledgeRouteDecision,
+) -> None:
+    website_answer = approved_website_answer_for_question(
+        message,
+        language=analysis.language,
+        source_group=route_decision.primary_source_group,
+    )
+    if not website_answer:
+        website_answer = approved_website_answer_for_question(message, language=analysis.language)
+    if not website_answer:
+        return
+    label = str(website_answer.get("public_source_label") or OFFICIAL_WEBSITE_SOURCE_LABEL)
+    source_group = str(website_answer.get("source_group") or "approved_website_sync")
+    analysis.reply = clean_public_answer_text(hide_internal_source_identifiers(str(website_answer["answer"])))
+    analysis.intent = "general_info"
+    analysis.should_create_lead = False
+    analysis.should_handover = False
+    analysis.used_sources = [label]
+    if "approved_website_sync_answer" not in analysis.risk_flags:
+        analysis.risk_flags.append("approved_website_sync_answer")
+    knowledge.clear()
+    knowledge.update(
+        {
+            "answer_source_status": "answered_from_approved_source",
+            "used_sources": [label],
+            "snippet_titles": [label],
+            "public_source_label": label,
+            "website_sync": True,
+        }
+    )
+    object.__setattr__(route_decision, "primary_source_group", source_group)
 
 
 def should_use_legacy_ai_analysis(intent_route) -> bool:
@@ -1658,7 +1709,7 @@ def validate_public_chat_answer(
         return
 
     future_calendar_reply = unsupported_future_calendar_reply((message or "").lower(), is_ka)
-    if future_calendar_reply and (
+    if not knowledge.get("website_sync") and future_calendar_reply and (
         is_explicit_academic_calendar_override((message or "").lower())
         or
         route_decision.primary_source_group == "academic_calendar_2025_2026"
@@ -1678,7 +1729,11 @@ def validate_public_chat_answer(
         if "answer_validator_empty_reply" not in analysis.risk_flags:
             analysis.risk_flags.append("answer_validator_empty_reply")
 
-    if route_decision.primary_source_group == "finance_sources" and finance_answer_invents_exact_amount(analysis.reply):
+    if (
+        not knowledge.get("website_sync")
+        and route_decision.primary_source_group == "finance_sources"
+        and finance_answer_invents_exact_amount(analysis.reply)
+    ):
         analysis.reply = finance_exact_amount_fallback(is_ka)
         analysis.should_create_lead = False
         if "answer_validator_finance_exact_amount_guard" not in analysis.risk_flags:
@@ -1700,6 +1755,8 @@ async def cloud_ai_orchestrator_reasoning_fallback(
     This is deliberately constrained to metadata and recent-turn context. It does
     not add Cloud AI to /api/knowledge/ask and does not perform writes.
     """
+    if knowledge.get("website_sync"):
+        return None
     recent_messages = await recent_messages_with_metadata(db, conversation_id, limit=8)
     lowered = (message or "").lower()
     is_ka = analysis.language == "ka" or any("\u10a0" <= char <= "\u10ff" for char in message or "")
@@ -3313,6 +3370,10 @@ def response_public_source_label(knowledge: dict, *, should_handover: bool, sour
         return None
     if knowledge.get("answer_source_status") != "answered_from_approved_source":
         return None
+    if knowledge.get("website_sync"):
+        trusted_label = str(knowledge.get("public_source_label") or "").strip()
+        if trusted_label in PUBLIC_SOURCE_LABEL_WHITELIST and safe_public_source_label(trusted_label):
+            return trusted_label
     label = PUBLIC_SOURCE_GROUP_LABELS.get(str(source_group or ""))
     if label in PUBLIC_SOURCE_LABEL_WHITELIST:
         return label

@@ -167,7 +167,8 @@ class KnowledgeAskResponse(BaseModel):
 
 
 WebsiteFreshnessClass = Literal["variable", "stable", "unknown"]
-WebsiteSyncStatus = Literal["draft"]
+WebsiteSyncStatus = Literal["draft", "approved", "rejected"]
+WebsiteApprovedStatus = Literal["approved", "archived"]
 WebsiteSyncMode = Literal["single_url"]
 
 
@@ -229,7 +230,56 @@ class WebsiteSyncDiffRead(BaseModel):
     run: WebsiteSyncPreviewRunRead
     detected_changes: list[str] = []
     conflicts: list[str] = []
-    approval_status: str = "disabled_preview_only"
+    approval_status: str = "draft_review"
+    approval_allowed: bool = False
+    risk_flags: list[str] = []
+    freshness_class: WebsiteFreshnessClass | None = None
+    source_group_guess: str | None = None
+    public_usable: bool = False
+
+
+class WebsiteApprovedChunkRead(BaseModel):
+    approved_chunk_id: str
+    run_id: str
+    source_id: str
+    source_url: str
+    canonical_url: str | None = None
+    page_title: str | None = None
+    language: KnowledgeLanguage | Literal["unknown"] = "unknown"
+    content_hash: str
+    approved_at: datetime
+    approved_by: str
+    version: str
+    source_group: str | None = None
+    freshness_class: WebsiteFreshnessClass
+    priority: int = 100
+    status: WebsiteApprovedStatus = "approved"
+    chunk_text: str
+    chunk_index: int
+    risk_flags: list[str] = []
+    public_usable: bool = True
+    clean_source_label: str
+
+
+class WebsiteSyncApproveResponse(BaseModel):
+    run_id: str
+    status: str
+    approved_count: int
+    public_usable: bool
+    source_labels: list[str] = []
+
+
+class WebsiteSyncRejectResponse(BaseModel):
+    run_id: str
+    status: str
+    public_usable: bool = False
+
+
+class WebsiteSyncRollbackResponse(BaseModel):
+    version_id: str
+    status: str
+    archived_count: int
+    public_usable: bool = False
 
 
 class KnowledgeReviewItem(BaseModel):

@@ -12,10 +12,14 @@ from urllib.request import Request, urlopen
 from uuid import uuid4
 
 from app.schemas.knowledge import (
+    WebsiteApprovedChunkRead,
+    WebsiteSyncApproveResponse,
     WebsiteSyncChunkPreview,
     WebsiteSyncDiffRead,
     WebsiteSyncPreviewRequest,
     WebsiteSyncPreviewRunRead,
+    WebsiteSyncRejectResponse,
+    WebsiteSyncRollbackResponse,
     WebsiteSyncSourceCreate,
     WebsiteSyncSourceRead,
 )
@@ -25,6 +29,7 @@ BLOCKED_PATH_PREFIXES = ("/admin", "/login", "/wp-admin", "/dashboard", "/api")
 MAX_PREVIEW_BYTES = 750_000
 DEFAULT_CHUNK_CHARS = 900
 SAFE_USER_AGENT = "AlteAI-WebsiteSyncPreview/10M draft-only"
+OFFICIAL_WEBSITE_SOURCE_LABEL = "\u10d0\u10da\u10e2\u10d4\u10e1 \u10dd\u10e4\u10d8\u10ea\u10d8\u10d0\u10da\u10e3\u10e0\u10d8 \u10d5\u10d4\u10d1\u10d2\u10d5\u10d4\u10e0\u10d3\u10d8"
 
 FIXTURE_HTML: dict[str, str] = {
     "fixture://admissions-deadlines": """
@@ -55,8 +60,16 @@ FIXTURE_HTML: dict[str, str] = {
     """,
 }
 
+FIXTURE_HTML["fixture://tuition-en"] = """
+  <html lang="en"><head><title>Medicine tuition fee</title></head><body><main>
+  <h1>Medicine tuition fee</h1>
+  <p>The Medicine/MD program tuition fee is 12000 GEL per academic year. Payment terms are current website information.</p>
+  </main></body></html>
+"""
+
 _sources: dict[str, WebsiteSyncSourceRead] = {}
 _runs: dict[str, WebsiteSyncPreviewRunRead] = {}
+_approved_chunks: dict[str, WebsiteApprovedChunkRead] = {}
 
 
 @dataclass
@@ -69,6 +82,7 @@ class ExtractedPage:
 def reset_website_sync_preview_state() -> None:
     _sources.clear()
     _runs.clear()
+    _approved_chunks.clear()
 
 
 class ReadableHTMLExtractor(HTMLParser):
@@ -143,10 +157,159 @@ def get_website_diff(run_id: str) -> WebsiteSyncDiffRead | None:
         return None
     return WebsiteSyncDiffRead(
         run=run,
-        detected_changes=["Preview-only run created; publish/approval diffing is planned for Phase 10N/10O."],
+        detected_changes=["Draft extraction is ready for admin review."],
         conflicts=[],
-        approval_status="disabled_preview_only",
+        approval_status=run.status,
+        approval_allowed=run.status == "draft",
+        risk_flags=run.risk_flags,
+        freshness_class=run.freshness_class,
+        source_group_guess=run.source_group_guess,
+        public_usable=run.public_usable,
     )
+
+
+def approve_website_run(run_id: str, *, approved_by: str = "local_admin") -> WebsiteSyncApproveResponse:
+    run = _runs.get(run_id)
+    if not run:
+        raise ValueError("Website sync preview run not found")
+    if run.status != "draft":
+        raise ValueError("Only draft website sync runs can be approved")
+    now = datetime.now(UTC)
+    version = f"website_sync:{run.run_id}"
+    source_labels: list[str] = []
+    for chunk in run.chunks:
+        label = clean_source_label(run)
+        if label not in source_labels:
+            source_labels.append(label)
+        approved = WebsiteApprovedChunkRead(
+            approved_chunk_id=str(uuid4()),
+            run_id=run.run_id,
+            source_id=run.source_id,
+            source_url=run.source_url,
+            canonical_url=run.canonical_url,
+            page_title=run.page_title,
+            language=run.language,
+            content_hash=chunk.content_hash,
+            approved_at=now,
+            approved_by=approved_by or "local_admin",
+            version=version,
+            source_group=run.source_group_guess,
+            freshness_class=run.freshness_class,
+            priority=100,
+            status="approved",
+            chunk_text=chunk.text,
+            chunk_index=chunk.index,
+            risk_flags=[flag for flag in run.risk_flags if flag != "draft_not_public_usable"],
+            public_usable=True,
+            clean_source_label=label,
+        )
+        _approved_chunks[approved.approved_chunk_id] = approved
+    _runs[run_id] = run.model_copy(update={"status": "approved", "public_usable": False})
+    return WebsiteSyncApproveResponse(
+        run_id=run_id,
+        status="approved",
+        approved_count=len(run.chunks),
+        public_usable=True,
+        source_labels=source_labels,
+    )
+
+
+def reject_website_run(run_id: str) -> WebsiteSyncRejectResponse:
+    run = _runs.get(run_id)
+    if not run:
+        raise ValueError("Website sync preview run not found")
+    if run.status != "draft":
+        raise ValueError("Only draft website sync runs can be rejected")
+    _runs[run_id] = run.model_copy(update={"status": "rejected", "public_usable": False})
+    return WebsiteSyncRejectResponse(run_id=run_id, status="rejected", public_usable=False)
+
+
+def list_approved_website_chunks() -> list[WebsiteApprovedChunkRead]:
+    return sorted(_approved_chunks.values(), key=lambda item: (item.approved_at, item.chunk_index), reverse=True)
+
+
+def archive_approved_website_version(version_id: str) -> WebsiteSyncRollbackResponse:
+    archived_count = 0
+    for chunk_id, chunk in list(_approved_chunks.items()):
+        if chunk.version == version_id or chunk.run_id == version_id:
+            _approved_chunks[chunk_id] = chunk.model_copy(update={"status": "archived", "public_usable": False})
+            archived_count += 1
+    if archived_count == 0:
+        raise ValueError("Approved website version not found")
+    return WebsiteSyncRollbackResponse(
+        version_id=version_id,
+        status="archived",
+        archived_count=archived_count,
+        public_usable=False,
+    )
+
+
+def approved_website_answer_for_question(
+    question: str,
+    *,
+    language: str | None = None,
+    source_group: str | None = None,
+) -> dict | None:
+    result = search_approved_website_knowledge(question, language=language, source_group=source_group, limit=1)
+    if not result:
+        return None
+    chunk, score = result[0]
+    if score < 2 and classify_freshness(question) != "variable":
+        return None
+    return {
+        "answer": chunk.chunk_text,
+        "status": "answered",
+        "source_group": chunk.source_group or "approved_website_sync",
+        "public_source_label": chunk.clean_source_label,
+        "confidence": min(0.98, 0.72 + (score / 20)),
+        "freshness_class": chunk.freshness_class,
+        "chunk": chunk,
+    }
+
+
+def search_approved_website_knowledge(
+    question: str,
+    *,
+    language: str | None = None,
+    source_group: str | None = None,
+    limit: int = 3,
+) -> list[tuple[WebsiteApprovedChunkRead, int]]:
+    query = normalize_text(question).lower()
+    if not query:
+        return []
+    query_freshness = classify_freshness(query)
+    query_tokens = search_tokens(query)
+    scored: list[tuple[WebsiteApprovedChunkRead, int]] = []
+    for chunk in _approved_chunks.values():
+        if chunk.status != "approved" or not chunk.public_usable:
+            continue
+        if language and chunk.language not in {language, "unknown"}:
+            continue
+        if source_group and chunk.source_group and source_group != chunk.source_group:
+            continue
+        if query_freshness == "variable" and chunk.freshness_class != "variable":
+            continue
+        text = f"{chunk.page_title or ''} {chunk.chunk_text}".lower()
+        score = sum(1 for token in query_tokens if token in text)
+        if query_freshness == "variable" and chunk.freshness_class == "variable":
+            score += 3
+        if chunk.source_group and source_group and chunk.source_group == source_group:
+            score += 2
+        if score > 0:
+            scored.append((chunk, score))
+    return sorted(scored, key=lambda item: (item[1], item[0].priority, item[0].approved_at), reverse=True)[:limit]
+
+
+def search_tokens(value: str) -> list[str]:
+    return [
+        token
+        for token in re.findall(r"[\w\u10a0-\u10ff]+", value.lower())
+        if len(token) >= 3 and token not in {"the", "and", "what", "when", "how", "does", "this"}
+    ]
+
+
+def clean_source_label(run: WebsiteSyncPreviewRunRead) -> str:
+    return OFFICIAL_WEBSITE_SOURCE_LABEL
 
 
 def run_preview_sync(payload: WebsiteSyncPreviewRequest) -> WebsiteSyncPreviewRunRead:

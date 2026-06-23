@@ -305,9 +305,9 @@
             <div class="panel-header">
               <h2>Knowledge - Website Sync</h2>
             </div>
-            <div class="settings-notice">
-              Draft website sync content is not used by the public chatbot until approved in a later approval phase.
-            </div>
+              <div class="settings-notice">
+                Draft content is never used by the public chatbot. Only approved website content can be used, and variable information uses website-first priority after approval.
+              </div>
             <div class="settings-grid">
               <label>
                 Source name
@@ -348,11 +348,15 @@
                 <h3>Sources</h3>
                 <div id="websiteSyncSources" class="list"></div>
               </section>
-              <section>
-                <h3>Preview result</h3>
-                <div id="websiteSyncPreviewResult" class="list"></div>
-              </section>
-            </div>
+                <section>
+                  <h3>Preview result</h3>
+                  <div id="websiteSyncPreviewResult" class="list"></div>
+                </section>
+                <section>
+                  <h3>Approved content</h3>
+                  <div id="websiteSyncApproved" class="list"></div>
+                </section>
+              </div>
           </section>
         </section>
       </main>

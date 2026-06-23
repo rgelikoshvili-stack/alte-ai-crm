@@ -22,6 +22,7 @@ from app.services.knowledge_routing_service import (
     format_clarification_reply,
     source_group_config,
 )
+from app.services.website_sync_preview_service import approved_website_answer_for_question
 
 
 async def create_knowledge_source(db: AsyncSession, payload: KnowledgeSourceCreate) -> KnowledgeSource:
@@ -373,6 +374,24 @@ async def ask_knowledge_deterministic(db: AsyncSession, payload: KnowledgeAskReq
             source_group=None,
             public_source_label=None,
             confidence=1.0,
+            clarification_options=[],
+            used_claude=False,
+        )
+
+    approved_website_answer = approved_website_answer_for_question(
+        question,
+        language=language,
+        source_group=payload.source_group,
+    )
+    if approved_website_answer:
+        return KnowledgeAskResponse(
+            answer=chat_helpers.clean_public_answer_text(
+                chat_helpers.hide_internal_source_identifiers(str(approved_website_answer["answer"]))
+            ),
+            status="answered",
+            source_group=approved_website_answer.get("source_group"),
+            public_source_label=approved_website_answer.get("public_source_label"),
+            confidence=float(approved_website_answer.get("confidence") or 0.9),
             clarification_options=[],
             used_claude=False,
         )
