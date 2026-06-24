@@ -112,8 +112,8 @@ async def reject_website_sync_run(run_id: str):
 
 
 @api_router.get("/sync/website/approved", response_model=list[WebsiteApprovedChunkRead])
-async def get_approved_website_sync_chunks():
-    return list_approved_website_chunks()
+async def get_approved_website_sync_chunks(include_archived: bool = False):
+    return list_approved_website_chunks(include_archived=include_archived)
 
 
 @api_router.post("/sync/website/rollback/{version_id}", response_model=WebsiteSyncRollbackResponse)

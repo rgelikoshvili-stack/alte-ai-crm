@@ -228,14 +228,27 @@ class WebsiteSyncPreviewRunRead(BaseModel):
 
 class WebsiteSyncDiffRead(BaseModel):
     run: WebsiteSyncPreviewRunRead
+    run_id: str | None = None
+    source_url: str | None = None
+    canonical_url: str | None = None
+    page_title: str | None = None
+    status: str | None = None
     detected_changes: list[str] = []
     conflicts: list[str] = []
     approval_status: str = "draft_review"
     approval_allowed: bool = False
+    rejection_allowed: bool = False
+    archive_available: bool = False
     risk_flags: list[str] = []
     freshness_class: WebsiteFreshnessClass | None = None
     source_group_guess: str | None = None
     public_usable: bool = False
+    chunks_preview: list[WebsiteSyncChunkPreview] = []
+    old_approved_content: list["WebsiteApprovedChunkRead"] = []
+    added_lines: list[str] = []
+    removed_lines: list[str] = []
+    unchanged_summary: str | None = None
+    content_hash_changed: bool = False
 
 
 class WebsiteApprovedChunkRead(BaseModel):

@@ -110,7 +110,8 @@ def test_phase_10n_archive_approved_version_disables_public_use(client):
     assert rollback.json()["status"] == "archived"
     assert rollback.json()["public_usable"] is False
 
-    approved = client.get("/api/knowledge/sync/website/approved").json()
+    assert client.get("/api/knowledge/sync/website/approved").json() == []
+    approved = client.get("/api/knowledge/sync/website/approved?include_archived=true").json()
     assert approved
     assert all(chunk["status"] == "archived" for chunk in approved)
     assert all(chunk["public_usable"] is False for chunk in approved)

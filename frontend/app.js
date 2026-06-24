@@ -876,6 +876,45 @@ function renderWebsiteSyncPreview(run) {
   $("websiteSyncRejectBtn")?.addEventListener("click", () => rejectWebsiteSyncRun(run.run_id).catch((error) => setStatus(error.message, true)));
 }
 
+function renderWebsiteSyncDiff(diff) {
+  const target = $("websiteSyncDiff");
+  if (!target) return;
+  if (!diff) {
+    target.innerHTML = listEmpty("Run a preview to review changes before approval.");
+    return;
+  }
+  const highRisk = (diff.risk_flags || []).filter((flag) => String(flag).startsWith("high_risk_"));
+  target.innerHTML = `
+    <article class="list-item">
+      <div class="item-title">
+        <span>${escapeHtml(diff.page_title || "Review")}</span>
+        <span>${diff.approval_allowed ? badge("approval allowed", "approved") : badge("approval closed")} ${diff.content_hash_changed ? badge("hash changed", "handover") : badge("same hash", "approved")}</span>
+      </div>
+      <div class="item-meta">${escapeHtml(diff.canonical_url || diff.source_url || "")}</div>
+      <div class="field-grid">
+        <div class="field"><span>Status</span><strong>${escapeHtml(diff.status || "-")}</strong></div>
+        <div class="field"><span>Freshness</span><strong>${escapeHtml(diff.freshness_class || "-")}</strong></div>
+        <div class="field"><span>Source group</span><strong>${escapeHtml(diff.source_group_guess || "-")}</strong></div>
+        <div class="field"><span>Archive available</span><strong>${diff.archive_available ? "true" : "false"}</strong></div>
+      </div>
+      <div class="settings-notice">${escapeHtml(diff.unchanged_summary || "No diff summary.")}</div>
+      ${highRisk.length ? `<div class="settings-notice danger">High-risk review: ${highRisk.map((flag) => escapeHtml(flag)).join(", ")}</div>` : ""}
+      <div class="badge-row">${(diff.risk_flags || []).map((flag) => badge(flag, String(flag).startsWith("high_risk_") ? "handover" : "")).join("")}</div>
+      <div class="split-grid">
+        <section>
+          <h4>Added</h4>
+          <div class="list">${(diff.added_lines || []).length ? diff.added_lines.map((line) => `<div class="item-meta">${escapeHtml(line)}</div>`).join("") : listEmpty("No added lines.")}</div>
+        </section>
+        <section>
+          <h4>Removed</h4>
+          <div class="list">${(diff.removed_lines || []).length ? diff.removed_lines.map((line) => `<div class="item-meta">${escapeHtml(line)}</div>`).join("") : listEmpty("No removed lines.")}</div>
+        </section>
+      </div>
+      <div class="item-meta">Previous approved chunks: ${Number((diff.old_approved_content || []).length)}</div>
+    </article>
+  `;
+}
+
 async function runWebsiteSyncPreview() {
   const sourceId = $("websiteSyncSourceSelect").value;
   const url = $("websiteSyncPreviewUrl").value.trim();
@@ -891,6 +930,8 @@ async function runWebsiteSyncPreview() {
     dry_run: true,
   });
   renderWebsiteSyncPreview(run);
+  const diff = await apiGet(`/api/knowledge/sync/website/diff/${encodeURIComponent(run.run_id)}`);
+  renderWebsiteSyncDiff(diff);
   await loadWebsiteSyncSources();
   setStatus("Preview sync completed. Draft content remains public_usable=false.");
 }
@@ -935,8 +976,8 @@ function renderApprovedWebsiteSync(chunks) {
   });
 }
 
-async function loadApprovedWebsiteSync() {
-  const chunks = await apiGet("/api/knowledge/sync/website/approved");
+async function loadApprovedWebsiteSync(includeArchived = false) {
+  const chunks = await apiGet("/api/knowledge/sync/website/approved", includeArchived ? { include_archived: true } : {});
   state.websiteSyncApproved = chunks;
   renderApprovedWebsiteSync(chunks);
 }
@@ -947,6 +988,7 @@ async function approveWebsiteSyncRun(runId) {
   await Promise.all([loadWebsiteSyncSources(), loadApprovedWebsiteSync()]);
   const diff = await apiGet(`/api/knowledge/sync/website/diff/${encodeURIComponent(runId)}`);
   renderWebsiteSyncPreview(diff.run);
+  renderWebsiteSyncDiff(diff);
 }
 
 async function rejectWebsiteSyncRun(runId) {
@@ -954,6 +996,7 @@ async function rejectWebsiteSyncRun(runId) {
   setStatus("Website sync run rejected. Draft content remains public_usable=false.");
   const diff = await apiGet(`/api/knowledge/sync/website/diff/${encodeURIComponent(runId)}`);
   renderWebsiteSyncPreview(diff.run);
+  renderWebsiteSyncDiff(diff);
   await loadApprovedWebsiteSync();
 }
 
@@ -1141,7 +1184,10 @@ function syncSettings() {
     $("websiteSyncPreviewUrl").value = "fixture://admissions-deadlines";
   }
   loadWebsiteSyncSources()
-    .then(() => renderWebsiteSyncPreview(null))
+    .then(() => {
+      renderWebsiteSyncPreview(null);
+      renderWebsiteSyncDiff(null);
+    })
     .catch((error) => setStatus(error.message, true));
   loadApprovedWebsiteSync().catch((error) => setStatus(error.message, true));
 }

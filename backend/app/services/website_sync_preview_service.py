@@ -67,6 +67,15 @@ FIXTURE_HTML["fixture://tuition-en"] = """
   </main></body></html>
 """
 
+FIXTURE_HTML["fixture://admissions-deadlines-updated"] = """
+  <html lang="en"><head><title>Admissions deadlines</title><link rel="canonical" href="https://alte.edu.ge/ka/admissions" /></head>
+  <body><main>
+  <h1>Admissions deadlines</h1>
+  <p>The 2027 admissions deadline and registration schedule will be published on the official page.</p>
+  <p>Application deadline details depend on the current admissions status and applicant category.</p>
+  </main></body></html>
+"""
+
 _sources: dict[str, WebsiteSyncSourceRead] = {}
 _runs: dict[str, WebsiteSyncPreviewRunRead] = {}
 _approved_chunks: dict[str, WebsiteApprovedChunkRead] = {}
@@ -155,16 +164,34 @@ def get_website_diff(run_id: str) -> WebsiteSyncDiffRead | None:
     run = _runs.get(run_id)
     if not run:
         return None
+    old_content = approved_chunks_for_run_scope(run, include_archived=True)
+    active_old_content = [chunk for chunk in old_content if chunk.status == "approved" and chunk.public_usable]
+    old_text = "\n".join(chunk.chunk_text for chunk in active_old_content)
+    diff = build_text_diff(old_text, run.extracted_text_preview)
+    conflicts = conflict_flags_for_run(run, active_old_content)
     return WebsiteSyncDiffRead(
         run=run,
-        detected_changes=["Draft extraction is ready for admin review."],
-        conflicts=[],
+        run_id=run.run_id,
+        source_url=run.source_url,
+        canonical_url=run.canonical_url,
+        page_title=run.page_title,
+        status=run.status,
+        detected_changes=diff["detected_changes"],
+        conflicts=conflicts,
         approval_status=run.status,
         approval_allowed=run.status == "draft",
+        rejection_allowed=run.status == "draft",
+        archive_available=any(chunk.status == "approved" and chunk.public_usable for chunk in old_content),
         risk_flags=run.risk_flags,
         freshness_class=run.freshness_class,
         source_group_guess=run.source_group_guess,
         public_usable=run.public_usable,
+        chunks_preview=run.chunks,
+        old_approved_content=old_content,
+        added_lines=diff["added_lines"],
+        removed_lines=diff["removed_lines"],
+        unchanged_summary=diff["unchanged_summary"],
+        content_hash_changed=diff["content_hash_changed"],
     )
 
 
@@ -224,8 +251,13 @@ def reject_website_run(run_id: str) -> WebsiteSyncRejectResponse:
     return WebsiteSyncRejectResponse(run_id=run_id, status="rejected", public_usable=False)
 
 
-def list_approved_website_chunks() -> list[WebsiteApprovedChunkRead]:
-    return sorted(_approved_chunks.values(), key=lambda item: (item.approved_at, item.chunk_index), reverse=True)
+def list_approved_website_chunks(*, include_archived: bool = False) -> list[WebsiteApprovedChunkRead]:
+    chunks = [
+        chunk
+        for chunk in _approved_chunks.values()
+        if include_archived or (chunk.status == "approved" and chunk.public_usable)
+    ]
+    return sorted(chunks, key=lambda item: (item.approved_at, item.chunk_index), reverse=True)
 
 
 def archive_approved_website_version(version_id: str) -> WebsiteSyncRollbackResponse:
@@ -312,6 +344,74 @@ def clean_source_label(run: WebsiteSyncPreviewRunRead) -> str:
     return OFFICIAL_WEBSITE_SOURCE_LABEL
 
 
+def approved_chunks_for_run_scope(
+    run: WebsiteSyncPreviewRunRead,
+    *,
+    include_archived: bool = False,
+) -> list[WebsiteApprovedChunkRead]:
+    canonical = canonical_scope(run.canonical_url or run.source_url)
+    source_group = run.source_group_guess
+    return sorted(
+        [
+            chunk
+            for chunk in _approved_chunks.values()
+            if canonical_scope(chunk.canonical_url or chunk.source_url) == canonical
+            and (not source_group or chunk.source_group == source_group)
+            and (include_archived or (chunk.status == "approved" and chunk.public_usable))
+        ],
+        key=lambda item: (item.approved_at, item.chunk_index),
+        reverse=True,
+    )
+
+
+def canonical_scope(value: str | None) -> str:
+    return canonicalize_url(value or "").rstrip("/")
+
+
+def build_text_diff(old_text: str, new_text: str) -> dict:
+    old_lines = comparable_lines(old_text)
+    new_lines = comparable_lines(new_text)
+    old_set = set(old_lines)
+    new_set = set(new_lines)
+    added = [line for line in new_lines if line not in old_set]
+    removed = [line for line in old_lines if line not in new_set]
+    unchanged_count = len([line for line in new_lines if line in old_set])
+    if not old_lines:
+        detected = ["No previous approved website content for this canonical URL/source group."]
+    elif added or removed:
+        detected = ["Draft content differs from currently approved website content."]
+    else:
+        detected = ["Draft content matches currently approved website content."]
+    return {
+        "detected_changes": detected,
+        "added_lines": added[:20],
+        "removed_lines": removed[:20],
+        "unchanged_summary": f"{unchanged_count} unchanged line(s), {len(added)} added, {len(removed)} removed.",
+        "content_hash_changed": hash_text(old_text) != hash_text(new_text) if old_lines else True,
+    }
+
+
+def comparable_lines(text: str) -> list[str]:
+    normalized = normalize_text(text)
+    if not normalized:
+        return []
+    parts = re.split(r"(?<=[.!?])\s+|\n+", normalized)
+    return [part.strip() for part in parts if part.strip()]
+
+
+def conflict_flags_for_run(run: WebsiteSyncPreviewRunRead, old_content: list[WebsiteApprovedChunkRead]) -> list[str]:
+    if not old_content:
+        return []
+    conflicts = []
+    old_hashes = {chunk.content_hash for chunk in old_content}
+    new_hashes = {chunk.content_hash for chunk in run.chunks}
+    if old_hashes and old_hashes != new_hashes:
+        conflicts.append("approved_content_hash_changed")
+    risky = sorted({flag for flag in run.risk_flags if flag.startswith("high_risk_")})
+    conflicts.extend(risky)
+    return conflicts
+
+
 def run_preview_sync(payload: WebsiteSyncPreviewRequest) -> WebsiteSyncPreviewRunRead:
     source = _sources.get(payload.source_id)
     if not source:
@@ -331,7 +431,7 @@ def run_preview_sync(payload: WebsiteSyncPreviewRequest) -> WebsiteSyncPreviewRu
         raise ValueError("No readable page text extracted")
     chunks = chunk_text(text, limit=payload.limit or 5)
     freshness_class = classify_freshness(text)
-    risk_flags = risk_flags_for_text(text, payload.url)
+    risk_flags = high_risk_flags_for_text(text, payload.url)
     source_group_guess = guess_source_group(text, source.source_group_hint)
     now = datetime.now(UTC)
     run = WebsiteSyncPreviewRunRead(
@@ -598,3 +698,35 @@ def risk_flags_for_text(text: str, url: str) -> list[str]:
     if url.startswith("fixture://"):
         flags.append("fixture_input")
     return flags
+
+
+def high_risk_flags_for_text(text: str, url: str) -> list[str]:
+    flags = risk_flags_for_text(text, url)
+    lowered = (text or "").lower()
+    if re.search(r"\b20(2[6-9]|3[0-5])\b", text or ""):
+        flags.append("high_risk_year_specific")
+    if re.search(r"\b\d{1,2}[./-]\d{1,2}([./-]\d{2,4})?\b", lowered):
+        flags.extend(["date_detected", "high_risk_dates"])
+    if any(marker in lowered for marker in ["deadline", "application deadline", "admission deadline", "ბოლო ვადა", "ვადა"]):
+        flags.append("high_risk_deadlines")
+    if re.search(r"\b\d+\s*(gel|lari|usd|eur)\b|₾\s*\d+|â‚¾\s*\d+", lowered):
+        flags.extend(["price_detected", "high_risk_tuition_fees"])
+    if any(marker in lowered for marker in ["tuition", "fee", "cost", "price", "საფასური", "ფასი", "რა ღირს"]):
+        flags.append("high_risk_tuition_fees")
+    if any(marker in lowered for marker in ["grant", "scholarship", "funding", "გრანტ", "დაფინანს", "სტიპენდ"]):
+        flags.append("high_risk_grants_scholarships")
+    if any(marker in lowered for marker in ["admission", "admissions", "enrollment", "მიღება", "ჩარიცხვა"]):
+        flags.append("high_risk_admissions_rules")
+    if any(marker in lowered for marker in ["calendar", "semester", "exam", "schedule", "კალენდარი", "სემესტრი", "გამოცდა"]):
+        flags.append("high_risk_academic_calendar")
+    if any(marker in lowered for marker in ["requirement", "prerequisite", "program requirement", "მოთხოვნ"]):
+        flags.append("high_risk_program_requirements")
+    if any(marker in lowered for marker in ["ects", "credit", "credits", "კრედიტ"]):
+        flags.append("high_risk_ects_credits")
+    if any(marker in lowered for marker in ["privacy", "legal", "personal data", "confidential", "პირად", "კონფიდენცი"]):
+        flags.append("high_risk_legal_privacy")
+    if any(marker in lowered for marker in ["contact", "phone", "email", "office hours", "address", "საკონტაქტ", "ტელეფონ", "ელფოსტ", "მისამართ"]):
+        flags.append("high_risk_contact_details")
+    if url.startswith("fixture://"):
+        flags.append("high_risk_fixture_test_input")
+    return list(dict.fromkeys(flags))
