@@ -5,6 +5,9 @@ from sqlalchemy import func, select
 from app.models import Customer, Lead, Task
 from app.services.website_sync_preview_service import reset_website_sync_preview_state
 
+OFFICIAL_WEBSITE_LABEL_KA = "ალტეს ოფიციალური ვებგვერდი"
+ADMISSIONS_QUESTION_KA = "მიღების ვადები როდის არის?"
+
 
 def add_source(client, **overrides):
     payload = {
@@ -18,6 +21,15 @@ def add_source(client, **overrides):
     response = client.post("/api/knowledge/sync/website/sources", json=payload)
     assert response.status_code == 200, response.text
     return response.json()
+
+
+def assert_readable_georgian(value: str, *expected: str):
+    for text in expected:
+        assert text in value
+    assert "áƒ" not in value
+    assert "�" not in value
+    assert "source_id" not in value.lower()
+    assert "chunk" not in value.lower()
 
 
 def preview(client, source_id: str, url: str = "fixture://tuition", **overrides):
@@ -172,6 +184,74 @@ def test_phase_10n_approved_website_retrieval_wins_for_variable_question(client,
     assert "source_id" not in chat_payload["public_source_label"].lower()
     assert chat_payload["created_lead_id"] is None
     assert chat_payload["created_task_id"] is None
+
+    counts = asyncio.run(crm_counts(session_factory))
+    assert counts == {"customers": 0, "leads": 0, "tasks": 0}
+
+
+def test_phase_10n_georgian_approved_store_and_knowledge_ask_are_readable(client):
+    reset_website_sync_preview_state()
+    source = add_source(client, source_group_hint="admissions_rules")
+    run = preview(client, source["id"], url="fixture://admissions-deadlines")
+    approve = client.post(f"/api/knowledge/sync/website/approve/{run['run_id']}", json={})
+    assert approve.status_code == 200
+
+    approved = client.get("/api/knowledge/sync/website/approved")
+    assert approved.status_code == 200
+    chunks = approved.json()
+    assert chunks
+    approved_chunk = chunks[0]
+    assert approved_chunk["status"] == "approved"
+    assert approved_chunk["public_usable"] is True
+    assert approved_chunk["priority"] == 100
+    assert approved_chunk["freshness_class"] == "variable"
+    assert approved_chunk["source_group"] == "admissions_rules"
+    assert approved_chunk["clean_source_label"] == OFFICIAL_WEBSITE_LABEL_KA
+    assert_readable_georgian(approved_chunk["chunk_text"], "მიღების ვადები", "2026 წლის მიღების ბოლო ვადა")
+    assert_readable_georgian(approved_chunk["clean_source_label"], OFFICIAL_WEBSITE_LABEL_KA)
+
+    ask = client.post(
+        "/api/knowledge/ask",
+        json={"question": ADMISSIONS_QUESTION_KA, "language": "ka", "mode": "public"},
+    )
+    assert ask.status_code == 200, ask.text
+    payload = ask.json()
+    assert payload["status"] == "answered"
+    assert payload["source_group"] == "admissions_rules"
+    assert payload["used_claude"] is False
+    assert payload["public_source_label"] == OFFICIAL_WEBSITE_LABEL_KA
+    assert_readable_georgian(payload["answer"], "მიღების ვადები", "2026 წლის მიღების ბოლო ვადა")
+    assert_readable_georgian(payload["public_source_label"], OFFICIAL_WEBSITE_LABEL_KA)
+
+
+def test_phase_10n_georgian_public_chat_website_answer_is_readable_and_no_write(client, session_factory):
+    reset_website_sync_preview_state()
+    source = add_source(client, source_group_hint="admissions_rules")
+    run = preview(client, source["id"], url="fixture://admissions-deadlines")
+    approve = client.post(f"/api/knowledge/sync/website/approve/{run['run_id']}", json={})
+    assert approve.status_code == 200
+
+    session = client.post("/chat/session/start", json={"source_domain": "alte.edu.ge", "language": "ka"}).json()
+    chat = client.post(
+        "/chat/message",
+        json={
+            "conversation_id": session["conversation_id"],
+            "session_id": session["session_id"],
+            "source_domain": "alte.edu.ge",
+            "language": "ka",
+            "message": ADMISSIONS_QUESTION_KA,
+        },
+    )
+    assert chat.status_code == 200, chat.text
+    payload = chat.json()
+    assert payload["answer_source_status"] == "answered_from_approved_source"
+    assert payload["source_group"] == "admissions_rules"
+    assert payload["public_source_label"] == OFFICIAL_WEBSITE_LABEL_KA
+    assert payload["created_lead_id"] is None
+    assert payload["created_task_id"] is None
+    assert payload["should_create_lead"] is False
+    assert_readable_georgian(payload["reply"], "მიღების ვადები", "2026 წლის მიღების ბოლო ვადა")
+    assert_readable_georgian(payload["public_source_label"], OFFICIAL_WEBSITE_LABEL_KA)
 
     counts = asyncio.run(crm_counts(session_factory))
     assert counts == {"customers": 0, "leads": 0, "tasks": 0}
