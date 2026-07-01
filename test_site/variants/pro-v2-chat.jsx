@@ -636,6 +636,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const [dragOver, setDragOver] = useState(false);
   const [toast, setToast] = useState(null);
   const seenOperatorMessageIds = useRef(new Set());
+  const contactSubmittedRef = useRef(false);
   const [settingsState, setSettingsState] = useState({ sources:true, notify:true, dark:false });
   const msgsRef = useRef(null);
 
@@ -712,6 +713,17 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     const handoverKw = ['ოპერატორ','live operator','human','agent','ცოცხალ','რეალურ','დაკავშირ','contact me','speak to'];
     if (handoverKw.some(k=>t.includes(k))) return 'handover';
     return null;
+  };
+
+  const openIntercomMessenger = () => {
+    try {
+      if (window.AlteChatBackend?.openIntercom) {
+        window.AlteChatBackend.openIntercom();
+        return;
+      }
+      const target = window.parent && window.parent !== window && typeof window.parent.Intercom === 'function' ? window.parent : window;
+      if (typeof target.Intercom === 'function') target.Intercom('show');
+    } catch (e) {}
   };
 
   const requestBackendHandover = useCallback(async (deptId=currentDept, messageText='') => {
@@ -845,6 +857,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
 
   const waitForOperator = useCallback((deptId=currentDept, messageText=latestUserText()) => {
     const textForOperator = messageText || (lang==='KA' ? 'მინდა ოპერატორთან დაკავშირება' : 'I want to speak with an operator');
+    openIntercomMessenger();
     requestBackendHandover(deptId, textForOperator).catch(()=>null).finally(()=>{
       setMessages(m => [...m, {
         id:'a'+Date.now(),
@@ -890,6 +903,10 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   };
 
   const onLeadSubmit = async (contact) => {
+    if (contactSubmittedRef.current) {
+      setShowLead(false);
+      return;
+    }
     try {
       await window.AlteChatBackend?.submitContact?.({
         ...contact,
@@ -898,6 +915,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
         selected_topic: contact?.interest || currentDept,
         message: contact?.message || leadMessageDraft || latestUserText(),
       });
+      contactSubmittedRef.current = true;
       setShowLead(false);
       setMessages(m => [...m, {
         id:'a'+Date.now(),

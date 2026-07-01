@@ -117,6 +117,74 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ conv: _convId, sess: _sessId })); } catch (e) {}
   }
 
+  function intercomWindow() {
+    try {
+      if (window.parent && window.parent !== window && typeof window.parent.Intercom === "function") return window.parent;
+    } catch (e) {}
+    return window;
+  }
+
+  function contactRequestText(data) {
+    return [
+      "ახალი საკონტაქტო მოთხოვნა:",
+      "სახელი: " + (data.full_name || data.name || ""),
+      "ტელეფონი: " + (data.phone || ""),
+      "ენა: " + normalizeLang(data.language),
+      "ელფოსტა: " + (data.email || ""),
+      "ინტერესი/თემა: " + (data.selected_topic || data.interest_area || data.interest || ""),
+      "შეტყობინება: " + (data.message || data.question || data.note || "")
+    ].join("\n");
+  }
+
+  function ensureIntercom(target) {
+    var appId = (target.intercomSettings && target.intercomSettings.app_id) || "q9gmpcfb";
+    if (typeof target.Intercom === "function") return;
+    var d = target.document;
+    var i = function () { i.c(arguments); };
+    i.q = [];
+    i.c = function (args) { i.q.push(args); };
+    target.Intercom = i;
+    target.intercomSettings = Object.assign({}, target.intercomSettings || {}, { app_id: appId });
+    var s = d.createElement("script");
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = "https://widget.intercom.io/widget/" + appId;
+    var x = d.getElementsByTagName("script")[0] || d.head.firstChild;
+    if (x && x.parentNode) x.parentNode.insertBefore(s, x);
+    else d.head.appendChild(s);
+  }
+
+  async function sendContactToIntercom(data) {
+    var target = intercomWindow();
+    ensureIntercom(target);
+    if (typeof target.Intercom !== "function") throw new Error("Intercom Messenger is not loaded");
+    var name = data.full_name || data.name || "";
+    var email = data.email || undefined;
+    var phone = data.phone || undefined;
+    var language = normalizeLang(data.language);
+    var topic = data.selected_topic || data.interest_area || data.interest || undefined;
+    var message = contactRequestText(data);
+    var settings = Object.assign({}, target.intercomSettings || {}, {
+      app_id: (target.intercomSettings && target.intercomSettings.app_id) || "q9gmpcfb",
+      name: name || undefined,
+      email: email,
+      phone: phone,
+      language_override: language,
+      contact_topic: topic
+    });
+    target.intercomSettings = settings;
+    target.Intercom("update", settings);
+    target.Intercom("showNewMessage", message);
+    target.Intercom("show");
+    return { ok: true, destination: "intercom", conversation_message: message };
+  }
+
+  function openIntercomMessenger() {
+    var target = intercomWindow();
+    ensureIntercom(target);
+    if (typeof target.Intercom === "function") target.Intercom("show");
+  }
+
   window.AlteChatBridge = {
     _reset: function () { _convId = null; _sessId = null; _lastResponse = null; try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} },
 
@@ -198,28 +266,22 @@
     },
     submitContact: async function (data) {
       await ensureSession(normalizeLang(data && data.language));
-      var response = await fetch(BACKEND + "/chat/contact/" + encodeURIComponent(_convId), {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          session_id: _sessId,
-          full_name: data.full_name || data.name || null,
-          phone: data.phone || null,
-          email: data.email || null,
-          interest_area: data.interest_area || data.interest || null,
-          selected_department: normalizeDepartment(data.selected_department),
-          selected_topic: data.selected_topic || null,
-          source_domain: SOURCE_DOMAIN,
-          language: normalizeLang(data.language),
-          message: data.message || data.question || data.note || null,
-          consent: data.consent === true,
-        }),
+      return sendContactToIntercom({
+        session_id: _sessId,
+        full_name: data.full_name || data.name || null,
+        phone: data.phone || null,
+        email: data.email || null,
+        interest_area: data.interest_area || data.interest || null,
+        selected_department: normalizeDepartment(data.selected_department),
+        selected_topic: data.selected_topic || null,
+        source_domain: SOURCE_DOMAIN,
+        language: normalizeLang(data.language),
+        message: data.message || data.question || data.note || null,
+        consent: data.consent === true,
       });
-      if (!response.ok) {
-        var err = await response.json().catch(function () { return {}; });
-        throw new Error("Contact handover failed (" + response.status + "): " + (err.detail || "unknown"));
-      }
-      return response.json();
+    },
+    openIntercom: function () {
+      openIntercomMessenger();
     },
     pollOperatorMessages: async function () {
       return [];
