@@ -1,6 +1,10 @@
 (function () {
   var APP_ID = "q9gmpcfb";
   var w = window;
+  w.intercomSettings = Object.assign({}, w.intercomSettings || {}, {
+    app_id: APP_ID,
+    hide_default_launcher: true
+  });
   var ic = w.Intercom;
 
   if (typeof ic === "function") {
@@ -18,8 +22,17 @@
     i.q.push(args);
   };
   w.Intercom = i;
-  w.intercomSettings = {
-    app_id: APP_ID
+  w.AlteIntercom = w.AlteIntercom || {
+    open: function () {
+      if (typeof w.Intercom === "function") {
+        w.Intercom("show");
+      }
+    },
+    hide: function () {
+      if (typeof w.Intercom === "function") {
+        w.Intercom("hide");
+      }
+    }
   };
 
   function loadIntercom() {

@@ -645,6 +645,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const [dragOver, setDragOver] = useState(false);
   const [toast, setToast] = useState(null);
   const seenOperatorMessageIds = useRef(new Set());
+  const operatorNoticeShown = useRef(false);
   const [settingsState, setSettingsState] = useState({ sources:true, notify:true, dark:false });
   const msgsRef = useRef(null);
 
@@ -853,21 +854,20 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   }, [latestUserText]);
 
   const startHandover = () => {
-    const requestText = lang==='KA' ? 'დამაკავშირე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
-    // Previous wiring called requestBackendHandover(currentDept, requestText) here.
-    // Phase 9AH keeps the typed/sidebar request local until the user chooses "Wait for operator".
-    setMessages(m => [...m, {
-      id:'u'+Date.now(),
-      role:'user',
-      text: requestText,
-    }]);
-    setMessages(m => [...m, {
-      id:'a'+Date.now(),
-      role:'assistant',
-      kind:'handover',
-      deptId:currentDept,
-      text: lang==='KA' ? 'შემიძლია დაგაკავშიროთ ოპერატორთან ამ ჩატში ან დატოვოთ საკონტაქტო ინფორმაცია.' : 'I can connect you with an operator in this chat, or you can leave contact details.',
-    }]);
+    if (!operatorNoticeShown.current) {
+      operatorNoticeShown.current = true;
+      setMessages(m => [...m, {
+        id:'operator-open-notice',
+        role:'assistant',
+        deptId:currentDept,
+        text:'გიხსნით ოპერატორთან სასაუბრო ფანჯარას.',
+      }]);
+    }
+    if (window.AlteIntercom?.open) {
+      window.AlteIntercom.open();
+    } else if (typeof window.Intercom === 'function') {
+      window.Intercom('show');
+    }
   };
 
   const newChat = () => {
@@ -876,6 +876,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       setMessages([]);
       window.AlteChatBackend?.reset?.();
       seenOperatorMessageIds.current = new Set();
+      operatorNoticeShown.current = false;
     }
   };
 
