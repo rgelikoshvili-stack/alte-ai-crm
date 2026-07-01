@@ -862,6 +862,32 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     setShowLead(true);
   }, [latestUserText]);
 
+  const contactTopicLabel = (interest) => ({
+    bsc: 'ბაკალავრი',
+    md: 'MD',
+    intl: 'საერთაშორისო',
+    fin: 'დაფინანსება',
+  }[interest] || interest || currentDept || '');
+
+  const buildIntercomContactMessage = (contact) => {
+    const message = contact?.message || leadMessageDraft || latestUserText() || '';
+    return [
+      'ახალი საკონტაქტო მოთხოვნა:',
+      `სახელი: ${contact?.full_name || contact?.name || ''}`,
+      `ტელეფონი: ${contact?.phone || ''}`,
+      `ენა: ${lang}`,
+      `ელფოსტა: ${contact?.email || ''}`,
+      `ინტერესი/თემა: ${contactTopicLabel(contact?.interest || contact?.selected_topic)}`,
+      `შეტყობინება: ${message}`,
+    ].join('\n');
+  };
+
+  const copyContactMessage = async (formattedMessage) => {
+    if (!navigator.clipboard?.writeText) return false;
+    await navigator.clipboard.writeText(formattedMessage);
+    return true;
+  };
+
   const startHandover = () => {
     const requestText = lang==='KA' ? 'დამაკავშირე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
     // Previous wiring called requestBackendHandover(currentDept, requestText) here.
@@ -890,29 +916,28 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   };
 
   const onLeadSubmit = async (contact) => {
+    const formattedMessage = buildIntercomContactMessage(contact);
+    const successText = 'თქვენი მონაცემები მომზადებულია. გთხოვთ დააჭიროთ გაგზავნის ღილაკს ოპერატორთან გადასაგზავნად.';
+    const fallbackText = 'შეტყობინება დაკოპირდა. ჩასვით ოპერატორის ჩატში და დააჭირეთ გაგზავნას.';
+    let confirmationText = successText;
+
     try {
-      await window.AlteChatBackend?.submitContact?.({
-        ...contact,
-        language: lang,
-        selected_department: currentDept,
-        selected_topic: contact?.interest || currentDept,
-        message: contact?.message || leadMessageDraft || latestUserText(),
-      });
-      setShowLead(false);
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        text: S.leadDone,
-        deptId:currentDept,
-      }]);
+      if (typeof window.Intercom !== 'function') throw new Error('Intercom unavailable');
+      window.Intercom('showNewMessage', formattedMessage);
     } catch (err) {
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        text: lang==='KA' ? 'კონტაქტის გაგზავნა ვერ მოხერხდა. გადაამოწმეთ ველები და სცადეთ თავიდან.' : 'Could not send your contact request. Check the fields and try again.',
-        deptId:currentDept,
-      }]);
+      const copied = await copyContactMessage(formattedMessage).catch(()=>false);
+      confirmationText = copied
+        ? fallbackText
+        : 'შეტყობინების მომზადება ვერ მოხერხდა. გთხოვთ სცადოთ თავიდან.';
     }
+
+    setShowLead(false);
+    setMessages(m => [...m, {
+      id:'a'+Date.now(),
+      role:'assistant',
+      text: confirmationText,
+      deptId:currentDept,
+    }]);
   };
 
   const syncOperatorMessages = useCallback(async () => {
