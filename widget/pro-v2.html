@@ -182,28 +182,25 @@
       return response.json();
     },
     submitContact: async function (data) {
-      await ensureSession(normalizeLang(data && data.language));
-      var response = await fetch(BACKEND + "/chat/contact/" + encodeURIComponent(_convId), {
+      var response = await fetch("/.netlify/functions/intercom-contact", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          session_id: _sessId,
-          full_name: data.full_name || data.name || null,
+          name: data.full_name || data.name || null,
           phone: data.phone || null,
           email: data.email || null,
-          interest_area: data.interest_area || data.interest || null,
-          selected_department: normalizeDepartment(data.selected_department),
-          selected_topic: data.selected_topic || null,
-          source_domain: SOURCE_DOMAIN,
           language: normalizeLang(data.language),
-          consent: data.consent === true,
+          message: data.message || data.question || data.note || null,
+          topic: data.topic || data.selected_topic || data.interest_area || data.interest || null,
         }),
       });
       if (!response.ok) {
         var err = await response.json().catch(function () { return {}; });
-        throw new Error("Contact handover failed (" + response.status + "): " + (err.detail || "unknown"));
+        throw new Error("Intercom contact failed (" + response.status + "): " + (err.error || "unknown"));
       }
-      return response.json();
+      var result = await response.json();
+      if (!result || result.ok !== true) throw new Error("Intercom contact failed");
+      return result;
     },
     pollOperatorMessages: async function () {
       if (!_convId || !_sessId) return [];
