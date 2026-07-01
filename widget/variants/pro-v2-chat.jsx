@@ -902,14 +902,14 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       setMessages(m => [...m, {
         id:'a'+Date.now(),
         role:'assistant',
-        text: S.leadDone,
+        text: lang==='KA' ? 'მადლობა, თქვენი შეტყობინება მიღებულია. ოპერატორი დაგიკავშირდებათ სამუშაო საათებში.' : S.leadDone,
         deptId:currentDept,
       }]);
     } catch (err) {
       setMessages(m => [...m, {
         id:'a'+Date.now(),
         role:'assistant',
-        text: lang==='KA' ? 'კონტაქტის გაგზავნა ვერ მოხერხდა. გადაამოწმეთ ველები და სცადეთ თავიდან.' : 'Could not send your contact request. Check the fields and try again.',
+        text: lang==='KA' ? 'შეტყობინების გაგზავნა ვერ მოხერხდა. გთხოვთ სცადოთ თავიდან ან დაელოდოთ ოპერატორს ამ ჩატში.' : 'Could not send your message. Please try again or wait for an operator in this chat.',
         deptId:currentDept,
       }]);
     }
