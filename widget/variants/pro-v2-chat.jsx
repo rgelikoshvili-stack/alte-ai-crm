@@ -55,6 +55,8 @@ const proV2Css = `
 .cw-side .item.human{ margin:6px 0 2px; background:var(--alte-panel); border:1px solid var(--alte-line); color:var(--alte-teal); font-weight:600; }
 .cw-side .item.human .ic{ opacity:1; color:var(--alte-teal); }
 .cw-side .item.human:hover{ background:var(--alte-soft); border-color:var(--alte-soft-line); }
+.cw-side .item.human.on{ background:var(--alte-teal); border-color:var(--alte-teal); color:#fff; }
+.cw-side .item.human.on .ic{ color:#fff; }
 .cw-side.collapsed .item-text, .cw-side.collapsed .badge{ display:none; }
 .cw-side.collapsed .item{ justify-content:center; padding:9px; }
 
@@ -162,8 +164,25 @@ const proV2Css = `
 .cw-handover .acts{ display:flex; gap:6px; margin-top:9px; padding-top:9px; border-top:1px dashed var(--alte-line); }
 .cw-btn-p{ background:var(--alte-teal); color:#fff; padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:0; cursor:pointer; font-family:inherit; }
 .cw-btn-p:hover{ background:var(--alte-teal-deep); }
+.cw-btn-p:disabled{ opacity:.5; cursor:not-allowed; }
 .cw-btn-s{ background:var(--alte-panel); color:var(--alte-teal); padding:7px 13px; border-radius:7px; font-size:11px; font-weight:700; border:1px solid var(--alte-teal); cursor:pointer; font-family:inherit; }
 .cw-btn-s:hover{ background:var(--alte-soft); }
+
+/* Operator screen */
+.cw-operator-screen{ flex:1; overflow-y:auto; padding:18px 14px; background:var(--alte-panel); }
+.cw-operator-card{ max-width:520px; margin:0 auto; background:var(--alte-panel); border:1px solid var(--alte-line); border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(7,32,36,0.06); }
+.cw-operator-card h2{ font-family:'Fraunces',serif; font-size:20px; line-height:1.2; color:var(--alte-ink); margin:0 0 8px; letter-spacing:-0.015em; }
+.cw-operator-card p{ margin:0 0 14px; font-size:12.5px; line-height:1.55; color:var(--alte-mute); }
+.cw-operator-card .field{ margin-bottom:11px; }
+.cw-operator-card label{ display:block; font-size:10px; font-weight:700; color:var(--alte-mute); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; }
+.cw-operator-card input,
+.cw-operator-card textarea{ width:100%; padding:10px 12px; border:1px solid var(--alte-line); border-radius:9px; font-size:13px; color:var(--alte-ink); background:var(--alte-panel); font-family:inherit; outline:0; transition:.15s; }
+.cw-operator-card input:focus,
+.cw-operator-card textarea:focus{ border-color:var(--alte-teal); box-shadow:0 0 0 3px rgba(7,64,69,0.08); }
+.cw-operator-card textarea{ min-height:108px; resize:vertical; line-height:1.45; }
+.cw-operator-card .acts{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.cw-operator-card .acts button{ min-height:38px; }
+.cw-operator-card .notice{ margin:12px 0 0; padding:10px 12px; border-radius:9px; background:var(--alte-soft); border:1px solid var(--alte-soft-line); color:var(--alte-teal); font-size:12px; font-weight:600; line-height:1.45; }
 
 /* File attachment card (in user bubble) */
 .cw-file{ background:var(--alte-teal); padding:6px; border-radius:var(--bub-r) var(--bub-r) 3px var(--bub-r); }
@@ -333,7 +352,10 @@ function inline(s){
 // ============ Sidebar ============
 function Sidebar({ S, lang, currentDept, setDept, collapsed, setCollapsed, onHuman }){
   const main = DEPTS.slice(0, 5);
-  const other = DEPTS.slice(5);
+  const other = [
+    ...DEPTS.slice(5),
+    { id:'contact', icon:'mail', ka:'კონტაქტი', en:'Contact' },
+  ];
   return (
     <nav className={"cw-side"+(collapsed?' collapsed':'')}>
       <div className="brand">
@@ -358,7 +380,7 @@ function Sidebar({ S, lang, currentDept, setDept, collapsed, setCollapsed, onHum
             <span className="item-text">{d[lang.toLowerCase()]}</span>
           </div>
         ))}
-        <div className="item human" onClick={onHuman} title={S.liveOperator}>
+        <div className={"item human"+(currentDept==='human_operator'?' on':'')} onClick={onHuman} title={S.liveOperator}>
           <span className="ic"><I name="headset" size={15} sw={2.2}/></span>
           <span className="item-text">{S.liveOperator}</span>
         </div>
@@ -614,6 +636,54 @@ function TrustBar({ S }){
   );
 }
 
+function OperatorScreen({ S }){
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [notice, setNotice] = useState('');
+  const canSubmit = name.trim() && email.trim() && message.trim();
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setNotice(S.operatorSuccess);
+  };
+
+  const openIntercom = () => {
+    if (typeof window.Intercom === 'function') {
+      window.Intercom('show');
+      return;
+    }
+    setNotice(S.operatorIntercomFallback);
+  };
+
+  return (
+    <div className="cw-operator-screen">
+      <form className="cw-operator-card" onSubmit={submit}>
+        <h2>{S.operatorTitle}</h2>
+        <p>{S.operatorMessage}</p>
+        <div className="field">
+          <label>{S.operatorName}</label>
+          <input value={name} onChange={e=>setName(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>{S.operatorEmail}</label>
+          <input value={email} onChange={e=>setEmail(e.target.value)} type="email" />
+        </div>
+        <div className="field">
+          <label>{S.operatorText}</label>
+          <textarea value={message} onChange={e=>setMessage(e.target.value)} rows={4} />
+        </div>
+        <div className="acts">
+          <button className="cw-btn-p" type="submit" disabled={!canSubmit}>{S.operatorSubmit}</button>
+          <button className="cw-btn-s" type="button" onClick={openIntercom}>{S.operatorIntercom}</button>
+        </div>
+        {notice && <div className="notice" role="status">{notice}</div>}
+      </form>
+    </div>
+  );
+}
+
 // =====================================================================
 // MAIN WIDGET - stateful root
 // =====================================================================
@@ -629,6 +699,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const [attaching, setAttaching] = useState(null);
   const [typing, setTyping] = useState(false);
   const [currentDept, setCurrentDept] = useState('admissions');
+  const [operatorOpen, setOperatorOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showLead, setShowLead] = useState(false);
@@ -833,6 +904,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
 
   // Sidebar handlers
   const setDept = (id) => {
+    setOperatorOpen(false);
     setCurrentDept(id);
     const d = DEPTS.find(x=>x.id===id);
     if (!d) return;
@@ -863,21 +935,8 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   }, [latestUserText]);
 
   const startHandover = () => {
-    const requestText = lang==='KA' ? 'დამაკავშირე ცოცხალ ოპერატორთან' : 'Connect me with a live operator';
-    // Previous wiring called requestBackendHandover(currentDept, requestText) here.
-    // Phase 9AH keeps the typed/sidebar request local until the user chooses "Wait for operator".
-    setMessages(m => [...m, {
-      id:'u'+Date.now(),
-      role:'user',
-      text: requestText,
-    }]);
-    setMessages(m => [...m, {
-      id:'a'+Date.now(),
-      role:'assistant',
-      kind:'handover',
-      deptId:currentDept,
-      text: lang==='KA' ? 'შემიძლია დაგაკავშიროთ ოპერატორთან ამ ჩატში ან დატოვოთ საკონტაქტო ინფორმაცია.' : 'I can connect you with an operator in this chat, or you can leave contact details.',
-    }]);
+    setOperatorOpen(true);
+    setCurrentDept('human_operator');
   };
 
   const newChat = () => {
@@ -961,29 +1020,35 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
             onClose={onClose} onSettings={()=>setShowSettings(true)} onNew={newChat}
             onExpand={()=>setExpanded(!expanded)} expanded={expanded}/>
           <TrustBar S={S}/>
-          <div ref={msgsRef} className={"cw-msgs "+(messages.length===0?'empty':'')}>
-            {messages.length === 0 && (
-              <Greeting S={S}
-                onChip={(t)=>send(t)}
-                onFeat={()=>send(S.quickReplies[2].text)}/>
-            )}
-            {messages.map(m => (
-              <Message key={m.id} msg={m} S={S} lang={lang}
-                onCopy={copy} onRegen={regen} onVote={vote}
-                onContactHandover={()=>openContactForm(latestUserText() || m.text)}
-                onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
-            ))}
-            {typing && (
-              <div className="cw-row">
-                <div className="cw-av"><AlteMark size={26}/></div>
-                <div className="cw-typing"><span></span><span></span><span></span></div>
+          {operatorOpen ? (
+            <OperatorScreen S={S}/>
+          ) : (
+            <>
+              <div ref={msgsRef} className={"cw-msgs "+(messages.length===0?'empty':'')}>
+                {messages.length === 0 && (
+                  <Greeting S={S}
+                    onChip={(t)=>send(t)}
+                    onFeat={()=>send(S.quickReplies[2].text)}/>
+                )}
+                {messages.map(m => (
+                  <Message key={m.id} msg={m} S={S} lang={lang}
+                    onCopy={copy} onRegen={regen} onVote={vote}
+                    onContactHandover={()=>openContactForm(latestUserText() || m.text)}
+                    onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
+                ))}
+                {typing && (
+                  <div className="cw-row">
+                    <div className="cw-av"><AlteMark size={26}/></div>
+                    <div className="cw-typing"><span></span><span></span><span></span></div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <Composer S={S} value={input} setValue={setInput}
-            onSend={()=>send()} onFile={pickFile}
-            attaching={attaching} removeAttach={()=>setAttaching(null)}
-            disabled={typing}/>
+              <Composer S={S} value={input} setValue={setInput}
+                onSend={()=>send()} onFile={pickFile}
+                attaching={attaching} removeAttach={()=>setAttaching(null)}
+                disabled={typing}/>
+            </>
+          )}
           {toast && <div className="cw-toast">{toast}</div>}
         </div>
       </div>
