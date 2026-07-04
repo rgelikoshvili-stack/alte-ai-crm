@@ -74,7 +74,7 @@ const STRINGS = {
     handoverDept:'მიღების ოფისი',
     handoverHours:'სამუშაო საათები: ',
     handoverHoursVal:'ორშ–პარ 09:00–18:00',
-    handoverWait:'შეგიძლიათ დატოვოთ კონტაქტი ან დაელოდოთ ოპერატორს ამ ჩატში.',
+    handoverWait:'შეგიძლიათ დატოვოთ კონტაქტი ან დაელოდოთ ოპერატორს ამ ჩათში.',
     handoverYes:'დატოვე კონტაქტი',
     handoverNo:'დაელოდე ოპერატორს',
     leadTitle:'დატოვე კონტაქტი',
