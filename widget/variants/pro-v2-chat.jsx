@@ -481,15 +481,10 @@ function HandoverCard({ msg, S, lang, onContact, onWait }){
     <div className="cw-row">
       <div className="cw-av"><AlteMark size={26}/></div>
       <div className="cw-bub-wrap" style={{maxWidth:'92%'}}>
-        <div className="cw-bub">{md(msg.text)}</div>
         <div className="cw-handover" style={{alignSelf:'stretch'}}>
           <div className="h">
             <div className="ic"><I name="headset" size={12} sw={2.2}/></div>
             {S.handoverTitle}
-          </div>
-          <div className="dept-pill">
-            <I name="building" size={10} sw={2.2}/>
-            {S.handoverDept}
           </div>
           <div className="note">
             {S.handoverHours}<strong>{S.handoverHoursVal}</strong>. {S.handoverWait}
@@ -750,51 +745,13 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     const wasAttaching = attaching;
     setAttaching(null);
 
-    // Handover intent: show the operator card, but do not call
-    // /chat/handover automatically from a normal typed message.
-    if (detectIntent(text) === 'handover'){
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        kind:'handover',
-        deptId:currentDept,
-        text: lang==='KA' ? 'ოპერატორთან დაკავშირება შესაძლებელია ღილაკით. თუ გსურს, დააჭირე ოპერატორის მოთხოვნას.' : 'You can request an operator from the button below.',
-      }]);
-      return;
-    }
-    setTyping(true);
-    try {
-      const built = buildHistory(text + (wasAttaching?` [attached: ${wasAttaching.name}]`:''));
-      const reply = await window.AlteChatBridge.complete({
-        system: built.system,
-        messages: built.messages,
-        context: {
-          language: lang,
-          selected_department: currentDept,
-          selected_topic: text,
-        },
-      });
-      setTyping(false);
-      const aId = 'a'+Date.now();
-      const backend = window.AlteChatBackend?.lastResponse || {};
-      setMessages(m => [...m, {
-        id: aId,
-        role:'assistant',
-        kind: backend.should_handover ? 'handover' : undefined,
-        text: reply,
-        deptId: backend.department_key || currentDept,
-        sourceLabel: settingsState.sources ? publicSourceLabel(backend) : null,
-      }]);
-    } catch (err) {
-      setTyping(false);
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        kind:'error',
-        text: lang==='KA' ? 'ვერ მივიღე პასუხი. სცადეთ თავიდან ან მიმართეთ ოპერატორს.' : 'Could not get an answer. Please try again or contact an operator.',
-        deptId: currentDept,
-      }]);
-    }
+    setMessages(m => [...m, {
+      id:'a'+Date.now(),
+      role:'assistant',
+      kind:'handover',
+      deptId:currentDept,
+      text:'',
+    }]);
   }, [input, attaching, typing, buildHistory, lang, currentDept, settingsState.sources, requestBackendHandover]);
 
   // Voting + copy + regen
@@ -803,18 +760,8 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
   const regen = async (m) => {
     const idx = messages.findIndex(x=>x.id===m.id);
     if (idx<0) return;
-    // find last user msg before this
-    let lastUser = null;
-    for (let i=idx-1; i>=0; i--) if (messages[i].role==='user'){ lastUser = messages[i]; break; }
-    if (!lastUser) return;
     setMessages(messages.slice(0, idx));
-    setTyping(true);
-    try{
-      const histBeforeUser = messages.slice(0, idx).filter(x=>x.role==='user'||x.role==='assistant').map(x=>({role:x.role, content:x.text||''}));
-      const reply = await window.AlteChatBridge.complete({ system: altePrompt(lang, dept), messages: histBeforeUser });
-      setTyping(false);
-      setMessages(m => [...m, { id:'a'+Date.now(), role:'assistant', text: reply, deptId: currentDept, sourceLabel: null }]);
-    } catch (e){ setTyping(false); }
+    setMessages(rows => [...rows, { id:'a'+Date.now(), role:'assistant', kind:'handover', text:'', deptId: currentDept }]);
   };
 
   // File pick (mocked - actual upload not supported in sandbox)
@@ -843,19 +790,11 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
     }
   };
 
-  const waitForOperator = useCallback((deptId=currentDept, messageText=latestUserText()) => {
-    const textForOperator = messageText || (lang==='KA' ? 'მინდა ოპერატორთან დაკავშირება' : 'I want to speak with an operator');
-    requestBackendHandover(deptId, textForOperator).catch(()=>null).finally(()=>{
-      setMessages(m => [...m, {
-        id:'a'+Date.now(),
-        role:'assistant',
-        deptId,
-        text: lang==='KA'
-          ? 'თქვენი მოთხოვნა გადაეცა ოპერატორს. გთხოვთ დაელოდოთ — ოპერატორი მალე დაგიკავშირდებათ ამ ჩატში.'
-          : 'Your request has been sent to an operator. Please wait — an operator will join this chat soon.',
-      }]);
-    });
-  }, [currentDept, lang, latestUserText, requestBackendHandover]);
+  const waitForOperator = useCallback(() => {
+    if (typeof window.Intercom === 'function') {
+      window.Intercom('show');
+    }
+  }, []);
 
   const openContactForm = useCallback((messageText=latestUserText()) => {
     setLeadMessageDraft(messageText || '');
@@ -876,7 +815,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
       role:'assistant',
       kind:'handover',
       deptId:currentDept,
-      text: lang==='KA' ? 'შემიძლია დაგაკავშიროთ ოპერატორთან ამ ჩატში ან დატოვოთ საკონტაქტო ინფორმაცია.' : 'I can connect you with an operator in this chat, or you can leave contact details.',
+      text:'',
     }]);
   };
 
@@ -971,7 +910,7 @@ function ChatWidget({ S, lang, setLang, tweaks, onClose, expanded, setExpanded }
               <Message key={m.id} msg={m} S={S} lang={lang}
                 onCopy={copy} onRegen={regen} onVote={vote}
                 onContactHandover={()=>openContactForm(latestUserText() || m.text)}
-                onWaitHandover={()=>waitForOperator(m.deptId || currentDept, latestUserText())}/>
+                onWaitHandover={waitForOperator}/>
             ))}
             {typing && (
               <div className="cw-row">
